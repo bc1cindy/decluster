@@ -11,8 +11,9 @@ left is a whole-chain **entity-reduction rate** (§10).*
 ## Abstract
 
 On-chain Bitcoin privacy is an emergent property of the **transaction graph**, not of
-any single transaction. The **primary** de-anonymization signal is not a fingerprint at
-all: it is the **amount structure** — a transaction that merges unrelated parties can be
+any single transaction. The **primary** de-anonymization signal is not a wallet-software
+fingerprint but the **amount structure** — the amounts in use are a fingerprint of their
+own kind. A transaction that merges unrelated parties can be
 re-partitioned into per-owner subtransactions by subtracting a contributed input from an
 output and testing whether the implied payment "makes sense" (a round number, under the
 unnecessary-input heuristic). Wallet fingerprints are a **corroborating** layer on top of
@@ -192,8 +193,8 @@ receiver; outputs 791, 6750; fee 209):
   partition; union-find gave the wrong one.
 
 This is an *existence* demonstration on one merged transaction, not a rate across the chain
-— but it instantiates the thesis on real data: two independent signals (amount, fingerprint)
-fuse and agree to re-partition the merge.
+— but it instantiates the thesis on real data: two independent signals fuse and agree to
+re-partition the merge.
 
 **Graph-level anonymity metric (`results/RESULTS-entropy.md`).** We quantify the effect with the
 entropy of the clustering (`H = −Σ (n_i/N)·log2(n_i/N)` bits; effective anonymity set
@@ -203,7 +204,7 @@ entropy of the clustering (`H = −Σ (n_i/N)·log2(n_i/N)` bits; effective anon
 | clustering | effective anon set | largest cluster |
 |---|---|---|
 | union-find (BlockSci) | 13.8 | 16% |
-| fingerprint-aware (amount+fingerprint) | **3.4** | 53% |
+| fingerprint-aware | **3.4** | 53% |
 
 The naive common-input view over-reports the anonymity set by **~4×**; the amount +
 fingerprint evidence collapses 15 clusters to 5 and forms a supercluster (53%). This is
