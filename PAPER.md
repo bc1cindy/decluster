@@ -21,10 +21,10 @@ this. We present a probabilistic clustering framework that fuses the two — an
 **amount-based subtransaction re-partition** and a **fingerprint** weight-of-evidence in
 **bits** (Fellegi–Sunter) — into a single most-likely clustering over the labeled
 transaction multigraph that avoids the cluster-collapse failure of a single union-find. 
-We build a curated **library of fingerprints with evidence** (22 measured axes across the
+We build a curated **library of fingerprints with evidence** (23 measured axes across the
 chain-observable transaction-construction surface, calibrated on unbiased real-chain
-samples — 17 structural axes on a whole-chain sample, 5 witness axes
-on a mempool sample — anchored to chain-proven examples) and, on a real mainnet
+samples — 17 structural axes on a whole-chain sample, and 6 on mempool samples (5 witness +
+a block-feerate broadcast-time axis) — anchored to chain-proven examples) and, on a real mainnet
 merged transaction whose correct owner-partition is known, show the intended false merge
 is **refused** by the amount structure alone and **again** by the fingerprints — the two
 signals fuse and agree. We argue that a merge's ~1.6 bits of structural ambiguity cannot
@@ -91,10 +91,11 @@ input/output ordering, change script type, tx version, coin-selection/UIH, low-R
 SIGHASH type, **fee-rate**, **input script type**), grouping six reference wallet
 integrations per axis (`catalog/tx-construction-matrix.md`). Each axis carries an
 **extractor**, **measured bits**, and a **chain-proven example** (`decluster/library.py`);
-the library carries **22 measured axes** in total (the base set plus the granular additions
+the library carries **23 measured axes** in total (the base set plus the granular additions
 in §8 — input-type presence, nested segwit, pubkey compression, multisig, OP_RETURN, output
-encoding, and the change relations): the 17 structural axes calibrated on the whole-chain
-BigQuery sample, the 5 witness axes on a mempool sample (§5).
+encoding, the change relations, and a block-feerate broadcast-time axis): the 17 structural
+axes calibrated on the whole-chain BigQuery sample, and 6 on mempool samples (5 witness +
+broadcast-time; §5).
 
 Bits are measured on an **unbiased** mainnet sample (§5). Representative
 values (bits per matching value; higher = rarer = stronger link):
@@ -326,8 +327,8 @@ bits; **◐** = captured coarsely, not as the granular tell; **❌** = not built
 `change_address_reuse` is heuristic-free.
 
 **Honest tally: ~30 of ~35 covered (measured bits), ~2 partial, ~2 not built** — the
-library carries **22 measured axes**, the structural ones on a whole-chain BigQuery
-sample (§5). The primary structural signal — the amount / receiver-contribution
+library carries **23 measured axes** (incl. a block-feerate broadcast-time axis, below),
+the structural ones on a whole-chain BigQuery sample (§5). The primary structural signal — the amount / receiver-contribution
 subtransaction re-partition — is covered (§2/§6). **The honest ceiling is
 ~32/35, not 35/35:** the two remaining items are not clean single-transaction chain
 fingerprints — **Coin Control** is a UX behavior no single tx uniquely reveals, and
@@ -336,7 +337,9 @@ transaction alone. The two ◐ partials (change-always-bech32, more-than-2-outpu
 refinements of axes already covered.
 
 **Deliberately out of scope (separate tracks, not part of the chain-observable fingerprint checklist):**
-relay / timing fingerprints, JSON/HTTP serialization. The graph-level entropy / entropist
+relay / network-timing fingerprints, JSON/HTTP serialization. (The one timing signal we *do*
+measure is the **block-feerate broadcast-time** estimate — a bound read from on-chain feerate
+ordering, not network relay — as the `locktime_vs_broadcast` axis; `results/RESULTS-broadcast.md`.) The graph-level entropy / entropist
 metric is **delivered** (§6, `decluster/graph_metric.py`), and the community-structure premise
 (Narayanan–Shmatikov) is now **measured on a real slice** (§6, `decluster/graph_deanon.py`, AUC
 0.95); the full seed-and-extend attack at chain scale still needs adjacency infra + labels.
@@ -380,7 +383,15 @@ These are named so absence is explicit, not hidden.
   (`P=0.00` of 272) while different owners almost always do (`0.997`) → `~−8` calibrated bits.
   Evaluating co-spent merges confident-first, this refuses a same-software payjoin end-to-end
   (`fp +2.78 − 8 = −5.2` → split; without topology the co-spend collapses them). Chain-scale
-  seed-and-extend over the whole graph remains future work (§10).
+  seed-and-extend over the whole graph remains future work (§10). We also *tested* a cluster's
+  **temporal activity schedule** — the broadcast-time (§8) of its txs aggregated into an
+  hour-of-day histogram (`active_hours`/`schedule_distance`, `results/RESULTS-temporal.md`) —
+  as a candidate quasi-identifier, and report it as a **negative result**: on a 30-day sample
+  of 20 000 reused-address clusters a naive split-half gives AUC 0.92, but that number is a
+  concentration artifact — under a persistence (time-ordered) split with negatives matched on
+  active-hours count the AUC collapses to **0.49 (chance)**. So the hour-of-day schedule does
+  *not* identify owners in this data; disjoint active hours remain at most weak evidence of
+  *different* owners. The mechanism is available, but unvalidated (§10).
 
 ## 10. Future work
 

@@ -84,7 +84,10 @@ AXES = [
      "bits": {"none": 0.09, "multisig": 4.02}},
     {"axis": "locktime_vs_broadcast", "extractor": "x_locktime_vs_broadcast", "severity": "medium",
      "chain_proven": "0ab4abca70d71f4554baa708a75604c0f05ad43f21f23cb0b25bd3e0e308b129",
-     "bits": {"no_locktime": 0.22, "matches": 2.85, "na_loose": 8.48, "backdated": 9.48}},
+     # na_loose = abstention (loose bound): non-evidential, weight 0. It is rare (~0.3%), but
+     # rarity is not owner-linkage — "both waited during congestion" is a market-wide condition,
+     # so scoring it by -log2(share) would forge a false same-owner link if fed to the combiner.
+     "bits": {"no_locktime": 0.22, "matches": 2.85, "na_loose": 0.0, "backdated": 9.48}},
 ]
 
 _BY = {a["axis"]: a for a in AXES}
