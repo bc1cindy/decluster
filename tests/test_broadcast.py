@@ -20,6 +20,27 @@ def test_broadcast_window_none():
     assert broadcast_window(None, 5.0, 100, 700) is None       # coinbase
     assert broadcast_window(10.0, None, 100, 700) == (False, None, 700)  # unknown prev_min
 
+from decluster.broadcast import locktime_vs_broadcast
+from decluster.extractors import x_locktime_vs_broadcast
+
+def test_axis_values():
+    tight = (True, 100, 700)
+    loose = (False, None, 700)
+    assert locktime_vs_broadcast(0, 900, tight) == "no_locktime"
+    assert locktime_vs_broadcast(500_000_001, 900, tight) == "timestamp"
+    assert locktime_vs_broadcast(899, 900, tight) == "matches"       # ~ current tip
+    assert locktime_vs_broadcast(700, 900, tight) == "backdated"     # >100 below N
+    assert locktime_vs_broadcast(950, 900, tight) == "future"        # above N
+    assert locktime_vs_broadcast(899, 900, loose) == "na_loose"      # height but loose
+    assert locktime_vs_broadcast(899, 900, None) == "na_loose"
+
+def test_extractor_reads_annotation():
+    tx = {"fee": 1000, "weight": 400, "locktime": 899,
+          "status": {"block_height": 900, "block_time": 700},
+          "_bc": {"prev_min": 5.0, "prev_time": 100, "incl_time": 700}}
+    assert x_locktime_vs_broadcast(tx) == "matches"
+    assert x_locktime_vs_broadcast({"locktime": 0}) == "na"          # not annotated
+
 if __name__ == "__main__":
     for name, fn in list(globals().items()):
         if name.startswith("test_"): fn(); print(f"  ok  {name}")

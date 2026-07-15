@@ -170,3 +170,16 @@ def x_change_address_reuse(tx):
     oa = {o.get("scriptpubkey_address") for o in tx["vout"]}
     oa.discard(None)
     return "reuse" if ia & oa else "none"
+
+from .broadcast import tx_feerate, broadcast_window, locktime_vs_broadcast
+
+def x_locktime_vs_broadcast(tx):
+    """nLocktime vs estimated broadcast height. Reads the tx['_bc'] annotation
+    (prev_min/prev_time/incl_time); returns 'na' when unannotated / coinbase."""
+    bc = tx.get("_bc")
+    st = tx.get("status") or {}
+    n = st.get("block_height")
+    if bc is None or n is None:
+        return "na"
+    win = broadcast_window(tx_feerate(tx), bc["prev_min"], bc["prev_time"], bc["incl_time"])
+    return locktime_vs_broadcast(tx.get("locktime", 0), n, win)

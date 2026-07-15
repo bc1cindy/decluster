@@ -17,3 +17,20 @@ def broadcast_window(tx_fr, prev_min, prev_time, incl_time):
     if prev_min is not None and prev_min < tx_fr:
         return (True, prev_time, incl_time)
     return (False, None, incl_time)
+
+def locktime_vs_broadcast(locktime, incl_height, win):
+    """Compare nLocktime to the estimated broadcast height (~ incl_height when the bound is
+    tight). This de-confounds the plain locktime axis: a tx that set locktime at broadcast and
+    then waited reads `matches`, not `backdated`. `win` = broadcast_window(...) or None."""
+    if locktime == 0:
+        return "no_locktime"
+    if locktime >= 500_000_000:
+        return "timestamp"
+    if win is None or not win[0]:              # no bound / loose -> cannot compare a height
+        return "na_loose"
+    n = incl_height
+    if locktime > n + 1:
+        return "future"
+    if locktime >= n - 100:                     # anti-fee-sniping (incl. Core's random back-off)
+        return "matches"
+    return "backdated"
