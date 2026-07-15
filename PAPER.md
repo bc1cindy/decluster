@@ -253,6 +253,10 @@ needs independent entity labels (§9).
 
 ## 7. Related work
 
+- **nothingmuch, [*Anonymity Sets on the Transaction Graph*](https://github.com/nothingmuch/tx-graph-anonymity-sets)**:
+  the theoretical framework this paper calibrates empirically — entropic anonymity sets (§6),
+  the sub-transaction and absorber models (§2/§6), and the graph-as-quasi-identifiers
+  argument the topology term realizes (§9). We measure and implement what it models.
 - **Maurer, Neudecker & Florian**, *Anonymous CoinJoin Transactions with Arbitrary Values*
   (2017): the **sub-transaction model** — a transaction with arbitrary amounts can be
   re-partitioned into the plausible original transactions, and their number and plausibility
