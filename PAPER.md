@@ -6,7 +6,7 @@
 real txs), `results/RESULTS-graph-deanon.md` (structural de-anon across four eras), and
 `results/RESULTS-wp4.md` (the ground-truth case study). Scope: a fingerprint-aware
 clustering **method**, validated at mainnet scale without an archival node; the one thing
-left is a whole-chain **entity-reduction rate** (§10).*
+left is a whole-chain **entity-reduction rate** (§9).*
 
 ## Abstract
 
@@ -57,7 +57,7 @@ strictly more expressive than the single union-find that clusters can only *grow
 
 This offensive result is a means, not an end: the de-anonymization engine is the
 measurement half of a construction-side cost function for collaborative transactions
-(§10). You cannot shape a transaction to avoid a tell you have not first measured.
+(§9). You cannot shape a transaction to avoid a tell you have not first measured.
 
 ## 2. Straw-man: why merging unrelated parties does not deliver privacy
 
@@ -92,7 +92,7 @@ SIGHASH type, **fee-rate**, **input script type**), grouping six reference walle
 integrations per axis (`catalog/tx-construction-matrix.md`). Each axis carries an
 **extractor**, **measured bits**, and a **chain-proven example** (`decluster/library.py`);
 the library carries **23 measured axes** in total (the base set plus the granular additions
-in §8 — input-type presence, nested segwit, pubkey compression, multisig, OP_RETURN, output
+in §7 — input-type presence, nested segwit, pubkey compression, multisig, OP_RETURN, output
 encoding, the change relations, and a block-feerate broadcast-time axis): the 17 structural
 axes calibrated on the whole-chain BigQuery sample, and 6 on mempool samples (5 witness +
 broadcast-time; §5).
@@ -216,7 +216,7 @@ entropy of the clustering (`H = −Σ (n_i/N)·log2(n_i/N)` bits; effective anon
 The naive common-input view over-reports the anonymity set by **~4×**; the amount +
 fingerprint evidence collapses 15 clusters to 5 and forms a supercluster (53%). This is
 the thesis quantified at the graph level — still a modest real graph (19 coins), not a
-chain-scale measurement (which needs the whole connected chain, §10).
+chain-scale measurement (which needs the whole connected chain, §9).
 
 **Community-structure de-anonymization (`results/RESULTS-graph-deanon.md`).** Beyond pairwise
 evidence, we test the Narayanan–Shmatikov premise directly: does the *structure* of the
@@ -225,7 +225,7 @@ a **connected real slice** — blocks 400000–400004, 8 927 txs, 27 962 address
 entities (`bigquery/graph.sql`, no archival node) — with same-owner labels from transitive
 co-spend clusters (itself a heuristic: it over-merges any collaborative transaction in the
 slice, so these labels are a near-certain floor for ordinary txs; an independent entity label
-would be stronger, §9) and held-out positives = same-owner pairs that are *not* directly co-spent
+would be stronger, §8) and held-out positives = same-owner pairs that are *not* directly co-spent
 (267 578 pairs), a common-neighbors link-prediction score predicts same-owner membership.
 Removing the co-spend edges that *define* those labels — scoring by payment structure
 alone (common neighbors) — still re-identifies same-owner addresses at **AUC 0.95** on the
@@ -250,46 +250,9 @@ era; the graph *depth* needed scales with counterparty churn. (Deeper reach avoi
 small-world collapse only because hub counterparties are excluded — so high-k AUC approaches
 non-hub component membership, a coarser tell than fine link prediction; and 2023 rests on
 111 pairs.) The stronger claim — structure links entities co-spend leaves separate — still
-needs independent entity labels (§9).
+needs independent entity labels (§8).
 
-## 7. Related work
-
-- **nothingmuch, [*Anonymity Sets on the Transaction Graph*](https://github.com/nothingmuch/tx-graph-anonymity-sets)**:
-  the theoretical framework this paper calibrates empirically — entropic anonymity sets (§6),
-  the sub-transaction and absorber models (§2/§6), and the graph-as-quasi-identifiers
-  argument the topology term realizes (§9). We measure and implement what it models.
-- **Maurer, Neudecker & Florian**, *Anonymous CoinJoin Transactions with Arbitrary Values*
-  (2017): the **sub-transaction model** — a transaction with arbitrary amounts can be
-  re-partitioned into the plausible original transactions, and their number and plausibility
-  bound its anonymity. This is the origin of the amount-based re-partition we take as the
-  *primary* signal (§2/§6); we layer measured fingerprint evidence and the transaction graph
-  on top.
-- **LaurentMT**, *Boltzmann* (OXT, 2015): operationalized the sub-transaction model as
-  transaction **entropy** `E = log₂N` over the N plausible input→output interpretations, with
-  a link-probability matrix. §1 refines this: what bounds anonymity is the *entropy of the
-  distribution* over those partitions, not the count `log₂N` — fingerprints and prior
-  clustering peak it on the true partition.
-- **Narayanan & Shmatikov**, robust de-anonymization of large sparse datasets / social
-  graphs: structure alone re-identifies nodes. §6 tests this premise on a real connected
-  Bitcoin slice — payment-graph structure predicts same-owner at AUC 0.95, beyond the
-  co-spend heuristic (`results/RESULTS-graph-deanon.md`). We measure the *premise* (structure is
-  entity-separable); the full N-S seed-and-extend attack at chain scale, and richer
-  features (community detection, embeddings), remain future work needing adjacency infra
-  and independent labels.
-- **Wang et al.**, *Exploring Unconfirmed Transactions for Effective Bitcoin Address
-  Clustering*: the closest model — a clustering-effectiveness paper reporting **entity
-  reduction** on the whole chain (co-spend +2.3%, novel heuristics +9.8%). We follow the
-  same anonymity-collapse framing but at **case-study scale** (the entropy metric on the
-  ground-truth merged transaction's graph, §6); a whole-chain entity-reduction measurement
-  is a separate follow-on that needs the whole connected chain, not an archival node (§10).
-- **Dingledine & Mathewson**, *Anonymity Loves Company*: uniformity is a network-effect
-  property — a wallet that de-biases one axis but stands out on another gains nothing.
-  This grounds our recommendation to randomize *between legitimate behaviors* (same
-  distribution), not merely to fix single fingerprints.
-- **Syverson**, *Why I'm Not an Entropist*: caution on the entropy framing; we report
-  bits as weight-of-evidence for pairwise linkage, not as a single anonymity scalar.
-
-## 8. Coverage of the chain-observable fingerprint surface
+## 7. Coverage of the chain-observable fingerprint surface
 
 The chain-observable fingerprint surface enumerates **~35 granular fingerprints**. We do **not** cover
 all of them; "coverage" here is an honest per-item claim (**✅** = extractor + measured
@@ -345,13 +308,13 @@ metric is **delivered** (§6, `decluster/graph_metric.py`), and the community-st
 0.95); the full seed-and-extend attack at chain scale still needs adjacency infra + labels.
 These are named so absence is explicit, not hidden.
 
-## 9. Limitations (honest)
+## 8. Limitations (honest)
 
 - **Scope, not scale.** The fingerprint model *is* validated at mainnet scale — attribution
   AUC 0.974 on 106,644 real txs (§5) — and structural de-anonymization is measured across
   four eras (§6), both **without an archival node**. What we do not claim is a whole-chain
   **entity-reduction rate** (à la Wang et al.: "X% of all entities collapse") — that single
-  number needs the full connected chain and is a separate follow-on (§10). The
+  number needs the full connected chain and is a separate follow-on (§9). The
   community-structure slices are also thin (a handful of blocks per era; the 2013 k=1 null
   shows one slice conflates slice-noise with era-trend), and the *stronger* N-S form
   (structure links what co-spend leaves separate) needs independent entity labels we lack —
@@ -400,17 +363,17 @@ These are named so absence is explicit, not hidden.
   *eccentricity* was field-dependent and is replaced by this global rarity test — itself N-S's own
   quasi-identifier weighting `wt = 1/log|supp|`.)
 
-  Chain-scale seed-and-extend over the whole graph remains future work (§10). We also *tested*
-  a cluster's **temporal activity schedule** — the broadcast-time (§8) of its txs aggregated
+  Chain-scale seed-and-extend over the whole graph remains future work (§9). We also *tested*
+  a cluster's **temporal activity schedule** — the broadcast-time (§7) of its txs aggregated
   into an hour-of-day histogram (`active_hours`/`schedule_distance`, `results/RESULTS-temporal.md`) —
   as a candidate quasi-identifier, and report it as a **negative result**: on a 30-day sample
   of 20 000 reused-address clusters a naive split-half gives AUC 0.92, but that number is a
   concentration artifact — under a persistence (time-ordered) split with negatives matched on
   active-hours count the AUC collapses to **0.49 (chance)**. So the hour-of-day schedule does
   *not* identify owners in this data; disjoint active hours remain at most weak evidence of
-  *different* owners. The mechanism is available, but unvalidated (§10).
+  *different* owners. The mechanism is available, but unvalidated (§9).
 
-## 10. Future work
+## 9. Future work
 
 The reason this measurement matters is constructive: every bit this paper reads as a link
 is, inverted, a bit a wallet must avoid emitting. The offensive engine is the calibration
@@ -432,9 +395,22 @@ case-study scale.)
 
 **Separate research tracks — not a scale run.** Two further directions are genuinely new
 work: first, the full Narayanan–Shmatikov **seed-and-extend attack** at chain scale — the
-rarity-threshold FP-control (§9) is delivered; what remains is running the cluster-level
+rarity-threshold FP-control (§8) is delivered; what remains is running the cluster-level
 topology over the whole connected graph with richer features (community detection,
 embeddings) and the independent entity labels the co-spend heuristic cannot supply
 (bootstrapped from the known-entity catalog, `catalog/known-entities.md`); second, the
 construction-side **cost function** — feeding the measured bits back so a wallet shapes its
 own transactions to avoid these tells, the defensive counterpart and a project in its own right.
+
+## 10. Related work
+
+- <sub>**nothingmuch, [*Anonymity Sets on the Transaction Graph*](https://github.com/nothingmuch/tx-graph-anonymity-sets)**: the theoretical framework this paper calibrates empirically — entropic anonymity sets (§6), the sub-transaction and absorber models (§2/§6), and the graph-as-quasi-identifiers argument the topology term realizes (§8). We measure and implement what it models.</sub>
+- <sub>**Maurer, Neudecker & Florian**, *Anonymous CoinJoin Transactions with Arbitrary Values* (2017): the **sub-transaction model** — a transaction with arbitrary amounts can be re-partitioned into the plausible original transactions, and their number and plausibility bound its anonymity. The origin of the amount-based re-partition we take as the *primary* signal (§2/§6).</sub>
+- <sub>**LaurentMT**, *Boltzmann* (OXT, 2015): operationalized the sub-transaction model as transaction **entropy** `E = log₂N` over the N plausible input→output interpretations. §1 refines this: what bounds anonymity is the *entropy of the distribution* over partitions, not the count `log₂N`.</sub>
+- <sub>**Fellegi & Sunter**, *A Theory for Record Linkage* (JASA 64(328):1183–1210, 1969; [doi:10.1080/01621459.1969.10501049](https://doi.org/10.1080/01621459.1969.10501049)): the record-linkage weight-of-evidence the engine scores in — an agreement on a value of frequency `p` contributes `−log₂p` bits (§4); the topology term internalizes counterparty overlap as an FS quasi-identifier, and the rarity threshold is its rarity-weighting of that match (§8).</sub>
+- <sub>**Narayanan & Shmatikov**, *Robust De-anonymization of Large Sparse Datasets* (IEEE S&P 2008; [arXiv:cs/0610105](https://arxiv.org/abs/cs/0610105)) and *De-anonymizing Social Networks* (IEEE S&P 2009; [arXiv:0903.3276](https://arxiv.org/abs/0903.3276)): structure alone re-identifies nodes. Their rarity-weighted quasi-identifier score `wt(i) = 1/log|supp(i)|` is the basis of our topology distinctiveness threshold (`−log₂(share)`, §8). §6 tests the *premise* on a real connected Bitcoin slice — payment-graph structure predicts same-owner at AUC 0.95 beyond co-spend (`results/RESULTS-graph-deanon.md`); the full seed-and-extend attack at chain scale, and richer features (community detection, embeddings), remain future work (§9).</sub>
+- <sub>**Wang et al.**, *Exploring Unconfirmed Transactions for Effective Bitcoin Address Clustering*: the closest model — a clustering-effectiveness paper reporting **entity reduction** on the whole chain (co-spend +2.3%, novel heuristics +9.8%). We follow the same anonymity-collapse framing but at **case-study scale** (the entropy metric on the merged-transaction graph, §6); a whole-chain measurement needs the whole connected chain, not an archival node (§9).</sub>
+- <sub>**Dingledine & Mathewson**, *Anonymity Loves Company*: uniformity is a network-effect property — a wallet that de-biases one axis but stands out on another gains nothing. This grounds our recommendation to randomize *between legitimate behaviors* (same distribution), not merely to fix single fingerprints.</sub>
+- <sub>**Syverson**, *Why I'm Not an Entropist*: caution on the entropy framing; we report bits as weight-of-evidence for pairwise linkage, not as a single anonymity scalar.</sub>
+- <sub>**Tracking issue** — [*chain-observable transaction-level fingerprinting*](https://github.com/payjoin/rust-payjoin/issues/1597) (payjoin/rust-payjoin #1597): the venue for this program and its review discussion.</sub>
+
