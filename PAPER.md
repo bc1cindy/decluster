@@ -251,6 +251,17 @@ needs independent entity labels (§9).
 
 ## 7. Related work
 
+- **Maurer, Neudecker & Florian**, *Anonymous CoinJoin Transactions with Arbitrary Values*
+  (2017): the **sub-transaction model** — a transaction with arbitrary amounts can be
+  re-partitioned into the plausible original transactions, and their number and plausibility
+  bound its anonymity. This is the origin of the amount-based re-partition we take as the
+  *primary* signal (§2/§6); we layer measured fingerprint evidence and the transaction graph
+  on top.
+- **LaurentMT**, *Boltzmann* (OXT, 2015): operationalized the sub-transaction model as
+  transaction **entropy** `E = log₂N` over the N plausible input→output interpretations, with
+  a link-probability matrix. §1 refines this: what bounds anonymity is the *entropy of the
+  distribution* over those partitions, not the count `log₂N` — fingerprints and prior
+  clustering peak it on the true partition.
 - **Narayanan & Shmatikov**, robust de-anonymization of large sparse datasets / social
   graphs: structure alone re-identifies nodes. §6 tests this premise on a real connected
   Bitcoin slice — payment-graph structure predicts same-owner at AUC 0.95, beyond the
