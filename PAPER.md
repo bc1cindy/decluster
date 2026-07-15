@@ -357,6 +357,24 @@ These are named so absence is explicit, not hidden.
   strongly identifying. Per-axis specificity is modeled but not yet fully calibrated.
 - **Independence assumption.** The engine sums per-axis bits assuming axis independence;
   real intra-wallet correlations (e.g. RBF ↔ locktime) may double-count.
+- **Same-software false positives.** Fingerprints separate only *different* wallet software;
+  two owners sharing a wallet, timezone, and fee policy emit matching fingerprints, so the
+  fingerprint channel goes silent and cannot refuse merging their clusters in a shared
+  payjoin. The control then rests on the amount structure alone (~1.6 bits for 2-in/2-out) —
+  thin. The robust fix is to score graph topology as a quasi-identifier: even with identical
+  fingerprints, Alice's counterparties differ from Bob's, and few such distinguishing
+  relationships suffice (Narayanan–Shmatikov). We *measure* that structure separates owners
+  (§6, AUC 0.95). The engine *scores* it as a Fellegi–Sunter quasi-identifier
+  (`topology_weight`, `cluster_topology_weight`, `results/RESULTS-topology.md`): a shared
+  rare counterparty carries mean `+3.57` bits for same-owner pairs (AUC 0.84 on a real
+  slice). The *per-pair* disjoint mismatch is weak (`−1.65` bits, `P(disjoint|same)=0.32` vs
+  `1.00`) and cannot refuse alone — the strength must come from *accumulation*, exactly the
+  "enough distinguishing relationships" the N-S argument needs. Aggregated to the cluster
+  level it does: same-owner clusters *never* have disjoint aggregate neighbourhoods
+  (`P=0.00` of 272) while different owners almost always do (`0.997`) → `~−8` calibrated bits.
+  Evaluating co-spent merges confident-first, this refuses a same-software payjoin end-to-end
+  (`fp +2.78 − 8 = −5.2` → split; without topology the co-spend collapses them). Chain-scale
+  seed-and-extend over the whole graph remains future work (§10).
 
 ## 10. Future work
 
@@ -379,9 +397,12 @@ separate `tx-indexer` crate; the Python prototype here reproduces the method at
 case-study scale.)
 
 **Separate research tracks — not a scale run.** Two further directions are genuinely new
-work: first, the full Narayanan–Shmatikov **seed-and-extend attack**, with richer features
+work: first, scaling the same-software false-positive control (§9) — the cluster-level
+accumulation refuses a same-software payjoin at case-study scale, but running it over the
+whole connected graph is the full Narayanan–Shmatikov **seed-and-extend attack** with richer
+features
 (community detection, embeddings) and the independent entity labels the co-spend ground
-truth cannot supply — bootstrapped from the known-entity catalog (`catalog/known-entities.md`);
+truth cannot supply (bootstrapped from the known-entity catalog, `catalog/known-entities.md`);
 second, the construction-side **cost function** — feeding the measured
 bits back so a wallet shapes its own transactions to avoid these tells, the defensive
 counterpart and a project in its own right.

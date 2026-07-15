@@ -9,6 +9,8 @@ class UF:
         while self.p[x] != x: self.p[x] = self.p[self.p[x]]; x = self.p[x]
         return x
     def union(self, a, b): self.p[self.find(a)] = self.find(b)
+    def group(self, x):
+        r = self.find(x); return [y for y in self.p if self.find(y) == r]
     def groups(self):
         g = {}
         for x in self.p: g.setdefault(self.find(x), []).append(x)
@@ -73,14 +75,75 @@ def amount_refuse_weight(t, a, b):
     margin = ranked[0][1] - (ranked[1][1] if len(ranked) > 1 else 0)  # winner - runner-up roundness
     return -float(margin)
 
-def cluster_fused(nodes, combiner, refuse_below=-2.0, link_above=4.0):
-    """like cluster_fingerprint_aware, but adds the amount weight to the fingerprint score
-    (linear combination). refused = (a,b,t,fp,amt,total)."""
+def counterparty_bits(neigh):
+    """rarity of each counterparty as node-frequency bits: `-log2(share of nodes touching
+    it)`. A hub (an exchange everyone touches) -> few bits; a private address -> many.
+    Calibrated from the graph itself, so a shared counterparty is weighted like a fingerprint
+    value. `neigh`: node -> counterparty set."""
+    import math
+    touch = {}
+    for a in neigh:
+        for c in neigh[a]:
+            touch[c] = touch.get(c, 0) + 1
+    n = len(neigh) or 1
+    return {c: -math.log2(f / n) for c, f in touch.items()}
+
+def topology_weight(a, b, neigh, cbits=None, disjoint_bits=-1.65, share_cap=12.0):
+    """graph-topology weight (signed) from counterparty neighbourhoods, as a Fellegi-Sunter
+    quasi-identifier. MATCH (shared counterparties) -> same-owner bits, rarity-weighted via
+    `cbits` (a rare shared address is strong, a hub ~0). MISMATCH (disjoint) -> `disjoint_bits`,
+    calibrated *weak*: on a real slice P(disjoint|same)=0.32 vs P(disjoint|diff)=1.00 ->
+    log2 ratio ~= -1.65, so a SINGLE disjoint pair barely moves the score and cannot by itself
+    overcome a fingerprint match. The refusal the collaborator describes ('enough
+    distinguishing relationships') is the ACCUMULATION of these across a whole cluster — an
+    N-S cluster-level computation, not this per-pair term (paper §10). 0 when either side has
+    too little graph to judge."""
+    na, nb = neigh.get(a, set()), neigh.get(b, set())
+    if not na or not nb:
+        return 0.0
+    common = na & nb
+    if common:
+        if cbits is not None:
+            return min(sum(cbits.get(c, 0.0) for c in common), share_cap)   # calibrated bits
+        return 1.5 * min(len(common), 4)                                    # prototype bonus
+    return disjoint_bits                                   # disjoint: calibrated but weak per-pair
+
+def cluster_topology_weight(members_a, members_b, neigh, cbits=None, disjoint_bits=-8.1, share_cap=12.0):
+    """cluster-level topology: aggregate the counterparty neighbourhoods of two candidate
+    clusters and score their overlap. This is the accumulation ("enough distinguishing
+    relationships"): on a real slice same-owner clusters NEVER have disjoint aggregate
+    neighbourhoods (P=0.00, Laplace-smoothed ~0.004) while different owners almost always do
+    (P=0.997) -> a disjoint aggregate is ~-8 calibrated bits, strong enough to refuse a
+    same-wallet payjoin (unlike the ~-1.65-bit per-pair term). Shared aggregate counterparties
+    corroborate same owner (rarity-weighted via `cbits`)."""
+    na, nb = set(), set()
+    for x in members_a: na |= neigh.get(x, set())
+    for x in members_b: nb |= neigh.get(x, set())
+    if not na or not nb:
+        return 0.0
+    common = na & nb
+    if common:
+        if cbits is not None:
+            return min(sum(cbits.get(c, 0.0) for c in common), share_cap)
+        return 1.5 * min(len(common), 4)
+    return disjoint_bits
+
+def cluster_fused(nodes, combiner, refuse_below=-2.0, link_above=4.0, neigh=None):
+    """like cluster_fingerprint_aware, but adds the amount weight and (when `neigh` is given)
+    a CLUSTER-LEVEL graph-topology weight: co-spent merges are evaluated confident-first
+    (shared counterparties before disjoint), and each is scored by the aggregate counterparty
+    overlap of the two *current* clusters (`cluster_topology_weight`) — so accumulated
+    distinguishing relationships refuse a same-software payjoin. refused = (a,b,t,fp,amt,total)."""
     uf = UF(nodes); refused = []; linked = []
-    for a, b, t in _cospent_pairs(nodes):
+    cbits = counterparty_bits(neigh) if neigh else None
+    pairs = _cospent_pairs(nodes)
+    if neigh:                          # confident (shared) merges first, ambiguous (disjoint) last
+        pairs = sorted(pairs, key=lambda p: -topology_weight(p[0], p[1], neigh, cbits))
+    for a, b, t in pairs:
         fp = combiner.score(fetch_tx(a), fetch_tx(b))
         amt = amount_refuse_weight(t, a, b)
-        total = fp + amt
+        top = cluster_topology_weight(uf.group(a), uf.group(b), neigh, cbits) if neigh else 0.0
+        total = fp + amt + top
         if total < refuse_below:
             refused.append((a, b, t, fp, amt, total)); continue
         uf.union(a, b)
