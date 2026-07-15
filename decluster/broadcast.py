@@ -34,3 +34,25 @@ def locktime_vs_broadcast(locktime, incl_height, win):
     if locktime >= n - 100:                     # anti-fee-sniping (incl. Core's random back-off)
         return "matches"
     return "backdated"
+
+def annotate_broadcast(sample, fetch_block_hash, fetch_block):
+    """Annotate each confirmed tx with tx['_bc'] = {prev_min, prev_time, incl_time} by fetching
+    block N-1's minimum feerate (extras.feeRange[0]). Caches per block height. Fetch failures /
+    missing feeRange leave the tx unannotated (extractor -> 'na')."""
+    cache = {}
+    for tx in sample:
+        st = tx.get("status") or {}
+        n = st.get("block_height")
+        if n is None or n < 1:
+            continue
+        if n not in cache:
+            try:
+                prev = fetch_block(fetch_block_hash(n - 1))
+                fr = (prev.get("extras") or {}).get("feeRange")
+                cache[n] = {"prev_min": fr[0] if fr else None, "prev_time": prev.get("timestamp")}
+            except Exception:
+                cache[n] = None
+        c = cache[n]
+        if c and c["prev_min"] is not None:
+            tx["_bc"] = {"prev_min": c["prev_min"], "prev_time": c["prev_time"],
+                         "incl_time": st.get("block_time")}

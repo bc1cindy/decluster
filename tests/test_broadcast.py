@@ -41,6 +41,21 @@ def test_extractor_reads_annotation():
     assert x_locktime_vs_broadcast(tx) == "matches"
     assert x_locktime_vs_broadcast({"locktime": 0}) == "na"          # not annotated
 
+from decluster.broadcast import annotate_broadcast
+
+def test_annotate():
+    txs = [{"status": {"block_height": 900, "block_time": 700}},
+           {"status": {"block_height": 900, "block_time": 700}},   # shares block 900
+           {"status": {}}]                                          # unconfirmed -> skipped
+    calls = []
+    def fake_hash(h): calls.append(h); return f"hash{h}"
+    def fake_block(bid): return {"timestamp": 100, "extras": {"feeRange": [5.0, 9, 20]}}
+    annotate_broadcast(txs, fake_hash, fake_block)
+    assert txs[0]["_bc"] == {"prev_min": 5.0, "prev_time": 100, "incl_time": 700}
+    assert txs[1]["_bc"] == txs[0]["_bc"]
+    assert "_bc" not in txs[2]
+    assert calls == [899]                                           # block 899 fetched once (cached)
+
 if __name__ == "__main__":
     for name, fn in list(globals().items()):
         if name.startswith("test_"): fn(); print(f"  ok  {name}")
