@@ -334,7 +334,10 @@ These are named so absence is explicit, not hidden.
   number needs the full connected chain and is a separate follow-on (§10). The
   community-structure slices are also thin (a handful of blocks per era; the 2013 k=1 null
   shows one slice conflates slice-noise with era-trend), and the *stronger* N-S form
-  (structure links what co-spend leaves separate) needs independent entity labels we lack.
+  (structure links what co-spend leaves separate) needs independent entity labels we lack —
+  whose practical source is a catalog of known super-clusters (SatoshiDice, Mt. Gox,
+  exchanges, pools) and entity-specific signatures (address-reuse eras, vanity prefixes,
+  BIP-47 notification graphs; `catalog/known-entities.md`).
 - **Low-R is a base-rate signal.** A non-grinding wallet emits a 71-byte signature ~50%
   of the time; low-R is a per-cluster *consistency* tell, low severity — the measured
   bits reflect this.
@@ -367,6 +370,7 @@ case-study scale.)
 **Separate research tracks — not a scale run.** Two further directions are genuinely new
 work: first, the full Narayanan–Shmatikov **seed-and-extend attack**, with richer features
 (community detection, embeddings) and the independent entity labels the co-spend ground
-truth cannot supply; second, the construction-side **cost function** — feeding the measured
+truth cannot supply — bootstrapped from the known-entity catalog (`catalog/known-entities.md`);
+second, the construction-side **cost function** — feeding the measured
 bits back so a wallet shapes its own transactions to avoid these tells, the defensive
 counterpart and a project in its own right.
