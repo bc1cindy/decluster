@@ -21,10 +21,10 @@ AXES = [
               "height_other": 7.65, "timestamp": 10.85}},   # zero~74-83%: TRUE chain dist
     {"axis": "input_order", "extractor": "x_input_order", "severity": "medium",
      "chain_proven": None,
-     "bits": {"single": 0.53, "shuffle": 2.46, "bip69": 3.00}},
+     "bits": {"single": 0.53, "shuffle": 2.46, "bip69": 3.00, "small_n": 0.0}},
     {"axis": "output_order", "extractor": "x_output_order", "severity": "high",
      "chain_proven": None,
-     "bits": {"sorted_value": 1.43, "unsorted": 1.61, "single": 1.72}},
+     "bits": {"sorted_value": 1.43, "unsorted": 1.61, "single": 1.72, "small_n": 0.0}},
     {"axis": "change_spk", "extractor": "x_change_spk_type", "severity": "medium",
      "chain_proven": None,
      "bits": {"uniform_p2pkh": 0.92, "mixed": 1.77, "uniform_v0_p2wpkh": 3.42,

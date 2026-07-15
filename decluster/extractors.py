@@ -14,8 +14,10 @@ def x_nsequence(tx):
 
 def x_input_order(tx):
     o = [(v["txid"], v["vout"]) for v in tx["vin"]]
-    if len(o) == 1: return "single"
-    return "bip69" if o == sorted(o) else "shuffle"
+    n = len(o)
+    if n == 1: return "single"
+    if o != sorted(o): return "shuffle"                # not sorted -> not BIP-69 (reliable at any n)
+    return "bip69" if n >= 4 else "small_n"            # sorted: brands BIP-69 only when accidental sort (1/n!) is small; n<=3 is coincidental (1/2, 1/6)
 
 def x_io_shape(tx): return f"{len(tx['vin'])}in-{len(tx['vout'])}out"
 
@@ -23,8 +25,10 @@ def x_version(tx): return f"v{tx.get('version')}"
 
 def x_output_order(tx):
     vals = [o["value"] for o in tx["vout"]]
-    if len(vals) == 1: return "single"
-    return "sorted_value" if vals == sorted(vals) else "unsorted"
+    n = len(vals)
+    if n == 1: return "single"
+    if vals != sorted(vals): return "unsorted"          # not sorted -> reliable at any n
+    return "sorted_value" if n >= 4 else "small_n"       # sorted: only brands at n>=4; n<=3 is coincidental (1/n!)
 
 def x_change_spk_type(tx):
     types = {o["scriptpubkey_type"] for o in tx["vout"]}

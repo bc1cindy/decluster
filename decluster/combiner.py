@@ -30,7 +30,7 @@ class Combiner:
         self.freq, self.collision = {}, {}
         for name in AXES:
             bits = (_BY.get(_LIB_AXIS[name]) or {}).get("bits") or {}
-            p = {v: 2 ** -b for v, b in bits.items()}
+            p = {v: 2 ** -b for v, b in bits.items() if b > 0}   # drop 0-bit abstain values (p=1 would poison collision)
             if name == "locktime":   # combiner uses zero/height; aggregate height_*
                 ph = sum(pv for v, pv in p.items() if v != "zero")
                 p = {"zero": p.get("zero", 0.5), "height": ph or 0.5}
@@ -43,8 +43,8 @@ class Combiner:
         total, rows = 0.0, []
         for name, fn in AXES.items():
             va, vb = fn(txA), fn(txB)
-            if name == "in_order" and "single" in (va, vb):
-                rows.append((name, va, vb, None)); continue
+            if name == "in_order" and ({"single", "small_n"} & {va, vb}):
+                rows.append((name, va, vb, None)); continue   # order uninformative (n=1, or small-n sorted -> coincidental)
             if va == vb:
                 w = -math.log2(self.freq[name].get(va, 1/self.n))
             else:

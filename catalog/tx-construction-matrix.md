@@ -78,7 +78,7 @@ severity is for the divergence as a backward-channel partition signal.
 | 3 | Taproot sighash | ✓ | ✓ | ✓ | ✓ | ✓ | ✓ | low |
 | 4 | nLockTime | tip exact ✓ | tip exact ✓ | **tip −Δ~10% ✗** | **swap/0 ✗** | tip exact ✓ | **0 always ✗** | **high** |
 | 5 | tx version | `2` ✓ | `2` ✓ | `2` ✓ | `2` ✓ | `2` ✓ | `2` ✓ | low |
-| 6 | Input order | shuffle ✓ | shuffle ✓ | **selection-order ✗** | **BIP-69 ✗** | shuffle ✓ | **BIP-69 ✗** | med |
+| 6 | Input order | shuffle ✓ | shuffle ✓ | **selection-order ✗** | **BIP-69 ✗** | shuffle ✓ | shuffle ✓ | med |
 | 7 | Output order | shuffle ✓ | shuffle ✓ | **change-last ✗** | sweep (n/a) | shuffle ✓ | **insertion ✗** | **high** |
 | 8 | Change spk type | match ✓ | match ✓ | match ✓ | sweep (n/a) | match ✓ | **fixed p2wpkh ✗** | med |
 | 9 | Coin select/UIH | Core BnB | BDK BnB | BnB+desc-fallback | sweep | **greedy ✗** | **greedy ✗** | med |
@@ -130,11 +130,15 @@ both sources:
   resistance against cross-wallet uniformity.
 
 ### Axis 6 — Input ordering · MEDIUM · *holds*
-Three-way split: **shuffle** (Core/BDK → the sender wallet, ldk-node, BBM) ·
-**BIP-69 lexicographic** (Boltz; Cake — builder default `inputOrdering=bip69` at
-`transaction_builder.dart:43`, *not* overridden at the call site) ·
-**selection/insertion order** (Liana). For n≥2 inputs, an exactly BIP-69-sorted
-input set brands Boltz/Cake; a randomized order excludes them.
+Three-way split: **shuffle** (Core/BDK → the sender wallet, ldk-node, BBM, Cake) ·
+**BIP-69 lexicographic** (Boltz) · **selection/insertion order** (Liana). A non-BIP-69 wallet
+sorts by chance with probability `1/n!` (½ at n=2, ⅙ at n=3), so a small-`n` sorted set is
+coincidental, not a brand. That `1/n!` sets the **gate**, not the emitted weight: `x_input_order`
+labels a sorted set `bip69` only at **n≥4** (accidental sort <5%); at n≤3 it returns `small_n`
+and the combiner **abstains** (`combiner.py`), so a coincidentally-sorted 2-input tx cannot forge
+a same-owner link. At n≥4 the emitted weight is the flat **software-rarity link (~3 bits,
+`−log₂(share)`)** — bounded, *not* a per-tx `log₂(n!)` (which would over-link different owners of
+the same wallet). A randomized order excludes BIP-69 at any n.
 
 ### Axis 7 — Output ordering / change position · HIGH · *holds*
 Directly defeats merged transaction's change-ambiguity goal.
@@ -200,9 +204,9 @@ surfacing divergent wallets before broadcast:
   resistance vs cross-wallet uniformity); converging needs one chosen shape.
 - **tx.version** = 2; **low-R grind**; **taproot SIGHASH_DEFAULT (64B)** — pin to
   prevent regression.
-- **Randomized input AND output order**; **forbid** BIP-69 sorting (Boltz, Cake
-  inputs), insertion/selection order (Liana inputs, Cake outputs), and
-  deterministic change-last (Liana).
+- **Randomized input AND output order**; **forbid** BIP-69 sorting (Boltz),
+  insertion/selection order (Liana inputs, Cake outputs), and deterministic
+  change-last (Liana).
 - **Change spk type matches input type** — forbid hard-fixed types (Cake).
 - **Prefer BnB** coin selection (recommendation + UIH self-check, not a hard
   reject — probabilistic).

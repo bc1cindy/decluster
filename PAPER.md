@@ -116,6 +116,11 @@ values (bits per matching value; higher = rarer = stronger link):
 (Rare values are now estimable: the whole-chain sample surfaces high-bit tells like the
 Cake-style `seq_0x01` nSequence at 8.9 bits and mixed input types at 6.0 bits.)
 
+Ordering tells (input/output) are **n-conditional**: a sorted set arises by chance with
+probability `1/n!` (½ at n=2, ⅙ at n=3), so the engine brands `bip69` only at **n≥4** and
+abstains (`small_n`, no link) at n≤3 — the `3.00` above is the software-rarity link weight for
+the reliable n≥4 case, not a per-tx claim at small n.
+
 **Honesty note.** Two catalog example transactions (Ex.1 low-R, Ex.2 SIGHASH) were
 originally listed with txids that do not resolve on mainnet — placeholders, never
 decoded. We replaced them with real example transactions surfaced and decoded from the

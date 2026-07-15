@@ -54,8 +54,11 @@ def _tx(vout, vin=None, version=2):
 
 def test_x_output_order():
     from decluster.extractors import x_output_order
+    # sorted but small n -> coincidental (1/n!, n=2 is 1/2) -> small_n, not a confident tell
     assert x_output_order(_tx([{"value": 1, "scriptpubkey_type": "a"},
-                               {"value": 2, "scriptpubkey_type": "b"}])) == "sorted_value"
+                               {"value": 2, "scriptpubkey_type": "b"}])) == "small_n"
+    # sorted with n>=4 -> deliberate -> sorted_value
+    assert x_output_order(_tx([{"value": i, "scriptpubkey_type": "a"} for i in (1, 2, 3, 4)])) == "sorted_value"
     assert x_output_order(_tx([{"value": 2, "scriptpubkey_type": "b"},
                                {"value": 1, "scriptpubkey_type": "a"}])) == "unsorted"
     assert x_output_order(_tx([{"value": 1, "scriptpubkey_type": "a"}])) == "single"
