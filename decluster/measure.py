@@ -11,6 +11,7 @@ from .extractors import (
     x_uih, x_low_r, x_sighash, x_fee_rate, x_input_script_type, x_op_return, x_output_encoding,
     x_input_types_present, x_nested_segwit, x_pubkey_compression, x_multisig,
     x_change_index, x_change_type_match, x_change_matches_output, x_change_address_reuse,
+    x_locktime_vs_broadcast,
 )
 
 # Full 22-axis map (mempool sample carries witness; BigQuery reads 'na' on witness axes).
@@ -27,6 +28,7 @@ EX = {
     "change_index": lambda t: x_change_index(t), "change_type_match": lambda t: x_change_type_match(t),
     "change_matches_output": lambda t: x_change_matches_output(t),
     "change_address_reuse": lambda t: x_change_address_reuse(t),
+    "locktime_vs_broadcast": lambda t: x_locktime_vs_broadcast(t),
 }
 
 

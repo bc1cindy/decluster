@@ -59,6 +59,15 @@ def fetch_block(block_id):
     d = _get(f"{API}/block/{block_id}")
     json.dump(d, open(p, "w")); return d
 
+def fetch_block_at(height):
+    """Fetch block summary at exact height via /v1/blocks/:height; includes extras.feeRange."""
+    p = os.path.join(CACHE, f"bh{height}.json")
+    if os.path.exists(p): return json.load(open(p))
+    blocks = _get(f"{API}/v1/blocks/{height}")
+    # v1/blocks/:height returns up to 15 blocks ending at height; find the exact one
+    d = next((b for b in blocks if b["height"] == height), blocks[0] if blocks else {})
+    json.dump(d, open(p, "w")); return d
+
 def fetch_tip_height():
     return _get(f"{API}/blocks/tip/height")
 

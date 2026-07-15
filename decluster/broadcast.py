@@ -35,10 +35,11 @@ def locktime_vs_broadcast(locktime, incl_height, win):
         return "matches"
     return "backdated"
 
-def annotate_broadcast(sample, fetch_block_hash, fetch_block):
+def annotate_broadcast(sample, fetch_block_hash, fetch_block, fetch_block_at=None):
     """Annotate each confirmed tx with tx['_bc'] = {prev_min, prev_time, incl_time} by fetching
     block N-1's minimum feerate (extras.feeRange[0]). Caches per block height. Fetch failures /
-    missing feeRange leave the tx unannotated (extractor -> 'na')."""
+    missing feeRange leave the tx unannotated (extractor -> 'na').
+    fetch_block_at(height) -> block dict with extras; used when fetch_block lacks feeRange."""
     cache = {}
     for tx in sample:
         st = tx.get("status") or {}
@@ -49,6 +50,11 @@ def annotate_broadcast(sample, fetch_block_hash, fetch_block):
             try:
                 prev = fetch_block(fetch_block_hash(n - 1))
                 fr = (prev.get("extras") or {}).get("feeRange")
+                if fr is None and fetch_block_at is not None:
+                    prev2 = fetch_block_at(n - 1)
+                    fr = (prev2.get("extras") or {}).get("feeRange")
+                    if prev2.get("timestamp"):
+                        prev["timestamp"] = prev2["timestamp"]
                 cache[n] = {"prev_min": fr[0] if fr else None, "prev_time": prev.get("timestamp")}
             except Exception:
                 cache[n] = None
@@ -56,3 +62,20 @@ def annotate_broadcast(sample, fetch_block_hash, fetch_block):
         if c and c["prev_min"] is not None:
             tx["_bc"] = {"prev_min": c["prev_min"], "prev_time": c["prev_time"],
                          "incl_time": st.get("block_time")}
+
+if __name__ == "__main__":
+    # calibrate on a recent mempool.space sample: coverage (tight vs loose) + axis bits
+    from .sampling import sample_chain_uniform
+    from .fetch import fetch_block, fetch_block_hash, fetch_block_at
+    from .engine import measure, print_report
+    from .extractors import x_locktime_vs_broadcast
+    sample = sample_chain_uniform(n_blocks=40, per_block=20, seed=0)
+    annotate_broadcast((tx for tx, _ in sample), fetch_block_hash, fetch_block, fetch_block_at)
+    tight = sum(1 for tx, _ in sample
+                if (w := broadcast_window(tx_feerate(tx),
+                        (tx.get("_bc") or {}).get("prev_min"),
+                        (tx.get("_bc") or {}).get("prev_time"),
+                        (tx.get("_bc") or {}).get("incl_time"))) and w[0])
+    n = len(sample)
+    print(f"# {n} txs   tight coverage: {tight}/{n} = {100*tight/n:.1f}%")
+    print_report(measure(sample, {"locktime_vs_broadcast": lambda t: x_locktime_vs_broadcast(t)}))
