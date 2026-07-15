@@ -221,10 +221,12 @@ chain-scale measurement (which needs the whole connected chain, §10).
 evidence, we test the Narayanan–Shmatikov premise directly: does the *structure* of the
 transaction graph predict same-owner membership, independent of the co-spend heuristic? On
 a **connected real slice** — blocks 400000–400004, 8 927 txs, 27 962 addresses, 2 463
-entities (`bigquery/graph.sql`, no archival node) — with ground truth = transitive co-spend
-clusters and held-out positives = same-owner pairs that are *not* directly co-spent
+entities (`bigquery/graph.sql`, no archival node) — with same-owner labels from transitive
+co-spend clusters (itself a heuristic: it over-merges any collaborative transaction in the
+slice, so these labels are a near-certain floor for ordinary txs; an independent entity label
+would be stronger, §9) and held-out positives = same-owner pairs that are *not* directly co-spent
 (267 578 pairs), a common-neighbors link-prediction score predicts same-owner membership.
-Removing the co-spend edges that *define* the ground truth — scoring by payment structure
+Removing the co-spend edges that *define* those labels — scoring by payment structure
 alone (common neighbors) — still re-identifies same-owner addresses at **AUC 0.95** on the
 2016 slice; the shuffle control lands at 0.50. Graph structure de-anonymizes *beyond* the
 common-input heuristic, on real data. Across **four eras**, swept over graph reach *k*

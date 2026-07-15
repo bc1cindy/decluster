@@ -10,8 +10,10 @@ A contiguous block range (not a random sample) so the graph is actually connecte
 2016 era has heavy address reuse, giving rich clusters. Extracted via `bigquery/graph.sql`
 (no archival node). Reproduce: `python3 decluster/graph_deanon.py <slice.json>`.
 
-**Method.** Ground truth = transitive co-spend clusters (address-level same-owner,
-~100% correct). Held-out positives = same-owner pairs that are **not**
+**Method.** Same-owner labels = transitive co-spend clusters — a *heuristic*: near-certain for
+ordinary txs but **broken by the collaborative transactions this work studies** (a
+coinjoin/payjoin in the slice is a false merge; 2016 has few — see the caveat below).
+Held-out positives = same-owner pairs that are **not**
 directly co-spent (267 578 pairs) — the link must come from structure, not the pair's own
 tx. Structural score = common neighbors in the address graph (classic link prediction).
 Negatives = cross-entity pairs. Metric = AUC (P[positive scores higher than negative]).
@@ -27,7 +29,7 @@ Blocks 400000–400004 (2016), full slice:
 | **SHUFFLE** (entity labels randomized) | **0.500** | control: the signal is not a sampling artifact |
 
 The confound: the FULL graph shares its co-spend edges with the heuristic that *defines*
-the ground truth, so its 0.990 is partly circular. Removing those edges — scoring pairs by
+those labels, so its 0.990 is partly circular. Removing those edges — scoring pairs by
 **payment** relationships only — still yields **AUC 0.950**. The shuffle control lands at
 0.500, confirming the effect is real structure, not the pair-sampling.
 
@@ -73,7 +75,7 @@ component membership than to a pairwise structural tell. (2023's 1.00 also rests
 - **One slice, one era.** 5 blocks of 2016. A multi-era / larger connected graph would
   strengthen (and possibly weaken, for modern low-reuse txs) the number. This is a
   demonstration on real data, not a whole-chain claim.
-- **Ground truth is co-spend**, near-certain but not perfect (a collaborative transaction in the slice would
+- **Labels are co-spend**, near-certain but not perfect (a collaborative transaction in the slice would
   be a false merge; 2016 has few). An *independent* entity label (exchange tags) would let
   us test the stronger claim — structure links entities co-spend leaves **separate** — which
   this self-contained design cannot (no external labels; the standing data wall).

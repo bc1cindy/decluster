@@ -5,7 +5,7 @@ transaction-construction fingerprints — signals every wallet emits. A whole-ch
 de-anonymization also needs an *entity-specific* layer on top: known super-clusters that
 must be treated specially, and construction/protocol signatures that identify a particular
 service. These are strong priors and, crucially, the practical source of the independent
-**entity labels** the co-spend ground truth cannot supply (paper §9/§10).
+**entity labels** the co-spend labels cannot supply (paper §9/§10).
 
 Status: this is a **backlog**, not built. Each entry notes the tell and how it maps to the
 engine (an existing axis, a new axis, or an entity label).
