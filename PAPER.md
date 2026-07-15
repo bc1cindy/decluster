@@ -382,10 +382,27 @@ These are named so absence is explicit, not hidden.
   level it does: same-owner clusters *never* have disjoint aggregate neighbourhoods
   (`P=0.00` of 272) while different owners almost always do (`0.997`) → `~−8` calibrated bits.
   Evaluating co-spent merges confident-first, this refuses a same-software payjoin end-to-end
-  (`fp +2.78 − 8 = −5.2` → split; without topology the co-spend collapses them). Chain-scale
-  seed-and-extend over the whole graph remains future work (§10). We also *tested* a cluster's
-  **temporal activity schedule** — the broadcast-time (§8) of its txs aggregated into an
-  hour-of-day histogram (`active_hours`/`schedule_distance`, `results/RESULTS-temporal.md`) —
+  (`fp +2.78 − 8 = −5.2` → split; without topology the co-spend collapses them).
+
+  A subtler false positive arises when two clusters share counterparties but only
+  non-distinctive ones (common hubs). Without a check, hub-only overlap could rescue a
+  spurious merge. This is handled by a **global rarity threshold** (`cluster_topology_weight`,
+  `topo_tau`): the shared counterparties are rarity-weighted (`−log2(share)`, so a hub is ~0 bits)
+  and summed; an overlap **below `topo_tau = 1.0` bit** — disjoint, or only non-distinctive hubs —
+  is treated as disjoint (`−8`), refusing the merge, while a distinctive rare shared counterparty
+  (≥ tau) corroborates same owner. Because rarity is global, this is field-independent (a universal
+  hub is always refused). The threshold **discriminates cleanly** on a real slice: same-owner
+  cluster pairs share **11.7** mean overlap bits vs different-owner **0.004** (99.97% share
+  nothing) → **AUC ≈1.00 (0.9997)** (`calibrate_topo_tau`; see `results/RESULTS-topology.md`). The residual
+  limit is inherent to the counterparty quasi-identifier, not the threshold: two *different* owners
+  who both use the same **rare** counterparty score above tau and merge — a shared rare
+  quasi-identifier is legitimate same-owner evidence in the FS model. (An earlier windowed N-S
+  *eccentricity* was field-dependent and is replaced by this global rarity test — itself N-S's own
+  quasi-identifier weighting `wt = 1/log|supp|`.)
+
+  Chain-scale seed-and-extend over the whole graph remains future work (§10). We also *tested*
+  a cluster's **temporal activity schedule** — the broadcast-time (§8) of its txs aggregated
+  into an hour-of-day histogram (`active_hours`/`schedule_distance`, `results/RESULTS-temporal.md`) —
   as a candidate quasi-identifier, and report it as a **negative result**: on a 30-day sample
   of 20 000 reused-address clusters a naive split-half gives AUC 0.92, but that number is a
   concentration artifact — under a persistence (time-ordered) split with negatives matched on
@@ -414,12 +431,10 @@ separate `tx-indexer` crate; the Python prototype here reproduces the method at
 case-study scale.)
 
 **Separate research tracks — not a scale run.** Two further directions are genuinely new
-work: first, scaling the same-software false-positive control (§9) — the cluster-level
-accumulation refuses a same-software payjoin at case-study scale, but running it over the
-whole connected graph is the full Narayanan–Shmatikov **seed-and-extend attack** with richer
-features
-(community detection, embeddings) and the independent entity labels the co-spend ground
-truth cannot supply (bootstrapped from the known-entity catalog, `catalog/known-entities.md`);
-second, the construction-side **cost function** — feeding the measured
-bits back so a wallet shapes its own transactions to avoid these tells, the defensive
-counterpart and a project in its own right.
+work: first, the full Narayanan–Shmatikov **seed-and-extend attack** at chain scale — the
+rarity-threshold FP-control (§9) is delivered; what remains is running the cluster-level
+topology over the whole connected graph with richer features (community detection,
+embeddings) and the independent entity labels the co-spend heuristic cannot supply
+(bootstrapped from the known-entity catalog, `catalog/known-entities.md`); second, the
+construction-side **cost function** — feeding the measured bits back so a wallet shapes its
+own transactions to avoid these tells, the defensive counterpart and a project in its own right.

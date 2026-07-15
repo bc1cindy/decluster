@@ -108,32 +108,78 @@ def topology_weight(a, b, neigh, cbits=None, disjoint_bits=-1.65, share_cap=12.0
         return 1.5 * min(len(common), 4)                                    # prototype bonus
     return disjoint_bits                                   # disjoint: calibrated but weak per-pair
 
-def cluster_topology_weight(members_a, members_b, neigh, cbits=None, disjoint_bits=-8.1, share_cap=12.0):
-    """cluster-level topology: aggregate the counterparty neighbourhoods of two candidate
-    clusters and score their overlap. This is the accumulation ("enough distinguishing
-    relationships"): on a real slice same-owner clusters NEVER have disjoint aggregate
-    neighbourhoods (P=0.00, Laplace-smoothed ~0.004) while different owners almost always do
-    (P=0.997) -> a disjoint aggregate is ~-8 calibrated bits, strong enough to refuse a
-    same-wallet payjoin (unlike the ~-1.65-bit per-pair term). Shared aggregate counterparties
-    corroborate same owner (rarity-weighted via `cbits`)."""
-    na, nb = set(), set()
-    for x in members_a: na |= neigh.get(x, set())
-    for x in members_b: nb |= neigh.get(x, set())
+def _agg(members, neigh):
+    s = set()
+    for x in members:
+        s |= neigh.get(x, set())
+    return s
+
+def _overlap_bits(common, cbits, share_cap):
+    if not common:
+        return 0.0
+    if cbits is not None:
+        return min(sum(cbits.get(c, 0.0) for c in common), share_cap)
+    return 1.5 * min(len(common), 4)
+
+DISJOINT_BITS = -8.1   # calibrated ~-8: same-owner clusters never disjoint (0/272), diff owners do (99.7%)
+
+def cluster_topology_weight(members_a, members_b, neigh, cbits=None, disjoint_bits=DISJOINT_BITS, share_cap=12.0, tau=0.0):
+    """cluster-level topology as a Fellegi-Sunter quasi-identifier: aggregate two clusters'
+    counterparty neighbourhoods and weight the overlap by GLOBAL rarity (`cbits`, `-log2(share)`) —
+    a shared rare counterparty is strong same-owner evidence, a common hub ~0 bits. The overlap-bit
+    magnitude *is* the distinctiveness; on a real slice it separates same-owner (mean 11.7 bits) from
+    different-owner (mean 0.004; 99.97% share nothing) at AUC 1.00. `tau` (bits) is the
+    distinctiveness threshold: an overlap below `tau` — disjoint, or sharing only non-distinctive
+    hubs — is treated as disjoint (`disjoint_bits ~ -8`), refusing the merge; `>= tau` corroborates
+    same owner. This is global (no candidate window), so it is field-independent and a universal hub
+    (0 bits < tau) is correctly refused. `tau=0` keeps any shared counterparty (legacy). 0 when
+    either side has too little graph to judge."""
+    na, nb = _agg(members_a, neigh), _agg(members_b, neigh)
     if not na or not nb:
         return 0.0
     common = na & nb
-    if common:
-        if cbits is not None:
-            return min(sum(cbits.get(c, 0.0) for c in common), share_cap)
-        return 1.5 * min(len(common), 4)
-    return disjoint_bits
+    if not common:
+        return disjoint_bits
+    bits = _overlap_bits(common, cbits, share_cap)
+    return bits if bits >= tau else disjoint_bits
 
-def cluster_fused(nodes, combiner, refuse_below=-2.0, link_above=4.0, neigh=None):
-    """like cluster_fingerprint_aware, but adds the amount weight and (when `neigh` is given)
-    a CLUSTER-LEVEL graph-topology weight: co-spent merges are evaluated confident-first
-    (shared counterparties before disjoint), and each is scored by the aggregate counterparty
-    overlap of the two *current* clusters (`cluster_topology_weight`) — so accumulated
-    distinguishing relationships refuse a same-software payjoin. refused = (a,b,t,fp,amt,total)."""
+def calibrate_topo_tau(sample, seed=0):
+    """Discriminative calibration of the distinctiveness threshold `tau` on a real slice
+    (graph_deanon.build payment graph). Compares the rarity-weighted counterparty-overlap bits of
+    same-owner cluster pairs (split-half) vs different-owner pairs. A `tau` between the two means
+    separates distinctive overlap (same-owner evidence) from non-distinctive/hub-only overlap
+    (treated as disjoint). Returns (n_clusters, same_mean, cross_mean, auc); AUC -> 1 means the
+    overlap-bit threshold cleanly separates owners, so it genuinely controls the false positive."""
+    import random
+    from .graph_deanon import build, _clusters, auc as _auc
+    uf, _neigh_full, neigh_pay, _cospent = build(sample)
+    groups = [m for m in _clusters(uf, neigh_pay).values() if len(m) >= 2]
+    cbits = counterparty_bits(neigh_pay)
+    rng = random.Random(seed)
+    def ov(A, B):
+        na, nb = _agg(A, neigh_pay), _agg(B, neigh_pay)
+        return _overlap_bits(na & nb, cbits, 12.0) if na and nb else None
+    same, cross = [], []
+    for m in groups:
+        h = len(m) // 2
+        v = ov(m[:h], m[h:])
+        if v is not None:
+            same.append(v)
+    for _ in range(min(3000, len(groups) * len(groups)) if len(groups) >= 2 else 0):
+        v = ov(*rng.sample(groups, 2))
+        if v is not None:
+            cross.append(v)
+    if not same or not cross:
+        return (len(groups), None, None, None)
+    return (len(groups), sum(same) / len(same), sum(cross) / len(cross), _auc(same, cross, seed))
+
+def cluster_fused(nodes, combiner, refuse_below=-2.0, link_above=4.0, neigh=None, topo_tau=1.0):
+    """like cluster_fingerprint_aware, but adds the amount weight and (when `neigh` is given) a
+    CLUSTER-LEVEL graph-topology weight: co-spent merges are evaluated confident-first (shared
+    counterparties before disjoint), and each is scored by the rarity-weighted counterparty overlap
+    of the two *current* clusters (`cluster_topology_weight`, distinctiveness threshold `topo_tau`
+    bits). An overlap below `topo_tau` — disjoint, or sharing only non-distinctive hubs — is treated
+    as disjoint (~-8 bits), refusing a same-software payjoin. refused = (a,b,t,fp,amt,total)."""
     uf = UF(nodes); refused = []; linked = []
     cbits = counterparty_bits(neigh) if neigh else None
     pairs = _cospent_pairs(nodes)
@@ -142,7 +188,7 @@ def cluster_fused(nodes, combiner, refuse_below=-2.0, link_above=4.0, neigh=None
     for a, b, t in pairs:
         fp = combiner.score(fetch_tx(a), fetch_tx(b))
         amt = amount_refuse_weight(t, a, b)
-        top = cluster_topology_weight(uf.group(a), uf.group(b), neigh, cbits) if neigh else 0.0
+        top = cluster_topology_weight(uf.group(a), uf.group(b), neigh, cbits, tau=topo_tau) if neigh else 0.0
         total = fp + amt + top
         if total < refuse_below:
             refused.append((a, b, t, fp, amt, total)); continue
