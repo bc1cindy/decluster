@@ -42,6 +42,12 @@ hoping a chain analyst will merge the parties into one entity. We show this hope
 quantitatively misplaced. A two-in/two-out merge adds at most **log₂3 ≈ 1.6 bits** of
 ambiguity, while an established cluster in a social-transaction graph carries **>100 bits**
 of identifying structure. An analyst needs only ~2 of those bits to override the merge.
+Enlarging the merge does not help: more inputs inflate the *count* of possible
+owner-partitions — combinatorially, on the order of B(#ins)·B(#outs) (Bell numbers) — but
+not the *entropy* of the distribution over them, which is what anonymity actually measures.
+Fingerprints and amounts peak that distribution on the partition that splits the inputs
+along their existing clusters, and those clusters can in turn be intersected to a common
+origin (Goldfeder et al.). More inputs buy possibilities, not privacy.
 
 Our contribution is the *combination engine* plus the *evidence library* that make this
 concrete: heuristics and fingerprints are fused as signed bits on a weighted graph, and
