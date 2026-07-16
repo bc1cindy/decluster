@@ -44,6 +44,14 @@ def fetch_tx(txid):
     d = _get(f"{API}/tx/{txid}")
     json.dump(d, open(p, "w")); return d
 
+def fetch_outspends(txid):
+    """mempool.space /tx/:txid/outspends -> one entry per output:
+    {"spent": bool, "txid": str|None, "vin": int|None, ...}. Cached like fetch_tx."""
+    p = os.path.join(CACHE, txid + ".outspends.json")
+    if os.path.exists(p): return json.load(open(p))
+    d = _get(f"{API}/tx/{txid}/outspends")
+    json.dump(d, open(p, "w")); return d
+
 def fetch_block_txs(block_id, index):
     p = os.path.join(BLK, f"{block_id}_{index}.json")
     if os.path.exists(p): return json.load(open(p))
