@@ -33,6 +33,16 @@ def cluster_naive(nodes):
     for a, b, _ in _cospent_pairs(nodes): uf.union(a, b)
     return uf.groups()
 
+def cluster_from_index(nodes, lookup):
+    """Group nodes by a precomputed {node -> cluster_id} lookup (whole-corpus cluster membership).
+    A node absent from lookup becomes its own singleton group. Returns a list of lists — the same
+    shape as cluster_naive, so downstream metrics run unchanged."""
+    groups = {}
+    for i, n in enumerate(nodes):
+        key = lookup[n] if n in lookup else ("_singleton", i)
+        groups.setdefault(key, []).append(n)
+    return list(groups.values())
+
 def cluster_fingerprint_aware(nodes, combiner, refuse_below=-2.0, link_above=4.0):
     """(1) REFUSES a co-spent merge when the fingerprint says 'different wallets' (avoids
     merged transaction collapse); (2) ADDS links common-input misses when two coins share a rare
