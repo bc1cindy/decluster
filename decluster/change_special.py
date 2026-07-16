@@ -26,6 +26,17 @@ def label_address_reuse(tx):
     reused = [i for i in (0, 1) if out_addr(tx, i) in ia]
     return reused[0] if len(reused) == 1 else None
 
+def label_round_number(tx, d=3):
+    """Round-number heuristic: an output whose sat value is a multiple of 10**(8-d) is a round BTC
+    amount (d decimal places). When exactly one output is round, it is the deliberately-chosen
+    payment, so change = the other output. Returns that index, else None. Reads ONLY output values."""
+    if not is_candidate(tx) or not 0 <= d <= 8: return None
+    ov = [o.get("value") for o in tx["vout"]]
+    if any(v is None for v in ov): return None
+    unit = 10 ** (8 - d)
+    round_outs = [i for i in (0, 1) if ov[i] % unit == 0]
+    return (1 - round_outs[0]) if len(round_outs) == 1 else None
+
 def build_gt_special(txs, labeler):
     gt = []
     for tx in txs:

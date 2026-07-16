@@ -73,6 +73,29 @@ def test_label_agreement():
     b = [rec("T1", 0), rec("T2", 0), rec("T4", 1)]        # T1 agree, T2 disagree, T4 only_b
     assert label_agreement(a, b) == {"both": 2, "agree": 1, "disagree": 1, "only_a": 1, "only_b": 1}
 
+def test_round_number_basic():
+    from decluster.change_special import label_round_number
+    # out0 = 5_000_000 sats (0.05 BTC, round at d=3); out1 = 4_321 (not round) -> change = out1
+    assert label_round_number(_tx(out_vals=(5_000_000, 4_321))) == 1
+    assert label_round_number(_tx(out_vals=(4_321, 5_000_000))) == 0   # tracks which output is round
+
+def test_round_number_threshold_edge():
+    from decluster.change_special import label_round_number
+    # d=3 -> unit = 10**5 = 100_000. 100_000 is round; 100_001 is not -> change = the non-round (1)
+    assert label_round_number(_tx(out_vals=(100_000, 100_001)), d=3) == 1
+
+def test_round_number_abstains():
+    from decluster.change_special import label_round_number
+    assert label_round_number(_tx(out_vals=(100_000, 200_000)), d=3) is None   # both round
+    assert label_round_number(_tx(out_vals=(12_345, 67_891)), d=3) is None      # neither round
+
+def test_round_number_reads_only_values():
+    from decluster.change_special import label_round_number
+    base = label_round_number(_tx(out_vals=(5_000_000, 4_321))); assert base == 1
+    # rewrite addresses + nSequence/version/locktime -> unchanged (values-only, disjoint fingerprints)
+    assert label_round_number(_tx(out_vals=(5_000_000, 4_321), in_addrs=("X", "Y"),
+                                  out_addrs=("z", "w"), seq=0x01, ver=1, lt=800000)) == base
+
 if __name__ == "__main__":
     fns = [v for k, v in sorted(globals().items()) if k.startswith("test_") and callable(v)]
     for fn in fns: fn(); print(f"ok  {fn.__name__}")
