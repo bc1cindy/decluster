@@ -341,11 +341,21 @@ Reading *the ordering* honestly: it is a **real but low-coverage** change predic
 fires on only 39% of labels (vs 57% for the round-number baseline, 78% for version) and, when it
 fires, its precision (0.83) is about the baseline's (0.86); `output_order` fires on 48% at
 precision 0.90. So ordering resolves *fewer* cases, not less accurately — the low recall is
-coverage, not error. The strong single tells are `nSequence`/`version` (near-perfect precision at
-high coverage: same-owner onward-spends reuse the wallet's sequence/version ~77%). The combined
-tx-level pre↔post score reaches AUC ≈ 0.76 against a shuffle-null ≈ 0.5. This confirms the §3
+coverage, not error. On this slice the strong single tells are `nSequence`/`version` (near-perfect
+precision at high coverage: same-owner onward-spends reuse the wallet's sequence/version ~77%). The
+combined tx-level pre↔post score reaches AUC ≈ 0.76 against a shuffle-null ≈ 0.5. This confirms the §3
 distinction: the 3.00-bit ordering *link* weight and ordering as a *change* signal are different
 quantities — the former stands; the latter is real but weak-coverage.
+
+**A label-robustness caveat.** This ranking does not survive an independent label
+(`results/RESULTS-special-change.md`). Re-run against an *optimal-change* label (the smaller-than-any-input
+output must be change — a value signal disjoint from co-spend) on a multi-epoch sample, all four
+onward-spend axes fall to ~0.60–0.74 precision and `nSequence`/`version` no longer dominate ordering.
+Part is a co-spend-label **selection bias** — that label selects changes whose onward-spender *is* the
+same-wallet reveal transaction, which shares nSequence/version by construction (inflating the numbers
+above); part is epoch / time-gap drift in the multi-epoch sample. Disentangling the two needs a
+contiguous-value slice running both labels on the same transactions (future work). The single-day
+figures above are slice- and label-specific, not a general claim.
 
 **A circularity caveat.** We also implemented Kappos's cluster-level `findNext` (change = the output
 whose onward-spend's construction features are in the input cluster's feature set). Against an M&N

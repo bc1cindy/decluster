@@ -42,11 +42,20 @@ coverage axes (version/nSequence) — another face of the fast-wallet skew. The 
   resolves **fewer** cases, not less accurately — its low TPR is mostly low coverage, not low
   precision. This is the honest answer to "validating the ordering": as a change predictor it is
   real but low-coverage and no better than the round-number baseline in precision.
-- **`nsequence` / `version` are the strong single tells** — near-perfect precision at high coverage:
-  same-owner onward-spends reuse the wallet's sequence/version ~77–78% of the time.
+- **`nsequence` / `version` are the strong single tells here** — near-perfect precision at high
+  coverage on this slice: same-owner onward-spends reuse the wallet's sequence/version ~77–78%.
 - The fresh-change filter removed ~45% of raw labels (an **in-slice** reuse proxy for M&N's
   reused-change removal — not identical to M&N's whole-chain filter, and this share is slice-local,
   not comparable to M&N's 28.4%).
+
+**This ranking is NOT robust to the label or the epoch** (`results/RESULTS-special-change.md`). Against
+an *independent, value-based* label (optimal-change, disjoint from co-spend) on a multi-epoch sample,
+all four onward-spend axes fall to ~0.60–0.74 precision and `nSequence`/`version` no longer dominate
+the ordering axes. Part of that is a co-spend-label **selection bias** — the co-spend label selects
+changes whose onward-spender *is* the reveal tx, a same-wallet transaction that shares nSequence/version
+by construction (inflating the numbers above); part is epoch / onward-spend time-gap drift in the
+multi-epoch sample. Disentangling the two needs a contiguous-value slice running both labels on the
+same transactions (Phase 2). Read the single-day numbers above as slice-and-label-specific, not general.
 
 ## The circular non-result: cluster `findNext` (reported ONLY as a circularity demonstration)
 
