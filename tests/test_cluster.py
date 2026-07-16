@@ -32,6 +32,19 @@ def test_build_cospend_lookup_separates_uncospent():
     assert lk["F1"] == lk["F2"]
     assert lk["F4"] != lk["F1"]
 
+def test_privacy_report_uses_baseline_lookup():
+    import decluster.graph_metric as gm
+    import decluster.cluster as cl
+    orig_fused = cl.cluster_fused
+    cl.cluster_fused = lambda nodes, combiner: ([[n] for n in nodes], [], [])   # stub: no network
+    try:
+        # A and B share a cluster_id -> the baseline (union_find) is ONE cluster of two coins
+        rep = gm.privacy_report(["A", "B"], combiner=None, baseline_lookup={"A": 1, "B": 1})
+        assert rep["union_find"]["clusters"] == 1
+        assert rep["fingerprint_aware"]["clusters"] == 2   # stub kept them separate
+    finally:
+        cl.cluster_fused = orig_fused
+
 if __name__ == "__main__":
     fns = [v for k, v in sorted(globals().items()) if k.startswith("test_") and callable(v)]
     for fn in fns: fn(); print(f"ok  {fn.__name__}")
