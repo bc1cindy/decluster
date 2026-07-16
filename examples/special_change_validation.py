@@ -1,5 +1,11 @@
-"""Validate fingerprint change-id against the value-based optimal-change label (non-circular):
-within-tx predictors (no network) + onward-spend fingerprints (live mempool.space fetch, sampled).
+"""Triangulate change-id fingerprints against FOUR near-independent special-case labels — optimal-change
+(value magnitude), round-number (value roundness), type-match (input script type), address-reuse — on
+the value-carrying downloads. Prints: label counts, a pairwise agreement matrix, within-tx predictors
+per label (no network), and onward-spend per-axis per label (live mempool.space fetch, sampled). The
+per-axis rate compared ACROSS the four independent labels is the label-robustness check.
+Caveat: the within-tx `round_number` predictor against the round_number LABEL is near-circular (both
+read roundness) — read that cell as self-agreement, not corroboration. The single-label Phase-1 tables
+are in results/RESULTS-special-change.md; a full triangulation results doc awaits a run.
 Run from repo root: python3 examples/special_change_validation.py [n_onward]
 Reads the value-carrying downloads in ~/Downloads/bquxjob_*.json."""
 import glob

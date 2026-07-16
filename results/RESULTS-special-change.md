@@ -5,6 +5,11 @@ Change identification validated against a **value-based** special-case label (op
 it validates — so this cross-check is not circular. Complements `results/RESULTS-change-id.md`
 (which used a co-spend label). Code: `decluster/change_special.py`, `examples/special_change_validation.py`.
 
+> **Note:** `examples/special_change_validation.py` has since been extended to *triangulate four*
+> near-independent labels (optimal-change, round-number, type-match, address-reuse) and print a
+> label-agreement matrix. The Phase-1 tables below are the single-label (optimal-change) results;
+> the four-label triangulation results are pending a dedicated run.
+
 **Optimal-change label:** in a ≥2-input 2-output tx, the output smaller than the smallest input value
 must be the change (else an input was unnecessary). Reads only values. Disjointness is machine-checked
 (`tests/test_change_special.py::test_optimal_change_reads_only_values`).
