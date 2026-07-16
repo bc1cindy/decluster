@@ -20,24 +20,36 @@ def _load_value_txs():
     return txs
 
 def main(n_onward=1500):
-    from decluster.change_special import build_gt_special, label_optimal_change, within_tx_rates
+    from decluster.change_special import (build_gt_special, within_tx_rates, agreement_matrix,
+        label_optimal_change, label_round_number, label_type_match, label_address_reuse)
     from decluster.change_validate import per_axis_rates
     from decluster.fetch import fetch_tx, fetch_outspends
+    LABELS = {"optimal_change": label_optimal_change, "round_number": label_round_number,
+              "type_match": label_type_match, "address_reuse": label_address_reuse}
     txs = _load_value_txs()
-    gt = build_gt_special(txs, label_optimal_change)
-    print("# optimal-change GT: %d labels (from %d value-carrying txs)" % (len(gt), len(txs)))
+    gts = {name: build_gt_special(txs, fn) for name, fn in LABELS.items()}
+    print("# special-case labels on %d value-carrying txs:" % len(txs))
+    for name, gt in gts.items():
+        print("#   %-16s %d labels" % (name, len(gt)))
 
-    print("\n# within-tx predictors vs optimal-change (no network):")
-    print("%-16s %6s %6s %8s" % ("predictor", "TPR", "FPR", "coverage"))
-    for name, (t, f, c) in within_tx_rates(gt).items():
-        print("%-16s %6.3f %6.3f %8.3f" % (name, t, f, c))
+    print("\n# label agreement matrix (both / agree / disagree):")
+    for (a, b), r in agreement_matrix(gts).items():
+        print("  %-16s x %-16s both=%-6d agree=%-6d disagree=%-6d"
+              % (a, b, r["both"], r["agree"], r["disagree"]))
+
+    print("\n# within-tx predictors vs each label (no network):")
+    print("%-16s %-16s %6s %6s %8s" % ("label", "predictor", "TPR", "FPR", "coverage"))
+    for name, gt in gts.items():
+        for pname, (t, f, c) in within_tx_rates(gt).items():
+            print("%-16s %-16s %6.3f %6.3f %8.3f" % (name, pname, t, f, c))
 
     rng = random.Random(0)
-    sample = rng.sample(gt, min(n_onward, len(gt)))
-    print("\n# onward-spend fingerprints vs optimal-change (live fetch, n=%d):" % len(sample))
-    print("%-16s %6s %6s %8s" % ("axis", "TPR", "FPR", "coverage"))
-    for name, (t, f, c) in per_axis_rates(sample, fetch_tx, fetch_outspends).items():
-        print("%-16s %6.3f %6.3f %8.3f" % (name, t, f, c))
+    print("\n# onward-spend per-axis vs each label (live fetch, n<=%d per label):" % n_onward)
+    print("%-16s %-14s %6s %6s %8s" % ("label", "axis", "TPR", "FPR", "coverage"))
+    for name, gt in gts.items():
+        sample = rng.sample(gt, min(n_onward, len(gt)))
+        for axis, (t, f, c) in per_axis_rates(sample, fetch_tx, fetch_outspends).items():
+            print("%-16s %-14s %6.3f %6.3f %8.3f" % (name, axis, t, f, c))
 
 if __name__ == "__main__":
     import sys
