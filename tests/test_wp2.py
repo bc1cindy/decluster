@@ -26,7 +26,7 @@ def test_library():
     names = {a["axis"] for a in AXES}
     assert {"nsequence", "locktime", "low_r", "sighash"} <= names
     for a in AXES:
-        assert a["extractor"] is not None or a["axis"] == "fee_rate"
+        assert a["extractor"] is not None
         assert "severity" in a and "bits" in a
     assert isinstance(bits("nsequence", "rbf_fffffffd"), float)
     assert isinstance(bits("low_r", "low_r"), float)

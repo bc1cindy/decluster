@@ -5,7 +5,7 @@
 --
 -- Run in the BigQuery console (or `bq query --use_legacy_sql=false --format=csv ...`),
 -- export the result as NEWLINE-DELIMITED JSON (one row = the `row` column), then:
---   python3 measure_file.py sample.ndjson
+--   python3 -m decluster.measure file sample.ndjson
 --
 -- The `type` values are normalized from BigQuery's names to mempool.space's so the
 -- existing Python extractors run unchanged. Witness-dependent axes (low-R, sighash,

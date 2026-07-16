@@ -14,7 +14,7 @@ from .extractors import (
     x_locktime_vs_broadcast,
 )
 
-# Full 22-axis map (mempool sample carries witness; BigQuery reads 'na' on witness axes).
+# Full 23-axis map (mempool sample carries witness; BigQuery reads 'na' on witness axes).
 EX = {
     "nsequence": lambda t: x_nsequence(t), "locktime": locktime_class,
     "input_order": lambda t: x_input_order(t), "output_order": lambda t: x_output_order(t),
@@ -62,7 +62,11 @@ def load_ndjson(path):
     """Accepts NDJSON or a JSON array — the BigQuery console downloads either."""
     raw = open(path).read().strip()
     rows = json.loads(raw) if raw.startswith("[") else [json.loads(l) for l in raw.splitlines() if l.strip()]
-    return [(_coerce(_unwrap(r)), _coerce(_unwrap(r)).get("height")) for r in rows]
+    out = []
+    for r in rows:
+        t = _coerce(_unwrap(r))
+        out.append((t, t.get("height")))
+    return out
 
 
 def _measure_files(paths):

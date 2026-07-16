@@ -36,7 +36,8 @@ def x_change_spk_type(tx):
 
 def x_uih(tx):
     # UIH1: some single input alone exceeds the largest output -> an input was unnecessary
-    in_vals = [v.get("value") for v in tx["vin"] if v.get("value") is not None]
+    in_vals = [iv for v in tx["vin"]
+               if (iv := (v.get("prevout") or {}).get("value", v.get("value"))) is not None]
     out_vals = [o["value"] for o in tx["vout"]]
     if len(in_vals) < 2 or not out_vals: return "none"
     return "uih1" if max(in_vals) >= max(out_vals) else "none"
@@ -84,7 +85,7 @@ def x_fee_rate(tx):
     return "precise"                          # estimator fractional
 
 def x_input_script_type(tx):
-    types = {v.get("prevout", {}).get("scriptpubkey_type") for v in tx["vin"]}
+    types = {(v.get("prevout") or {}).get("scriptpubkey_type") for v in tx["vin"]}
     types.discard(None)
     if not types: return "na"
     return f"uniform_{next(iter(types))}" if len(types) == 1 else "mixed"
@@ -103,12 +104,12 @@ def x_output_encoding(tx):
     return next(iter(encs)) if len(encs) == 1 else "mixed"
 
 def x_input_types_present(tx):
-    types = sorted({v.get("prevout", {}).get("scriptpubkey_type") for v in tx["vin"]} - {None})
+    types = sorted({(v.get("prevout") or {}).get("scriptpubkey_type") for v in tx["vin"]} - {None})
     return "+".join(types) if types else "na"
 
 def x_nested_segwit(tx):
     # a P2SH input carrying a witness is nested segwit (P2SH-P2WPKH / P2SH-P2WSH)
-    nested = any(v.get("prevout", {}).get("scriptpubkey_type") == "p2sh" and v.get("witness")
+    nested = any((v.get("prevout") or {}).get("scriptpubkey_type") == "p2sh" and v.get("witness")
                  for v in tx["vin"])
     return "nested_segwit" if nested else "none"
 
@@ -116,7 +117,7 @@ def x_pubkey_compression(tx):
     # p2wpkh inputs: last witness item is the pubkey; 33B/0x02-03 = compressed, 65B/0x04 = uncompressed
     kinds = set()
     for v in tx["vin"]:
-        if v.get("prevout", {}).get("scriptpubkey_type") != "v0_p2wpkh": continue
+        if (v.get("prevout") or {}).get("scriptpubkey_type") != "v0_p2wpkh": continue
         w = v.get("witness") or []
         if len(w) < 2: continue
         pk = w[-1]; n = len(pk) // 2
@@ -129,7 +130,7 @@ def x_multisig(tx):
     # basic: a redeemScript/witnessScript ending in OP_CHECKMULTISIG (0xae).
     # P2WSH -> last witness item; P2SH (legacy) -> last push of the scriptSig.
     for v in tx["vin"]:
-        t = v.get("prevout", {}).get("scriptpubkey_type")
+        t = (v.get("prevout") or {}).get("scriptpubkey_type")
         if t == "v0_p2wsh":
             w = v.get("witness") or []
             if w and w[-1].lower().endswith("ae"): return "multisig"
@@ -158,7 +159,7 @@ def x_change_type_match(tx):
     ci = _change_index(tx)
     if ci is None: return "na"
     ct = tx["vout"][ci].get("scriptpubkey_type")
-    itypes = {v.get("prevout", {}).get("scriptpubkey_type") for v in tx["vin"]}
+    itypes = {(v.get("prevout") or {}).get("scriptpubkey_type") for v in tx["vin"]}
     return "match_input" if ct in itypes else "mismatch_input"
 
 def x_change_matches_output(tx):
@@ -169,7 +170,7 @@ def x_change_matches_output(tx):
     return "match_output" if ct == ot else "mismatch_output"
 
 def x_change_address_reuse(tx):
-    ia = {v.get("prevout", {}).get("scriptpubkey_address") for v in tx["vin"]}
+    ia = {(v.get("prevout") or {}).get("scriptpubkey_address") for v in tx["vin"]}
     ia.discard(None)
     oa = {o.get("scriptpubkey_address") for o in tx["vout"]}
     oa.discard(None)

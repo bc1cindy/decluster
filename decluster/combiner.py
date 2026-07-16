@@ -48,7 +48,7 @@ class Combiner:
             if va == vb:
                 w = -math.log2(self.freq[name].get(va, 1/self.n))
             else:
-                w = math.log2((1 - self.c) / max(1 - self.collision[name], 1e-6))
+                w = min(0.0, math.log2((1 - self.c) / max(1 - self.collision[name], 1e-6)))
             total += w; rows.append((name, va, vb, w))
         return (total, rows) if explain else total
 

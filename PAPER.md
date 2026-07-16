@@ -2,9 +2,9 @@
 
 *Every empirical number below is reproducible from this repository:
 `decluster/library.py` (measured bits), `results/RESULTS-bigquery.txt` (calibration on a
-~105k uniform whole-chain sample), `results/RESULTS-fingerprint-validation.md` (attribution AUC 0.974 on 106k
+~105k uniform whole-chain sample), `results/RESULTS-fingerprint-validation.md` (attribution AUC 0.935 on 165k
 real txs), `results/RESULTS-graph-deanon.md` (structural de-anon across four eras), and
-`results/RESULTS-wp4.md` (the ground-truth case study). Scope: a fingerprint-aware
+`results/RESULTS-wp4.md` (the same-owner-labelled case study). Scope: a fingerprint-aware
 clustering **method**, validated at mainnet scale without an archival node; the one thing
 left is a whole-chain **entity-reduction rate** (§9).*
 
@@ -175,18 +175,18 @@ per-tx measurement would still want the whole chain, but for calibrating fingerp
 frequencies this is publication-grade (rare values become estimable).
 
 **Validation on real data (`results/RESULTS-fingerprint-validation.md`).** Do the calibrated
-bits actually attribute wallets? On **106,644 real witness-bearing mainnet txs**, with ground
-truth = address reuse (two txs spending the same input address are the same wallet),
-the Fellegi–Sunter score ranks same-wallet tx pairs (mean **+15.7 bits**) far above random
-pairs (mean **−12.2 bits**): **AUC 0.974**, with a shuffle control at 0.51. So the measured
-fingerprint model separates same-wallet from random transactions on real data — a systematic,
-quantified result beyond the prior anecdotal spot-checking. (Ground truth is address reuse, so
-the `input_types` axis matches partly by construction; the signal is spread across all axes and
-the control is clean — see the honest caveats in the results file.)
+bits actually attribute wallets? On **164,705 real witness-bearing mainnet txs**, with
+same-owner labels = address reuse (two txs spending the same input address are the same wallet),
+the canonical 23-axis Fellegi–Sunter score ranks same-wallet tx pairs (mean **+14.2 bits**) far
+above random pairs (mean **−22.6 bits**): **AUC 0.935**, with a shuffle control at 0.49. So the
+measured fingerprint model separates same-wallet from random transactions on real data — a
+systematic, quantified result beyond the prior anecdotal spot-checking. (The labels are address
+reuse, so the `input_types` axis matches partly by construction; the signal is spread across all
+axes and the control is clean — see the honest caveats in the results file.)
 
 ## 6. Demonstration: a real merged transaction re-partitioned
 
-Our anchor is a **ground-truth merged transaction**: `931d6627` is a confirmed mainnet
+Our anchor is a **known merged transaction**: `931d6627` is a confirmed mainnet
 transaction that merges two wallets — a **Cake Wallet receiver** and a **distinct sender
 wallet** — into one common-input group, so the correct owner-partition is known, not
 inferred. On its ancestry graph (7 coins; inputs 2000 sats sender, 5750 sats Cake
@@ -373,7 +373,7 @@ window is revealed) over one-day clusters. A multi-epoch replication is future w
 ## 8. Limitations (honest)
 
 - **Scope, not scale.** The fingerprint model *is* validated at mainnet scale — attribution
-  AUC 0.974 on 106,644 real txs (§5) — and structural de-anonymization is measured across
+  AUC 0.935 on 164,705 real txs (§5) — and structural de-anonymization is measured across
   four eras (§6), both **without an archival node**. What we do not claim is a whole-chain
   **entity-reduction rate** (à la Wang et al.: "X% of all entities collapse") — that single
   number needs the full connected chain and is a separate follow-on (§9). The

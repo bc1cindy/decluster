@@ -12,11 +12,11 @@ two people into one).
 
 - **Fingerprints reveal which wallet built a transaction.** Every wallet leaves quirks in
   how it constructs a transaction — nSequence values, script types, signature grinding, and
-  more. Do those quirks actually identify the wallet? Taking address reuse as ground
-  truth (two transactions spending the same address are the same wallet), the measured
-  fingerprint bits rank a *same-wallet* pair of transactions above a *random* pair **97.4%
-  of the time** (AUC 0.974) on 106k real mainnet transactions. Shuffle the labels and it
-  drops to 0.50 (a coin flip) — so the 0.974 is real signal, not an artifact.
+  more. Do those quirks actually identify the wallet? Taking address reuse as the same-owner
+  label (two transactions spending the same address are the same wallet), the measured
+  fingerprint bits rank a *same-wallet* pair of transactions above a *random* pair **93.5%
+  of the time** (AUC 0.935) on 165k real mainnet transactions. Shuffle the labels and it
+  drops to 0.49 (a coin flip) — so the 0.935 is real signal, not an artifact.
 
 - **The shape of the payment graph reveals owners too.** Independently of who-spent-with-whom,
   the *structure* of the graph (who pays whom) betrays common ownership — the same effect
@@ -32,7 +32,7 @@ two people into one).
 
 ## Layout
 
-- `decluster/` — the method: extractors, library, combiner, cluster, graph_deanon, rust_bridge
+- `decluster/` — the method: extractors, library, combiner, cluster, graph_deanon
 - `PAPER.md` — the manuscript; `results/` — reproducible outputs; `catalog/`, `bigquery/`
 
 Every number is reproducible. MIT — see `LICENSE`.

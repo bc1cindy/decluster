@@ -1,6 +1,6 @@
 # WP1a — recalibrated evidence bits (real mainnet, unbiased)
 
-Reproduce: `python3 recalibrate.py 40` (seeded, cached to `.cache`/`.blkcache`).
+Reproduce: `python3 -m decluster.measure recalibrate 40` (seeded, cached to `.cache`/`.blkcache`).
 Sample: 861 non-coinbase txs, heights uniform in [200000, tip], **within-block
 offsets fee-spread** (offset 0 = high-fee top; spread corrects the fee bias).
 

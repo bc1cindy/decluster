@@ -1,6 +1,6 @@
 # WP4 — merged transaction backward-channel demonstration (real bits)
 
-Reproduce: `python3 examples/graph_demo.py` (bits from `fingerprints/library.py`, WP2).
+Reproduce: `python3 examples/graph_demo.py` (bits from `decluster/library.py`, WP2).
 Regression-guarded by `tests/test_wp4.py::test_merge_money_shot`.
 
 ## The graph

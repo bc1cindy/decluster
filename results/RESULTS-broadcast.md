@@ -12,7 +12,7 @@ looks heavily backdated there even if it set locktime at broadcast. Here a loose
 `na_loose` (abstain), refusing that misleading verdict; we judge only when broadcast is
 tightly bounded (see the de-confounding demonstration below).
 
-There is no on-chain ground truth for broadcast time: the feerate bound is correct **by
+There is no on-chain record of broadcast time: the feerate bound is correct **by
 construction**; we report coverage and calibrate the axis bits, and claim nothing more.
 
 ## Result
@@ -67,7 +67,7 @@ exercised (2 `na_loose`, 1 `backdated`), so the effect is demonstrated, not yet 
 population scale.
 
 ## Honest limits
-- No ground-truth broadcast time; only the bound is guaranteed.
+- No known broadcast time; only the bound is guaranteed.
 - Loose for low-feerate txs during congestion (they wait many blocks) → `na_loose`.
 - The cluster temporal fingerprint built on this estimate (activity schedule / timezone) was
   tested separately and is a **null** under proper controls (`results/RESULTS-temporal.md`).

@@ -52,7 +52,7 @@ in each wallet's standard tx builder — that is what this matrix audits.
     - **sighash (axis 3):** `0361ae989850134b483cbf04b04978f331b0e6095dcf91de9737f4bde516367a`
       → `x_sighash = taproot_default` (64-byte schnorr, 4.23 bits/match). ECDSA `all`
       is the common case (34%, 1.57 bits).
-    These bits and example txids are recorded in `fingerprints/library.py`. Low-R is a
+    These bits and example txids are recorded in `decluster/library.py`. Low-R is a
     per-cluster *consistency* signal (a non-grinding wallet emits a 71-byte sig ~50% of
     the time), so it is low-severity — the measured base rate reflects that.
 - **Core values now fetched from source:** axis 1 (`0xFFFFFFFD`) and axis 4

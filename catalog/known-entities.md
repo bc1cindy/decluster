@@ -32,7 +32,7 @@ measures, specialized to one entity.
 | Entity | Era | Signature | Maps to |
 |---|---|---|---|
 | Coinbase (hot wallet) | ~2013–2017 | *Reported/anecdotal* (not independently verified here): uneconomic consolidations + anomalous fee estimation | `fee_rate` + `io_shape` (consolidation) |
-| Binance | multi-year | Static per-user deposit addresses, reused → an entity's deposit flow (and per-user deposit clusters) is visible on chain for that era | address reuse (the validation ground truth) |
+| Binance | multi-year | Static per-user deposit addresses, reused → an entity's deposit flow (and per-user deposit clusters) is visible on chain for that era | address reuse (the validation label) |
 | BitMEX | ~2015–2023 | `3BMEX…` / `bc1qmex` vanity-prefix deposit addresses on 3-of-4 P2WSH multisig; reissued to plain bech32 in Oct 2023 (legacy deprecated Mar 2025) | address vanity prefix + multisig type |
 
 ## C. Protocol structures and patterns

@@ -33,4 +33,4 @@ the common-input view suggests, once fingerprints and amount structure are accou
   archival Bitcoin Core node (Floresta cannot provide it — its Utreexo model keeps no
   historical blocks). The metric is the contribution; the graph size is data-limited.
 - The fingerprint-aware clustering inherits the round-number change-id and the
-  per-axis measured bits (preliminary, ~300-tx samples).
+  per-axis measured bits (the library-measured bits, decluster/library.py).

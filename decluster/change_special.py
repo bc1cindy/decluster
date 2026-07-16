@@ -1,4 +1,4 @@
-"""Special-case change labels (Ron & Shamir): near-certain change identification from a single
+"""Special-case change labels (value-based heuristics, M&N Table 1): near-certain change identification from a single
 signal, used as an INDEPENDENT label to validate fingerprints non-circularly. label_optimal_change
 reads ONLY values — disjoint from co-spend/addresses AND from ordering/nSequence/version — which is
 what breaks the circularity that invalidates cluster findNext against an M&N co-spend label."""
