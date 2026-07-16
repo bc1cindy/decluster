@@ -119,7 +119,9 @@ Cake-style `seq_0x01` nSequence at 8.9 bits and mixed input types at 6.0 bits.)
 Ordering tells (input/output) are **n-conditional**: a sorted set arises by chance with
 probability `1/n!` (½ at n=2, ⅙ at n=3), so the engine brands `bip69` only at **n≥4** and
 abstains (`small_n`, no link) at n≤3 — the `3.00` above is the software-rarity link weight for
-the reliable n≥4 case, not a per-tx claim at small n.
+the reliable n≥4 case, not a per-tx claim at small n. (As a *change* predictor rather than a link,
+this ordering axis validates as **real but low-coverage** — it resolves fewer cases than the
+round-number baseline at comparable precision; §7.)
 
 **Honesty note.** Two catalog example transactions (Ex.1 low-R, Ex.2 SIGHASH) were
 originally listed with txids that do not resolve on mainnet — placeholders, never
@@ -292,7 +294,9 @@ bits; **◐** = captured coarsely, not as the granular tell; **❌** = not built
 
 † conditional on a round-number change-identification heuristic (payment is the rounder
 2-output; change is arbitrary) — the change-relation axes inherit that heuristic's error;
-`change_address_reuse` is heuristic-free.
+`change_address_reuse` is heuristic-free. §7 tests these axes against M&N same-owner change labels
+(the ordering axis validates as a real but low-coverage change signal); a cluster-membership
+`findNext` reaches higher raw accuracy but is circular against those labels (§7) and is not used.
 
 **Honest tally: ~30 of ~35 covered (measured bits), ~2 partial, ~2 not built** — the
 library carries **23 measured axes** (incl. a block-feerate broadcast-time axis, below),
@@ -312,6 +316,49 @@ metric is **delivered** (§6, `decluster/graph_metric.py`), and the community-st
 (Narayanan–Shmatikov) is now **measured on a real slice** (§6, `decluster/graph_deanon.py`, AUC
 0.95); the full seed-and-extend attack at chain scale still needs adjacency infra + labels.
 These are named so absence is explicit, not hidden.
+
+### Change identification: validating the ordering against same-owner change labels
+
+Following Möser–Narayanan's non-interactive labeling — a 2-output transaction's change is revealed
+when its address is later co-spent with the inputs' cluster — we build a labeled set on a one-day
+mainnet slice (2024-06-01, 739,889 txs → **578** change labels after the M&N §2.2 filters:
+fresh-change / reused-change removal and the >10% two-change-cluster exclusion). We then test each
+construction axis as a change predictor: change = the output whose onward-spending transaction
+**agrees with T on that axis** — a fingerprint agreement between T and its output's spender,
+*disjoint* from the address-graph label. `coverage` = share of labels where the axis fires;
+`prec.` = precision when it fires. (`decluster/change_gt.py`, `change_slice.py`, `change_validate.py`;
+`results/RESULTS-change-id.md`.)
+
+| axis (bootstrap B=2000) | TPR | FPR | coverage | prec. |
+|---|---|---|---|---|
+| tx version | 0.779 | 0.000 | 0.779 | 1.00 |
+| nSequence | 0.768 | 0.007 | 0.775 | 0.99 |
+| round-number baseline (`change_index`) | 0.486 | 0.080 | 0.566 | 0.86 |
+| output order | 0.436 | 0.048 | 0.484 | 0.90 |
+| input order | 0.320 | 0.066 | 0.386 | 0.83 |
+
+Reading *the ordering* honestly: it is a **real but low-coverage** change predictor. `input_order`
+fires on only 39% of labels (vs 57% for the round-number baseline, 78% for version) and, when it
+fires, its precision (0.83) is about the baseline's (0.86); `output_order` fires on 48% at
+precision 0.90. So ordering resolves *fewer* cases, not less accurately — the low recall is
+coverage, not error. The strong single tells are `nSequence`/`version` (near-perfect precision at
+high coverage: same-owner onward-spends reuse the wallet's sequence/version ~77%). The combined
+tx-level pre↔post score reaches AUC ≈ 0.76 against a shuffle-null ≈ 0.5. This confirms the §3
+distinction: the 3.00-bit ordering *link* weight and ordering as a *change* signal are different
+quantities — the former stands; the latter is real but weak-coverage.
+
+**A circularity caveat.** We also implemented Kappos's cluster-level `findNext` (change = the output
+whose onward-spend's construction features are in the input cluster's feature set). Against an M&N
+co-spend label it is **circular** — the change's onward-spender *is* the co-spend reveal transaction,
+hence a cluster member by construction (verified: change spender is a member 576/578; payment spender
+0/226), so "features ∈ cluster set" reduces to the label itself, and nulling the entire construction
+fingerprint still scores 0.66. M&N's co-spend label and Kappos's co-spend-cluster `findNext` share
+the same signal, so the latter cannot be validated against the former; the label-disjoint validation
+is the per-axis test above. (`change_cluster.py` implements `findNext` but its number is a
+label-consistency upper bound, not a fingerprint result.)
+
+This is a case study: one day, labels skewed to fast-spending wallets (only change spent inside the
+window is revealed) over one-day clusters. A multi-epoch replication is future work (§9).
 
 ## 8. Limitations (honest)
 
@@ -396,7 +443,8 @@ an archival node. The remaining work is an integration spike — surfacing those
 through the node's library API and running the scaled engine over the stream — not new
 method. (That scaled engine, and its real-block / cached-tx runners, currently live in a
 separate `tx-indexer` crate; the Python prototype here reproduces the method at
-case-study scale.)
+case-study scale.) The same scale gap applies to the change-identification validation (§7): its
+labels and clusters are one-day; a multi-epoch replication is only scale, not new method.
 
 **Separate research tracks — not a scale run.** Two further directions are genuinely new
 work: first, the full Narayanan–Shmatikov **seed-and-extend attack** at chain scale — the
@@ -414,6 +462,8 @@ own transactions to avoid these tells, the defensive counterpart and a project i
 - <sub>**LaurentMT**, *Boltzmann* (OXT, 2015): operationalized the sub-transaction model as transaction **entropy** `E = log₂N` over the N plausible input→output interpretations. §1 refines this: what bounds anonymity is the *entropy of the distribution* over partitions, not the count `log₂N`.</sub>
 - <sub>**Fellegi & Sunter**, *A Theory for Record Linkage* (JASA 64(328):1183–1210, 1969; [doi:10.1080/01621459.1969.10501049](https://doi.org/10.1080/01621459.1969.10501049)): the record-linkage weight-of-evidence the engine scores in — an agreement on a value of frequency `p` contributes `−log₂p` bits (§4); the topology term internalizes counterparty overlap as an FS quasi-identifier, and the rarity threshold is its rarity-weighting of that match (§8).</sub>
 - <sub>**Narayanan & Shmatikov**, *Robust De-anonymization of Large Sparse Datasets* (IEEE S&P 2008; [arXiv:cs/0610105](https://arxiv.org/abs/cs/0610105)) and *De-anonymizing Social Networks* (IEEE S&P 2009; [arXiv:0903.3276](https://arxiv.org/abs/0903.3276)): structure alone re-identifies nodes. Their rarity-weighted quasi-identifier score `wt(i) = 1/log|supp(i)|` is the basis of our topology distinctiveness threshold (`−log₂(share)`, §8). §6 tests the *premise* on a real connected Bitcoin slice — payment-graph structure predicts same-owner at AUC 0.95 beyond co-spend (`results/RESULTS-graph-deanon.md`); the full seed-and-extend attack at chain scale, and richer features (community detection, embeddings), remain future work (§9).</sub>
+- <sub>**Möser & Narayanan**, *Resurrecting Address Clustering in Bitcoin* (FC 2023; [arXiv:2107.05749](https://arxiv.org/abs/2107.05749)): the non-interactive change-labeling method — the change of a 2-output transaction is revealed when its address is later co-spent with the inputs' cluster — and the "consistent fingerprint" change heuristics (their Table 4, incl. ordered ins/outs). We reproduce their labeling and §2.2 filters, and their per-axis validation, on a real slice (§7; `results/RESULTS-change-id.md`).</sub>
+- <sub>**Kappos et al.**, *How to Peel a Million: Validating and Expanding Bitcoin Clusters* (USENIX Security 2022; [paper](https://www.usenix.org/system/files/sec22-kappos.pdf)): change identification by whether an output's onward-spend belongs to the same peel chain — the cluster-feature `findNext` (TFC/AFC/changeC). We implement `findNext` (§7, `change_cluster.py`), but note it cannot be *validated against* an M&N co-spend label: the two share the co-spend-cluster signal, so `findNext` scores that label by construction (§7 circularity caveat). Our label-disjoint validation is the per-axis fingerprint test instead.</sub>
 - <sub>**Wang et al.**, *Exploring Unconfirmed Transactions for Effective Bitcoin Address Clustering*: the closest model — a clustering-effectiveness paper reporting **entity reduction** on the whole chain (co-spend +2.3%, novel heuristics +9.8%). We follow the same anonymity-collapse framing but at **case-study scale** (the entropy metric on the merged-transaction graph, §6); a whole-chain measurement needs the whole connected chain, not an archival node (§9).</sub>
 - <sub>**Dingledine & Mathewson**, *Anonymity Loves Company*: uniformity is a network-effect property — a wallet that de-biases one axis but stands out on another gains nothing. This grounds our recommendation to randomize *between legitimate behaviors* (same distribution), not merely to fix single fingerprints.</sub>
 - <sub>**Syverson**, *Why I'm Not an Entropist*: caution on the entropy framing; we report bits as weight-of-evidence for pairwise linkage, not as a single anonymity scalar.</sub>
