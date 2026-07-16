@@ -183,6 +183,22 @@ def calibrate_topo_tau(sample, seed=0):
         return (len(groups), None, None, None)
     return (len(groups), sum(same) / len(same), sum(cross) / len(cross), _auc(same, cross, seed))
 
+def build_cospend_lookup(corpus_txs):
+    """Whole-corpus multi-input clustering as a {funder_txid -> cluster_id} lookup. Over ALL txs
+    (no sample restriction), union the funder txids (vin[*].txid) co-spent within each tx; the
+    cluster_id is the union-find root. Reads tx dicts directly — offline, no fetch_tx."""
+    funders, edges = set(), []
+    for t in corpus_txs:
+        fs = [v["txid"] for v in t.get("vin", []) if v.get("txid")]
+        funders.update(fs)
+        for i in range(len(fs)):
+            for j in range(i + 1, len(fs)):
+                edges.append((fs[i], fs[j]))
+    uf = UF(funders)
+    for a, b in edges:
+        uf.union(a, b)
+    return {f: uf.find(f) for f in funders}
+
 def cluster_fused(nodes, combiner, refuse_below=-2.0, link_above=4.0, neigh=None, topo_tau=1.0):
     """like cluster_fingerprint_aware, but adds the amount weight and (when `neigh` is given) a
     CLUSTER-LEVEL graph-topology weight: co-spent merges are evaluated confident-first (shared

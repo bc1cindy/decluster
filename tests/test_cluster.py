@@ -12,6 +12,26 @@ def test_cluster_from_index_unknown_is_singleton():
     g = cluster_from_index(["A", "D", "E"], {"A": 1})   # D, E absent -> each its own group
     assert sorted(sorted(x) for x in g) == [["A"], ["D"], ["E"]]
 
+def test_build_cospend_lookup_transitive():
+    from decluster.cluster import build_cospend_lookup
+    # F1,F2 co-spent in T1 ; F2,F3 co-spent in T2 -> F1,F2,F3 one cluster (transitive, whole-corpus)
+    corpus = [
+        {"txid": "T1", "vin": [{"txid": "F1"}, {"txid": "F2"}], "vout": []},
+        {"txid": "T2", "vin": [{"txid": "F2"}, {"txid": "F3"}], "vout": []},
+    ]
+    lk = build_cospend_lookup(corpus)
+    assert lk["F1"] == lk["F2"] == lk["F3"]
+
+def test_build_cospend_lookup_separates_uncospent():
+    from decluster.cluster import build_cospend_lookup
+    corpus = [
+        {"txid": "T1", "vin": [{"txid": "F1"}, {"txid": "F2"}], "vout": []},
+        {"txid": "T2", "vin": [{"txid": "F4"}], "vout": []},          # F4 never co-spent
+    ]
+    lk = build_cospend_lookup(corpus)
+    assert lk["F1"] == lk["F2"]
+    assert lk["F4"] != lk["F1"]
+
 if __name__ == "__main__":
     fns = [v for k, v in sorted(globals().items()) if k.startswith("test_") and callable(v)]
     for fn in fns: fn(); print(f"ok  {fn.__name__}")
