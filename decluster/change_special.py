@@ -2,6 +2,7 @@
 signal, used as an INDEPENDENT label to validate fingerprints non-circularly. label_optimal_change
 reads ONLY values — disjoint from co-spend/addresses AND from ordering/nSequence/version — which is
 what breaks the circularity that invalidates cluster findNext against an M&N co-spend label."""
+from itertools import combinations
 from .change_gt import is_candidate, input_addrs, out_addr
 from .change_cluster import _addr_type
 
@@ -89,3 +90,8 @@ def label_agreement(gt_a, gt_b):
     agree = sum(1 for t in both if a[t] == b[t])
     return {"both": len(both), "agree": agree, "disagree": len(both) - agree,
             "only_a": len(a.keys() - b.keys()), "only_b": len(b.keys() - a.keys())}
+
+def agreement_matrix(gts):
+    """gts: {name: gt_list}. For every unordered pair (names sorted), label_agreement over the txs
+    both label. Returns {(name_a, name_b): {"both","agree","disagree","only_a","only_b"}}."""
+    return {(a, b): label_agreement(gts[a], gts[b]) for a, b in combinations(sorted(gts), 2)}

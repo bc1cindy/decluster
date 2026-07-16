@@ -117,6 +117,17 @@ def test_type_match_reads_only_types():
     assert label_type_match(_tx(in_addrs=("bc1qaaa", "bc1qbbb"), out_addrs=("bc1qccc", "1Dddd"),
                                 in_vals=(999, 888), out_vals=(7, 7), seq=0x01, ver=1, lt=800000)) == base
 
+def test_agreement_matrix():
+    from decluster.change_special import agreement_matrix
+    def rec(txid, ci): return {"tx": {"txid": txid}, "change_index": ci}
+    gts = {"x": [rec("T1", 0), rec("T2", 1)],
+           "y": [rec("T1", 0), rec("T2", 0)],   # vs x: T1 agree, T2 disagree
+           "z": [rec("T1", 1)]}                 # vs x: T1 disagree, T2 only in x
+    m = agreement_matrix(gts)
+    assert set(m) == {("x", "y"), ("x", "z"), ("y", "z")}
+    assert m[("x", "y")] == {"both": 2, "agree": 1, "disagree": 1, "only_a": 0, "only_b": 0}
+    assert m[("x", "z")] == {"both": 1, "agree": 0, "disagree": 1, "only_a": 1, "only_b": 0}
+
 if __name__ == "__main__":
     fns = [v for k, v in sorted(globals().items()) if k.startswith("test_") and callable(v)]
     for fn in fns: fn(); print(f"ok  {fn.__name__}")
