@@ -56,3 +56,13 @@ def within_tx_rates(gt, preds=WITHIN_TX):
             else: fp += 1
         out[name] = (tp / n, fp / n, cov / n)
     return out
+
+def label_agreement(gt_a, gt_b):
+    """Over transactions labeled by BOTH gts (keyed by txid), agreement/disagreement of the change
+    index. Returns {"both", "agree", "disagree", "only_a", "only_b"}."""
+    a = {r["tx"]["txid"]: r["change_index"] for r in gt_a}
+    b = {r["tx"]["txid"]: r["change_index"] for r in gt_b}
+    both = a.keys() & b.keys()
+    agree = sum(1 for t in both if a[t] == b[t])
+    return {"both": len(both), "agree": agree, "disagree": len(both) - agree,
+            "only_a": len(a.keys() - b.keys()), "only_b": len(b.keys() - a.keys())}

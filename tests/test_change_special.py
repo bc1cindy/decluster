@@ -66,6 +66,13 @@ def test_optimal_change_partial_missing_input_value():
     del tx["vin"][1]["prevout"]["value"]        # one input value missing -> min() untrustworthy
     assert label_optimal_change(tx) is None
 
+def test_label_agreement():
+    from decluster.change_special import label_agreement
+    def rec(txid, ci): return {"tx": {"txid": txid}, "change_index": ci}
+    a = [rec("T1", 0), rec("T2", 1), rec("T3", 0)]        # T1,T2,T3
+    b = [rec("T1", 0), rec("T2", 0), rec("T4", 1)]        # T1 agree, T2 disagree, T4 only_b
+    assert label_agreement(a, b) == {"both": 2, "agree": 1, "disagree": 1, "only_a": 1, "only_b": 1}
+
 if __name__ == "__main__":
     fns = [v for k, v in sorted(globals().items()) if k.startswith("test_") and callable(v)]
     for fn in fns: fn(); print(f"ok  {fn.__name__}")
