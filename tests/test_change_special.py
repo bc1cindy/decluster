@@ -51,6 +51,21 @@ def test_build_gt_special():
     drop = _tx("D", in_vals=(100,), out_vals=(50, 500))         # 1 input -> None
     assert build_gt_special([keep, drop], label_optimal_change) == [{"tx": keep, "change_index": 0}]
 
+def test_within_tx_rates_concrete():
+    from decluster.change_special import within_tx_rates
+    # round_number picks the less-round output; label is optimal-change.
+    # tx K: inputs (100,200), outputs (50, 500) -> optimal-change = 0; 50 is less round than 500 -> round_number=0 (agree)
+    K = _tx("K", in_vals=(100, 200), out_vals=(50, 500))
+    gt = [{"tx": K, "change_index": 0}]
+    rates = within_tx_rates(gt)
+    assert rates["round_number"] == (1.0, 0.0, 1.0)          # agrees on the single record
+    assert set(rates) == {"round_number", "address_reuse"}
+
+def test_optimal_change_partial_missing_input_value():
+    tx = _tx(in_vals=(100, 200), out_vals=(50, 500))
+    del tx["vin"][1]["prevout"]["value"]        # one input value missing -> min() untrustworthy
+    assert label_optimal_change(tx) is None
+
 if __name__ == "__main__":
     fns = [v for k, v in sorted(globals().items()) if k.startswith("test_") and callable(v)]
     for fn in fns: fn(); print(f"ok  {fn.__name__}")

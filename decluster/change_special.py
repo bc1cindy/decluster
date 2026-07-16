@@ -10,8 +10,7 @@ def label_optimal_change(tx):
     qualifies, else None. Reads ONLY values."""
     if not is_candidate(tx): return None
     iv = [v.get("prevout", {}).get("value") for v in tx["vin"]]
-    iv = [v for v in iv if v is not None]
-    if len(iv) < 2: return None
+    if any(v is None for v in iv) or len(iv) < 2: return None
     ov = [o.get("value") for o in tx["vout"]]
     if any(v is None for v in ov): return None
     smin = min(iv)
@@ -34,3 +33,26 @@ def build_gt_special(txs, labeler):
         if ci is not None:
             gt.append({"tx": tx, "change_index": ci})
     return gt
+
+from .extractors import _change_index
+
+# Within-tx which-output predictors: round_number (less-round output is change) and address_reuse
+# (output reusing an input address). Position and type-match are excluded: position requires a
+# cluster's change-index habit; type-match only qualifies the round-number pick, not an output.
+WITHIN_TX = {"round_number": _change_index, "address_reuse": label_address_reuse}
+
+def within_tx_rates(gt, preds=WITHIN_TX):
+    """{name: (tpr, fpr, coverage)} of each within-tx predictor vs the special-case label. TP: pred
+    == label; FP: pred == the other (spend) output. Denominator = len(gt)."""
+    n = len(gt) or 1
+    out = {}
+    for name, fn in preds.items():
+        tp = fp = cov = 0
+        for rec in gt:
+            v = fn(rec["tx"])
+            if v is None: continue
+            cov += 1
+            if v == rec["change_index"]: tp += 1
+            else: fp += 1
+        out[name] = (tp / n, fp / n, cov / n)
+    return out
