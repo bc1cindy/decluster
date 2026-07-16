@@ -96,6 +96,27 @@ def test_round_number_reads_only_values():
     assert label_round_number(_tx(out_vals=(5_000_000, 4_321), in_addrs=("X", "Y"),
                                   out_addrs=("z", "w"), seq=0x01, ver=1, lt=800000)) == base
 
+def test_type_match_basic():
+    from decluster.change_special import label_type_match
+    # inputs segwit (bc1q); out0 segwit (matches -> change), out1 legacy (1... payment)
+    assert label_type_match(_tx(in_addrs=("bc1qaaa", "bc1qbbb"), out_addrs=("bc1qccc", "1Dddd"))) == 0
+    assert label_type_match(_tx(in_addrs=("bc1qaaa", "bc1qbbb"), out_addrs=("1Dddd", "bc1qccc"))) == 1
+
+def test_type_match_abstains():
+    from decluster.change_special import label_type_match
+    # both outputs segwit -> both match input type -> None
+    assert label_type_match(_tx(in_addrs=("bc1qa", "bc1qb"), out_addrs=("bc1qc", "bc1qd"))) is None
+    # neither output matches input type (inputs segwit; outputs legacy + p2sh) -> None
+    assert label_type_match(_tx(in_addrs=("bc1qa", "bc1qb"), out_addrs=("1c", "3d"))) is None
+
+def test_type_match_reads_only_types():
+    from decluster.change_special import label_type_match
+    base = label_type_match(_tx(in_addrs=("bc1qaaa", "bc1qbbb"), out_addrs=("bc1qccc", "1Dddd")))
+    assert base == 0
+    # change values / nSequence / version / locktime -> unchanged (types-only)
+    assert label_type_match(_tx(in_addrs=("bc1qaaa", "bc1qbbb"), out_addrs=("bc1qccc", "1Dddd"),
+                                in_vals=(999, 888), out_vals=(7, 7), seq=0x01, ver=1, lt=800000)) == base
+
 if __name__ == "__main__":
     fns = [v for k, v in sorted(globals().items()) if k.startswith("test_") and callable(v)]
     for fn in fns: fn(); print(f"ok  {fn.__name__}")

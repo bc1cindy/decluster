@@ -3,6 +3,7 @@ signal, used as an INDEPENDENT label to validate fingerprints non-circularly. la
 reads ONLY values — disjoint from co-spend/addresses AND from ordering/nSequence/version — which is
 what breaks the circularity that invalidates cluster findNext against an M&N co-spend label."""
 from .change_gt import is_candidate, input_addrs, out_addr
+from .change_cluster import _addr_type
 
 def label_optimal_change(tx):
     """Optimal-change / UIH: in a >=2-input 2-output tx, the output smaller than the smallest input
@@ -36,6 +37,17 @@ def label_round_number(tx, d=3):
     unit = 10 ** (8 - d)
     round_outs = [i for i in (0, 1) if ov[i] % unit == 0]
     return (1 - round_outs[0]) if len(round_outs) == 1 else None
+
+def label_type_match(tx):
+    """Script-type match: change tends to inherit the wallet's input script type while the payment
+    differs. When exactly one output's type is among the input types, that output is the change.
+    Returns that index, else None. Reads ONLY script types (address-derived via _addr_type)."""
+    if not is_candidate(tx): return None
+    itypes = {_addr_type(a) for a in input_addrs(tx)}
+    itypes.discard(None)
+    if not itypes: return None
+    matched = [i for i in (0, 1) if _addr_type(out_addr(tx, i)) in itypes]
+    return matched[0] if len(matched) == 1 else None
 
 def build_gt_special(txs, labeler):
     gt = []
