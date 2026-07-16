@@ -27,7 +27,7 @@ def test_topology_disjoint_is_weak_calibrated_honest_limit():
     neigh = {"A1": {"C1", "C2", "C3"}, "B1": {"D1", "D2", "D3"}}   # disjoint circles
     w = topology_weight("A1", "B1", neigh, cbits={})               # no shared -> disjoint branch
     assert -3.0 < w < 0.0, f"disjoint should be a WEAK negative, not an inflated penalty (got {w:+.2f})"
-    # a fingerprint match of ~+2.78 (same wallet) dominates: +2.78 + (-1.65) = +1.13 -> NOT refused.
+    # a fingerprint match of ~+2.78 (same wallet) outweighs it: +2.78 + (-1.65) = +1.13 -> NOT refused.
     # per-pair topology cannot refuse the same-software payjoin; that needs cluster-level topology.
 
 def test_cluster_topology_weight_tau_threshold():

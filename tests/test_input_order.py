@@ -1,5 +1,5 @@
 """BIP-69 input/output ordering is n-aware: a small-n sorted set is coincidental (1/n!), so it
-must not brand a wallet or forge a same-owner link. Yuval: n=2 -> 1/2, n=3 -> 1/6 (non-negligible),
+must not brand a wallet or forge a same-owner link. Concretely: n=2 -> 1/2, n=3 -> 1/6 (non-negligible),
 n>=4 -> <=1/24 (deliberate). The combiner abstains on small-n sorted (like it does on single-input)."""
 import sys, os
 sys.path.insert(0, os.path.dirname(os.path.dirname(__file__)))
