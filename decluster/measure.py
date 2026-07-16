@@ -69,12 +69,23 @@ def load_ndjson(path):
     return out
 
 
-def _measure_files(paths):
-    seen, sample = set(), []
+def load_unique(paths, keep=None):
+    """Load ndjson from each path, dedup by txid, keep (tx, height) pairs. keep(tx)->bool filters
+    (a filtered-out tx is not marked seen)."""
+    seen, out = set(), []
     for path in paths:
         for tx, h in load_ndjson(path):
-            if tx.get("txid") in seen: continue
-            seen.add(tx.get("txid")); sample.append((tx, h))
+            tid = tx.get("txid")
+            if not tid or tid in seen:
+                continue
+            if keep and not keep(tx):
+                continue
+            seen.add(tid); out.append((tx, h))
+    return out
+
+
+def _measure_files(paths):
+    sample = load_unique(paths)
     print(f"# combined sample: {len(sample)} unique txs from {len(paths)} file(s)")
     print_report(measure(sample, EX))
 

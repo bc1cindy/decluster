@@ -6,17 +6,19 @@ def test_from_library_bits():
     from decluster.combiner import Combiner
     from decluster import library
     c = Combiner.from_library()
+    freq = {a[0]: a[2] for a in c.axes}         # axes: (name, fn, p, collision, abstain)
+    collision = {a[0]: a[3] for a in c.axes}
     # freq = 2**-bits, sourced from the current library (recalibration-proof)
-    assert abs(c.freq["nsequence"]["rbf_fffffffd"]
+    assert abs(freq["nsequence"]["rbf_fffffffd"]
                - 2 ** -library.bits("nsequence", "rbf_fffffffd")) < 1e-6
     # locktime coarsened by the combiner: zero + aggregated height_*
-    assert set(c.freq["locktime"]) == {"zero", "height"}
+    assert set(freq["locktime"]) == {"zero", "height"}
     lb = library._BY["locktime"]["bits"]
     exp_height = sum(2 ** -b for v, b in lb.items() if v != "zero")
-    assert abs(c.freq["locktime"]["height"] - exp_height) < 1e-6
+    assert abs(freq["locktime"]["height"] - exp_height) < 1e-6
     # collision is sum of squares
-    assert abs(c.collision["locktime"]
-               - sum(p*p for p in c.freq["locktime"].values())) < 1e-9
+    assert abs(collision["locktime"]
+               - sum(p*p for p in freq["locktime"].values())) < 1e-9
 
 def test_merge_money_shot():
     from decluster import fetch_tx

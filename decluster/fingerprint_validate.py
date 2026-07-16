@@ -3,10 +3,8 @@
 and reports AUC. Offline."""
 import random
 from .graph_deanon import auc
-
-
-def _input_addrs(tx):
-    return {a for v in tx["vin"] if (a := (v.get("prevout") or {}).get("scriptpubkey_address"))}
+from .combiner import fs_score
+from .change_gt import input_addrs
 
 
 def reuse_pairs(txs, cap=4000, seed=0):
@@ -16,7 +14,7 @@ def reuse_pairs(txs, cap=4000, seed=0):
     rng = random.Random(seed)
     by_addr = {}
     for tx in txs:
-        for a in _input_addrs(tx):
+        for a in input_addrs(tx):
             by_addr.setdefault(a, {})[tx["txid"]] = tx      # dedup txs per address by txid
     groups = [list(g.values()) for g in by_addr.values() if len(g) >= 2]
     pos = []
@@ -31,12 +29,12 @@ def reuse_pairs(txs, cap=4000, seed=0):
     return pos, neg
 
 
-def evaluate(txs, combiner, cap=4000, seed=0):
-    """Score positives/negatives with combiner.score and return separation metrics. shuffle_auc flips
+def evaluate(txs, scorer, cap=4000, seed=0):
+    """Score positives/negatives with scorer.score and return separation metrics. shuffle_auc flips
     each aligned pair's label -> expect ~0.5."""
     pos_pairs, neg_pairs = reuse_pairs(txs, cap, seed)
-    pos = [combiner.score(a, b) for a, b in pos_pairs]
-    neg = [combiner.score(a, b) for a, b in neg_pairs]
+    pos = [scorer.score(a, b) for a, b in pos_pairs]
+    neg = [scorer.score(a, b) for a, b in neg_pairs]
     rng = random.Random(seed)
     spos, sneg = [], []
     for p, ng in zip(pos, neg):
@@ -50,9 +48,7 @@ def evaluate(txs, combiner, cap=4000, seed=0):
 
 class LibraryScorer:
     """Canonical Fellegi-Sunter pair scorer over ALL library axes (library.AXES) — the witness-bearing
-    multi-axis model, using the corrected extractors. Agreement on a value adds its measured library
-    bits; a mismatch adds a clamped (<=0) weight; 0-bit/absent values are skipped. Replaces the deleted
-    rust_bridge vector scorer with the canonical extractor path."""
+    multi-axis model, using the corrected extractors. Delegates the scoring kernel to combiner.fs_score."""
     def __init__(self, consistency=0.95, floor_n=1000):
         from . import extractors, engine, library
         self.c = consistency
@@ -64,29 +60,20 @@ class LibraryScorer:
                 continue
             p = {v: 2 ** -b for v, b in (a.get("bits") or {}).items() if b > 0}
             if a["axis"] == "locktime":
-                # locktime_class emits a bare "height" bucket offline (no block_height), so fold the
-                # library's height_* sub-classes into it; "zero" and "timestamp" are emitted as-is.
+                # locktime_class emits a bare "height" bucket offline; fold the height_* sub-classes
+                # into it; "zero" and "timestamp" are emitted as-is.
                 h = sum(pv for v, pv in p.items() if v.startswith("height"))
                 p = {v: pv for v, pv in p.items() if not v.startswith("height")}
                 if h:
                     p["height"] = h
             if not p:
                 continue
-            self.axes.append((a["axis"], fn, p, sum(pv * pv for pv in p.values())))
+            collision = sum(pv * pv for pv in p.values())
+            abstain = (lambda va, vb, p=p: va not in p and vb not in p)
+            self.axes.append((a["axis"], fn, p, collision, abstain))
 
     def score(self, txA, txB, explain=False):
-        import math
-        total, rows = 0.0, []
-        for name, fn, p, collision in self.axes:
-            va, vb = fn(txA), fn(txB)
-            if va not in p and vb not in p:                          # both abstain/absent -> skip
-                rows.append((name, va, vb, None)); continue
-            if va == vb:
-                w = -math.log2(p.get(va, 1.0 / self.floor_n))        # measured library bits
-            else:
-                w = min(0.0, math.log2((1 - self.c) / max(1 - collision, 1e-6)))
-            total += w; rows.append((name, va, vb, w))
-        return (total, rows) if explain else total
+        return fs_score(self.axes, txA, txB, self.c, self.floor_n, explain)
 
 
 def load_blkcache(path=".blkcache"):

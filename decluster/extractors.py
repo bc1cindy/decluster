@@ -1,4 +1,6 @@
 """Layer 1 — pure extractors: tx -> categorical fingerprint value."""
+def locktime_policy(tx): return "zero" if tx.get("locktime", 0) == 0 else "height"
+
 def seqs(tx): return [v["sequence"] for v in tx["vin"]]
 
 def x_nsequence(tx):

@@ -30,6 +30,12 @@ def subtransactions(tx):
     amb = math.log2(len(plausible)) if plausible else None
     return plausible, amb
 
+def norm(t):
+    """mempool.space tx -> shape subtransaction expects (prevout.value present)."""
+    return {"txid": t["txid"],
+            "vin": [{"txid": v["txid"], "prevout": {"value": v["prevout"]["value"]}} for v in t["vin"]],
+            "vout": [{"value": o["value"]} for o in t["vout"]]}
+
 def partition_signal(tx):
     """structural signal for the combiner: refuse (different-owner inputs) + link
     (input -> its output) from the most likely partition. scope guard -> empty."""

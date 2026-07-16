@@ -12,10 +12,8 @@ kept for the method, but its accuracy is a label-consistency upper bound, not fi
 the label-disjoint validation lives in change_validate (per-axis) and change_score (tx-level).
 See results/RESULTS-change-id.md."""
 from collections import Counter
-from .extractors import x_nsequence, x_version
+from .extractors import x_nsequence, x_version, locktime_policy
 from .change_gt import input_addrs, out_addr
-
-def _locktime_policy(tx): return "zero" if tx.get("locktime", 0) == 0 else "height"
 
 def _addr_type(addr):
     """derive the script type from a mainnet address prefix/length (so AFC works even when the slice
@@ -34,7 +32,7 @@ def _o_type(o):
 
 def tx_features(tx):
     """Kappos TFC element: a construction feature tuple (nsequence, locktime, version)."""
-    return (x_nsequence(tx), _locktime_policy(tx), x_version(tx))
+    return (x_nsequence(tx), locktime_policy(tx), x_version(tx))
 
 def _out_types(tx):
     return Counter(t for o in tx["vout"] if (t := _o_type(o)))

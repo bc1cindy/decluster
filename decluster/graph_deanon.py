@@ -4,20 +4,12 @@ NOT directly co-spent, scored by common neighbors. `evaluate` runs the 1-hop pro
 `analyze` sweeps graph depth k (hubs excluded) to show structure is deeper under churn.
 usage: python3 -m decluster.graph_deanon [--depth] <slice.json...>"""
 import sys, random
-from .measure import load_ndjson
+from .measure import load_unique
+from .unionfind import UF
+from .change_gt import union_input_addrs
 
 HUBCAP = 100      # don't expand through hubs (degree > this) — avoids small-world collapse
 SIZECAP = 6000    # cap neighborhood growth
-
-
-class UF:
-    def __init__(self): self.p = {}
-    def find(self, x):
-        self.p.setdefault(x, x)
-        while self.p[x] != x:
-            self.p[x] = self.p[self.p[x]]; x = self.p[x]
-        return x
-    def union(self, a, b): self.p[self.find(a)] = self.find(b)
 
 
 def build(sample):
@@ -29,8 +21,7 @@ def build(sample):
         in_addr = [v.get("prevout", {}).get("scriptpubkey_address") for v in tx.get("vin", [])]
         in_addr = [a for a in in_addr if a]
         out_addr = [o.get("scriptpubkey_address") for o in tx.get("vout", []) if o.get("scriptpubkey_address")]
-        for a in in_addr[1:]:
-            uf.union(in_addr[0], a)
+        union_input_addrs(tx, uf)
         for i in range(len(in_addr)):
             for j in range(i + 1, len(in_addr)):
                 cospent.add(frozenset((in_addr[i], in_addr[j])))
@@ -144,12 +135,7 @@ def analyze(sample, ks=(1, 2, 3, 4), cap=1500, seed=0):
 
 
 def _load(paths):
-    seen, sample = set(), []
-    for p in paths:
-        for tx, h in load_ndjson(p):
-            if tx.get("txid") in seen: continue
-            seen.add(tx.get("txid")); sample.append((tx, h))
-    return sample
+    return load_unique(paths)
 
 
 if __name__ == "__main__":

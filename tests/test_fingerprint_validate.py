@@ -88,6 +88,20 @@ def test_library_scorer_locktime_not_inert():
     # height_* sub-classes folded into the "height" bucket the extractor emits -> axis is not inert
     assert "height" in lp and "zero" in lp and "timestamp" in lp
 
+def test_library_scorer_delegates_to_fs_score():
+    from decluster.fingerprint_validate import LibraryScorer
+    from decluster import combiner
+    s = LibraryScorer()
+    # each axis tuple is (name, fn, p, collision, abstain) — the fs_score contract
+    assert all(len(a) == 5 and callable(a[4]) for a in s.axes)
+    tx = {"version": 2, "locktime": 0, "fee": 300, "weight": 800,
+          "vin": [{"sequence": 0xfffffffd, "txid": "aa" * 32, "vout": 0,
+                   "prevout": {"value": 3000, "scriptpubkey_type": "v0_p2wpkh", "scriptpubkey_address": "bc1qa"},
+                   "witness": ["30450221" + "11" * 33, "02" + "11" * 32]}],
+          "vout": [{"value": 900, "scriptpubkey_type": "v0_p2wpkh", "scriptpubkey_address": "bc1qc"},
+                   {"value": 2000, "scriptpubkey_type": "v0_p2wpkh", "scriptpubkey_address": "bc1qd"}]}
+    assert s.score(tx, tx) == combiner.fs_score(s.axes, tx, tx, s.c, s.floor_n)   # delegation is exact
+
 if __name__ == "__main__":
     fns = [v for k, v in sorted(globals().items()) if k.startswith("test_") and callable(v)]
     for fn in fns: fn(); print(f"ok  {fn.__name__}")

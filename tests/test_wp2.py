@@ -33,8 +33,19 @@ def test_library():
     assert bits("fee_rate", "anything") is None
     assert bits("nsequence", "no_such_value") is None
 
+def test_locktime_policy_shared():
+    from decluster.extractors import locktime_policy
+    assert locktime_policy({"locktime": 0}) == "zero"
+    assert locktime_policy({"locktime": 800000}) == "height"
+    assert locktime_policy({}) == "zero"          # .get default (missing key -> zero)
+
+def test_norm_shared():
+    from decluster.subtransaction import norm
+    t = {"txid": "T", "vin": [{"txid": "F", "prevout": {"value": 5}}], "vout": [{"value": 4}]}
+    assert norm(t) == {"txid": "T", "vin": [{"txid": "F", "prevout": {"value": 5}}], "vout": [{"value": 4}]}
+
 if __name__ == "__main__":
     for name, fn in list(globals().items()):
         if name.startswith("test_"):
             fn(); print(f"  ok  {name}")
-    print("2 passed")
+    print("5 passed")

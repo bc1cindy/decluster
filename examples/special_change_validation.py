@@ -14,16 +14,12 @@ import random
 
 def _load_value_txs():
     """dedup 2-output txs that carry input values (from the fingerprint-calibration exports)."""
-    from decluster.measure import load_ndjson
-    seen, txs = set(), []
-    for f in sorted(glob.glob(os.path.expanduser("~/Downloads/bquxjob_*.json"))):
-        for tx, _h in load_ndjson(f):
-            vin0 = (tx.get("vin") or [{}])[0]
-            has_val = "value" in vin0.get("prevout", {}) or "value" in vin0
-            if not (tx.get("txid") and has_val) or tx["txid"] in seen:
-                continue
-            seen.add(tx["txid"]); txs.append(tx)
-    return txs
+    from decluster.measure import load_unique
+    def _has_val(tx):
+        vin0 = (tx.get("vin") or [{}])[0]
+        return "value" in vin0.get("prevout", {}) or "value" in vin0
+    paths = sorted(glob.glob(os.path.expanduser("~/Downloads/bquxjob_*.json")))
+    return [tx for tx, _ in load_unique(paths, keep=_has_val)]
 
 def main(n_onward=1500):
     from decluster.change_special import (build_gt_special, within_tx_rates, agreement_matrix,

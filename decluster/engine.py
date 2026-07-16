@@ -42,6 +42,6 @@ def measure(sample, extractors):
 
 def print_report(rep):
     for n, r in rep.items():
-        print(f"\n== {n}  (n={r['total']}, entropia={r['entropy_bits']:.2f} bits) ==")
+        print(f"\n== {n}  (n={r['total']}, entropy={r['entropy_bits']:.2f} bits) ==")
         for val, k, p, bits in r["rows"]:
             print(f"  {val:16} {k:>5} {p*100:>6.2f}% {bits:>7.2f} bits/match")

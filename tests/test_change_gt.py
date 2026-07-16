@@ -23,6 +23,20 @@ def test_out_addr():
     t = _tx(["i1"], ["a", "b"])
     assert out_addr(t, 0) == "a" and out_addr(t, 1) == "b"
 
+def test_union_input_addrs():
+    from decluster.change_gt import union_input_addrs
+    from decluster.unionfind import UF
+    uf = UF()
+    tx = {"vin": [{"prevout": {"scriptpubkey_address": "A"}},
+                  {"prevout": {"scriptpubkey_address": "B"}},
+                  {"prevout": None}]}            # None prevout skipped, no crash
+    union_input_addrs(tx, uf)
+    assert uf.find("A") == uf.find("B")
+
+def test_input_addrs_tolerates_prevout_none():
+    from decluster.change_gt import input_addrs
+    assert input_addrs({"vin": [{"prevout": None}]}) == set()
+
 if __name__ == "__main__":
     fns = [v for k, v in sorted(globals().items()) if k.startswith("test_") and callable(v)]
     for fn in fns: fn(); print(f"ok  {fn.__name__}")

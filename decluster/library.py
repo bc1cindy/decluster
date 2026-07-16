@@ -35,7 +35,7 @@ AXES = [
      "chain_proven": None, "bits": {"1in-2out": 1.38, "1in-1out": 2.17,
               "2in-2out": 3.95, "3in-2out": 4.31}},
     {"axis": "uih", "extractor": "x_uih", "severity": "medium",
-     "chain_proven": None, "bits": {"none": 0.12, "uih1": 3.59}},   # medido (input values reais)
+     "chain_proven": None, "bits": {"none": 0.12, "uih1": 3.59}},   # measured (real input values)
     {"axis": "fee_rate", "extractor": "x_fee_rate", "severity": "medium",
      "chain_proven": "16d3fad11242d95da3d12991e176b04cbb474bda95b968b3c4635453d4f9c90e",
      "bits": {"precise": 0.28, "round": 2.53, "na": 7.99}},

@@ -1,7 +1,7 @@
 """Unbiased sampling: spreads offsets across the whole block (not just the high-fee top).
 Fixes the bias that gave locktime 83/17 instead of ~95/4.5."""
 import random
-from .fetch import recent_blocks, fetch_block_txs, fetch_tip_height, fetch_block_hash, fetch_block
+from .fetch import fetch_block_txs, fetch_tip_height, fetch_block_hash, fetch_block
 
 def sample_chain_uniform(n_blocks=40, per_block=8, seed=0, floor=200_000):
     """samples n_blocks uniform heights in [floor, tip]; per block, per_block txs from

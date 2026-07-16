@@ -6,8 +6,13 @@ are not circular. (The cluster findNext in change_cluster instead tests cluster 
 circular against this label — see its docstring.)"""
 
 def input_addrs(tx):
-    return {v["prevout"]["scriptpubkey_address"]
-            for v in tx["vin"] if v.get("prevout", {}).get("scriptpubkey_address")}
+    return {a for v in tx["vin"] if (a := (v.get("prevout") or {}).get("scriptpubkey_address"))}
+
+def union_input_addrs(tx, uf):
+    """Union a transaction's input addresses into uf (multi-input co-spend clustering)."""
+    ins = list(input_addrs(tx))
+    for a in ins[1:]:
+        uf.union(ins[0], a)
 
 def out_addr(tx, i):
     return tx["vout"][i].get("scriptpubkey_address")

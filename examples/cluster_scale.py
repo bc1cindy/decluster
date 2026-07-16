@@ -10,14 +10,9 @@ sys.path.insert(0, os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
 
 
 def _load_all_txs():
-    from decluster.measure import load_ndjson
-    seen, txs = set(), []
-    for f in sorted(glob.glob(os.path.expanduser("~/Downloads/bquxjob_*.json"))):
-        for tx, _h in load_ndjson(f):
-            t = tx.get("txid")
-            if t and t not in seen:
-                seen.add(t); txs.append(tx)
-    return txs
+    from decluster.measure import load_unique
+    paths = sorted(glob.glob(os.path.expanduser("~/Downloads/bquxjob_*.json")))
+    return [tx for tx, _ in load_unique(paths)]
 
 
 def _groups(lookup):

@@ -1,20 +1,8 @@
 """Layer 4 — graph-level clustering: single-heuristic union-find (common-input-ownership)
 collapse vs. fingerprint-aware clustering."""
 from .fetch import fetch_tx
-from .subtransaction import subtransactions, partition_signal
-
-class UF:
-    def __init__(self, items): self.p = {x: x for x in items}
-    def find(self, x):
-        while self.p[x] != x: self.p[x] = self.p[self.p[x]]; x = self.p[x]
-        return x
-    def union(self, a, b): self.p[self.find(a)] = self.find(b)
-    def group(self, x):
-        r = self.find(x); return [y for y in self.p if self.find(y) == r]
-    def groups(self):
-        g = {}
-        for x in self.p: g.setdefault(self.find(x), []).append(x)
-        return list(g.values())
+from .subtransaction import subtransactions, partition_signal, norm
+from .unionfind import UF
 
 def _cospent_pairs(nodes):
     """common-input-ownership: coins co-spent in one tx -> same owner. A node is the txid
@@ -49,8 +37,9 @@ def cluster_fingerprint_aware(nodes, combiner, refuse_below=-2.0, link_above=4.0
     fingerprint (score >= link_above)."""
     uf = UF(nodes); refused = []; linked = []
     for a, b, t in _cospent_pairs(nodes):
-        if combiner.score(fetch_tx(a), fetch_tx(b)) < refuse_below:
-            refused.append((a, b, t, combiner.score(fetch_tx(a), fetch_tx(b)))); continue
+        sc = combiner.score(fetch_tx(a), fetch_tx(b))
+        if sc < refuse_below:
+            refused.append((a, b, t, sc)); continue
         uf.union(a, b)
     node_list = list(nodes)
     for i in range(len(node_list)):
@@ -61,17 +50,11 @@ def cluster_fingerprint_aware(nodes, combiner, refuse_below=-2.0, link_above=4.0
                 uf.union(a, b); linked.append((a, b, sc))
     return uf.groups(), refused, linked
 
-def _norm(t):
-    """mempool.space tx -> shape subtransaction expects (prevout.value present)."""
-    return {"txid": t["txid"],
-            "vin": [{"txid": v["txid"], "prevout": {"value": v["prevout"]["value"]}} for v in t["vin"]],
-            "vout": [{"value": o["value"]} for o in t["vout"]]}
-
 def amount_refuse_weight(t, a, b):
     """structural amount weight (<=0): if t's best partition splits inputs a,b (different
     owners), returns -(roundness margin); 0 if out of scope / no split. A prior, not
     calibrated bits."""
-    tx = _norm(fetch_tx(t))
+    tx = norm(fetch_tx(t))
     ins = [v["txid"] for v in tx["vin"]]
     if set(ins) != {a, b}:
         return 0.0

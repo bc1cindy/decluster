@@ -42,7 +42,8 @@ def test_combiner_bip69_vs_shuffle_is_negative():
     # (regression guard: a 0-bit abstain value must not poison the collision -> +bits.)
     from decluster.combiner import Combiner
     cmb = Combiner.from_library()
-    assert cmb.collision["in_order"] < 0.95, "collision must stay < consistency (no 0-bit poisoning)"
+    collision = {a[0]: a[3] for a in cmb.axes}      # axes: (name, fn, p, collision, abstain)
+    assert collision["in_order"] < 0.95, "collision must stay < consistency (no 0-bit poisoning)"
     _t, rows = cmb.score(_tx("A", ["a", "b", "c", "d"]), _tx("B", ["d", "c", "b", "a"]), explain=True)
     io = [r for r in rows if r[0] == "in_order"][0]
     assert (io[1], io[2]) == ("bip69", "shuffle")

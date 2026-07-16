@@ -3,9 +3,9 @@ multi-input CLUSTER membership — feasible because the whole slice is in memory
 carries funding txid+vout (forward-spend) and prevout address (clustering), so one export gives
 labeling, forward-spend, and fingerprints offline. slice_fetchers matches the injected
 get_tx/get_outspends interface, so change_score/change_validate run unchanged over the slice."""
-from .measure import load_ndjson
-from .graph_deanon import UF
-from .change_gt import is_candidate, input_addrs, out_addr
+from .measure import load_unique
+from .unionfind import UF
+from .change_gt import is_candidate, input_addrs, out_addr, union_input_addrs
 
 def index_slice(txs):
     """-> (by_txid, spender, uf). by_txid: txid->tx; spender: (funding_txid, vout)->spending txid;
@@ -13,9 +13,7 @@ def index_slice(txs):
     by_txid, spender, uf = {}, {}, UF()
     for tx in txs:
         by_txid[tx["txid"]] = tx
-        ins = [a for v in tx["vin"] if (a := v.get("prevout", {}).get("scriptpubkey_address"))]
-        for a in ins[1:]:
-            uf.union(ins[0], a)
+        union_input_addrs(tx, uf)
         for v in tx["vin"]:
             ft, fv = v.get("txid"), v.get("vout")
             if ft is not None and fv is not None:
@@ -23,12 +21,7 @@ def index_slice(txs):
     return by_txid, spender, uf
 
 def load_slice(paths):
-    seen, txs = set(), []
-    for p in paths:
-        for tx, _h in load_ndjson(p):
-            if tx.get("txid") in seen: continue
-            seen.add(tx["txid"]); txs.append(tx)
-    return index_slice(txs)
+    return index_slice([tx for tx, _ in load_unique(paths)])
 
 def slice_fetchers(by_txid, spender):
     """get_tx / get_outspends closures over the slice, matching change_score/change_validate."""
