@@ -27,9 +27,10 @@ samples — 16 structural axes on a whole-chain sample, and 7 on mempool samples
 a block-feerate broadcast-time axis) — anchored to chain-proven examples) and, on a real mainnet
 merged transaction whose correct owner-partition is known, show the intended false merge
 is **refused** by the amount structure alone and **again** by the fingerprints — the two
-signals fuse and agree. We argue that a merge's ~1.6 bits of structural ambiguity cannot
-survive against the 100+ bits carried by an established cluster, and that fingerprint
-uniformity is necessary but far from sufficient for collaborative-transaction privacy.
+signals fuse and agree. We show that a merge's ~1.6 bits of structural ambiguity cannot
+survive the identifying structure an established cluster carries — measured at a median
+~33 bits per cluster on a real slice, a lower bound on the >100 whole-chain figure — and that
+fingerprint uniformity is necessary but far from sufficient for collaborative-transaction privacy.
 This measurement is instrumental: the same per-axis bits, read as a penalty instead of a
 same-owner link, define a construction-side cost function — so quantifying the attack is
 the prerequisite for the defense, shaping transactions that no longer carry these tells.
@@ -40,10 +41,13 @@ The common-input-ownership heuristic clusters all inputs of a transaction as one
 entity. Collaborative transactions that deliberately merge unrelated parties violate it,
 hoping a chain analyst will merge the parties into one entity. We show this hope is
 quantitatively misplaced. A two-in/two-out merge adds at most **log₂3 ≈ 1.6 bits** of
-ambiguity, while an established cluster in a social-transaction graph carries — we argue —
-an estimated **>100 bits** of identifying structure (an order-of-magnitude figure from the
-Narayanan–Shmatikov analysis, not one this paper measures directly). An analyst needs only
-~2 of those bits to override the merge.
+ambiguity, while an established cluster in a social-transaction graph carries far more
+identifying structure. We measure it: on a real connected slice, **every** co-spend cluster's
+counterparty-rarity bits sum past the merge's 1.6 (median **~33 bits**, ~12% already exceed
+100) — the Narayanan–Shmatikov accumulation computed directly (`results/RESULTS-cluster-bits.md`).
+The **>100-bit** figure is the whole-chain order of magnitude; a slice undercounts each
+cluster's counterparties, so the measured median is a lower bound (§9). An analyst needs only
+~2 of those bits to override the merge, and every cluster supplies an order of magnitude more.
 Enlarging the merge does not help: more inputs inflate the *count* of possible
 owner-partitions — combinatorially, on the order of B(#ins)·B(#outs) (Bell numbers) — but
 not the *entropy* of the distribution over them, which is what anonymity actually measures.
@@ -84,7 +88,8 @@ Three facts defeat it, in order of importance:
    Those carry wallet-specific fingerprints an analyst reads to corroborate the amount
    partition.
 2. **The bit asymmetry.** Even with perfectly uniform fingerprints and ambiguous amounts,
-   the merge's ~1.6 bits are dwarfed by the (argued) 100+ bits of prior clustering evidence; the
+   the merge's ~1.6 bits are dwarfed by the prior clustering evidence — measured at a median
+   ~33 bits per cluster on a real slice, a lower bound on >100 whole-chain (`results/RESULTS-cluster-bits.md`); the
    partition is decidable *without needing the merged transaction at all*.
 
 ## 3. The fingerprint library (evidence)
