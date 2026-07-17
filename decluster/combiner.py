@@ -13,7 +13,8 @@ _ABSTAIN = {"nsequence": _never, "locktime": _never, "in_order": _in_order_absta
 
 def fs_score(axes, txA, txB, c, floor_n, explain=False):
     """Fellegi-Sunter kernel over axes = [(name, fn, p, collision, abstain)]: agreement adds
-    -log2(p[value]); a mismatch adds a clamped (<=0) weight; abstain(va, vb) skips the axis."""
+    -log2(p[value]); a mismatch adds a clamped (<=0) weight; abstain(va, vb) skips the axis.
+    c is a float, or a dict mapping axis-name -> m per axis (must cover every scored axis)."""
     total, rows = 0.0, []
     for name, fn, p, collision, abstain in axes:
         va, vb = fn(txA), fn(txB)
@@ -22,7 +23,8 @@ def fs_score(axes, txA, txB, c, floor_n, explain=False):
         if va == vb:
             w = -math.log2(p.get(va, 1.0 / floor_n))
         else:
-            w = min(0.0, math.log2((1 - c) / max(1 - collision, 1e-6)))
+            cj = c[name] if isinstance(c, dict) else c
+            w = min(0.0, math.log2((1 - cj) / max(1 - collision, 1e-6)))
         total += w; rows.append((name, va, vb, w))
     return (total, rows) if explain else total
 
