@@ -344,11 +344,11 @@ bits; **◐** = captured coarsely, not as the granular tell; **❌** = not built
 | Change type matches output(s) | ✅ `change_matches_output`† |
 | Change address matches input | ✅ `change_address_reuse` (heuristic-free, 2.14 bits) |
 | Change is always bech32 | ◐ via change-spk type |
-| More than 2 outputs | ◐ count only (io-shape) |
+| More than 2 outputs | ◐ subsumed by `io_shape`; scoring it separately adds only +0.0011 AUC (`results/RESULTS-catalog-axes.md`) |
 | Spend unconfirmed outputs (zero-conf) | ❌ not a single-tx fingerprint — needs the tx's ancestry (parent-in-same-block), like the amount/time edges |
 | Coin Control | ❌ not cleanly chain-observable — a UX behavior; UIH (its on-chain proxy) is now measured (8.3%, 3.6 bits) but does not *uniquely* identify manual coin control |
 | Taproot script-tree depth from a round fee | ❌ not built — a niche *derived* leak: a round-number fee at the nominal rate can betray taproot script-tree depth (Kogman). We model `fee_rate` (round/precise) and taproot script type, but not the depth inference |
-| SegWit serialization / SegWit-conform | ◐ subsumed by the per-input/output script-type and `output_encoding` axes; the specific M&N "segwit-capable wallet forced to non-segwit serialization when no input is segwit" tell (TPR ≈ 0.02) is not isolated as its own axis |
+| SegWit serialization / SegWit-conform | ◐ subsumed by `input_script_type` + `nested_segwit`; M&N's weakest tell (TPR ≈ 0.02). Scoring it separately adds only a +0.0026 AUC double-counting artifact — the redundant axis produces the *larger* bump — so it stays unscored (`results/RESULTS-catalog-axes.md`) |
 
 † conditional on a round-number change-identification heuristic (payment is the rounder
 2-output; change is arbitrary) — the change-relation axes inherit that heuristic's error;
@@ -363,8 +363,10 @@ subtransaction re-partition — is covered (§2/§6). **The honest ceiling is
 ~32/35, not 35/35:** the two remaining items are not clean single-transaction chain
 fingerprints — **Coin Control** is a UX behavior no single tx uniquely reveals, and
 **spend-unconfirmed** requires the transaction's ancestry (parent block heights), not the
-transaction alone. The two ◐ partials (change-always-bech32, more-than-2-outputs) are
-refinements of axes already covered.
+transaction alone. The ◐ partials are refinements of axes already covered: output-count and
+SegWit-conform were tested against the 23-axis scorer directly and add ≤ +0.0026 AUC — a
+double-counting artifact within the noise floor, larger for the *more* redundant axis — so
+the model correctly leaves both unscored (`results/RESULTS-catalog-axes.md`).
 
 **Deliberately out of scope (separate tracks, not part of the chain-observable fingerprint checklist):**
 relay / network-timing fingerprints, JSON/HTTP serialization. (The one timing signal we *do*
