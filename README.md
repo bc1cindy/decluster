@@ -14,15 +14,17 @@ two people into one).
   how it constructs a transaction — nSequence values, script types, signature grinding, and
   more. Do those quirks actually identify the wallet? Taking address reuse as the same-owner
   label (two transactions spending the same address are the same wallet), the measured
-  fingerprint bits rank a *same-wallet* pair of transactions above a *random* pair **93.5%
-  of the time** (AUC 0.935) on 165k real mainnet transactions. Shuffle the labels and it
-  drops to 0.49 (a coin flip) — so the 0.935 is real signal, not an artifact.
+  fingerprint bits rank a *same-wallet* pair of transactions above a *random* pair **93.3%
+  of the time** (AUC 0.933) on 166k real mainnet transactions. Shuffle the labels and it
+  drops to 0.50 (a coin flip) — so the 0.933 is real signal, not an artifact.
 
 - **The shape of the payment graph reveals owners too.** Independently of who-spent-with-whom,
   the *structure* of the graph (who pays whom) betrays common ownership — the same effect
   that de-anonymized social networks (Narayanan–Shmatikov). Across four eras (2012–2023),
   payment-graph structure *alone* predicts whether two addresses share an owner, ranking
-  same-owner pairs correctly **up to 98% of the time** (1.0 = perfect, 0.5 = chance).
+  same-owner pairs correctly **0.95–0.97 of the time at one hop on the clean eras**, and
+  **0.98–1.00 across all four eras by four hops** (1.0 = perfect, 0.5 = chance; the churny
+  2013 slice starts near chance at one hop and needs the deeper hops).
 
 - **It survives a transaction built to fool it.** On a real transaction deliberately
   constructed to merge two owners into one (the false link from above), the method keeps
