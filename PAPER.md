@@ -174,6 +174,7 @@ scale). **The 16 structural axes are measured on a ~105,000-tx uniform sample ac
 witness axes (low-R, SIGHASH, pubkey compression, multisig, nested segwit) *and OP_RETURN* are measured on
 a ~3,500-tx mempool sample, since BigQuery's schema carries no witness data (and OP_RETURN is degenerate
 in the whole-chain export — all-`none`, 0 bits — so its 4.00 bits come from the mempool sample too).
+That witness snapshot is effectively **SegWit-era**; re-measured across eras it drifts (below).
 
 Two honest corrections the whole-chain sample forced:
 - **nLockTime `zero` is ~74% chain-wide, not ~95%.** The ~95% figure we had chased was a
@@ -184,6 +185,16 @@ Two honest corrections the whole-chain sample forced:
   artifact of the mempool sample lacking top-level input values.
 - Distributions are **non-stationary**: e.g. round fee-rates are ~17% chain-wide but ~9%
   in recent blocks — old wallets used round fees more. Chain-wide is the right prior.
+- **Witness bits drift by era** — measured directly on a balanced multi-era sample (180k txs
+  split at the SegWit/Taproot activations, `results/RESULTS-witness-era-drift.md`,
+  `examples/witness_bits_by_era.py`): `low_r` carries 2.33 bits in the SegWit era but only
+  **1.01** in the Taproot era (grinding went mainstream), `pubkey_compression` `compressed`
+  falls 2.64 → 0.46, and `nested_segwit` *inverts* 1.88 → 4.01 (P2SH wrappers gave way to
+  native bech32, so the wrapper regained rarity). A single bits number per witness axis is
+  thus an era-weighted approximation — the library's tracks the SegWit era — and a
+  whole-chain model would carry per-era bits for the drifting axes. This does not move the
+  validation headline, which scores pairs on the multi-era cache directly, not from these
+  per-value bits.
 
 This is a **large representative sample (~105,000 txs)**, not literally every tx; exhaustive
 per-tx measurement would still want the whole chain, but for calibrating fingerprint
