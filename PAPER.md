@@ -182,13 +182,11 @@ a ~3,500-tx mempool sample, since BigQuery's schema carries no witness data (and
 in the whole-chain export — all-`none`, 0 bits — so its 4.00 bits come from the mempool sample too).
 That witness snapshot is effectively **SegWit-era**; re-measured across eras it drifts (below).
 
-Two honest corrections the whole-chain sample forced:
-- **nLockTime `zero` is ~74% chain-wide, not ~95%.** The ~95% figure we had chased was a
-  misconception; the whole-chain BigQuery sample puts zero at ~74% (the smaller recent
-  mempool sample ran higher, ~85%).
-- **UIH is real, not inert.** The unnecessary-input heuristic fires on ~8.3% of txs
-  (3.6 bits) once real input values are available — the earlier "inert" result was an
-  artifact of the mempool sample lacking top-level input values.
+Whole-chain calibration notes:
+- **nLockTime `zero` is ~74% chain-wide** (whole-chain BigQuery); a recent mempool sample
+  runs higher (~85%). Chain-wide is the right prior.
+- **UIH is a real signal.** The unnecessary-input heuristic fires on ~8.3% of txs
+  (3.6 bits), measured on the whole-chain sample with real top-level input values.
 - Distributions are **non-stationary**: e.g. round fee-rates are ~17% chain-wide but ~9%
   in recent blocks — old wallets used round fees more. Chain-wide is the right prior.
 - **Witness bits drift by era** — measured directly on a balanced multi-era sample (180k txs
