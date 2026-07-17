@@ -19,6 +19,25 @@ def largest_cluster_frac(groups):
     n = sum(sizes)
     return max(sizes) / n if n else 0.0
 
+def adjusted_rand_index(groups_a, groups_b):
+    """Hubert-Arabie Adjusted Rand Index between two partitions of the SAME node set (each a list of
+    member lists, as uf.groups() returns). 1.0 = identical partitions; ~0 = independent. Returns 1.0
+    in the degenerate case where the expected index equals the maximum."""
+    a_sets = [set(g) for g in groups_a]
+    b_sets = [set(g) for g in groups_b]
+    index = sum(math.comb(len(sa & sb), 2) for sa in a_sets for sb in b_sets)
+    sum_a = sum(math.comb(len(sa), 2) for sa in a_sets)
+    sum_b = sum(math.comb(len(sb), 2) for sb in b_sets)
+    n = sum(len(sa) for sa in a_sets)
+    total = math.comb(n, 2)
+    if total == 0:
+        return 1.0
+    expected = sum_a * sum_b / total
+    maximum = (sum_a + sum_b) / 2
+    if maximum == expected:
+        return 1.0
+    return (index - expected) / (maximum - expected)
+
 def privacy_report(nodes, combiner, baseline_lookup=None):
     """graph anonymity under union-find (BlockSci) vs fused clustering (fingerprint+amount).
     baseline_lookup: optional {node -> cluster_id} for a whole-corpus merge-only baseline; when None,
