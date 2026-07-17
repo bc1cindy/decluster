@@ -14,7 +14,7 @@ def reuse_pairs(txs, cap=4000, seed=0):
     rng = random.Random(seed)
     by_addr = {}
     for tx in txs:
-        for a in input_addrs(tx):
+        for a in sorted(input_addrs(tx)):                   # sorted -> group order is PYTHONHASHSEED-independent
             by_addr.setdefault(a, {})[tx["txid"]] = tx      # dedup txs per address by txid
     groups = [list(g.values()) for g in by_addr.values() if len(g) >= 2]
     pos = []

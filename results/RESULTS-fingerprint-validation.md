@@ -5,7 +5,7 @@ transactions apart from random ones — on real witness-bearing data? Scored on 
 (`LibraryScorer` over all library axes, using the same extractors the rest of the pipeline uses), not
 the former `rust_bridge` mirror.
 
-**Data.** 164,705 witness-bearing transactions from the local block-tx cache (`.blkcache`), each with
+**Data.** 165,832 witness-bearing transactions from the local block-tx cache (`.blkcache`), each with
 full witness and prevout data (coinbase and inputs with missing prevout are dropped, so all axes —
 including the witness ones: low-R, uncompressed pubkey, taproot sighash — are populated).
 
@@ -19,26 +19,26 @@ library axes). Metric = AUC, with a shuffle control.
 
 | | bits |
 |---|---:|
-| same-wallet pair score (mean) | **+14.22** |
-| random pair score (mean) | **−22.59** |
+| same-wallet pair score (mean) | **+13.90** |
+| random pair score (mean) | **−22.39** |
 
 | AUC | |
 |---|---:|
-| 23-axis fingerprint separates same-wallet from random | **0.935** |
-| shuffle control (per-pair label permutation) | **0.494** |
+| 23-axis fingerprint separates same-wallet from random | **0.9333** |
+| shuffle control (per-pair label permutation) | **0.496** |
 
-The library model ranks same-wallet transaction pairs far above random pairs (AUC 0.935); the shuffle
+The library model ranks same-wallet transaction pairs far above random pairs (AUC 0.933); the shuffle
 control at ~0.50 confirms the signal is real, not an artifact of the pair sampling. On real
 witness-bearing data, the 23-axis model attributes wallet identity from transaction-construction style.
-Reproduce: `python3 examples/fingerprint_validation.py`. (These figures are a snapshot on the current
-`.blkcache`; the exact AUC wobbles by ~±0.001 as the local cache grows, since the tx population and the
-seeded pair sample shift with it — the signal, not the third decimal, is the result.)
+Reproduce: `python3 examples/fingerprint_validation.py`. (The pair sampler is now
+`PYTHONHASHSEED`-independent, so for a given `.blkcache` the figure is fixed; it shifts only as the local
+cache grows — the signal, not the third decimal, is the result.)
 
 **Note on the number.** An earlier version of this measurement reported AUC 0.974, produced by a
 now-removed `rust_bridge` mirror whose low-R and BIP-69 extractors were defective (a high-R signature
 was misclassified as low-R; a coincidental small-n input sort was branded BIP-69) — both of which could
 inflate the separation. Recomputed on the canonical path — with the correct length-based `x_low_r`, the
-`n>=4`-gated `x_input_order`, and `x_uih` reading `prevout.value` — the honest figure is **0.935**. The
+`n>=4`-gated `x_input_order`, and `x_uih` reading `prevout.value` — the honest figure is **0.933**. The
 signal holds; the model is no longer measured through a buggy, unmaintained parallel implementation.
 
 ## Honest limits

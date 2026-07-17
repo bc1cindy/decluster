@@ -1,5 +1,6 @@
 """Narayanan-Shmatikov probe: does graph structure predict same-owner beyond co-spend?
-Ground truth = transitive common-input clusters; held-out positives = same-owner pairs
+Same-owner labels = transitive common-input clusters — a near-certain *heuristic*, not ground truth
+(a collaborative tx in the slice would be a false merge). Held-out positives = same-owner pairs
 NOT directly co-spent, scored by common neighbors. `evaluate` runs the 1-hop probe;
 `analyze` sweeps graph depth k (hubs excluded) to show structure is deeper under churn.
 usage: python3 -m decluster.graph_deanon [--depth] <slice.json...>"""
@@ -13,7 +14,7 @@ SIZECAP = 6000    # cap neighborhood growth
 
 
 def build(sample):
-    """neigh_pay excludes co-spend adjacency (which defines the ground truth) so the
+    """neigh_pay excludes co-spend adjacency (which defines the same-owner labels) so the
     payment-only score is not circular. Returns (uf, neigh_full, neigh_pay, cospent)."""
     uf = UF()
     neigh_full, neigh_pay, cospent = {}, {}, set()
