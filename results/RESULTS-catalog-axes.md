@@ -23,29 +23,37 @@ def x_segwit_serialization(tx):
 Bits = `−log2(share)` on the local `.blkcache` (~166k): output_count `{2: 0.51, 1: 2.33,
 4plus: 4.17, 3: 4.45}`; segwit_serialization `{segwit: 0.60, non_segwit: 1.56}`.
 
-## Result
+## Result — measured on two cache snapshots
 
-| scorer | AUC | Δ vs base |
+Absolute AUCs are `.blkcache`-specific (the cache is a local, growing artifact — see
+`RESULTS-fingerprint-validation.md`); the **deltas** are the finding, and they are not even
+stable across two cache sizes on the same seeded pairs:
+
+| adding to the 23-axis scorer | Δ AUC @ 166k cache | Δ AUC @ 180k cache |
 |---|---:|---:|
-| base (23 axes) | 0.9328 | — |
-| + output_count | 0.9339 | **+0.0011** |
-| + segwit_serialization | 0.9354 | **+0.0026** |
-| + both | 0.9353 | +0.0025 |
+| + output_count | +0.0011 | **−0.0012** |
+| + segwit_serialization | +0.0026 | +0.0020 |
+| + both | +0.0025 | +0.0006 |
+
+(The base AUC itself drifts 0.9328 → 0.9416 as the cache grows — that is the pair-sample
+moving, not the axes.)
 
 ## Reading — this is a double-counting artifact, not new signal
 
-- **The bigger bump comes from the *more redundant* axis.** `segwit_serialization` is nearly
-  determined by `input_script_type` (+ `nested_segwit`), yet it moves the AUC more (+0.0026)
-  than `output_count` (+0.0011). In a naïve-Bayes product-of-axes scorer, adding an axis
-  correlated with one already present **re-counts the same evidence**: same-wallet pairs
-  share their input script type by construction (address-reuse label → same type), so
-  counting "both are segwit" on top of "both are `v0_p2wpkh`" inflates the positive-pair
-  scores. A redundant axis producing the *largest* gain is the signature of that
-  double-count, not of independent information.
-- **They are not additive.** Both together (+0.0025) ≤ segwit alone (+0.0026): the two
-  overlap, and `output_count` adds essentially nothing once `segwit_serialization` is in.
-  Independent signals would add up; these don't.
-- **The magnitude is within noise.** +0.0025 is smaller than the EM per-axis-`m` refinement
+- **The delta is not even sign-stable.** `output_count` moves from **+0.0011** (166k) to
+  **−0.0012** (180k) — it *flips sign* between two samples of the same cache. A contribution
+  whose sign depends on the sample is noise, not signal: the cleanest possible evidence the
+  axis carries no independent information.
+- **The bigger magnitude comes from the *more redundant* axis.** `segwit_serialization` is
+  nearly determined by `input_script_type` (+ `nested_segwit`), yet it moves the AUC more
+  (~±0.002) than `output_count`. In a naïve-Bayes product-of-axes scorer, adding an axis
+  correlated with one already present **re-counts the same evidence**: same-wallet pairs share
+  their input script type by construction (address-reuse label → same type), so counting
+  "both are segwit" on top of "both are `v0_p2wpkh`" inflates the positive-pair scores. A
+  redundant axis producing the larger swing is the signature of that double-count.
+- **Not additive.** Both together ≤ segwit alone on *both* snapshots: `output_count` adds
+  essentially nothing once `segwit_serialization` is in. Independent signals would add up.
+- **Within noise.** Every delta above is smaller than the EM per-axis-`m` refinement
   (+0.0035, `RESULTS-em-m.md`) and deep inside the weight-sensitivity band (AUC moves ~0.04
   across the realistic `c` sweep, `RESULTS-weight-sensitivity.md`).
 

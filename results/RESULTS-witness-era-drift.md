@@ -9,10 +9,10 @@ era's tx population — the same method as the library, applied per era.
 Witness exists only post-SegWit, so pre-segwit is degenerate (all `na`) by protocol and
 omitted below.
 
-**Sample.** Balanced multi-era `.blkcache` (`examples/era_crawler.py`): 180,258 txs —
-pre-segwit 36,024, **segwit 34,818, taproot 109,416** witness-bearing. Enlarging the sample
-from 166k to 180k moved every bit below by ≤ 0.07, so the drift is stable, not a small-sample
-artifact.
+**Sample.** Balanced multi-era `.blkcache` (`examples/era_crawler.py`): ~180k txs —
+pre-segwit ~36k, **segwit ~35k, taproot ~110k** witness-bearing (exact counts grow with the
+local cache). The per-era bits are stable across cache sizes (≤ 0.07 variation), so the drift
+is real structure, not a small-sample artifact.
 
 | axis | value | segwit bits | taproot bits | library snapshot |
 |---|---|---:|---:|---:|
