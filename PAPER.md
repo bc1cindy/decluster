@@ -161,8 +161,9 @@ Three properties matter for the thesis:
 - **Beyond union-find.** The graph can carry *negative* edges, so the clustering can
   **refuse** a merge — impossible for a monotone union-find.
 - **Bit-accounting / priors.** A large established cluster contracts as a unit carrying
-  its full weight; a merge-strength contrary signal (−3 bits) cannot override a 100-bit
-  prior. We verify this as a property test (`high_weight_prior_survives_contrary_fingerprint`)
+  its full weight; a merge-strength contrary signal (−3 bits) cannot override an established
+  cluster's prior (measured at a median ~33 bits, >100 whole-chain; §1,
+  `results/RESULTS-cluster-bits.md`). We verify this as a property test (`high_weight_prior_survives_contrary_fingerprint`)
   and replace the old hard "skip large groups" with O(n) star-contraction so large
   wallets are not silently dropped at scale.
 - **Real bits.** `EvidenceModel::from_bits_table` (and the Python `Combiner.from_library`)
