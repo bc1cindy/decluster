@@ -3,7 +3,7 @@
 *Every empirical number below is reproducible from this repository:
 `decluster/library.py` (measured bits), `results/RESULTS-bigquery.txt` (calibration on a
 ~105k uniform whole-chain sample), `results/RESULTS-fingerprint-validation.md` (attribution AUC 0.933 on 165,832
-real txs), `results/RESULTS-graph-deanon.md` (structural de-anon across four eras), and
+real txs), `results/RESULTS-graph-deanon.md` (structural de-anon across five eras), and
 `results/RESULTS-wp4.md` (the same-owner-labelled case study). Scope: a fingerprint-aware
 clustering **method**, validated at mainnet scale without an archival node; the one thing
 left is a whole-chain **entity-reduction rate** (§9).*
@@ -289,10 +289,10 @@ generalization to the non-uniform case; the largest-cluster fraction is used as 
 | clustering | eff. anon-set size | largest cluster |
 |---|---|---|
 | union-find (BlockSci) | 13.8 | 16% |
-| fingerprint-aware | **3.4** | 53% |
+| fingerprint-aware | **3.7** | 53% |
 
-The naive common-input view over-reports the anonymity-set size by **~4×**; the amount +
-fingerprint evidence collapses 15 clusters to 5 and forms a supercluster (53%). This is
+The naive common-input view over-reports the anonymity-set size by **~3.7×**; the amount +
+fingerprint evidence collapses 15 clusters to 6 and forms a supercluster (53%). This is
 the thesis quantified at the graph level — still a modest real graph (19 coins), not a
 chain-scale measurement (which needs the whole connected chain, §9).
 
@@ -308,27 +308,33 @@ would be stronger, §8) and held-out positives = same-owner pairs that are *not*
 Removing the co-spend edges that *define* those labels — scoring by payment structure
 alone (common neighbors) — still re-identifies same-owner addresses at **AUC 0.95** on the
 2016 slice; the shuffle control lands at 0.50. Graph structure de-anonymizes *beyond* the
-common-input heuristic, on real data. Across **four eras**, swept over graph reach *k*
-(k-hop, hub intermediates excluded; `decluster/graph_deanon.py --depth`):
+common-input heuristic, on real data. Across **five eras** (2012–2024), swept over graph
+reach *k* (k-hop, hub intermediates excluded; `decluster/graph_deanon.py --depth`). Each
+slice is a contiguous block range (partition-pruned by `block_timestamp_month`,
+`bigquery/graph.sql`); **share%** = fraction of same-owner pairs sharing a *direct*
+counterparty:
 
-| era (slice) | held-out pairs | share% | k=1 | k=2 | k=3 | k=4 |
-|---|---:|---:|---:|---:|---:|---:|
-| 2012 (200 000) | 9 635 | 95% | 0.97 | 0.99 | 0.98 | 0.98 |
-| 2013 (250 000) | 25 944 | **7%** | **0.53** | 0.77 | 0.93 | 0.98 |
-| 2016 (400 000) | 267 578 | 91% | 0.95 | 0.97 | 1.00 | 0.99 |
-| 2023 (800 000) | 111 | 65% | 0.82 | 1.00 | 1.00 | 1.00 |
+| Year | blocks | entities | held-out pairs | share% | k=1 | k=2 | k=3 | k=4 |
+|---|---|---:|---:|---:|---:|---:|---:|---:|
+| 2012 | 200000–200019 | 189 | 9 635 | 96% | 0.97 | 0.99 | 0.98 | 0.97 |
+| 2013 | 250000–250014 | 558 | 25 944 | **6%** | **0.53** | 0.78 | 0.92 | 0.98 |
+| 2016 | 400000–400004 | 2 463 | 267 578 | 91% | 0.95 | 0.97 | 0.99 | 0.99 |
+| 2023 | 800000–800002 | 363 | 111 | 65% | 0.83 | 1.00 | 1.00 | 1.00 |
+| 2024 | 845982–846001 | 2 704 | 897 247 | 48% | **0.74** | 0.88 | 0.95 | 0.97 |
 
 At k=1 the effect is *not* a clean era curve: the 2013 slice falls to chance (0.53) on
 25 944 pairs. The mechanism is exact — 1-hop AUC tracks **share%**, the fraction of
-same-owner pairs sharing a direct counterparty (95→0.97 … 7→0.53); 2013 is the
+same-owner pairs sharing a direct counterparty (96→0.97, 48→0.74, 6→0.53); 2013 is the
 service-churn (SatoshiDice) era, where an owner's addresses each touch a *different* service
-address. But the structure is only deeper: sweeping reach recovers 2013 (0.53→0.98) and
-**by k=4 all four eras sit at 0.98–1.00**. So structural de-anonymization holds across every
+address. The 2024 slice anchors the modern end: heavy churn (48% share) starves k=1 to
+0.74, yet depth recovers to 0.97 on 897 k held-out pairs — a robust modern point, not the
+111 of 2023. But the structure is only deeper: sweeping reach recovers 2013 (0.53→0.98) and
+**by k=4 all five eras sit at 0.97–1.00**. So structural de-anonymization holds across every
 era; the graph *depth* needed scales with counterparty churn. (Deeper reach avoids the
 small-world collapse only because hub counterparties are excluded — so high-k AUC approaches
-non-hub component membership, a coarser tell than fine link prediction; and 2023 rests on
-111 pairs.) The stronger claim — structure links entities co-spend leaves separate — still
-needs independent entity labels (§8).
+non-hub component membership, a coarser tell than fine link prediction.) The stronger claim
+— structure links entities co-spend leaves separate — still needs independent entity labels
+(§8).
 
 ## 7. Coverage of the chain-observable fingerprint surface
 
@@ -450,7 +456,7 @@ window is revealed) over one-day clusters. A multi-epoch replication is future w
 
 - **Scope, not scale.** The fingerprint model *is* validated at mainnet scale — attribution
   AUC 0.933 on 165,832 real txs (§5) — and structural de-anonymization is measured across
-  four eras (§6), both **without an archival node**. What we do not claim is a whole-chain
+  five eras (§6), both **without an archival node**. What we do not claim is a whole-chain
   **entity-reduction rate** (à la Wang et al.: "X% of all entities collapse") — that single
   number needs the full connected chain and is a separate follow-on (§9). The
   community-structure slices are also thin (a handful of blocks per era; the 2013 k=1 null
@@ -561,6 +567,7 @@ only), so the unsupervised EM/Splink and Bayesian paths are the ones pursued her
 - <sub>**Maurer, Neudecker & Florian**, *Anonymous CoinJoin Transactions with Arbitrary Values* (2017): the **sub-transaction model** — a transaction with arbitrary amounts can be re-partitioned into the plausible original transactions, and their number and plausibility bound its anonymity. The origin of the amount-based re-partition we take as the *primary* signal (§2/§6).</sub>
 - <sub>**LaurentMT**, *Boltzmann* (OXT, 2015): operationalized the sub-transaction model as transaction **entropy** `E = log₂N` over the N plausible input→output interpretations. §1 refines this: what bounds anonymity is the *entropy of the distribution* over partitions, not the count `log₂N`.</sub>
 - <sub>**Fellegi & Sunter**, *A Theory for Record Linkage* (JASA 64(328):1183–1210, 1969; [doi:10.1080/01621459.1969.10501049](https://doi.org/10.1080/01621459.1969.10501049)): the record-linkage weight-of-evidence the engine scores in — an agreement on a value of frequency `p` contributes `−log₂p` bits (§4; this value-specific *frequency-based* weighting is due to Newcombe, 1959/1962); the topology term internalizes counterparty overlap as an FS quasi-identifier, and the rarity threshold is its rarity-weighting of that match (§8).</sub>
+- <sub>**Winkler**, *Using the EM Algorithm for Weight Computation in the Fellegi–Sunter Model of Record Linkage* (1988; 2000), and **Splink** (UK Ministry of Justice, [moj-analytical-services/splink](https://github.com/moj-analytical-services/splink)): the unsupervised EM that estimates the FS model's per-field agreement probability `m` without same-owner labels, and its open-source reference implementation. Our per-axis `m` fit (§5, `results/RESULTS-em-m.md`) is Splink-style — `u` fixed at the measured collision, the reuse label withheld for validation — and the Bayesian variant (`results/RESULTS-bayes-vs-fs.md`) is its posterior generalization.</sub>
 - <sub>**Narayanan & Shmatikov**, *Robust De-anonymization of Large Sparse Datasets* (IEEE S&P 2008; [arXiv:cs/0610105](https://arxiv.org/abs/cs/0610105)) and *De-anonymizing Social Networks* (IEEE S&P 2009; [arXiv:0903.3276](https://arxiv.org/abs/0903.3276)): structure alone re-identifies nodes. Their rarity-weighted quasi-identifier score `wt(i) = 1/log|supp(i)|` is the basis of our topology distinctiveness threshold (`−log₂(share)`, §8). §6 tests the *premise* on a real connected Bitcoin slice — payment-graph structure predicts same-owner at AUC 0.95 beyond co-spend (`results/RESULTS-graph-deanon.md`); the full seed-and-extend attack at chain scale, and richer features (community detection, embeddings), remain future work (§9).</sub>
 - <sub>**Möser & Narayanan**, *Resurrecting Address Clustering in Bitcoin* (FC 2023; [arXiv:2107.05749](https://arxiv.org/abs/2107.05749)): the non-interactive change-labeling method — the change of a 2-output transaction is revealed when its address is later co-spent with the inputs' cluster — and the "consistent fingerprint" change heuristics (their Table 4, incl. ordered ins/outs). We reproduce their labeling and §2.2 filters, and their per-axis validation, on a real slice (§7; `results/RESULTS-change-id.md`).</sub>
 - <sub>**Kappos et al.**, *How to Peel a Million: Validating and Expanding Bitcoin Clusters* (USENIX Security 2022; [paper](https://www.usenix.org/system/files/sec22-kappos.pdf)): change identification by whether an output's onward-spend belongs to the same peel chain — the cluster-feature `findNext` (TFC/AFC/changeC). We implement `findNext` (§7, `change_cluster.py`), but note it cannot be *validated against* an M&N co-spend label: the two share the co-spend-cluster signal, so `findNext` scores that label by construction (§7 circularity caveat). Our label-disjoint validation is the per-axis fingerprint test instead.</sub>

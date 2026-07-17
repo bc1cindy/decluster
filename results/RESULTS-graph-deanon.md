@@ -24,7 +24,7 @@ Blocks 400000–400004 (2016), full slice:
 
 | Graph used for structure | AUC | Reading |
 |---|---:|---|
-| **FULL** (co-spend + payment edges) | **0.990** | structure aligns with entity boundaries |
+| **FULL** (co-spend + payment edges) | **0.992** | structure aligns with entity boundaries |
 | **PAYMENT-ONLY** (co-spend edges removed) | **0.950** | ← the honest test: structure de-anonymizes *independently* of the clustering heuristic |
 | **SHUFFLE** (entity labels randomized) | **0.500** | control: the signal is not a sampling artifact |
 
@@ -33,30 +33,36 @@ those labels, so its 0.990 is partly circular. Removing those edges — scoring 
 **payment** relationships only — still yields **AUC 0.950**. The shuffle control lands at
 0.500, confirming the effect is real structure, not the pair-sampling.
 
-### Across four eras: the mechanism, not a clean curve
+### Across five eras: the mechanism, not a clean curve
 
-Payment-only AUC on four connected slices, swept over graph reach *k* (k-hop common
-neighbors, hub intermediates excluded — `decluster/graph_deanon.py --depth`,
-). **share%** = fraction of same-owner pairs sharing a
-*direct* counterparty:
+Payment-only AUC on five connected slices, swept over graph reach *k* (k-hop common
+neighbors, hub intermediates excluded — `decluster/graph_deanon.py --depth`).
+**share%** = fraction of same-owner pairs sharing a *direct* counterparty. Each slice is a
+contiguous block range (partition-pruned by `block_timestamp_month`, `bigquery/graph.sql`):
 
-| Era | slice | entities | held-out pairs | share% | k=1 | k=2 | k=3 | k=4 |
+| Year | blocks | entities | held-out pairs | share% | k=1 | k=2 | k=3 | k=4 |
 |---|---|---:|---:|---:|---:|---:|---:|---:|
-| 2012 | 200 000 | 189 | 9 635 | 95% | **0.97** | 0.99 | 0.98 | 0.98 |
-| 2013 | 250 000 | 558 | 25 944 | **7%** | **0.53** | 0.77 | 0.93 | **0.98** |
-| 2016 | 400 000 | 2 463 | 267 578 | 91% | **0.95** | 0.97 | 1.00 | 0.99 |
-| 2023 | 800 000 | 363 | 111 | 65% | **0.82** | 1.00 | 1.00 | 1.00 |
+| 2012 | 200000–200019 | 189 | 9 635 | 96% | **0.97** | 0.99 | 0.98 | 0.97 |
+| 2013 | 250000–250014 | 558 | 25 944 | **6%** | **0.53** | 0.78 | 0.92 | **0.98** |
+| 2016 | 400000–400004 | 2 463 | 267 578 | 91% | **0.95** | 0.97 | 0.99 | 0.99 |
+| 2023 | 800000–800002 | 363 | 111 | 65% | **0.83** | 1.00 | 1.00 | 1.00 |
+| 2024 | 845982–846001 | 2 704 | 897 247 | 48% | **0.74** | 0.88 | 0.95 | 0.97 |
+
+(2024 is the robust modern anchor — 2 704 entities, 897 k held-out pairs, largest cluster
+only 5% of clustered addresses, so no supercluster inflates it — unlike a small 2025 slice,
+which is dominated by a single ~40%-supercluster consolidation and saturates to a
+non-informative 1.00; a meaningful 2025 point needs that supercluster excluded first.)
 
 Two findings. **(1) At k=1 the effect is not a clean era/reuse curve**: the 2013 slice
 drops to chance (0.53) on a *substantial* 25 944 pairs — not a small-sample fluke. The
-diagnostic explains it: 1-hop AUC tracks **share%** monotonically (95%→0.97, 91%→0.95,
-65%→0.82, 7%→0.53). 2013 is the SatoshiDice / service-churn era — an owner's addresses each
-touch a *different* service address, so only 7% share a direct counterparty and the 1-hop
+diagnostic explains it: 1-hop AUC tracks **share%** monotonically (96%→0.97, 91%→0.95,
+65%→0.83, 48%→0.74, 6%→0.53). 2013 is the SatoshiDice / service-churn era — an owner's addresses each
+touch a *different* service address, so only 6% share a direct counterparty and the 1-hop
 feature is starved.
 
 **(2) The structure is still there, deeper in the graph.** Sweeping reach recovers the
-churny slice — 2013 climbs 0.53 → 0.77 → 0.93 → 0.98 — while the others stay saturated;
-**by k=4 all four eras sit at 0.98–1.00**. So the 2013 null is a limitation of *shallow
+churny slice — 2013 climbs 0.53 → 0.78 → 0.92 → 0.98 — while the others stay saturated;
+**by k=4 all five eras sit at 0.97–1.00**. So the 2013 null is a limitation of *shallow
 reach under counterparty churn*, not absence of structural de-anonymizability. The depth
 you need scales with how much counterparties are shared. This *strengthens* the
 Narayanan–Shmatikov claim: structure de-anonymizes across every era tested.

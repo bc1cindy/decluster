@@ -18,11 +18,11 @@ singletons / max anonymity; `0` = one cluster / full collapse). Effective anonym
 | clustering | clusters | entropy (bits) | effective anon set | largest cluster |
 |---|---|---|---|---|
 | **union-find (BlockSci)** | 15 | 3.79 | **13.8** | 16% |
-| **fingerprint-aware (amount+fingerprint)** | 5 | 1.78 | **3.4** | 53% |
+| **fingerprint-aware (amount+fingerprint)** | 6 | 1.89 | **3.7** | 53% |
 
 **Interpretation.** The naive union-find view reports an effective anonymity set of
 ~13.8; applying the amount + fingerprint evidence collapses the graph from 15 clusters
-to 5, revealing the *real* anonymity of ~**3.4** — a **~4× overestimate** by the naive
+to 6, revealing the *real* anonymity of ~**3.7** — a **~3.7× overestimate** by the naive
 view. The largest cluster grows from 16% to 53% (a supercluster forming). This is the
 paper's thesis quantified at the graph level: the on-chain anonymity is far smaller than
 the common-input view suggests, once fingerprints and amount structure are accounted for.

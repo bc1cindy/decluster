@@ -20,10 +20,10 @@ two people into one).
 
 - **The shape of the payment graph reveals owners too.** Independently of who-spent-with-whom,
   the *structure* of the graph (who pays whom) betrays common ownership — the same effect
-  that de-anonymized social networks (Narayanan–Shmatikov). Across four eras (2012–2023),
+  that de-anonymized social networks (Narayanan–Shmatikov). Across five eras (2012–2024),
   payment-graph structure *alone* predicts whether two addresses share an owner, ranking
   same-owner pairs correctly **0.95–0.97 of the time at one hop on the clean eras**, and
-  **0.98–1.00 across all four eras by four hops** (1.0 = perfect, 0.5 = chance; the churny
+  **0.97–1.00 across all five eras by four hops** (1.0 = perfect, 0.5 = chance; the churny
   2013 slice starts near chance at one hop and needs the deeper hops).
 
 - **It survives a transaction built to fool it.** On a real transaction deliberately
