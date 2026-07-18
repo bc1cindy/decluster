@@ -39,12 +39,12 @@ def adjusted_rand_index(groups_a, groups_b):
     return (index - expected) / (maximum - expected)
 
 def privacy_report(nodes, combiner, baseline_lookup=None):
-    """graph anonymity under union-find (BlockSci) vs fused clustering (fingerprint+amount).
-    baseline_lookup: optional {node -> cluster_id} for a whole-corpus merge-only baseline; when None,
-    the baseline is the sample-local cluster_naive (unchanged)."""
-    from .cluster import cluster_naive, cluster_fused, cluster_from_index
+    """graph anonymity under union-find (BlockSci) vs the fingerprint+amount clustering
+    (`cluster_refined`). baseline_lookup: optional {node -> cluster_id} for a whole-corpus merge-only
+    baseline; when None, the baseline is the sample-local cluster_naive (unchanged)."""
+    from .cluster import cluster_naive, cluster_refined, cluster_from_index
     base = cluster_from_index(nodes, baseline_lookup) if baseline_lookup is not None else cluster_naive(nodes)
-    fused, _refused, _linked = cluster_fused(nodes, combiner)
+    fused = cluster_refined(nodes, combiner)[0]
     def m(groups):
         return {"clusters": len(groups), "entropy_bits": partition_entropy(groups),
                 "eff_anon_set": effective_anon_set(groups), "largest_frac": largest_cluster_frac(groups)}

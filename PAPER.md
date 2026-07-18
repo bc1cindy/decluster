@@ -19,8 +19,8 @@ output and testing whether the implied payment "makes sense" (a round number, un
 unnecessary-input heuristic). Wallet fingerprints are a **corroborating** layer on top of
 this. We present a probabilistic clustering framework that fuses the two — an
 **amount-based subtransaction re-partition** and a **fingerprint** weight-of-evidence in
-**bits** (Fellegi–Sunter) — into a single most-likely clustering over the labeled
-transaction multigraph that avoids the cluster-collapse failure of a single union-find. 
+**bits** (Fellegi–Sunter) — into a single partition-refinement clustering over the labeled
+transaction multigraph that refuses false merges, avoiding the cluster-collapse failure of a single union-find. 
 We build a curated **library of fingerprints with evidence** (23 measured axes across the
 chain-observable transaction-construction surface, calibrated on unbiased real-chain
 samples — 16 structural axes on a whole-chain sample, and 7 on mempool samples (5 witness + OP_RETURN +
@@ -58,9 +58,11 @@ multi-transaction, using the whole graph, not any single tx). More inputs buy po
 
 Our contribution is the *combination engine* plus the *evidence library* that make this
 concrete: heuristics and fingerprints are fused as signed bits on a weighted graph, and
-a correlation-clustering pass (Pivot/KwikCluster) produces the most-likely partition —
-strictly more expressive than the single union-find that clusters can only *grow*, never
-*refuse*.
+a **partition-refinement** pass over those bits (`cluster_refined`) admits *negative* edges, so it
+can **refuse** a co-spent merge — the refinement lattice, not the merge-only union-find that can only
+*grow*, never *refuse*. It is order-independent (a synchronous fixed-point) yet keeps the
+Narayanan–Shmatikov **cluster-level** counterparty accumulation. It is the only fingerprint-aware
+engine; `cluster_naive` is the merge-only BlockSci baseline it is compared against.
 
 This offensive result is a means, not an end: the de-anonymization engine is the
 measurement half of a construction-side cost function for collaborative transactions
@@ -152,9 +154,18 @@ until a collaborative transaction connects it to the rest of the graph.
 
 Evidence is a signed weight-of-evidence in bits. For a value of frequency `p`, a match
 contributes `-log₂p` toward "same wallet"; a mismatch contributes a negative penalty
-(`EvidenceModel`, Fellegi–Sunter). Heuristic partitions and the fingerprint graph are
-fused additively onto one weighted graph (`combine_evidence`), then correlation-
-clustered.
+(`Combiner`, Fellegi–Sunter). Per co-spent pair the fingerprint score, the amount-structure weight
+(`amount_refuse_weight`), and the Narayanan–Shmatikov **cluster-level** counterparty-overlap weight
+(`cluster_topology_weight` — the rarity-weighted overlap of two clusters' neighbourhoods,
+`wt = 1/log|supp|`, *not* a per-pair term) are summed, and the partition is refined by
+`cluster_refined`: a union-find that both merges *and* refuses (the refinement lattice, going down
+as well as up). A synchronous fixed-point recomputes the cluster-level topology on the growing
+entities each round and unions the net-positive pairs until stable — order-independent, and
+transitive: a net-negative co-spent edge is refused (splitting a bare merge, §6), a chain A-B, B-C
+stays one wallet, and an established cluster's bits dominate a lone refusal. `cluster_refined`
+produces every partition figure; `amount=False` gives the fingerprint-only corroboration (§6). Only
+the partition results depend on the engine at all — the per-axis bits, attribution AUC, structural
+de-anon, and cluster-bits figures never call a clustering engine.
 
 Three properties matter for the thesis:
 
@@ -163,11 +174,11 @@ Three properties matter for the thesis:
 - **Bit-accounting / priors.** A large established cluster contracts as a unit carrying
   its full weight; a merge-strength contrary signal (−3 bits) cannot override an established
   cluster's prior (measured at a median ~33 bits, >100 whole-chain; §1,
-  `results/RESULTS-cluster-bits.md`). We verify this as a property test (`high_weight_prior_survives_contrary_fingerprint`)
-  and replace the old hard "skip large groups" with O(n) star-contraction so large
-  wallets are not silently dropped at scale.
-- **Real bits.** `EvidenceModel::from_bits_table` (and the Python `Combiner.from_library`)
-  let the engine score from the measured library bits rather than a small in-sample fit.
+  `results/RESULTS-cluster-bits.md`). We verify this as a property test (`high_weight_prior_survives_contrary_fingerprint`);
+  the fixed-point union-find keeps a large wallet whole as one component (replacing the old hard
+  "skip large groups"), so large wallets are not silently dropped at scale.
+- **Real bits.** `Combiner.from_library` lets the engine score from the measured library bits
+  (`library.py`) rather than a small in-sample fit.
 
 ## 5. Empirical calibration (unbiased real data)
 
@@ -229,7 +240,7 @@ yet the pair-AUC rises only from 0.933 to 0.937: the same flat plateau, now meas
 divergence of the correlated axes' EM `m` from their label-implied value is the expected
 conditional-independence artifact, reported not hidden. This establishes the *fingerprint* leg of the
 robustness claim; the **graph-topology leg is measured too** (`results/RESULTS-cluster-robustness.md`).
-Fusing the counterparty-overlap term into the clustering (`cluster_fused(neigh=…)`, §8) and sweeping the
+Fusing the counterparty-overlap term into the clustering (`cluster_refined(neigh=…)`, §8) and sweeping the
 same `c`, the owner-partition is byte-identical across the whole range (Adjusted Rand Index **1.0**)
 while a fingerprint-only clustering moves at both ends of the sweep — the >100 identifying bits of graph
 structure (§1) swamp the per-axis weight uncertainty, exactly the "enough fingerprints *and* graph
@@ -266,7 +277,7 @@ receiver; outputs 791, 6750; fee 209):
   bit ambiguity, resolved by round-ness, **before any fingerprint**.
 - **Union-find (BlockSci-style)** mis-merges {Cake `0a568e3a`, sender `91106666`} — the
   exact false link the merge intends.
-- **Fused clustering (`cluster_fused`, `results/RESULTS-wp4.md`)** refuses that merge: the
+- **The engine (`cluster_refined`, `results/RESULTS-wp4.md`)** refuses that merge: the
   fingerprint evidence scores `−3.1 bits` (`max_ffffffff` vs `seq_0x01`), past the
   prototype's `−2.0` refuse threshold → the merge is re-partitioned, the sender isolated;
   and the fingerprint layer **adds** the links the co-spend missed (Cake lineage
@@ -538,14 +549,18 @@ separate `tx-indexer` crate; the Python prototype here reproduces the method at
 case-study scale.) The same scale gap applies to the change-identification validation (§7): its
 labels and clusters are one-day; a multi-epoch replication is only scale, not new method.
 
-**Separate research tracks — not a scale run.** Two further directions are genuinely new
+**Separate research tracks — not a scale run.** Three further directions are genuinely new
 work: first, the full Narayanan–Shmatikov **seed-and-extend attack** at chain scale — the
 rarity-threshold FP-control (§8) is delivered; what remains is running the cluster-level
 topology over the whole connected graph with richer features (community detection,
 embeddings) and the independent entity labels the co-spend heuristic cannot supply
 (bootstrapped from the known-entity catalog, `catalog/known-entities.md`); second, the
 construction-side **cost function** — feeding the measured bits back so a wallet shapes its
-own transactions to avoid these tells, the defensive counterpart and a project in its own right.
+own transactions to avoid these tells, the defensive counterpart and a project in its own right;
+third, generalizing the amount channel (§2) beyond the 2-in/2-out roundness test to the
+**subset-sum density** of the implied instance — a *dense* target value is equally linked to either
+owner, while one that *stands out* is attackable (e.g. by linear programming) — whose density engine
+is the separate `dense-subset-sum` crate.
 
 The three method directions the motivating comment raised are all delivered and reported in §5: tuning
 the per-axis disagreement weights (`results/RESULTS-em-m.md`); the robustness of the verdict to those

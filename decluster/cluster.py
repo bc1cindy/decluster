@@ -31,25 +31,6 @@ def cluster_from_index(nodes, lookup):
         groups.setdefault(key, []).append(n)
     return list(groups.values())
 
-def cluster_fingerprint_aware(nodes, combiner, refuse_below=-2.0, link_above=4.0):
-    """(1) REFUSES a co-spent merge when the fingerprint says 'different wallets' (avoids
-    merged transaction collapse); (2) ADDS links common-input misses when two coins share a rare
-    fingerprint (score >= link_above)."""
-    uf = UF(nodes); refused = []; linked = []
-    for a, b, t in _cospent_pairs(nodes):
-        sc = combiner.score(fetch_tx(a), fetch_tx(b))
-        if sc < refuse_below:
-            refused.append((a, b, t, sc)); continue
-        uf.union(a, b)
-    node_list = list(nodes)
-    for i in range(len(node_list)):
-        for j in range(i+1, len(node_list)):
-            a, b = node_list[i], node_list[j]
-            sc = combiner.score(fetch_tx(a), fetch_tx(b))
-            if sc >= link_above:
-                uf.union(a, b); linked.append((a, b, sc))
-    return uf.groups(), refused, linked
-
 def amount_refuse_weight(t, a, b):
     """structural amount weight (<=0): if t's best partition splits inputs a,b (different
     owners), returns -(roundness margin); 0 if out of scope / no split. A prior, not
@@ -182,31 +163,57 @@ def build_cospend_lookup(corpus_txs):
         uf.union(a, b)
     return {f: uf.find(f) for f in funders}
 
-def cluster_fused(nodes, combiner, refuse_below=-2.0, link_above=4.0, neigh=None, topo_tau=1.0):
-    """like cluster_fingerprint_aware, but adds the amount weight and (when `neigh` is given) a
-    CLUSTER-LEVEL graph-topology weight: co-spent merges are evaluated confident-first (shared
-    counterparties before disjoint), and each is scored by the rarity-weighted counterparty overlap
-    of the two *current* clusters (`cluster_topology_weight`, distinctiveness threshold `topo_tau`
-    bits). An overlap below `topo_tau` — disjoint, or sharing only non-distinctive hubs — is treated
-    as disjoint (~-8 bits), refusing a same-software payjoin. refused = (a,b,t,fp,amt,total)."""
-    uf = UF(nodes); refused = []; linked = []
+COSPEND_PRIOR = 2.0   # common-input-ownership prior in bits; a merge survives iff prior + fp + amt + topo > 0
+
+def cluster_refined(nodes, combiner, cospend_prior=COSPEND_PRIOR, link_above=4.0, neigh=None,
+                    amount=True, topo_tau=1.0):
+    """The engine (the only fingerprint-aware clusterer; `cluster_naive` is the merge-only BlockSci
+    baseline). Order-independent partition refinement that keeps the N-S CLUSTER-LEVEL counterparty
+    accumulation (`cluster_topology_weight`, not a per-pair term). The per-pair evidence
+    `cospend_prior + fp + amt` is fixed up front (`amount=False` gives the fingerprint-only
+    corroboration — fingerprints alone refuse, §6); then a SYNCHRONOUS fixed-point unions every
+    still-separate co-spent pair whose fused bits — including the cluster-level topology recomputed on
+    the CURRENT entities each round — are net-positive, until nothing changes. Order-independent (a
+    round scores one snapshot; union-find components do not depend on merge order) and transitive; a
+    bare merge whose net stays negative is refused (§6), an established cluster's bits dominate a lone
+    refusal. Also ADDS a link where two coins share a rare fingerprint the co-spend missed
+    (`fp >= link_above`). Monotone, so it converges in <= |nodes| rounds. Returns (groups, refused,
+    linked): refused = (a, b, t, fp, amt, fp+amt+top) for co-spent pairs left split; linked = (a, b, sc)."""
     cbits = counterparty_bits(neigh) if neigh else None
-    pairs = _cospent_pairs(nodes)
-    if neigh:                          # confident (shared) merges first, ambiguous (disjoint) last
-        pairs = sorted(pairs, key=lambda p: -topology_weight(p[0], p[1], neigh, cbits))
-    for a, b, t in pairs:
-        fp = combiner.score(fetch_tx(a), fetch_tx(b))
-        amt = amount_refuse_weight(t, a, b)
-        top = cluster_topology_weight(uf.group(a), uf.group(b), neigh, cbits, tau=topo_tau) if neigh else 0.0
-        total = fp + amt + top
-        if total < refuse_below:
-            refused.append((a, b, t, fp, amt, total)); continue
-        uf.union(a, b)
-    node_list = list(nodes)
-    for i in range(len(node_list)):
-        for j in range(i + 1, len(node_list)):
-            a, b = node_list[i], node_list[j]
+    ev = {}                                     # (t, fp, amt) per pair: fp is a pair property (scored
+    for a, b, t in _cospent_pairs(nodes):       # once); amt kept from the most-refuting co-spend of the pair
+        k = (a, b) if a <= b else (b, a)
+        amt = amount_refuse_weight(t, a, b) if amount else 0.0
+        if k not in ev:
+            ev[k] = (t, combiner.score(fetch_tx(a), fetch_tx(b)), amt)
+        elif amt < ev[k][2]:
+            ev[k] = (t, ev[k][1], amt)
+    base = {k: cospend_prior + fp + amt for k, (t, fp, amt) in ev.items()}
+    uf = UF(nodes); linked = []
+    node_list = list(nodes)                     # links the co-spend MISSED: only NON-co-spent pairs —
+    for i in range(len(node_list)):             # a co-spent pair is decided by the fused fixed-point
+        for j in range(i + 1, len(node_list)):  # (amount + topology + fp), never fingerprint alone, so a
+            a, b = node_list[i], node_list[j]    # coerced-uniform merge cannot bypass an amount/topology refusal
+            if ((a, b) if a <= b else (b, a)) in base:
+                continue
             sc = combiner.score(fetch_tx(a), fetch_tx(b))
             if sc >= link_above:
                 uf.union(a, b); linked.append((a, b, sc))
+    for _ in range(len(node_list)):             # synchronous fixed-point; monotone -> <= |nodes| rounds
+        to_merge = []
+        for (a, b), be in base.items():
+            if uf.find(a) == uf.find(b):
+                continue
+            top = cluster_topology_weight(uf.group(a), uf.group(b), neigh, cbits, tau=topo_tau) if neigh else 0.0
+            if be + top > 0:
+                to_merge.append((a, b))
+        if not to_merge:
+            break
+        for a, b in to_merge:
+            uf.union(a, b)
+    refused = []
+    for (a, b), (t, fp, amt) in ev.items():
+        if uf.find(a) != uf.find(b):
+            top = cluster_topology_weight(uf.group(a), uf.group(b), neigh, cbits, tau=topo_tau) if neigh else 0.0
+            refused.append((a, b, t, fp, amt, fp + amt + top))
     return uf.groups(), refused, linked

@@ -53,10 +53,10 @@ def test_amount_refuse_weight_931d():
     w = amount_refuse_weight(PAY, SEND, CAKE)
     assert w < 0, f"amount should push toward refusal, got {w}"   # roundness margin 3-1=2 -> -2
 
-def test_cluster_fused_refuses_merge():
+def test_engine_refuses_merge():
     from decluster import fetch_tx
     from decluster.combiner import Combiner
-    from decluster.cluster import cluster_fused
+    from decluster.cluster import cluster_refined
     import os
     PAY  = "931d6627f7b63491cbc2e6d860dc630537385fd9ee3171f2013b64e6a143a4e4"
     CAKE = "0a568e3ae6fa6bf34ce8925266ac2cdb1668c723980398d9c613d67d72b39729"
@@ -67,7 +67,7 @@ def test_cluster_fused_refuses_merge():
     nodes = {PAY, CAKE, SEND}
     nodes.add(fetch_tx(CAKE)["vin"][0]["txid"])
     for v in fetch_tx(SEND)["vin"]: nodes.add(v["txid"])
-    groups, refused, linked = cluster_fused(nodes, Combiner.from_library())
+    groups, refused, linked = cluster_refined(nodes, Combiner.from_library())
     # sender and Cake are split
     for g in groups:
         assert not (SEND in g and CAKE in g)

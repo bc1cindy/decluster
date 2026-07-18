@@ -4,7 +4,7 @@ import sys, os
 sys.path.insert(0, os.path.dirname(os.path.dirname(__file__)))
 from decluster import fetch_tx
 from decluster.combiner import Combiner
-from decluster.cluster import cluster_naive, cluster_fingerprint_aware
+from decluster.cluster import cluster_naive, cluster_refined
 from decluster.extractors import x_nsequence
 
 
@@ -29,12 +29,12 @@ def main():
     cmb = Combiner.from_library()
 
     print("\n=== 2) FINGERPRINT-AWARE CLUSTERING ===")
-    groups, refused, linked = cluster_fingerprint_aware(nodes, cmb)
+    groups, refused, linked = cluster_refined(nodes, cmb, amount=False)
     for g in groups:
         print(f"  cluster ({len(g)}): " + ", ".join(sorted(label(x) for x in g)))
     print("\n  REFUSED merges (merged transaction re-partitioned):")
-    for a, b, t, sc in refused:
-        print(f"    {a[:10]}.. <-x-> {b[:10]}..  ({sc:+.1f} bits)  co-spent in {t[:10]}..")
+    for a, b, t, fp, amt, total in refused:
+        print(f"    {a[:10]}.. <-x-> {b[:10]}..  ({total:+.1f} bits)  co-spent in {t[:10]}..")
     print("  ADDED links (rare fingerprint that co-spend missed):")
     for a, b, sc in linked:
         print(f"    {a[:10]}.. <--> {b[:10]}..  ({sc:+.1f} bits)")

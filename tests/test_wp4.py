@@ -23,7 +23,7 @@ def test_from_library_bits():
 def test_merge_money_shot():
     from decluster import fetch_tx
     from decluster.combiner import Combiner
-    from decluster.cluster import cluster_fingerprint_aware
+    from decluster.cluster import cluster_refined
     MERGE = "931d6627f7b63491cbc2e6d860dc630537385fd9ee3171f2013b64e6a143a4e4"
     CAKE    = "0a568e3ae6fa6bf34ce8925266ac2cdb1668c723980398d9c613d67d72b39729"
     SENDER  = "91106666451dc43a0e3f78b325764251e205b39d7e9498948885678616ba719a"
@@ -37,7 +37,7 @@ def test_merge_money_shot():
     cmb = Combiner.from_library()
     s = cmb.score(fetch_tx(SENDER), fetch_tx(CAKE))
     assert s < 0, f"sender/Cake should be refused, got {s:+.2f}"
-    groups, refused, linked = cluster_fingerprint_aware(nodes, cmb)
+    groups, refused, linked = cluster_refined(nodes, cmb, amount=False)
     for g in groups:
         assert not (SENDER in g and CAKE in g), "sender and Cake must be split"
     assert linked, "expected added links the co-spend missed"

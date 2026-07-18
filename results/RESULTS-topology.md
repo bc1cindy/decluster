@@ -1,7 +1,7 @@
 # Graph-topology weight — counterparty overlap as a Fellegi–Sunter quasi-identifier
 
 Reproduce: `python3 tests/test_topology.py`. Term in `decluster/cluster.py`
-(`counterparty_bits`, `topology_weight`), fused in `cluster_fused(..., neigh=...)`.
+(`counterparty_bits`, `topology_weight`), fused in `cluster_refined(..., neigh=...)`.
 
 ## The gap this addresses
 
@@ -95,7 +95,7 @@ The two populations are cleanly separated: same-owner clusters share distinctive
 (11.7 bits), different owners essentially never do. Any `topo_tau` in `[0.5, 3.0]` keeps 100% of
 same-owner and refuses 100% of different-owner on this slice; the default is **`topo_tau = 1.0`**
 (the shared counterparty must be worth ≥ 1 bit, i.e. touched by ≤ half the nodes), with margin.
-End-to-end proof in `test_cluster_fused_refuses_hub_only_partial_overlap` (hub-only Alice/Bob
+End-to-end proof in `test_engine_refuses_hub_only_partial_overlap` (hub-only Alice/Bob
 overlap refused; their own distinctive coins kept).
 
 **Honest limit.** This is the inherent counterparty-quasi-identifier limit, not removed by the

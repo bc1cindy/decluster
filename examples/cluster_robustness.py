@@ -1,7 +1,7 @@
 """Clustering weight-robustness: does fusing the graph-topology term make the owner-partition stable
 under a fingerprint-weight (c) sweep, where a fingerprint-only clustering moves? Builds a controlled
 ancestry-shaped scenario (per-wallet fingerprints + distinctive counterparties, cross-wallet payjoins),
-runs cluster_fused in two arms (neigh=None vs neigh=NEIGH) across c, and reports ARI vs each arm's
+runs cluster_refined (the registered engine) in two arms (neigh=None vs neigh=NEIGH) across c, and reports ARI vs each arm's
 c=0.95 baseline. Offline, deterministic. Run from repo root: python3 examples/cluster_robustness.py.
 See results/RESULTS-cluster-robustness.md."""
 import sys
@@ -38,8 +38,8 @@ def build_scenario():
 
 def _partition(nodes, c, neigh):
     from decluster.combiner import Combiner
-    from decluster.cluster import cluster_fused
-    groups, _refused, _linked = cluster_fused(nodes, Combiner.from_library(consistency=c), neigh=neigh)
+    from decluster.cluster import cluster_refined
+    groups, _refused, _linked = cluster_refined(nodes, Combiner.from_library(consistency=c), neigh=neigh)
     return groups
 
 

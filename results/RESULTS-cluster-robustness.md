@@ -2,14 +2,14 @@
 
 **Claim tested.** The collaborator's part-3 conjecture is robustness "with enough fingerprints **and graph
 structure**." The fingerprint leg is shown in `RESULTS-weight-sensitivity.md` / `RESULTS-em-m.md`. This
-tests the graph leg at the clustering level: does fusing the topology term (`cluster_fused(neigh=…)`,
+tests the graph leg at the clustering level: does fusing the topology term (`cluster_refined(neigh=…)`,
 calibrated in `RESULTS-topology.md`) make the owner-*partition* stable under a fingerprint-weight (`c`)
 sweep, where a fingerprint-only clustering moves?
 
 **Setup.** A controlled ancestry-shaped scenario (`examples/cluster_robustness.py`): 4 wallets, each with
 distinct construction fingerprints and a distinctive rare counterparty, consolidations giving within-wallet
 co-spend edges, and 2 cross-wallet payjoin merges (the false links). For each `c ∈ {0.60…0.99}` we run
-`cluster_fused` twice — `neigh=None` (fp-only) and `neigh=NEIGH` (fp+topo) — and measure the Adjusted Rand
+`cluster_refined` twice — `neigh=None` (fp-only) and `neigh=NEIGH` (fp+topo) — and measure the Adjusted Rand
 Index of each partition against that arm's `c=0.95` partition. Offline, deterministic.
 
 ## Result
@@ -42,7 +42,7 @@ Reproduce: `python3 examples/cluster_robustness.py`.
   `931d6627` ancestry is a noted follow-on.
 - **3-axis clustering scorer.** The clustering path uses the 3-axis `Combiner`, not the 23-axis
   `LibraryScorer` of the pair-AUC validation.
-- **`cluster_fused` is case-study scale** (`fetch_tx` per pair, O(n²) linking); the scenario is sized
+- **`cluster_refined` is case-study scale** (`fetch_tx` per pair, O(n²) linking); the scenario is sized
   accordingly.
 - **The topology signal here is counterparty-overlap, narrower than "graph connectivity."** The fused
   term is a rarity-weighted shared-counterparty overlap (`cluster_topology_weight`) — a graph-derived

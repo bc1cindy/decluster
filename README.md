@@ -34,7 +34,7 @@ two people into one).
 
 ## Layout
 
-- `decluster/` — the method: extractors, library, combiner, cluster, graph_deanon
+- `decluster/` — the method: extractors, library, combiner, cluster (engine: `cluster_refined`), graph_deanon
 - `PAPER.md` — the manuscript; `results/` — reproducible outputs; `catalog/`, `bigquery/`
 
 Every number is reproducible. MIT — see `LICENSE`.

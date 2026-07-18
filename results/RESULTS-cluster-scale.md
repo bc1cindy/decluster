@@ -57,7 +57,7 @@ far beyond any window.
 
 ## Scope & caveats
 
-- **Baseline only.** The `cluster_fused` (decluster signed) side of `privacy_report` is `O(n^2)`
+- **Baseline only.** The `cluster_refined` (decluster signed) side of `privacy_report` is `O(n^2)`
   pairwise and calls `fetch_tx` (network), so the baseline-vs-fused comparison at scale is **not** run
   here — it awaits a local raw-tx source (esplora / Core txindex) to be cheap. This doc measures the
   merge-only baseline's scale and faithfulness, which is what `build_cospend_lookup` newly enables.

@@ -69,16 +69,16 @@ def test_cluster_topology_refuses_same_software_payjoin():
     neigh = {"A1": {"Ca", "Cb", "Cc"}, "A2": {"Ca", "Cb", "Cc"},
              "B1": {"Da", "Db", "Dc"}, "B2": {"Da", "Db", "Dc"}}
 
-    g0, _r0, _ = C.cluster_fused(nodes, cmb)                    # no topology -> collapse
+    g0, _r0, _ = C.cluster_refined(nodes, cmb)                    # no topology -> collapse
     assert any("A1" in g and "B1" in g for g in g0), "baseline should collapse the payjoin"
 
-    g1, refused, _ = C.cluster_fused(nodes, cmb, neigh=neigh)   # cluster-level topology
+    g1, refused, _ = C.cluster_refined(nodes, cmb, neigh=neigh)   # cluster-level topology
     for g in g1:
         assert not ("A1" in g and "B1" in g), "cluster topology must keep Alice and Bob apart"
     assert any("A1" in g and "A2" in g for g in g1), "Alice's own coins stay clustered"
     assert any(set(x[:2]) == {"A1", "B1"} for x in refused), "the A1/B1 merge must be refused"
 
-def test_cluster_fused_refuses_hub_only_partial_overlap():
+def test_engine_refuses_hub_only_partial_overlap():
     """Partial overlap (not disjoint): Alice and Bob share only a common HUB (touched by many ->
     ~0 rarity bits). Alice's own coins share her distinctive rare 'Carol', Bob's share 'Dave'. The
     rarity threshold keeps Alice's/Bob's own merges but treats the hub-only Alice/Bob overlap as
@@ -100,7 +100,7 @@ def test_cluster_fused_refuses_hub_only_partial_overlap():
     neigh = {"A1": {"Carol", "HUB"}, "A2": {"Carol", "HUB"},
              "B1": {"Dave", "HUB"}, "B2": {"Dave", "HUB"}}
     for z in decoys: neigh[z] = {"HUB"}                 # HUB common -> ~0 bits -> non-distinctive
-    g, refused, _ = C.cluster_fused(nodes, cmb, neigh=neigh)
+    g, refused, _ = C.cluster_refined(nodes, cmb, neigh=neigh)
     assert any(set(x[:2]) == {"A1", "B1"} for x in refused), "hub-only overlap must not rescue the payjoin"
     for grp in g:
         assert not ("A1" in grp and "B1" in grp), "Alice and Bob must stay apart"
