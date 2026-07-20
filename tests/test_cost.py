@@ -60,19 +60,6 @@ def test_ancestry_entropy_is_wired_not_a_stub():
     assert not hasattr(cost, "privacy_of_transaction")
 
 
-def test_cost_report_shape_and_unbuilt_target():
-    coins = [{"role": "m", "index": 0, "value": 100, "log_w": 0.0, "kappa_c": 0.9}]
-    rep = cost.cost_report(
-        tx_a={"txid": "a"}, tx_b={"txid": "b"},
-        inputs=[100], outputs=[100],
-        members_a=["A"], members_b=["B"], neigh={"A": {"x"}, "B": {"y"}},
-        combiner=_FakeCombiner(5.0), oracle=_fake_oracle(coins))
-    assert rep["leak"] == 5.0
-    assert [c.index for c in rep["cuts"]] == [0]
-    assert rep["topology"] < 0
-    assert rep["target"] is None          # unbuilt, not fabricated
-
-
 def test_construction_cost_is_a_stub():
     # composition deferred: construction_cost raises until the metric design lands
     with pytest.raises(NotImplementedError):

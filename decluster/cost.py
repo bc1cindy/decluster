@@ -43,16 +43,8 @@ def topology_bits(members_a, members_b, neigh, tau=1.0):
     return cluster_topology_weight(members_a, members_b, neigh, cbits=cbits, tau=tau)
 
 
-def cost_report(tx_a, tx_b, inputs, outputs, members_a, members_b, neigh,
-                combiner, oracle, cut_threshold=1.0, tau=1.0):
-    """(B) measurement view on a real transaction: the fused terms. `target` is None (path-counting
-    unbuilt); it is never fabricated. Read the numbers as attacker evidence / lower bounds, not privacy."""
-    return {
-        "leak": leak_bits(tx_a, tx_b, combiner),
-        "cuts": amount_cuts(inputs, outputs, oracle, cut_threshold),
-        "topology": topology_bits(members_a, members_b, neigh, tau),
-        "target": None,
-    }
+# The fused measurement view (leak + amount cuts + topology + ancestry target) lives in one place:
+# `decluster.report.report` (the per-tx orchestrator). This module holds the leaf terms it composes.
 
 
 def construction_cost(leak, topology, target_fn=ancestry_entropy, graph=None):

@@ -3,9 +3,9 @@ example (real txid).
 
 Bit provenance:
 - structural/amount/type/change: uniform ~105k whole-chain sample via BigQuery
-  (`bigquery/`, `measure_file.py`), accumulated over several TABLESAMPLE runs.
+  (`bigquery/` SQL), accumulated over several TABLESAMPLE runs.
 - witness (low_r, sighash, pubkey_compression, multisig, nested_segwit) and op_return:
-  ~3.5k mempool.space txs (`bigmeasure.py`) — BigQuery's schema has no witness."""
+  ~3.5k mempool.space txs (`engine.sample_recent_txs`) — BigQuery's schema has no witness."""
 
 _EX3 = "8fb80573d8871efee060a34dcb97fd12d5229444b7262b26358cd84912a04a75"
 

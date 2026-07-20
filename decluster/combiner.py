@@ -1,4 +1,6 @@
-"""Layer 3 — Fellegi-Sunter combiner: score(txA,txB) in bits (+ same / - different)."""
+"""Layer 3 — Fellegi-Sunter combiner: score(txA,txB) in bits (+ same / - different). This is the
+narrow engine combiner (3 axes: nsequence, locktime, in_order) that `cluster_refined` uses; the full
+23-axis validated model (the AUC≈0.933 headline) is `fingerprint_validate.LibraryScorer`."""
 import math
 from collections import Counter
 from .extractors import x_nsequence, x_input_order, locktime_policy

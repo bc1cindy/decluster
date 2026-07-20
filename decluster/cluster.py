@@ -70,8 +70,9 @@ def topology_weight(a, b, neigh, cbits=None, disjoint_bits=-1.65, share_cap=12.0
     log2 ratio ~= -1.65, so a SINGLE disjoint pair barely moves the score and cannot by itself
     overcome a fingerprint match. The refusal the collaborator describes ('enough
     distinguishing relationships') is the ACCUMULATION of these across a whole cluster — an
-    N-S cluster-level computation, not this per-pair term (paper §10). 0 when either side has
-    too little graph to judge."""
+    N-S cluster-level computation, not this per-pair term (paper §10). NOT called by the engine
+    (`cluster_refined` uses `cluster_topology_weight`); kept as the per-pair illustration. 0 when
+    either side has too little graph to judge."""
     na, nb = neigh.get(a, set()), neigh.get(b, set())
     if not na or not nb:
         return 0.0
@@ -183,6 +184,8 @@ def cluster_refined(nodes, combiner, cospend_prior=COSPEND_PRIOR, link_above=4.0
     ev = {}                                     # (t, fp, amt) per pair: fp is a pair property (scored
     for a, b, t in _cospent_pairs(nodes):       # once); amt kept from the most-refuting co-spend of the pair
         k = (a, b) if a <= b else (b, a)
+        # amount channel, mode 1 of 2 (refuse-only): structural roundness re-partition. Mode 2 is the
+        # denomination de-mix (`subsetsum=`, below) — two variants of the one amount refuse channel.
         amt = amount_refuse_weight(t, a, b) if amount else 0.0
         if k not in ev:
             ev[k] = (t, combiner.score(fetch_tx(a), fetch_tx(b)), amt)
