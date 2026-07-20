@@ -54,9 +54,10 @@ def test_topology_bits_shared_rare_corroborates():
     assert cost.topology_bits(["A"], ["B"], neigh) > 0
 
 
-def test_privacy_of_transaction_is_a_stub():
-    with pytest.raises(NotImplementedError):
-        cost.privacy_of_transaction(graph={})
+def test_ancestry_entropy_is_wired_not_a_stub():
+    # the path-counting target is now the ancestry engine; it no longer raises NotImplementedError
+    assert hasattr(cost, "ancestry_entropy")
+    assert not hasattr(cost, "privacy_of_transaction")
 
 
 def test_cost_report_shape_and_unbuilt_target():

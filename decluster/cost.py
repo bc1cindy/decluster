@@ -7,6 +7,7 @@ the amount channel is REFUSE-ONLY (it can cut a coin from the graph, never add a
 from dataclasses import dataclass
 
 from .cluster import cluster_topology_weight, counterparty_bits
+from .ancestry import ancestry_entropy
 
 
 @dataclass(frozen=True)
@@ -42,14 +43,6 @@ def topology_bits(members_a, members_b, neigh, tau=1.0):
     return cluster_topology_weight(members_a, members_b, neigh, cbits=cbits, tau=tau)
 
 
-def privacy_of_transaction(graph):
-    """STUB. The intrinsic path-count / k-route flow estimate over the loose tx-graph trait,
-    under no auxiliary information — the target the construction minimises cost to reach. The engine
-    is separate future work; this raises until it lands so no caller silently fabricates a value."""
-    raise NotImplementedError(
-        "path-counting / k-route 'privacy of transaction' engine is not built yet")
-
-
 def cost_report(tx_a, tx_b, inputs, outputs, members_a, members_b, neigh,
                 combiner, oracle, cut_threshold=1.0, tau=1.0):
     """(B) measurement view on a real transaction: the fused terms. `target` is None (path-counting
@@ -62,7 +55,7 @@ def cost_report(tx_a, tx_b, inputs, outputs, members_a, members_b, neigh,
     }
 
 
-def construction_cost(leak, topology, target_fn=privacy_of_transaction, graph=None):
+def construction_cost(leak, topology, target_fn=ancestry_entropy, graph=None):
     """(A) construction objective — composition DEFERRED. Combining the terms into one cost is an
     open design question: it depends on the path-counting `target` (still a stub) and on how the
     channels combine (Liebig vs weighted), which is not settled until that engine and the metric
