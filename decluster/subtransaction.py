@@ -14,7 +14,10 @@ def roundness(x):
 
 def subtransactions(tx):
     """balanced 2-owner partitions of a 2-in/2-out merged transaction, ranked by plausibility.
-    Returns (ranked, ambiguity_bits); ranked = [(payment, score, r_in_idx, r_out_idx)]."""
+    Returns (ranked, ambiguity_bits); ranked = [(payment, score, r_in_idx, r_out_idx)].
+    `ambiguity_bits = log2(count)` is a raw *count* diagnostic (Boltzmann-style), NOT a privacy
+    quantity — what bounds anonymity is the entropy of the *distribution* over partitions, not the
+    count (paper §10). It is reported for transparency and never fed into clustering as anonymity."""
     ins = [(i, v["prevout"]["value"]) for i, v in enumerate(tx["vin"])]
     outs = [(j, o["value"]) for j, o in enumerate(tx["vout"])]
     if len(ins) != 2 or len(outs) != 2:
@@ -47,9 +50,12 @@ def partition_signal(tx):
     si = next(i for i in range(2) if i != ri)
     so = next(j for j in range(2) if j != ro)
     return {
-        "refuse": [(txids[si], txids[ri])],                         # different owners
+        "refuse": [(txids[si], txids[ri])],                         # different owners (consumed by the engine)
+        # UNUSED by cluster_refined: amounts REFUSE only, never add a positive same-owner link
+        # (sub-transaction evidence can cut a coin from the graph, never inflate the score). Kept
+        # for diagnostics/tests; do not wire into clustering as a positive signal.
         "link": [(txids[ri], f"{tx['txid']}:{ro}"),                 # receiver -> its output
                  (txids[si], f"{tx['txid']}:{so}")],                # sender -> its output
         "payment": payment,
-        "ambiguity_bits": amb,
+        "ambiguity_bits": amb,                                      # count diagnostic, not privacy (see subtransactions)
     }

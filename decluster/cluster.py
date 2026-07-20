@@ -166,7 +166,7 @@ def build_cospend_lookup(corpus_txs):
 COSPEND_PRIOR = 2.0   # common-input-ownership prior in bits; a merge survives iff prior + fp + amt + topo > 0
 
 def cluster_refined(nodes, combiner, cospend_prior=COSPEND_PRIOR, link_above=4.0, neigh=None,
-                    amount=True, topo_tau=1.0):
+                    amount=True, topo_tau=1.0, subsetsum=False, _ss_fn=None):
     """The engine (the only fingerprint-aware clusterer; `cluster_naive` is the merge-only BlockSci
     baseline). Order-independent partition refinement that keeps the N-S CLUSTER-LEVEL counterparty
     accumulation (`cluster_topology_weight`, not a per-pair term). The per-pair evidence
@@ -189,6 +189,15 @@ def cluster_refined(nodes, combiner, cospend_prior=COSPEND_PRIOR, link_above=4.0
         elif amt < ev[k][2]:
             ev[k] = (t, ev[k][1], amt)
     base = {k: cospend_prior + fp + amt for k, (t, fp, amt) in ev.items()}
+    if subsetsum:
+        resolve = _ss_fn
+        if resolve is None:
+            from .subsetsum import amount_refuse_demix
+
+            def resolve(tx, a, b):
+                return amount_refuse_demix(tx, a, b)           # per-pair de-mix verdict (diff participants -> refuse)
+        for k, (t, fp, amt) in ev.items():
+            base[k] += resolve(fetch_tx(t), k[0], k[1])            # per-pair: amount refuse / forced-link
     uf = UF(nodes); linked = []
     node_list = list(nodes)                     # links the co-spend MISSED: only NON-co-spent pairs —
     for i in range(len(node_list)):             # a co-spent pair is decided by the fused fixed-point
