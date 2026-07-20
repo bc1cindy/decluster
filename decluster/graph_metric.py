@@ -1,5 +1,9 @@
-"""Graph-level privacy metric: clustering entropy (retained anonymity, bits) + supercluster
-rejection. Not a chain-scale validation."""
+"""Clustering-overcount diagnostic (relative, NOT a privacy score): how much the naive co-spend
+clustering overstates the attacker's residual uncertainty relative to the fingerprint+amount
+clustering. The entropy here is a property of a *clustering partition*, not the intrinsic anonymity
+of any transaction (that is the separate path-counting / k-route estimate). Read only as the
+naive-vs-fused ratio; never as an absolute 'this graph has N bits of anonymity'. Not a chain-scale
+validation."""
 import math
 
 def partition_entropy(groups):
@@ -9,8 +13,8 @@ def partition_entropy(groups):
     if n == 0: return 0.0
     return sum(-(s / n) * math.log2(s / n) for s in sizes)
 
-def effective_anon_set(groups):
-    """effective anonymity set = 2^H."""
+def effective_cluster_count(groups):
+    """effective cluster count = 2^H (the 2^entropy effective number of clusters)."""
     return 2 ** partition_entropy(groups)
 
 def largest_cluster_frac(groups):
@@ -38,14 +42,15 @@ def adjusted_rand_index(groups_a, groups_b):
         return 1.0
     return (index - expected) / (maximum - expected)
 
-def privacy_report(nodes, combiner, baseline_lookup=None):
-    """graph anonymity under union-find (BlockSci) vs the fingerprint+amount clustering
-    (`cluster_refined`). baseline_lookup: optional {node -> cluster_id} for a whole-corpus merge-only
-    baseline; when None, the baseline is the sample-local cluster_naive (unchanged)."""
+def overcount_report(nodes, combiner, baseline_lookup=None):
+    """clustering-overcount diagnostic: naive union-find (BlockSci) vs the fingerprint+amount
+    clustering (`cluster_refined`), read as the naive-vs-fused ratio (not an absolute privacy score).
+    baseline_lookup: optional {node -> cluster_id} for a whole-corpus merge-only baseline; when None,
+    the baseline is the sample-local cluster_naive (unchanged)."""
     from .cluster import cluster_naive, cluster_refined, cluster_from_index
     base = cluster_from_index(nodes, baseline_lookup) if baseline_lookup is not None else cluster_naive(nodes)
     fused = cluster_refined(nodes, combiner)[0]
     def m(groups):
         return {"clusters": len(groups), "entropy_bits": partition_entropy(groups),
-                "eff_anon_set": effective_anon_set(groups), "largest_frac": largest_cluster_frac(groups)}
+                "eff_cluster_count": effective_cluster_count(groups), "largest_frac": largest_cluster_frac(groups)}
     return {"n_coins": len(nodes), "union_find": m(base), "fingerprint_aware": m(fused)}

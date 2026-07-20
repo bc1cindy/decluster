@@ -45,7 +45,7 @@ def _partition(nodes, c, neigh):
 
 def run():
     from decluster import cluster as C
-    from decluster.graph_metric import adjusted_rand_index, effective_anon_set
+    from decluster.graph_metric import adjusted_rand_index, effective_cluster_count
     nodes, neigh, txmap = build_scenario()
     C.fetch_tx = txmap.__getitem__                          # runner-local offline shim
 
@@ -59,7 +59,7 @@ def run():
         pt = _partition(nodes, c, neigh)
         print("%-5.2f %12.4f %12.4f %12.2f %12.2f"
               % (c, adjusted_rand_index(pf, base_fp), adjusted_rand_index(pt, base_tp),
-                 effective_anon_set(pf), effective_anon_set(pt)))
+                 effective_cluster_count(pf), effective_cluster_count(pt)))
 
 
 if __name__ == "__main__":

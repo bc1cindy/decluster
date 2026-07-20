@@ -24,16 +24,16 @@ def _groups(lookup):
 
 def main():
     from decluster.cluster import build_cospend_lookup
-    from decluster.graph_metric import partition_entropy, effective_anon_set, largest_cluster_frac
+    from decluster.graph_metric import partition_entropy, effective_cluster_count, largest_cluster_frac
     txs = _load_all_txs()
     print("# corpus: %d unique txs from the downloads\n" % len(txs))
 
     lk = build_cospend_lookup(txs)
     g = _groups(lk)
     print("# whole-corpus multi-input baseline:")
-    print("  funders=%d -> entities=%d (%.1f%% collapse)  entropy=%.2f bits  eff_anon=%.1f  largest=%.4f"
+    print("  funders=%d -> entities=%d (%.1f%% collapse)  entropy=%.2f bits  eff_clusters=%.1f  largest=%.4f"
           % (len(lk), len(g), 100 * (1 - len(g) / len(lk)), partition_entropy(g),
-             effective_anon_set(g), largest_cluster_frac(g)))
+             effective_cluster_count(g), largest_cluster_frac(g)))
 
     print("\n# scale curve (corpus fraction -> entities/funder; contiguous chains collapse, scattered ones don't):")
     print("%-8s %10s %10s %10s %12s" % ("frac", "txs", "funders", "entities", "ent/funder"))

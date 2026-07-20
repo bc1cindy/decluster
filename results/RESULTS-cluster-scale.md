@@ -1,7 +1,7 @@
 # Cluster-scale — the whole-corpus merge-only baseline, measured offline
 
 The faithful merge-only baseline (`cluster.build_cospend_lookup` + `cluster_from_index`, wired into
-`graph_metric.privacy_report` via `baseline_lookup`) computes multi-input clustering over the **whole
+`graph_metric.overcount_report` via `baseline_lookup`) computes multi-input clustering over the **whole
 loaded corpus**, not just the evaluation sample. This measures its **scale** and checks the premise
 that whole-corpus membership is a stronger, fairer baseline than the sample-local `cluster_naive`.
 Offline — no network. Code: `decluster/cluster.py`, `decluster/graph_metric.py`.
@@ -57,7 +57,7 @@ far beyond any window.
 
 ## Scope & caveats
 
-- **Baseline only.** The `cluster_refined` (decluster signed) side of `privacy_report` is `O(n^2)`
+- **Baseline only.** The `cluster_refined` (decluster signed) side of `overcount_report` is `O(n^2)`
   pairwise and calls `fetch_tx` (network), so the baseline-vs-fused comparison at scale is **not** run
   here — it awaits a local raw-tx source (esplora / Core txindex) to be cheap. This doc measures the
   merge-only baseline's scale and faithfulness, which is what `build_cospend_lookup` newly enables.

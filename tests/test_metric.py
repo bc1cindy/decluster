@@ -1,4 +1,4 @@
-"""test graph-level anonymity metrics"""
+"""test the clustering-overcount diagnostic primitives"""
 import sys, os
 sys.path.insert(0, os.path.dirname(os.path.dirname(__file__)))
 
@@ -8,10 +8,10 @@ def test_partition_entropy():
     assert partition_entropy([["a", "b", "c", "d"]]) == 0.0                     # one cluster -> 0
     assert abs(partition_entropy([["a", "b", "c"], ["d"]]) - 0.8112781) < 1e-6  # 3,1
 
-def test_effective_anon_set():
-    from decluster.graph_metric import effective_anon_set
-    assert abs(effective_anon_set([["a"], ["b"], ["c"], ["d"]]) - 4.0) < 1e-9
-    assert abs(effective_anon_set([["a", "b", "c", "d"]]) - 1.0) < 1e-9
+def test_effective_cluster_count():
+    from decluster.graph_metric import effective_cluster_count
+    assert abs(effective_cluster_count([["a"], ["b"], ["c"], ["d"]]) - 4.0) < 1e-9
+    assert abs(effective_cluster_count([["a", "b", "c", "d"]]) - 1.0) < 1e-9
 
 def test_largest_cluster_frac():
     from decluster.graph_metric import largest_cluster_frac
