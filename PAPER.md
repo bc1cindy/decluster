@@ -11,13 +11,20 @@ left is a whole-chain **entity-reduction rate** (§9).*
 ## Abstract
 
 On-chain Bitcoin privacy is an emergent property of the **transaction graph**, not of
-any single transaction. The **primary** de-anonymization signal is not a wallet-software
-fingerprint but the **amount structure** — the amounts in use are a fingerprint of their
-own kind. A transaction that merges unrelated parties can be
-re-partitioned into per-owner subtransactions by subtracting a contributed input from an
-output and testing whether the implied payment "makes sense" (a round number, under the
-unnecessary-input heuristic). Wallet fingerprints are a **corroborating** layer on top of
-this. We present a probabilistic clustering framework that fuses the two — an
+any single transaction. **Where the amount structure is decidable** — a sparse subset-sum
+instance, or a plausible round partition — the **primary** de-anonymization signal is not a
+wallet-software fingerprint but the **amount structure** — the amounts in use are a fingerprint of
+their own kind. A transaction that merges unrelated parties can be re-partitioned into per-owner
+subtransactions by subtracting a contributed input from an output and testing whether the implied
+payment "makes sense" (a round number, under the unnecessary-input heuristic), or, for a general
+coinjoin, by de-mixing each participant's input against the mix denomination and their change output
+(`input = mix + change − fee`, `decluster/coinjoin_demix.py`). On a real JoinMarket coinjoin (11
+participants) the de-mix recovers 8 of the makers uniquely, with fees matching the reference tool.
+**Where the amounts are dense** — a well-mixed coinjoin, where many input→output mappings balance —
+the amount channel is silent and the wallet fingerprints and cluster-level graph structure carry the
+weight; all 30 real Wasabi 2 coinjoins in a labelled set recover 0 participants, so they are
+amount-private (`results/RESULTS-subtx-demix.md`). Wallet fingerprints are a **corroborating** layer
+on top of the decidable case. We present a probabilistic clustering framework that fuses the two — an
 **amount-based subtransaction re-partition** and a **fingerprint** weight-of-evidence in
 **bits** (Fellegi–Sunter) — into a single partition-refinement clustering over the labeled
 transaction multigraph that refuses false merges, avoiding the cluster-collapse failure of a single union-find. 
@@ -36,6 +43,21 @@ same-owner link, define a construction-side cost function — so quantifying the
 the prerequisite for the defense, shaping transactions that no longer carry these tells.
 
 ## 1. Introduction & thesis
+
+**Scope of the bits.** Every bit in this paper is an *attacker's* weight-of-evidence for linkage — a
+lower bound on how identifiable a construction is under our best models, absent auxiliary information —
+not a "bits of privacy" a transaction possesses. We never claim a transaction "has N bits of
+anonymity": reading a single structure's entropy as its privacy is misleading (a distribution can be
+assumed to yield almost any number), and the entropy of the sub-transaction model relates to privacy
+only when it is *low* (Liebig's law of the minimum — the weakest channel governs). Accordingly the
+sub-transaction / subset-sum channel enters this engine only as evidence that can *refuse* a link (cut
+a coin from the graph), never as a positive term that adds anonymity. The measured `−log₂p` fingerprint
+weights are that on-chain *leak* — evidence an analyst reads directly from the graph, which *reduces*
+the auxiliary information an adversary must otherwise supply, not a bound the adversary must overcome.
+The lower bound on that auxiliary information is set instead by the *residual ambiguity* — the
+interpretations that survive the leak — and how far to trust that floor against a given threat model
+(how much auxiliary information is really available) is an irreducibly subjective discount the user
+must apply.
 
 The common-input-ownership heuristic clusters all inputs of a transaction as one
 entity. Collaborative transactions that deliberately merge unrelated parties violate it,
@@ -107,7 +129,7 @@ encoding, the change relations, and a block-feerate broadcast-time axis): the 16
 axes calibrated on the whole-chain BigQuery sample, and 7 on mempool samples (5 witness + OP_RETURN +
 broadcast-time; §5).
 
-Bits are measured on an **unbiased** mainnet sample (§5). Representative
+Bits are estimated from an **unbiased** mainnet sample (§5). Representative
 values (bits per matching value; higher = rarer = stronger link):
 
 | Axis | value | bits/match |
@@ -154,8 +176,8 @@ until a collaborative transaction connects it to the rest of the graph.
 
 Evidence is a signed weight-of-evidence in bits. For a value of frequency `p`, a match
 contributes `-log₂p` toward "same wallet"; a mismatch contributes a negative penalty
-(`Combiner`, Fellegi–Sunter). Per co-spent pair the fingerprint score, the amount-structure weight
-(`amount_refuse_weight`), and the Narayanan–Shmatikov **cluster-level** counterparty-overlap weight
+(`Combiner`, Fellegi–Sunter). Per co-spent pair the fingerprint score, the amount-structure weights
+(the 2-in/2-out roundness `amount_refuse_weight` and the coinjoin de-mix refuse `amount_refuse_demix`), and the Narayanan–Shmatikov **cluster-level** counterparty-overlap weight
 (`cluster_topology_weight` — the rarity-weighted overlap of two clusters' neighbourhoods,
 `wt = 1/log|supp|`, *not* a per-pair term) are summed, and the partition is refined by
 `cluster_refined`: a union-find that both merges *and* refuses (the refinement lattice, going down
@@ -187,7 +209,7 @@ Naive sampling of recent block tops is fee-biased. We first de-biased via mempoo
 definitively on a **uniform random sample of the whole chain via Google BigQuery's public
 Bitcoin dataset** (`results/RESULTS-bigquery.txt`, `bigquery/sample.sql` — no archival node; the
 query exports transactions in the pipeline's JSON schema so the same extractors run at
-scale). **The 16 structural axes are measured on a ~105,000-tx uniform sample across the whole chain**; the
+scale). **The 16 structural axes are estimated from a ~105,000-tx uniform sample across the whole chain**; the
 witness axes (low-R, SIGHASH, pubkey compression, multisig, nested segwit) *and OP_RETURN* are measured on
 a ~3,500-tx mempool sample, since BigQuery's schema carries no witness data (and OP_RETURN is degenerate
 in the whole-chain export — all-`none`, 0 bits — so its 4.00 bits come from the mempool sample too).
@@ -290,14 +312,17 @@ This is an *existence* demonstration on one merged transaction, not a rate acros
 — but it instantiates the thesis on real data: two independent signals fuse and agree to
 re-partition the merge.
 
-**Graph-level anonymity metric (`results/RESULTS-entropy.md`).** We quantify the effect with the
-entropy of the clustering (`H = −Σ (n_i/N)·log2(n_i/N)` bits; effective anonymity-set *size*
-`2^H`). The metric is anonymity-set *size* — which assumes a uniform distribution — and entropy is its
-generalization to the non-uniform case; the largest-cluster fraction is used as a supercluster
-*rejection* signal (a supercluster argues *against* a clustering, never *for* privacy). On the real
+**Clustering-overcount diagnostic (`results/RESULTS-entropy.md`).** We quantify the effect as a
+*relative* diagnostic — the entropy of the clustering *partition* (`H = −Σ (n_i/N)·log2(n_i/N)` bits;
+`2^H`) read only as the ratio between the naive and fused clusterings. This is **not** an absolute
+"bits of anonymity" of the transaction: partition entropy is a property of a clustering, whereas the
+intrinsic anonymity of a payment — its interpretations under no auxiliary information — is the separate
+path-counting / k-route estimate (§9), which this figure does not compute. The largest-cluster fraction
+is used as a supercluster *rejection* signal (a supercluster argues *against* a clustering, never *for*
+privacy). On the real
 **depth-6 ancestry graph of `931d6627` (19 coins)**:
 
-| clustering | eff. anon-set size | largest cluster |
+| clustering | eff. cluster count (2^H) | largest cluster |
 |---|---|---|
 | union-find (BlockSci) | 13.8 | 16% |
 | fingerprint-aware | **3.7** | 53% |
@@ -402,10 +427,15 @@ delta even flips sign across cache samples), larger in magnitude for the *more* 
 axis — so the model correctly leaves both unscored (`results/RESULTS-catalog-axes.md`).
 
 **Deliberately out of scope (separate tracks, not part of the chain-observable fingerprint checklist):**
-relay / network-timing fingerprints, JSON/HTTP serialization. (The one timing signal we *do*
-measure is the **block-feerate broadcast-time** estimate — a bound read from on-chain feerate
-ordering, not network relay — as the `locktime_vs_broadcast` axis; `results/RESULTS-broadcast.md`.) The graph-level entropy / entropist
-metric is **delivered** (§6, `decluster/graph_metric.py`), and the community-structure premise
+relay / network-timing fingerprints, JSON/HTTP serialization, and — most consequentially — the
+**provenance / "deep-feature" channel**. The 23 axes here are all *low-dimensional* construction tells
+(nSequence, ordering, low-R, …), which standardizing construction can drive toward zero; the
+high-dimensional provenance features (where a coin came from — its ancestry signature) are a distinct
+and stronger attack surface, the origin of the sparse-high-dimension curse of dimensionality, that this
+measurement does not cover. (The one timing signal we *do* measure is the **block-feerate
+broadcast-time** estimate — a bound read from on-chain feerate ordering, not network relay — as the
+`locktime_vs_broadcast` axis; `results/RESULTS-broadcast.md`.) The relative clustering-overcount
+diagnostic is **delivered** (§6, `decluster/graph_metric.py`), and the community-structure premise
 (Narayanan–Shmatikov) is now **measured on a real slice** (§6, `decluster/graph_deanon.py`, AUC
 0.95); the full seed-and-extend attack at chain scale still needs adjacency infra + labels.
 These are named so absence is explicit, not hidden.
@@ -535,6 +565,19 @@ is, inverted, a bit a wallet must avoid emitting. The offensive engine is the ca
 instrument for a defensive **cost function** — the bridge to collaborative multi-party
 transactions where privacy can be *quantified and designed for* rather than hoped for.
 
+**Two halves, one boundary.** What this repository delivers is the *measurement* half — an
+evidence-measurement instrument (fingerprint extraction + decluster + record-linkage/ML) whose natural
+scope is privacy *research*: analyzing and sharing findings, or explorer-style analyses. Whole-graph
+analysis carries heavy data-trust and modeling assumptions, and taint or identifiability scores are a
+poor basis for coin selection — discriminating against coins fights the fungibility and the
+cost-function *monotonicity* a coordination protocol needs for stable coalition formation. The
+*actionable* half a client uses to choose among construction proposals is a distinct, still-to-be-built
+estimator: an intrinsic "privacy of a transaction" from **path counting / k-route flow** over the
+transaction graph (the loose trait), assuming no auxiliary information, into which the subset-sum
+density enters strictly as a *cut* — pruning infeasible input→output edges so paths are not overcounted
+— never as a positive score. It can be estimated rather than counted exactly, and picks the proposal
+that improves connectivity. It is a separate project, and the natural continuation of this one.
+
 What remains splits into one item that is only scale and several that are separate research.
 
 **Only scale — the whole-chain rate.** The method is validated (§5/§6); it does not yet
@@ -557,10 +600,15 @@ embeddings) and the independent entity labels the co-spend heuristic cannot supp
 (bootstrapped from the known-entity catalog, `catalog/known-entities.md`); second, the
 construction-side **cost function** — feeding the measured bits back so a wallet shapes its
 own transactions to avoid these tells, the defensive counterpart and a project in its own right;
-third, generalizing the amount channel (§2) beyond the 2-in/2-out roundness test to the
-**subset-sum density** of the implied instance — a *dense* target value is equally linked to either
-owner, while one that *stands out* is attackable (e.g. by linear programming) — whose density engine
-is the separate `dense-subset-sum` crate.
+third, generalizing the amount channel (§2) beyond the 2-in/2-out roundness test — the
+current amount channel is the coinjoin de-mix (`input = mix + change − fee`, `decluster/coinjoin_demix.py`),
+whose refuse verdict (`amount_refuse_demix`) fuses with the fingerprint channel in the same engine. On a
+real JoinMarket coinjoin (11 participants) it recovers **8 of the makers** uniquely, with maker fees
+matching the reference tool (`examples/coinjoin_demix_demo.py`, `results/RESULTS-subtx-demix.md`). The
+de-mix does not false-fire on ordinary payments, which carry no mix+change+fee structure. Dense
+coinjoins (Wasabi 2) are amount-private: all 30 real Wasabi 2 coinjoins in the labelled set recover 0
+participants, so there the fused decision is carried by the fingerprint and cluster-level topology
+channels — the intended, decidability-dependent behaviour.
 
 The three method directions the motivating comment raised are all delivered and reported in §5: tuning
 the per-axis disagreement weights (`results/RESULTS-em-m.md`); the robustness of the verdict to those
