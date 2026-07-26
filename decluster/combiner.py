@@ -23,7 +23,9 @@ def fs_score(axes, txA, txB, c, floor_n, explain=False):
         if abstain(va, vb):
             rows.append((name, va, vb, None)); continue
         if va == vb:
-            w = -math.log2(p.get(va, 1.0 / floor_n))
+            if va not in p:                     # value never measured -> rarity unknown, not evidence
+                rows.append((name, va, vb, None)); continue   # (crediting -log2(1/floor_n) would forge a match)
+            w = -math.log2(p[va])
         else:
             cj = c[name] if isinstance(c, dict) else c
             w = min(0.0, math.log2((1 - cj) / max(1 - collision, 1e-6)))

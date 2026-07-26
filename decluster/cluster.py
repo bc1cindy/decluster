@@ -184,13 +184,15 @@ def cluster_refined(nodes, combiner, cospend_prior=COSPEND_PRIOR, link_above=4.0
     ev = {}                                     # (t, fp, amt) per pair: fp is a pair property (scored
     for a, b, t in _cospent_pairs(nodes):       # once); amt kept from the most-refuting co-spend of the pair
         k = (a, b) if a <= b else (b, a)
-        # amount channel, mode 1 of 2 (refuse-only): structural roundness re-partition. Mode 2 is the
-        # denomination de-mix (`subsetsum=`, below) — two variants of the one amount refuse channel.
-        amt = amount_refuse_weight(t, a, b) if amount else 0.0
-        if k not in ev:
-            ev[k] = (t, combiner.score(fetch_tx(a), fetch_tx(b)), amt)
-        elif amt < ev[k][2]:
-            ev[k] = (t, ev[k][1], amt)
+        fp = ev[k][1] if k in ev else combiner.score(fetch_tx(a), fetch_tx(b))
+        # amount channel, mode 1 of 2 (refuse-only): structural roundness re-partition. Roundness is a
+        # heuristic (paper §2), not proof, so it only refuses a co-spend the fingerprint ALSO disagrees
+        # on (fp < 0) — it corroborates, never splits a benign single-owner 2-in/2-out round payment on
+        # its own; the fingerprint-silent case falls to the topology control (§8). Mode 2 is the
+        # denomination de-mix (`subsetsum=`, below), which carries its own uniqueness guard.
+        amt = amount_refuse_weight(t, a, b) if (amount and fp < 0) else 0.0
+        if k not in ev or amt < ev[k][2]:
+            ev[k] = (t, fp, amt)
     base = {k: cospend_prior + fp + amt for k, (t, fp, amt) in ev.items()}
     if subsetsum:
         resolve = _ss_fn

@@ -14,7 +14,11 @@ On-chain Bitcoin privacy is an emergent property of the **transaction graph**, n
 any single transaction. **Where the amount structure is decidable** — a sparse subset-sum
 instance, or a plausible round partition — the **primary** de-anonymization signal is not a
 wallet-software fingerprint but the **amount structure** — the amounts in use are a fingerprint of
-their own kind. A transaction that merges unrelated parties can be re-partitioned into per-owner
+their own kind. *This primacy is regime-scoped:* in general the amount channel is the **most
+defeatable** layer — net-settlement and deliberately underdetermined values silence it — and the
+transaction **graph** is primary; following the cited framework (`tx-graph-anonymity-sets`, §05) we
+treat the amount channel as *embedded within* the graph model, decisive only where a plausible
+partition survives. A transaction that merges unrelated parties can be re-partitioned into per-owner
 subtransactions by subtracting a contributed input from an output and testing whether the implied
 payment "makes sense" (a round number, under the unnecessary-input heuristic), or, for a general
 coinjoin, by de-mixing each participant's input against the mix denomination and their change output
@@ -33,8 +37,8 @@ chain-observable transaction-construction surface, calibrated on unbiased real-c
 samples — 16 structural axes on a whole-chain sample, and 7 on mempool samples (5 witness + OP_RETURN +
 a block-feerate broadcast-time axis) — anchored to chain-proven examples) and, on a real mainnet
 merged transaction whose correct owner-partition is known, show the intended false merge
-is **refused** by the amount structure alone and **again** by the fingerprints — the two
-signals fuse and agree. We show that a merge's ~1.6 bits of structural ambiguity cannot
+is re-partitioned by the amount structure and **again** by the fingerprints — the two
+signals fuse and agree (the engine's standalone refuse is corroboration-gated; §4/§8). We show that a merge's ~1.6 bits of structural ambiguity cannot
 survive the identifying structure an established cluster carries — measured at a median
 ~33 bits per cluster on a real slice, a lower bound on the >100 whole-chain figure — and that
 fingerprint uniformity is necessary but far from sufficient for collaborative-transaction privacy.
@@ -95,7 +99,7 @@ measurement half of a construction-side cost function for collaborative transact
 A merged transaction induces a false common-input link between a receiver and a sender.
 Three facts defeat it, in order of importance:
 
-0. **The amount structure (primary).** The receiver contributes an input that is added to
+0. **The amount structure (primary in the decidable regime).** The receiver contributes an input that is added to
    the payment output. An analyst subtracts a candidate contributed input from an output
    and reads off the implied payment; if that payment is a plausible (round) number under
    the unnecessary-input heuristic, the partition is likely. For a 2-in/2-out merge the
@@ -105,7 +109,9 @@ Three facts defeat it, in order of importance:
    a proof:* it needs a value model (a round number in fiat at the time, not just in sats),
    and a market-priced payment may carry no round-number signal at all — so the amount
    channel is strong where a plausible round partition exists (as in §6) and silent where
-   it does not.
+   it does not. In the fused engine this round-ness re-partition **corroborates** a fingerprint
+   disagreement rather than refusing a co-spend on its own (§4, §8): it identifies the likely
+   split, but the standalone refuse is gated on the fingerprint also disagreeing.
 1. **The backward channel (fingerprints).** A collaborative construction can coerce
    intra-transaction fingerprint uniformity (e.g. the receiver copies the sender's
    `nSequence`), but it cannot reach the *prior* transactions that created each input.
@@ -179,7 +185,9 @@ until a collaborative transaction connects it to the rest of the graph.
 Evidence is a signed weight-of-evidence in bits. For a value of frequency `p`, a match
 contributes `-log₂p` toward "same wallet"; a mismatch contributes a negative penalty
 (`Combiner`, Fellegi–Sunter). Per co-spent pair the fingerprint score, the amount-structure weights
-(the 2-in/2-out roundness `amount_refuse_weight` and the coinjoin de-mix refuse `amount_refuse_demix`), and the Narayanan–Shmatikov **cluster-level** counterparty-overlap weight
+(the 2-in/2-out roundness `amount_refuse_weight`, applied only when the fingerprint also disagrees —
+round-ness is a heuristic (§2), so it corroborates a refusal rather than forcing one; and the coinjoin
+de-mix refuse `amount_refuse_demix`, which carries its own uniqueness guard), and the Narayanan–Shmatikov **cluster-level** counterparty-overlap weight
 (`cluster_topology_weight` — the rarity-weighted overlap of two clusters' neighbourhoods,
 `wt = 1/log|supp|`, *not* a per-pair term) are summed, and the partition is refined by
 `cluster_refined`: a union-find that both merges *and* refuses (the refinement lattice, going down
@@ -296,17 +304,19 @@ wallet** — into one common-input group, so the correct owner-partition is know
 inferred. On its ancestry graph (7 coins; inputs 2000 sats sender, 5750 sats Cake
 receiver; outputs 791, 6750; fee 209):
 
-- **Amount alone (primary, `results/RESULTS-gap1.md`)** re-partitions it: `6750 − 5750 = 1000`
-  is a round payment, so the receiver is the Cake input and the sender is separate — at 1
-  bit ambiguity, resolved by round-ness, **before any fingerprint**.
+- **Amount analysis (primary in the decidable regime, `results/RESULTS-gap1.md`)** re-partitions it:
+  `6750 − 5750 = 1000` is a round payment, so the receiver is the Cake input and the sender is
+  separate — at 1 bit ambiguity, resolved by round-ness, **before any fingerprint**. (This is the
+  sub-transaction *analysis*; the engine's standalone refuse is corroboration-gated, below.)
 - **Union-find (BlockSci-style)** mis-merges {Cake `0a568e3a`, sender `91106666`} — the
   exact false link the merge intends.
 - **The engine (`cluster_refined`, `results/RESULTS-wp4.md`)** refuses that merge: the
   fingerprint evidence scores `−3.1 bits` (`max_ffffffff` vs `seq_0x01`), past the
   prototype's `−2.0` refuse threshold → the merge is re-partitioned, the sender isolated;
   and the fingerprint layer **adds** the links the co-spend missed (Cake lineage
-  `+10.2 bits`, sender funding chain `+5.4 bits` each). The amount channel refuses the same
-  merge independently (the round `1000`-sat re-partition above), so the two signals agree.
+  `+10.2 bits`, sender funding chain `+5.4 bits` each). The amount channel **corroborates** the same
+  split (the round `1000`-sat re-partition above; the fingerprint disagreement is what licenses its
+  refuse in the fused engine), so the two signals agree.
   Resulting clusters: `{sender}`, `{sender funding chain}`, `{Cake, lineage}` — the correct
   partition; union-find gave the wrong one.
 
@@ -519,8 +529,11 @@ window is revealed) over one-day clusters. A multi-epoch replication is future w
 - **Same-software false positives.** Fingerprints separate only *different* wallet software;
   two owners sharing a wallet, timezone, and fee policy emit matching fingerprints, so the
   fingerprint channel goes silent and cannot refuse merging their clusters in a shared
-  payjoin. The control then rests on the amount structure alone (~1.6 bits for 2-in/2-out) —
-  thin. The robust fix is to score graph topology as a quasi-identifier: even with identical
+  payjoin. The amount channel does **not** fill this gap: its round-ness refuse is gated on a
+  fingerprint disagreement (§4), which is exactly what is absent here, so a same-software merge is
+  not split on amounts — the flip side of the same gate that stops a benign single-owner round
+  2-in/2-out from being *falsely* split. The control rests instead on graph topology, scored as a
+  quasi-identifier: even with identical
   fingerprints, Alice's counterparties differ from Bob's, and few such distinguishing
   relationships suffice (Narayanan–Shmatikov). We *measure* that structure separates owners
   (§6, AUC 0.95). The engine *scores* it as a Fellegi–Sunter quasi-identifier
