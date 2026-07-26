@@ -45,13 +45,12 @@ class Combiner:
     @classmethod
     def from_library(cls, consistency=0.95):
         """Build from the measured library bits (library.py) rather than a live sample."""
-        from .library import _BY
+        from .library import _BY, p_from_bits
         self = cls.__new__(cls)
         self.c = consistency
         self.axes = []
         for name, fn in AXES.items():
-            bits = (_BY.get(_LIB_AXIS[name]) or {}).get("bits") or {}
-            p = {v: 2 ** -b for v, b in bits.items() if b > 0}   # drop 0-bit abstain values
+            p = p_from_bits((_BY.get(_LIB_AXIS[name]) or {}).get("bits"))
             if name == "locktime":   # locktime_policy emits zero/height; fold all non-zero into height
                 ph = sum(pv for v, pv in p.items() if v != "zero")
                 p = {"zero": p.get("zero", 0.5), "height": ph or 0.5}
@@ -62,9 +61,3 @@ class Combiner:
 
     def score(self, txA, txB, explain=False):
         return fs_score(self.axes, txA, txB, self.c, self.floor_n, explain)
-
-def verdict(bits):
-    if bits >= 3:  return f"SAME wallet (strong, {bits:+.1f} bits)"
-    if bits > 0:   return f"same (weak, {bits:+.1f} bits)"
-    if bits > -3:  return f"different (weak, {bits:+.1f} bits)"
-    return f"DIFFERENT wallets (strong, {bits:+.1f} bits)"

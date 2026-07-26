@@ -14,6 +14,7 @@ See results/RESULTS-change-id.md."""
 from collections import Counter
 from .extractors import x_nsequence, x_version, locktime_policy
 from .change_gt import input_addrs, out_addr
+from .change_validate import axis_rates
 
 def _addr_type(addr):
     """derive the script type from a mainnet address prefix/length (so AFC works even when the slice
@@ -109,15 +110,7 @@ def find_change(tx, uf, tfc, afc, cidx, get_tx, get_outspends, use_afc=True):
 def cluster_rates(gt, uf, tfc, afc, cidx, get_tx, get_outspends, use_afc=True):
     """(tpr, fpr, coverage) of cluster-level findNext over GT. TP: predict == change label;
     FP: predict == spend. Denominator = len(gt)."""
-    n = len(gt) or 1
-    tp = fp = cov = 0
-    for rec in gt:
-        v = find_change(rec["tx"], uf, tfc, afc, cidx, get_tx, get_outspends, use_afc)
-        if v is None: continue
-        cov += 1
-        if v == rec["change_index"]: tp += 1
-        else: fp += 1
-    return (tp / n, fp / n, cov / n)
+    return axis_rates(gt, lambda rec: find_change(rec["tx"], uf, tfc, afc, cidx, get_tx, get_outspends, use_afc))
 
 if __name__ == "__main__":
     import sys

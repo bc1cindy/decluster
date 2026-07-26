@@ -26,8 +26,8 @@ in each wallet's standard tx builder — that is what this matrix audits.
   grouping. 9/10 axis groupings held; **axis 4 was refuted and corrected below**.
 - **Most cells are code-PREDICTED; Example 3 is now chain-PROVEN.** Full txids
   for the three catalog examples (the open item) are:
-  - Ex.1 (Ashigaru, low-R): `8dba6657…` — **UNVERIFIABLE: 404 on mainnet** (WP2, 2026-07-14). This txid was never actually decoded; it was a placeholder. See replacement below.
-  - Ex.2 (PDK demo, sighash): `3c5436f1…` — **UNVERIFIABLE: 404 on mainnet** (WP2). Placeholder, not a real decoded tx.
+  - Ex.1 (Ashigaru, low-R): `8dba6657…` — a **testnet** tx in the source write-up (resolves on testnet, 404 on mainnet), decoded there but not on our mainnet sample. Re-anchored to a mainnet example below (WP2, 2026-07-14).
+  - Ex.2 (PDK demo, sighash): `3c5436f1…` — a **Mutinynet/signet** tx in the source write-up (404 on mainnet). Re-anchored to a mainnet example below (WP2).
   - Ex.3 (Cake→BBM merged transaction): `8fb80573d8871efee060a34dcb97fd12d5229444b7262b26358cd84912a04a75`
     · prior in_0 `9ecd77ab2115f12fd6d5ff46271f0a5e04ed03b267d6431f7b0991e0f0e23ef9`
     · prior in_1 `3fbe17132477ae6e38709b5e8e12ff5054fc66b4dd03568fea92a7a5bac18a84`
@@ -42,8 +42,8 @@ in each wallet's standard tx builder — that is what this matrix audits.
     `version=1` with a `v1_p2tr` input — i.e. **not** itself a BBM/BDK tx
     (BDK = v2/p2wpkh). Its all-`MAX` seq is *consistent with* the receiver, not
     proof BBM built it. The writeup's "consistent with BBM" attribution is loose.
-  - **Ex.1/Ex.2 REPLACED with real chain-proven examples (WP2, 2026-07-14).** The
-    catalog's original Ex.1/Ex.2 txids 404 on mainnet (placeholders). Instead, the
+  - **Ex.1/Ex.2 RE-ANCHORED to mainnet chain-proven examples (WP2, 2026-07-14).** The
+    source Ex.1/Ex.2 txids are testnet/signet transactions that 404 on mainnet. Instead, the
     `x_low_r` and `x_sighash` extractors were run over a real unbiased mainnet sample
     (300 txs) and real example txids surfaced and decoded:
     - **low-R (axis 2):** `dce69633124d7a3240cc76de5fcc947881f6a140d6d2d0b009f70938136c6bb9`

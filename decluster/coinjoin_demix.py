@@ -1,7 +1,9 @@
 """Coinjoin de-mix: assign inputs to participants by the fixed-denomination identity
-`input = mix + change - fee`. Recovers single-input makers of a JoinMarket/Wasabi coinjoin; abstains
-on ordinary and batch payments (no mix denomination, or no unique match). Refuse-only signal for the
-clusterer via `subsetsum.amount_refuse_demix`."""
+`input = mix + change - fee` (the maker earns the fee, so its outputs exceed its input — the
+JoinMarket case). Recovers single-input makers of such a coinjoin; abstains on ordinary and batch
+payments (no mix denomination, or no unique match) and on dense equal-amount coinjoins (e.g.
+Wasabi 2), which are amount-private. Refuse-only signal for the clusterer via
+`subsetsum.amount_refuse_demix`."""
 from collections import Counter
 from functools import lru_cache
 

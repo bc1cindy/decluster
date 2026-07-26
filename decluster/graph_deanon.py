@@ -1,5 +1,5 @@
 """Narayanan-Shmatikov probe: does graph structure predict same-owner beyond co-spend?
-Same-owner labels = transitive common-input clusters — a near-certain *heuristic*, not ground truth
+Same-owner labels = transitive common-input clusters — a near-certain *heuristic*, not an independent same-owner oracle
 (a collaborative tx in the slice would be a false merge). Held-out positives = same-owner pairs
 NOT directly co-spent, scored by common neighbors. `evaluate` runs the 1-hop probe;
 `analyze` sweeps graph depth k (hubs excluded) to show structure is deeper under churn.
@@ -51,6 +51,16 @@ def auc(pos_scores, neg_scores, seed=0):
         p, n = rng.choice(pos_scores), rng.choice(neg_scores)
         wins += 1.0 if p > n else (0.5 if p == n else 0.0)
     return wins / trials
+
+
+def shuffle_auc(pos_scores, neg_scores, seed=0):
+    """Shuffle-null control: randomly flip each aligned (pos, neg) pair's label, then AUC -> ~0.5."""
+    rng = random.Random(seed)
+    spos, sneg = [], []
+    for p, ng in zip(pos_scores, neg_scores):
+        if rng.random() < 0.5: spos.append(p); sneg.append(ng)
+        else: spos.append(ng); sneg.append(p)
+    return auc(spos, sneg, seed)
 
 
 def _pairs(clusters, neigh, cospent, rng, cap=5000):

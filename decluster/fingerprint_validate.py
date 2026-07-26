@@ -2,7 +2,7 @@
 (address-reuse label) from random pairs? Scores pairs with LibraryScorer over all library axes
 and reports AUC. Offline."""
 import random
-from .graph_deanon import auc
+from .graph_deanon import auc, shuffle_auc
 from .combiner import fs_score
 from .change_gt import input_addrs
 
@@ -35,15 +35,10 @@ def evaluate(txs, scorer, cap=4000, seed=0):
     pos_pairs, neg_pairs = reuse_pairs(txs, cap, seed)
     pos = [scorer.score(a, b) for a, b in pos_pairs]
     neg = [scorer.score(a, b) for a, b in neg_pairs]
-    rng = random.Random(seed)
-    spos, sneg = [], []
-    for p, ng in zip(pos, neg):
-        if rng.random() < 0.5: spos.append(p); sneg.append(ng)
-        else: spos.append(ng); sneg.append(p)
     return {"n_pos": len(pos), "n_neg": len(neg),
             "pos_mean": (sum(pos) / len(pos)) if pos else None,
             "neg_mean": (sum(neg) / len(neg)) if neg else None,
-            "auc": auc(pos, neg, seed), "shuffle_auc": auc(spos, sneg, seed)}
+            "auc": auc(pos, neg, seed), "shuffle_auc": shuffle_auc(pos, neg, seed)}
 
 
 class LibraryScorer:
@@ -58,7 +53,7 @@ class LibraryScorer:
             fn = getattr(extractors, a["extractor"], None) or getattr(engine, a["extractor"], None)
             if fn is None:
                 continue
-            p = {v: 2 ** -b for v, b in (a.get("bits") or {}).items() if b > 0}
+            p = library.p_from_bits(a.get("bits"))
             if a["axis"] == "locktime":
                 # locktime_class emits a bare "height" bucket offline; fold the height_* sub-classes
                 # into it; "zero" and "timestamp" are emitted as-is.

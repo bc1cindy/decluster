@@ -1,7 +1,9 @@
-"""Structural layer — amount inference (subtransaction/UIH) that re-partitions a 2-in/2-out
-merged transaction. This is the PRIMARY signal; the fingerprint corroborates. In
-2-in/2-out the per-owner balance is automatic, so the discriminator is the roundness of the
-implied payment (receiver's output minus the input it contributed)."""
+"""Amount channel — sub-transaction re-partition of a 2-in/2-out merged transaction by the
+roundness of the implied payment (an output minus the input it contributed). Primary only in the
+*decidable* regime (a plausible round partition); silenced by dense or deliberately
+underdetermined constructions, where the fingerprint and graph-topology channels carry the weight.
+Refuse-only: it can cut a co-spend from the graph, never add a positive same-owner link. Roundness
+is a heuristic, not proof. ("Structural" is reserved for the graph/provenance attack, not this.)"""
 import math
 
 def roundness(x):

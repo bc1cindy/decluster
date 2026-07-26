@@ -44,10 +44,6 @@ def x_uih(tx):
     if len(in_vals) < 2 or not out_vals: return "none"
     return "uih1" if max(in_vals) >= max(out_vals) else "none"
 
-def features(tx):
-    return {"shape": x_io_shape(tx), "nseq": x_nsequence(tx), "in_order": x_input_order(tx),
-            "seqs": [hex(v) for v in seqs(tx)]}
-
 def _witness_sig(vin):
     w = vin.get("witness") or []
     return w[0] if w else None

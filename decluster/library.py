@@ -97,3 +97,8 @@ def bits(axis, value):
     a = _BY.get(axis)
     if not a or not a.get("bits"): return None
     return a["bits"].get(value)
+
+def p_from_bits(bits):
+    """{value: p} from a measured-bits dict: p = 2**-bits, dropping 0-bit (abstain) values.
+    The value-frequency prior shared by the F-S axis builders (combiner, LibraryScorer)."""
+    return {v: 2 ** -b for v, b in (bits or {}).items() if b > 0}

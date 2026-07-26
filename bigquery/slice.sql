@@ -1,7 +1,7 @@
 -- Contiguous time-window slice -> the fingerprint pipeline's JSON schema, WITH forward-spend links.
 -- Unlike sample.sql (uniform TABLESAMPLE, for frequency calibration), this exports EVERY tx in a
 -- window so (a) multi-input clusters and (b) each output's spending tx are IN-SAMPLE. That enables
--- Möser-Narayanan change ground truth: change = the output whose address clusters (multi-input) with
+-- Möser-Narayanan change labels: change = the output whose address clusters (multi-input) with
 -- the inputs, revealed by a co-spend that lands inside the slice.
 --
 -- LEAN projection: only the columns change_slice's validation needs — version, locktime, input
@@ -17,7 +17,7 @@
 -- Export as NEWLINE-DELIMITED JSON (or a JSON array) to slice.json, then:
 --   python3 -m decluster.change_slice slice.json
 --
--- Honest bias: only change spent WITHIN the window is revealed -> ground truth skews to fast-spending
+-- Honest bias: only change spent WITHIN the window is revealed -> the same-owner labels skew to fast-spending
 -- wallets (services, peel chains). Widen the window to reduce it.
 
 SELECT TO_JSON_STRING(STRUCT(

@@ -1,5 +1,5 @@
 -- Cluster temporal fingerprint calibration (broadcast.py: active_hours / schedule_distance).
--- Ground truth = address reuse: transactions spending the SAME input address are the same
+-- Same-owner labels = address reuse: transactions spending the SAME input address are the same
 -- owner (near-certain). For each input address reused >= 8 times over a WIDE window we collect
 -- its txs' unix timestamps -> the owner's hour-of-day activity schedule.
 --

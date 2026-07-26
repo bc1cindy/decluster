@@ -5,6 +5,7 @@ what breaks the circularity that invalidates cluster findNext against an M&N co-
 from itertools import combinations
 from .change_gt import is_candidate, input_addrs, out_addr
 from .change_cluster import _addr_type
+from .change_validate import axis_rates
 
 def label_optimal_change(tx):
     """Optimal-change / UIH: in a >=2-input 2-output tx, the output smaller than the smallest input
@@ -68,18 +69,7 @@ WITHIN_TX = {"round_number": _change_index, "address_reuse": label_address_reuse
 def within_tx_rates(gt, preds=WITHIN_TX):
     """{name: (tpr, fpr, coverage)} of each within-tx predictor vs the special-case label. TP: pred
     == label; FP: pred == the other (spend) output. Denominator = len(gt)."""
-    n = len(gt) or 1
-    out = {}
-    for name, fn in preds.items():
-        tp = fp = cov = 0
-        for rec in gt:
-            v = fn(rec["tx"])
-            if v is None: continue
-            cov += 1
-            if v == rec["change_index"]: tp += 1
-            else: fp += 1
-        out[name] = (tp / n, fp / n, cov / n)
-    return out
+    return {name: axis_rates(gt, lambda rec, fn=fn: fn(rec["tx"])) for name, fn in preds.items()}
 
 def label_agreement(gt_a, gt_b):
     """Over transactions labeled by BOTH gts (keyed by txid), agreement/disagreement of the change

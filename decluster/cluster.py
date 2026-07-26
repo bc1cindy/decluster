@@ -1,7 +1,7 @@
 """Layer 4 — graph-level clustering: single-heuristic union-find (common-input-ownership)
 collapse vs. fingerprint-aware clustering."""
 from .fetch import fetch_tx
-from .subtransaction import subtransactions, partition_signal, norm
+from .subtransaction import subtransactions, norm
 from .unionfind import UF
 
 def _cospent_pairs(nodes):
@@ -32,9 +32,13 @@ def cluster_from_index(nodes, lookup):
     return list(groups.values())
 
 def amount_refuse_weight(t, a, b):
-    """structural amount weight (<=0): if t's best partition splits inputs a,b (different
-    owners), returns -(roundness margin); 0 if out of scope / no split. A prior, not
-    calibrated bits."""
+    """Amount refuse weight (<=0) for a 2-in/2-out co-spend of inputs a,b: returns
+    -(roundness margin) = -(best re-partition's roundness minus the runner-up's). A soft refuse
+    that grows only when one round re-partition is distinctly more plausible than the alternatives,
+    and is ~0 when none stands out — amounts alone do not separate an ordinary round payment from a
+    merge. Roundness is a heuristic, not proof (paper §2): refuse-only (it can cut a co-spend from
+    the graph, never add a positive same-owner term), meant to be corroborated by the fingerprint
+    and topology channels. 0 out of scope (not a 2-in/2-out co-spend of {a,b}, or no partition)."""
     tx = norm(fetch_tx(t))
     ins = [v["txid"] for v in tx["vin"]]
     if set(ins) != {a, b}:
@@ -42,11 +46,7 @@ def amount_refuse_weight(t, a, b):
     ranked, _amb = subtransactions(tx)
     if not ranked:
         return 0.0
-    sig = partition_signal(tx)
-    splits = any({x, y} == {a, b} for (x, y) in sig["refuse"])
-    if not splits:
-        return 0.0
-    margin = ranked[0][1] - (ranked[1][1] if len(ranked) > 1 else 0)  # winner - runner-up roundness
+    margin = ranked[0][1] - (ranked[1][1] if len(ranked) > 1 else 0)  # best - runner-up roundness
     return -float(margin)
 
 def counterparty_bits(neigh):

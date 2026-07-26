@@ -1,7 +1,11 @@
-"""Ancestry-entropy engine (exact absorber-model rung). A backward provenance walk over the tx
-graph, weighted by the exact subset-sum link matrix, solved as an absorbing Markov chain. Every
-number is a lower bound on the intrinsic graph entropy of the payment's provenance under no
-auxiliary information — NOT a privacy score; subjectively discounted by the reader's threat model."""
+"""Ancestry-entropy engine (Laplacian-approximation rung). A backward provenance walk over the tx
+graph, weighted by the subset-sum link matrix and solved as an absorbing Markov chain: the coin's
+absorption distribution is the harmonic measure of the walk — the solution of the discrete Laplace
+system (I − Q) H = R with absorbing boundary. This is a Laplacian *approximation* of the provenance
+stationary distribution, not an exact or Monte-Carlo computation of it (the link-probability-only
+edge weighting is provisional; see build_extended_graph). Every number is a lower bound on the
+intrinsic graph entropy of the payment's provenance under no auxiliary information — NOT a privacy
+score; subjectively discounted by the reader's threat model."""
 import math
 
 

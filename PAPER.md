@@ -156,10 +156,12 @@ this ordering axis validates as **real but low-coverage** — it resolves fewer 
 round-number baseline at comparable precision; §7.)
 
 **Honesty note.** Two catalog example transactions (Ex.1 low-R, Ex.2 SIGHASH) were
-originally listed with txids that do not resolve on mainnet — placeholders, never
-decoded. We replaced them with real example transactions surfaced and decoded from the
-unbiased sample (`dce69633…` for low-R, `0361ae98…` for taproot SIGHASH). Only the Cake
-group-C nSequence bug (`8fb80573…`) was independently chain-proven earlier.
+originally cited from the source write-up as a testnet tx (`8dba6657…`, resolves on
+testnet) and a Mutinynet/signet tx (`3c5436f1…`) — real, decoded transactions there, but
+not on mainnet, so they do not resolve against our mainnet calibration. We re-anchored them
+to mainnet example transactions surfaced and decoded from the unbiased sample (`dce69633…`
+for low-R, `0361ae98…` for taproot SIGHASH). Only the Cake group-C nSequence bug
+(`8fb80573…`) was independently chain-proven on mainnet earlier.
 
 ## 4. The engine
 
@@ -625,6 +627,7 @@ only), so the unsupervised EM/Splink and Bayesian paths are the ones pursued her
 ## 10. Related work
 
 - <sub>**Yuval Kogman (nothingmuch), [*Anonymity Sets on the Transaction Graph*](https://github.com/nothingmuch/tx-graph-anonymity-sets)**: the theoretical framework this paper calibrates empirically — entropic anonymity sets (§6), the sub-transaction and absorber models (§2/§6), and the graph-as-quasi-identifiers argument the topology term realizes (§8). We measure and implement what it models.</sub>
+- <sub>**Yuval Kogman (nothingmuch), [*Collaborative Transaction Privacy*](https://gist.github.com/nothingmuch/d84ba390d89b5b08897af2d95009c2a1)**: the failure-mode taxonomy this paper calibrates against — CIOH violation by collaborative transactions, the NS1R / NSNR / net-settlement progression, and the robust-connectivity / own-origin / deep-feature program (§2/§8/§9). It frames the amount channel as the *most defeatable* layer — net-settlement with cycles and deliberately underdetermined values silence it — which is why our *primary* amount signal is scoped to the decidable regime (§2), and the provenance / deep-feature channel it develops is exactly the one §7 defers as out of scope.</sub>
 - <sub>**Armin Sabouri, [*How Fingerprints Damage PayJoin Privacy*](https://github.com/payjoin/research-docs/blob/main/fingerprints/payjoin.md)** (payjoin/research-docs): the applied payjoin case for this program — it walks real payjoin transactions through the same construction tells this paper measures (low-R, SIGHASH serialization, nSequence, value-conservation/round-number, input ordering/locktime, coin-selection residuals), across intra- and inter-transaction layers, and concludes that "PayJoin's privacy extends only as far as the uniformity of the participating wallets." That is precisely the collaborative-transaction failure our engine quantifies: the merge is refused by the amount structure and again by the fingerprints (§2/§6), and the same per-axis bits, inverted, define the construction-side uniformity a payjoin must reach (§9).</sub>
 - <sub>**Cindy (bc1cindy)**, [*Tracking: chain-observable transaction-level fingerprinting*](https://github.com/payjoin/rust-payjoin/issues/1597) (payjoin/rust-payjoin #1597): the venue for this program and its review discussion — the tracking issue that scopes the fingerprint checklist (§7) this paper measures against.</sub>
 - <sub>**Maurer, Neudecker & Florian**, *Anonymous CoinJoin Transactions with Arbitrary Values* (2017): the **sub-transaction model** — a transaction with arbitrary amounts can be re-partitioned into the plausible original transactions, and their number and plausibility bound its anonymity. The origin of the amount-based re-partition we take as the *primary* signal (§2/§6).</sub>

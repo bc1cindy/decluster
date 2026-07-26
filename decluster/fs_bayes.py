@@ -5,12 +5,7 @@ shape; see results/RESULTS-bayes-vs-fs.md. NOTE: this is the axis-level F-S, not
 (which is value-specific)."""
 import math
 import random
-
-_EPS = 1e-6
-
-
-def _clamp(x, lo=_EPS, hi=1 - _EPS):
-    return lo if x < lo else hi if x > hi else x
+from .fs_em import _clamp    # shared clamp for the per-axis F-S probabilities
 
 
 def pair_probs(A, mask, m, u, lam):
