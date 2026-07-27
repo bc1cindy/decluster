@@ -14,8 +14,12 @@ def x_nsequence(tx):
     if all(v == 0xFFFFFFFF for v in s): return "max_ffffffff"
     return "mixed_other"
 
+def _txid_internal(t):                                  # BIP-69 orders by the prevout txid in internal (reversed) byte order, not display hex
+    try: return bytes.fromhex(t)[::-1]
+    except ValueError: return t.encode()                # non-hex synthetic ids (test fixtures): fall back to raw order
+
 def x_input_order(tx):
-    o = [(v["txid"], v["vout"]) for v in tx["vin"]]
+    o = [(_txid_internal(v["txid"]), v["vout"]) for v in tx["vin"]]
     n = len(o)
     if n == 1: return "single"
     if o != sorted(o): return "shuffle"                # not sorted -> not BIP-69 (reliable at any n)
@@ -26,10 +30,11 @@ def x_io_shape(tx): return f"{len(tx['vin'])}in-{len(tx['vout'])}out"
 def x_version(tx): return f"v{tx.get('version')}"
 
 def x_output_order(tx):
-    vals = [o["value"] for o in tx["vout"]]
-    n = len(vals)
+    o = [(v["value"], bytes.fromhex(v["scriptpubkey"]) if v.get("scriptpubkey") else b"")  # BIP-69: value ascending, then scriptPubKey byte order (breaks equal-value ties); falls back to value-only where raw spk is absent (e.g. the BigQuery export)
+         for v in tx["vout"]]
+    n = len(o)
     if n == 1: return "single"
-    if vals != sorted(vals): return "unsorted"          # not sorted -> reliable at any n
+    if o != sorted(o): return "unsorted"                # not sorted -> reliable at any n
     return "sorted_value" if n >= 4 else "small_n"       # sorted: only brands at n>=4; n<=3 is coincidental (1/n!)
 
 def x_change_spk_type(tx):

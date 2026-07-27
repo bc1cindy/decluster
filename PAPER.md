@@ -2,8 +2,9 @@
 
 *Every empirical number below is reproducible from this repository:
 `decluster/library.py` (measured bits), `results/RESULTS-bigquery.txt` (calibration on a
-~105k uniform whole-chain sample), `results/RESULTS-fingerprint-validation.md` (attribution AUC 0.933 on 165,832
-real txs), `results/RESULTS-graph-deanon.md` (structural de-anon across five eras), and
+~105k uniform whole-chain sample), `results/RESULTS-fingerprint-validation.md` (attribution AUC ≈0.93
+on 4,000 same-wallet + 4,000 random pairs drawn from a witness-bearing mainnet cache),
+`results/RESULTS-graph-deanon.md` (structural de-anon across five eras), and
 `results/RESULTS-wp4.md` (the same-owner-labelled case study). Scope: a fingerprint-aware
 clustering **method**, validated at mainnet scale without an archival node; the one thing
 left is a whole-chain **entity-reduction rate** (§9).*
@@ -11,14 +12,14 @@ left is a whole-chain **entity-reduction rate** (§9).*
 ## Abstract
 
 On-chain Bitcoin privacy is an emergent property of the **transaction graph**, not of
-any single transaction. **Where the amount structure is decidable** — a sparse subset-sum
-instance, or a plausible round partition — the **primary** de-anonymization signal is not a
-wallet-software fingerprint but the **amount structure** — the amounts in use are a fingerprint of
-their own kind. *This primacy is regime-scoped:* in general the amount channel is the **most
-defeatable** layer — net-settlement and deliberately underdetermined values silence it — and the
-transaction **graph** is primary; following the cited framework (`tx-graph-anonymity-sets`, §05) we
-treat the amount channel as *embedded within* the graph model, decisive only where a plausible
-partition survives. A transaction that merges unrelated parties can be re-partitioned into per-owner
+any single transaction. The transaction **graph is primary**: in general the amount channel is the
+**most defeatable** layer — net-settlement and deliberately underdetermined values silence it —
+and, following the cited framework (`tx-graph-anonymity-sets`, §05), we treat the amount channel as
+*embedded within* the graph model. Within that model there is one **regime-scoped exception**:
+**where the amount structure is decidable** — a sparse subset-sum instance, or a plausible round
+partition — the amounts become the *locally* decisive de-anonymization signal, ahead of any
+wallet-software fingerprint (the amounts in use are a fingerprint of their own kind), decisive only
+where a plausible partition survives. A transaction that merges unrelated parties can be re-partitioned into per-owner
 subtransactions by subtracting a contributed input from an output and testing whether the implied
 payment "makes sense" (a round number, under the unnecessary-input heuristic), or, for a general
 coinjoin, by de-mixing each participant's input against the mix denomination and their change output
@@ -26,7 +27,7 @@ coinjoin, by de-mixing each participant's input against the mix denomination and
 participants) the de-mix recovers 8 of the makers uniquely, with fees matching the reference tool.
 **Where the amounts are dense** — a well-mixed coinjoin, where many input→output mappings balance —
 the amount channel is silent and the wallet fingerprints and cluster-level graph structure carry the
-weight; all 30 real Wasabi 2 coinjoins in a labelled set recover 0 participants, so they are
+weight; the labelled real Wasabi 2 coinjoins recover 0 participants, so they are
 amount-private (`results/RESULTS-subtx-demix.md`). Wallet fingerprints are a **corroborating** layer
 on top of the decidable case. We present a probabilistic clustering framework that fuses the two — an
 **amount-based subtransaction re-partition** and a **fingerprint** weight-of-evidence in
@@ -161,6 +162,19 @@ the reliable n≥4 case, not a per-tx claim at small n. (As a *change* predictor
 this ordering axis validates as **real but low-coverage** — it resolves fewer cases than the
 round-number baseline at comparable precision; §7.)
 
+**BIP-69 byte-order correction.** BIP-69 orders inputs by the prevout txid in *internal* (reversed)
+byte order and outputs by value-then-scriptPubKey; the extractor now matches this
+(`x_input_order`, `x_output_order`). An earlier version sorted by the *display* txid hex, which
+agrees with the true order only ~1.5% of the time — so it was branding coincidentally
+display-sorted transactions rather than real BIP-69, measuring noise. Correcting it roughly halves
+the `bip69` incidence on the witness cache (0.95%→0.46%), i.e. the true tell is rarer (higher-bit)
+than the prior number, and leaves the attribution AUC unchanged within run-to-run variation (≈0.93→
+≈0.95). The `3.00`-bit weight above is calibrated on the pre-correction structural BigQuery sample;
+**re-deriving `input_order`'s bits on that sample with the corrected extractor is a pending
+follow-up** (the BigQuery structural sample is not reproduced offline, §5) — the local witness-cache
+frequency puts the corrected tell nearer 7–8 bits, so the current `3.00` is a conservative
+(under-weighting) placeholder, not an over-claim.
+
 **Honesty note.** Two catalog example transactions (Ex.1 low-R, Ex.2 SIGHASH) were
 originally cited from the source write-up as a testnet tx (`8dba6657…`, resolves on
 testnet) and a Mutinynet/signet tx (`3c5436f1…`) — real, decoded transactions there, but
@@ -198,6 +212,20 @@ stays one wallet, and an established cluster's bits dominate a lone refusal. `cl
 produces every partition figure; `amount=False` gives the fingerprint-only corroboration (§6). Only
 the partition results depend on the engine at all — the per-axis bits, attribution AUC, structural
 de-anon, and cluster-bits figures never call a clustering engine.
+
+**The engine's fingerprint score deliberately uses three axes, not all 23.** `cluster_refined`
+scores co-spent pairs on the three highest-entropy, least-correlated construction axes (nSequence,
+nLockTime policy, input ordering), *not* the full 23-axis library that drives the attribution AUC
+(§5). This is a design choice, not an oversight, and the distinction matters: the 23-axis score is
+an excellent *pairwise discriminator* but a poor *clustering driver* at the engine's thresholds,
+because summing agreement bits across many correlated low-entropy axes inflates spurious same-owner
+links between different-software wallets that happen to match on several policy values — exactly the
+conditional-independence double-counting §8 flags. Concretely, on the merged anchor `931d6627` (§6)
+the 3-axis engine refuses the false Cake↔sender merge (−3.2 bits) and recovers the correct
+partition, whereas plugging the 23-axis `LibraryScorer` into the same engine *resurrects* the false
+link (+11.7 bits) and re-merges the sender into the Cake cluster. The wide-axis model is therefore
+the right instrument for measuring *attribution* and the wrong one for driving *refusal*; the engine
+uses the narrow, decorrelated set on purpose.
 
 Three properties matter for the thesis:
 
@@ -248,10 +276,13 @@ per-tx measurement would still want the whole chain, but for calibrating fingerp
 frequencies this is publication-grade (rare values become estimable).
 
 **Validation on real data (`results/RESULTS-fingerprint-validation.md`).** Do the calibrated
-bits actually attribute wallets? On **165,832 real witness-bearing mainnet txs**, with
-same-owner labels = address reuse (two txs spending the same input address are the same wallet),
-the canonical 23-axis Fellegi–Sunter score ranks same-wallet tx pairs (mean **+13.9 bits**) far
-above random pairs (mean **−22.4 bits**): **AUC 0.933**, with a shuffle control at 0.50. So the
+bits actually attribute wallets? On **4,000 same-wallet and 4,000 random tx pairs drawn from a
+witness-bearing mainnet cache** (165,832 txs at the reported run; the cache is a growing snapshot,
+so the exact count and AUC drift a little run-to-run), with same-owner labels = address reuse (two
+txs spending the same input address are the same wallet), the canonical 23-axis Fellegi–Sunter
+score ranks same-wallet tx pairs (mean **+13.9 bits**) far above random pairs (mean **−22.4 bits**):
+**AUC 0.933** (0.93–0.95 across re-runs), with a shuffle control at 0.50. The pair draws are sampled
+with replacement, so the effective support is narrower than 4,000 (see the results file). So the
 measured fingerprint model separates same-wallet from random transactions on real data — a
 systematic, quantified result beyond the prior anecdotal spot-checking. (The labels are address
 reuse, so the `input_types` axis matches partly by construction; the signal is spread across all
@@ -621,7 +652,7 @@ whose refuse verdict (`amount_refuse_demix`) fuses with the fingerprint channel 
 real JoinMarket coinjoin (11 participants) it recovers **8 of the makers** uniquely, with maker fees
 matching the reference tool (`examples/coinjoin_demix_demo.py`, `results/RESULTS-subtx-demix.md`). The
 de-mix does not false-fire on ordinary payments, which carry no mix+change+fee structure. Dense
-coinjoins (Wasabi 2) are amount-private: all 30 real Wasabi 2 coinjoins in the labelled set recover 0
+coinjoins (Wasabi 2) are amount-private: the labelled real Wasabi 2 coinjoins recover 0
 participants, so there the fused decision is carried by the fingerprint and cluster-level topology
 channels — the intended, decidability-dependent behaviour.
 

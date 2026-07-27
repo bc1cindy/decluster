@@ -5,7 +5,8 @@ import sys, os
 sys.path.insert(0, os.path.dirname(os.path.dirname(__file__)))
 from decluster.extractors import x_input_order, x_output_order
 
-def _in(txids): return {"vin": [{"txid": t, "vout": 0} for t in txids]}
+def _h(s): return f"{ord(s):02x}"                       # single-char label -> valid 1-byte hex txid (reversed-byte order preserves the intended sort)
+def _in(txids): return {"vin": [{"txid": _h(t), "vout": 0} for t in txids]}
 def _out(vals): return {"vout": [{"value": v} for v in vals]}
 
 def test_input_order_small_n_gate():
@@ -22,7 +23,7 @@ def test_output_order_small_n_gate():
 
 def _tx(txid, ins, seq=0xfffffffd, lt=0):
     return {"txid": txid, "locktime": lt,
-            "vin": [{"txid": fu, "vout": 0, "sequence": seq, "prevout": {"value": 100000}} for fu in ins],
+            "vin": [{"txid": _h(fu), "vout": 0, "sequence": seq, "prevout": {"value": 100000}} for fu in ins],
             "vout": [{"value": 50000}]}
 
 def test_combiner_abstains_on_small_n_sorted():

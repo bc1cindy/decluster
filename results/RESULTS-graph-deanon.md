@@ -29,7 +29,7 @@ Blocks 400000–400004 (2016), full slice:
 | **SHUFFLE** (entity labels randomized) | **0.500** | control: the signal is not a sampling artifact |
 
 The confound: the FULL graph shares its co-spend edges with the heuristic that *defines*
-those labels, so its 0.990 is partly circular. Removing those edges — scoring pairs by
+those labels, so its 0.992 is partly circular. Removing those edges — scoring pairs by
 **payment** relationships only — still yields **AUC 0.950**. The shuffle control lands at
 0.500, confirming the effect is real structure, not the pair-sampling.
 
