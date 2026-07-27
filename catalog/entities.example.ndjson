@@ -1,0 +1,8 @@
+# Curated entity labels — SCHEMA EXAMPLE (synthetic addresses; not real attributions).
+# Copy to catalog/entities.ndjson and populate from tagged sources (WalletExplorer / OXT / known tags)
+# to activate the named super-clusters and services that carry no self-contained on-chain signature.
+# One JSON object per line; blank lines and `#` comments are ignored by entities.load_curated().
+# Fields: key (address), entity, kind (supercluster|service|protocol), source, confidence.
+{"key": "1ExampleSatoshiDiceAddrDoNotUse00000", "entity": "satoshidice", "kind": "supercluster", "source": "example", "confidence": 0.95}
+{"key": "1ExampleMtGoxAddrDoNotUse0000000000000", "entity": "mtgox", "kind": "supercluster", "source": "example", "confidence": 0.95}
+{"key": "1ExampleBinanceDepositAddrDoNotUse0000", "entity": "binance", "kind": "service", "source": "example", "confidence": 0.9}

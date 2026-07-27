@@ -3,6 +3,7 @@ __pycache__/
 .cache/
 .blkcache/
 *.ndjson
+!catalog/entities.example.ndjson
 slice*.json
 slice*.err
 day-*.json

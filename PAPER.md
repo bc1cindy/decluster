@@ -539,16 +539,37 @@ window is revealed) over one-day clusters. A multi-epoch replication is future w
 ## 8. Limitations (honest)
 
 - **Scope, not scale.** The fingerprint model *is* validated at mainnet scale — attribution
-  AUC 0.933 on 165,832 real txs (§5) — and structural de-anonymization is measured across
-  five eras (§6), both **without an archival node**. What we do not claim is a whole-chain
+  AUC ≈0.93 on pairs drawn from a 165k-tx witness-bearing mainnet cache (§5) — and structural
+  de-anonymization is measured across five eras (§6), both **without an archival node**. What we do not claim is a whole-chain
   **entity-reduction rate** (à la Wang et al.: "X% of all entities collapse") — that single
   number needs the full connected chain and is a separate follow-on (§9). The
   community-structure slices are also thin (a handful of blocks per era; the 2013 k=1 null
   shows one slice conflates slice-noise with era-trend), and the *stronger* N-S form
-  (structure links what co-spend leaves separate) needs independent entity labels we lack —
-  whose practical source is a catalog of known super-clusters (SatoshiDice, Mt. Gox,
-  exchanges, pools) and entity-specific signatures (address-reuse eras, vanity prefixes,
-  BIP-47 notification graphs; `catalog/known-entities.md`).
+  (structure links what co-spend leaves separate) needs **independent** entity labels — whose
+  practical source is a catalog of known super-clusters (SatoshiDice, Mt. Gox, exchanges,
+  pools) and entity-specific signatures (address-reuse eras, vanity prefixes, BIP-47
+  notification graphs; `catalog/known-entities.md`). Three such label sources are now **built**
+  as self-contained detectors (`decluster/entities.py`, validated firing on real data): BitMEX
+  vanity deposit addresses (437 hits), BIP-47 notification transactions (605), and dust
+  fan-out / "Moby Dick" (28); a curated-list loader (`entities.load_curated`) covers the named
+  super-clusters that carry no on-chain signature; and the probe that consumes any of them as an
+  independent same-owner label, disjoint from co-spend, is implemented
+  (`graph_deanon.evaluate_entity`, unit-tested in `tests/test_entity_deanon.py`). Run on **real
+  BigQuery slices** the strong claim is **demonstrated, with a sharp boundary condition**
+  (`results/RESULTS-entity-deanon.md`). For **SatoshiDice** — a gambling service detected by its
+  `1dice…` vanity prefix (2013-08, blocks 250000–250150, 38.9k txs, 42 house addresses) — payment
+  structure re-links the house addresses beyond co-spend at **AUC ≈0.72** (k=1–3), because a returning
+  bettor population gives the addresses a dense shared neighbourhood. For **BitMEX** — a custodial
+  exchange, `3BMEX…` vanity (2019-06, 74k txs, 2,642 deposit addresses) — the same probe is a **null**
+  (AUC 0.50), because deposit addresses are a **hub-and-spoke star**: each links only to its own
+  distinct depositor, and the shared hot wallet is reached only through consolidation that is a
+  co-spend (excluded) or out of window. The boundary is the claim's real content: independent labels
+  are necessary but not sufficient — the entity must sit in an **economic graph with recurring peers**
+  (a service with returning customers), not a custodial hub or a mining pool (whose coinbase pays a
+  near-single reused address, its miners a hop downstream). Notably the positive case needed **no
+  external data** — a vanity-prefix detector on an entity already in `catalog/known-entities.md`; a
+  curated address list (`catalog/entities.ndjson`) would extend this to the non-detectable named
+  entities (Mt. Gox, Binance) but is not a prerequisite for the demonstration.
 - **Low-R is a base-rate signal.** A non-grinding wallet emits a 71-byte signature ~50%
   of the time; low-R is a per-cluster *consistency* tell, low severity — the measured
   bits reflect this.

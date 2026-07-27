@@ -49,18 +49,29 @@ def amount_refuse_weight(t, a, b):
     margin = ranked[0][1] - (ranked[1][1] if len(ranked) > 1 else 0)  # best - runner-up roundness
     return -float(margin)
 
-def counterparty_bits(neigh):
+def counterparty_bits(neigh, hubs=None):
     """rarity of each counterparty as node-frequency bits: `-log2(share of nodes touching
     it)`. A hub (an exchange everyone touches) -> few bits; a private address -> many.
     Calibrated from the graph itself, so a shared counterparty is weighted like a fingerprint
-    value. `neigh`: node -> counterparty set."""
+    value. `neigh`: node -> counterparty set.
+
+    `hubs` (the super-cluster guard): addresses of known super-clusters (SatoshiDice, an exchange
+    hot wallet — `entities.detect_*`) are forced to **0 bits**, i.e. always treated as a universal
+    hub. This is boundary knowledge, not a measurement: a known super-cluster shared as a counterparty
+    must never corroborate a merge even when a thin slice under-samples it into apparent rarity. It can
+    only *remove* a spurious hub-driven link, never add one."""
     import math
     touch = {}
     for a in neigh:
         for c in neigh[a]:
             touch[c] = touch.get(c, 0) + 1
     n = len(neigh) or 1
-    return {c: -math.log2(f / n) for c, f in touch.items()}
+    bits = {c: -math.log2(f / n) for c, f in touch.items()}
+    if hubs:
+        for c in hubs:
+            if c in bits:
+                bits[c] = 0.0
+    return bits
 
 def topology_weight(a, b, neigh, cbits=None, disjoint_bits=-1.65, share_cap=12.0):
     """graph-topology weight (signed) from counterparty neighbourhoods, as a Fellegi-Sunter
@@ -167,7 +178,7 @@ def build_cospend_lookup(corpus_txs):
 COSPEND_PRIOR = 2.0   # common-input-ownership prior in bits; a merge survives iff prior + fp + amt + topo > 0
 
 def cluster_refined(nodes, combiner, cospend_prior=COSPEND_PRIOR, link_above=4.0, neigh=None,
-                    amount=True, topo_tau=1.0, subsetsum=False, _ss_fn=None):
+                    amount=True, topo_tau=1.0, subsetsum=False, _ss_fn=None, hubs=None):
     """The engine (the only fingerprint-aware clusterer; `cluster_naive` is the merge-only BlockSci
     baseline). Order-independent partition refinement that keeps the N-S CLUSTER-LEVEL counterparty
     accumulation (`cluster_topology_weight`, not a per-pair term). The per-pair evidence
@@ -180,7 +191,7 @@ def cluster_refined(nodes, combiner, cospend_prior=COSPEND_PRIOR, link_above=4.0
     refusal. Also ADDS a link where two coins share a rare fingerprint the co-spend missed
     (`fp >= link_above`). Monotone, so it converges in <= |nodes| rounds. Returns (groups, refused,
     linked): refused = (a, b, t, fp, amt, fp+amt+top) for co-spent pairs left split; linked = (a, b, sc)."""
-    cbits = counterparty_bits(neigh) if neigh else None
+    cbits = counterparty_bits(neigh, hubs=hubs) if neigh else None   # hubs: known super-cluster addresses forced to 0 bits (never corroborate a merge)
     ev = {}                                     # (t, fp, amt) per pair: fp is a pair property (scored
     for a, b, t in _cospent_pairs(nodes):       # once); amt kept from the most-refuting co-spend of the pair
         k = (a, b) if a <= b else (b, a)

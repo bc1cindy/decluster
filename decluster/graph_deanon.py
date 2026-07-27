@@ -13,16 +13,25 @@ HUBCAP = 100      # don't expand through hubs (degree > this) — avoids small-w
 SIZECAP = 6000    # cap neighborhood growth
 
 
-def build(sample):
+def build(sample, dust_guard=False):
     """neigh_pay excludes co-spend adjacency (which defines the same-owner labels) so the
-    payment-only score is not circular. Returns (uf, neigh_full, neigh_pay, cospent)."""
+    payment-only score is not circular. Returns (uf, neigh_full, neigh_pay, cospent).
+
+    `dust_guard` (refuse-only): drop the counterparty edges a **dust fan-out** creates
+    (`entities.detect_dust_fanout`) — a dusted address sharing the duster as a "counterparty" is the
+    main confound for address-reuse/topology clustering (dust ≠ ownership), so those edges must not
+    corroborate a merge. Co-spend is kept (it is not forgeable). No-op on value-less samples (the dust
+    test needs output values, absent from the address-only BigQuery export)."""
+    from .entities import detect_dust_fanout
     uf = UF()
     neigh_full, neigh_pay, cospent = {}, {}, set()
     for tx, _ in sample:
+        union_input_addrs(tx, uf)                        # co-spend is a real, unforgeable signal — keep it
+        if dust_guard and detect_dust_fanout(tx):
+            continue                                     # dust spray: its output edges are not counterparty structure
         in_addr = [v.get("prevout", {}).get("scriptpubkey_address") for v in tx.get("vin", [])]
         in_addr = [a for a in in_addr if a]
         out_addr = [o.get("scriptpubkey_address") for o in tx.get("vout", []) if o.get("scriptpubkey_address")]
-        union_input_addrs(tx, uf)
         for i in range(len(in_addr)):
             for j in range(i + 1, len(in_addr)):
                 cospent.add(frozenset((in_addr[i], in_addr[j])))
@@ -143,6 +152,52 @@ def analyze(sample, ks=(1, 2, 3, 4), cap=1500, seed=0):
         ns = [len(_nk(a, pay, k, cache) & _nk(b, pay, k, cache)) for a, b in neg]
         aucs.append(auc(ps, ns, seed))
     return {"entities": len(clusters), "pairs": len(allp), "share_pct": share, "ks": ks, "aucs": aucs}
+
+
+def entity_label_uf(sample, labeler):
+    """INDEPENDENT same-owner partition from an entity detector (disjoint from co-spend): every address
+    a detector attributes to the same entity is unioned. `labeler(tx)` yields dicts with 'address' and
+    'entity' (e.g. entities.detect_bitmex). This is the label the *strong* Narayanan-Shmatikov claim
+    needs — it can group addresses co-spend leaves in separate clusters."""
+    uf = UF()
+    anchor, labeled = {}, set()                          # entity -> first address, to union the rest onto it
+    for tx, _ in sample:
+        for h in labeler(tx):
+            a, e = h.get("address"), h.get("entity")
+            if not a or not e:
+                continue
+            labeled.add(a)
+            if e in anchor:
+                uf.union(anchor[e], a)
+            else:
+                anchor[e] = a
+    return uf, labeled
+
+
+def evaluate_entity(sample, labeler, seed=0):
+    """Strong N-S probe with an INDEPENDENT entity label: does payment-graph structure link same-entity
+    addresses that co-spend leaves in separate clusters? Positives = same-entity pairs that are NOT
+    directly co-spent; negatives = entity vs non-entity. Returns AUC on the payment-only graph, or None
+    when the sample carries no multi-address entity (the usual case unless the slice covers an entity)."""
+    _uf, _full, neigh_pay, cospent = build(sample)
+    euf, labeled_all = entity_label_uf(sample, labeler)
+    labeled = {a for a in neigh_pay if a in labeled_all}
+    clusters = {}
+    for a in labeled:
+        clusters.setdefault(euf.find(a), []).append(a)
+    clusters = {r: m for r, m in clusters.items() if len(m) >= 2}
+    rng = random.Random(seed)
+    pos = [structural_score(m[i], m[j], neigh_pay)
+           for m in clusters.values()
+           for i in range(len(m)) for j in range(i + 1, len(m))
+           if frozenset((m[i], m[j])) not in cospent]
+    others = [a for a in neigh_pay if a not in labeled]
+    ent_addrs = list(labeled)
+    neg = ([structural_score(rng.choice(ent_addrs), rng.choice(others), neigh_pay)
+            for _ in range(min(5000, max(len(pos), 1)))] if ent_addrs and others else [])
+    return {"entity_clusters": len(clusters), "pos_pairs": len(pos), "neg_pairs": len(neg),
+            "auc_payment": auc(pos, neg, seed),
+            "pos_mean": (sum(pos) / len(pos)) if pos else None}
 
 
 def _load(paths):
