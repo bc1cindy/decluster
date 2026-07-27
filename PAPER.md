@@ -474,8 +474,26 @@ relay / network-timing fingerprints, JSON/HTTP serialization, and — most conse
 **provenance / "deep-feature" channel**. The 23 axes here are all *low-dimensional* construction tells
 (nSequence, ordering, low-R, …), which standardizing construction can drive toward zero; the
 high-dimensional provenance features (where a coin came from — its ancestry signature) are a distinct
-and stronger attack surface, the origin of the sparse-high-dimension curse of dimensionality, that this
-measurement does not cover. (The one timing signal we *do* measure is the **block-feerate
+and stronger attack surface, the origin of the sparse-high-dimension curse of dimensionality. Its
+first rung *is* now built and measured: `ancestry_entropy` (`decluster/ancestry.py`) computes the
+absorber-model provenance entropy — a backward walk weighted by the exact subset-sum link matrix
+(`dss.pairwise_link_prob`), solved as an absorbing Markov chain — a per-coin lower bound on provenance
+ambiguity. On real coins it confirms the framework's premise directly: for typical coins the bound is
+**≈0 bits** (the origin resolves to a single ancestral coin — "every coin is sparsely represented"),
+rising only through genuine fan-out (`results/RESULTS-ancestry.md`). The **deep-feature matching**
+attack — using that sparse ancestry signature as a Narayanan–Shmatikov quasi-identifier to *link*
+coins — has a first demonstration too: `provenance_link` (`ancestry.py`) scores the rarity-weighted
+overlap of two provenance signatures, and on the merged anchor `931d6627` it independently separates
+the Cake and sender lineages (link **0.000** — disjoint provenance), a third channel agreeing with the
+fingerprints and amounts of §6. At *graph scale* a first pass is only directional (same-owner pairs
+share nonzero provenance, random pairs zero, but AUC ≈0.52 at depth 3), and a contiguous
+value-bearing slice does *worse* — every signature collapses to a single boundary atom (AUC 0.50),
+because a tractable-width slice cannot contain multi-hop ancestry (a coin's parents are older than the
+window). This is the load-bearing point: provenance matching is intrinsically a **whole-graph** attack
+— shared ancestry lives arbitrarily far back, unlike the few-block-local direct-counterparty structure
+of §6 — so the strong graph-scale AUC is gated on whole-connected-graph data (the §9 Utreexo/Floresta
+stream), a data-scale requirement, not a missing method (`results/RESULTS-ancestry.md`).
+(The one timing signal we *do* measure is the **block-feerate
 broadcast-time** estimate — a bound read from on-chain feerate ordering, not network relay — as the
 `locktime_vs_broadcast` axis; `results/RESULTS-broadcast.md`.) The relative clustering-overcount
 diagnostic is **delivered** (§6, `decluster/graph_metric.py`), and the community-structure premise

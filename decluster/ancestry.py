@@ -136,6 +136,35 @@ def _min_entropy(probs):
     return -math.log2(top) if top > 0 else 0.0
 
 
+def ancestry_signature(target, depth=6, fetch=None, link_oracle=dss_link_oracle):
+    """The coin's **provenance signature**: its absorption distribution over ancestral boundary coins —
+    a sparse, high-dimensional quasi-identifier vector (`{ancestor: mass}`). Same backward walk as
+    `ancestry_entropy`, exposing the distribution instead of its entropy. This is the feature the
+    deep-feature *matching* attack scores: two coins with overlapping signatures share provenance."""
+    if fetch is None:
+        from .fetch import fetch_tx
+        fetch = fetch_tx
+    g = build_extended_graph(target, depth=depth, fetch=fetch, link_oracle=link_oracle)
+    return absorber_distribution(g, target)
+
+
+def provenance_link(sig_a, sig_b, rarity=None):
+    """Narayanan–Shmatikov quasi-identifier overlap of two provenance signatures: the shared ancestral
+    coins, each scored by the mass it carries in *both* and, optionally, its global rarity
+    `wt = 1/log2(support)` (a shared *rare* ancestor is strong same-origin evidence; a shared common
+    one — a hub coinbase spent by everyone — is weak). `rarity` maps ancestor -> support count; absent,
+    all shared ancestors weigh equally. Returns a non-negative link score (0 = disjoint provenance)."""
+    shared = set(sig_a) & set(sig_b)
+    if not shared:
+        return 0.0
+    def wt(c):
+        if not rarity:
+            return 1.0
+        supp = rarity.get(c, 1)
+        return 1.0 / math.log2(supp + 1) if supp > 1 else 1.0
+    return sum(min(sig_a[c], sig_b[c]) * wt(c) for c in shared)
+
+
 def ancestry_entropy(target, depth=6, fetch=None, link_oracle=dss_link_oracle):
     """Lower bound on the intrinsic graph entropy of the target coin's provenance under no auxiliary
     information — NOT a privacy score; subjectively discounted by the reader's threat model. Returns
