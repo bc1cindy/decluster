@@ -1,4 +1,4 @@
-from decluster.propagate import build_rarity, entity_signature, label_scores, eccentricity, propagate_merge, should_split
+from decluster.propagate import build_rarity, entity_signature, label_scores, eccentricity, propagate_merge, should_split, NSPropagator
 
 
 def test_build_rarity_counts_supports():
@@ -79,3 +79,24 @@ def test_should_split_requires_both_channels():
     assert should_split(disjoint_a, disjoint_b, {}, {}, agree, rarity) is False
     # fingerprint diverges but provenance overlaps -> no split
     assert should_split(overlap_a, overlap_b, {}, {}, diverge, rarity) is False
+
+
+class _ABCombiner:
+    """Distinct name avoids collision with the earlier _FakeCombiner that takes a constructor arg."""
+    def score(self, a, b):
+        return -5.0 if {a, b} == {"A", "B"} else 3.0
+
+def test_nspropagator_refines_and_propagates():
+    node_sigs = {
+        "A":     {"r1": 1.0},            # co-spend cluster [A, B] ...
+        "B":     {"r9": 1.0},            # ... B disjoint from A + divergent fp -> split off
+        "seedX": {"r1": 1.0},
+        "u_ok":  {"r1": 0.9, "h": 0.1},  # propagates to label X
+    }
+    rarity = {"r1": 1, "r9": 1, "h": 300}
+    node_txs = {k: k for k in node_sigs}
+    prop = NSPropagator(rarity, _ABCombiner(), theta=0.5, min_score=0.1, refuse_below=-2.0)
+    res = prop.run([["A", "B"]], {"seedX": "X"}, node_sigs, node_txs)
+    groups = [sorted(g) for g in res["refined"]]
+    assert ["A"] in groups and ["B"] in groups     # split channel removed the A-B edge
+    assert res["labels"]["u_ok"] == "X"            # merge channel propagated X to u_ok

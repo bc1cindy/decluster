@@ -91,3 +91,44 @@ def should_split(sig_a, sig_b, tx_a, tx_b, combiner, rarity,
     if provenance_link(sig_a, sig_b, rarity) > link_eps:
         return False
     return combiner.score(tx_a, tx_b) < refuse_below
+
+
+class NSPropagator:
+    """Fused seed-and-propagate over two edge sets. `propagate` grows seed labels by
+    provenance overlap (merge, N-S). `refine` removes wrongly-merged edges inside
+    pre-existing co-spend clusters where provenance is disjoint AND the fingerprint
+    diverges (split, decluster's move down the lattice). The two are complementary and
+    reported separately."""
+    def __init__(self, rarity, combiner, theta=0.5, min_score=0.1, refuse_below=-2.0):
+        self.rarity = rarity
+        self.combiner = combiner
+        self.theta = theta
+        self.min_score = min_score
+        self.refuse_below = refuse_below
+
+    def propagate(self, node_sigs, seed_labels):
+        return propagate_merge(node_sigs, seed_labels, self.rarity, self.theta,
+                               self.min_score)
+
+    def refine(self, cospend_clusters, node_sigs, node_txs):
+        refined = []
+        for cluster in cospend_clusters:
+            if not cluster:
+                continue
+            anchor = cluster[0]
+            kept, split_off = [anchor], []
+            for node in cluster[1:]:
+                if should_split(node_sigs[anchor], node_sigs[node],
+                                node_txs[anchor], node_txs[node],
+                                self.combiner, self.rarity,
+                                refuse_below=self.refuse_below):
+                    split_off.append([node])
+                else:
+                    kept.append(node)
+            refined.append(kept)
+            refined.extend(split_off)
+        return refined
+
+    def run(self, cospend_clusters, seed_labels, node_sigs, node_txs):
+        return {"refined": self.refine(cospend_clusters, node_sigs, node_txs),
+                "labels": self.propagate(node_sigs, seed_labels)}
