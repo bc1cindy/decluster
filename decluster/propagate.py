@@ -4,6 +4,8 @@ are the sparse quasi-identifier; merge propagation is gated on eccentricity, spl
 refinement on provenance-disjointness AND fingerprint-divergence. Needs no same-owner
 labels: it propagates from a seed set."""
 from collections import Counter
+import statistics
+from .ancestry import provenance_link
 
 
 def build_rarity(signatures):
@@ -27,3 +29,22 @@ def entity_signature(coin_sigs):
     if total <= 0:
         return {}
     return {anc: m / total for anc, m in acc.items()}
+
+
+def label_scores(node_sig, labeled_sigs, rarity):
+    """Score a node's signature against each label's signature via the rarity-weighted
+    provenance overlap."""
+    return {label: provenance_link(node_sig, sig, rarity)
+            for label, sig in labeled_sigs.items()}
+
+
+def eccentricity(scores):
+    """(best - second_best) / stdev(scores): the N-S acceptance gap. A single dominant
+    match scores high; a diffuse tie scores ~0. 0.0 when fewer than 2 scores or no spread."""
+    vals = sorted(scores.values() if isinstance(scores, dict) else scores, reverse=True)
+    if len(vals) < 2:
+        return 0.0
+    spread = statistics.pstdev(vals)
+    if spread <= 0:
+        return 0.0
+    return (vals[0] - vals[1]) / spread
