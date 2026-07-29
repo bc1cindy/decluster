@@ -34,8 +34,8 @@ two people into one).
 
 ## Layout
 
-- `decluster/` — the attacker (the measurement half that runs): extractors, library, combiner, cluster (engine: `cluster_refined`), graph_deanon
-- the construction/cost half (deferred — PAPER §9): `cost` (leak / amount-cut / topology leaf terms + the deferred `construction_cost`), `ancestry` (the absorber-model provenance target), `report` (fuses the terms on a real tx), `subsetsum`/`coinjoin_demix` (the amount de-mix channel); consumes the `dense-subset-sum` engine (build: `maturin develop`)
+- `decluster/` — the attacker (the measurement half that runs): extractors, library, combiner, cluster (engine: `cluster_refined`), propagate (entity-level N-S seed-and-propagate via provenance signatures; synthetic evaluation), graph_deanon
+- the construction/cost half (deferred — PAPER §9): `cost` (leak / amount-cut / topology leaf terms + the deferred `construction_cost`), `ancestry` (the absorber-model provenance target; feeds propagate), `report` (fuses the terms on a real tx), `subsetsum`/`coinjoin_demix` (the amount de-mix channel); consumes the `dense-subset-sum` engine (build: `maturin develop`); `cluster_refined` optionally refuses links when provenance and fingerprints diverge
 - `PAPER.md` — the manuscript; `results/` — reproducible outputs; `catalog/`, `bigquery/`
 
 Every number is reproducible. MIT — see `LICENSE`.
