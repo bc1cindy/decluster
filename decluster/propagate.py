@@ -48,3 +48,35 @@ def eccentricity(scores):
     if spread <= 0:
         return 0.0
     return (vals[0] - vals[1]) / spread
+
+
+def propagate_merge(node_sigs, seed_labels, rarity, theta, min_score=0.0):
+    """N-S core: propagate seed labels to unlabeled nodes by rarity-weighted signature
+    overlap. Assign a node to its best label iff `best > min_score` (absolute match floor)
+    AND (`len(scores) < 2` OR `eccentricity > theta`) — the floor carries the 1-2-label
+    case where eccentricity is degenerate; eccentricity refines only at >=3 labels.
+    Re-aggregates each label's signature from its members every round (multi-hop); iterates
+    to convergence. Returns {node: label} (seeds included)."""
+    assigned = dict(seed_labels)
+    changed = True
+    while changed:
+        changed = False
+        # aggregate the current signature of each label from its member nodes
+        members = {}
+        for node, label in assigned.items():
+            members.setdefault(label, []).append(node_sigs[node])
+        labeled_sigs = {label: entity_signature(sigs) for label, sigs in members.items()}
+        for node, sig in node_sigs.items():
+            if node in assigned:
+                continue
+            scores = label_scores(sig, labeled_sigs, rarity)
+            if not scores:
+                continue
+            best = max(scores.values())
+            if best <= min_score:
+                continue
+            if len(scores) >= 2 and eccentricity(scores) <= theta:
+                continue
+            assigned[node] = max(scores, key=scores.get)
+            changed = True
+    return assigned

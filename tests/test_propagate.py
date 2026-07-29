@@ -1,4 +1,4 @@
-from decluster.propagate import build_rarity, entity_signature, label_scores, eccentricity
+from decluster.propagate import build_rarity, entity_signature, label_scores, eccentricity, propagate_merge
 
 
 def test_build_rarity_counts_supports():
@@ -37,3 +37,27 @@ def test_eccentricity_gap_over_spread():
 def test_eccentricity_degenerate():
     assert eccentricity({"a": 5.0}) == 0.0          # <2 scores
     assert eccentricity({"a": 3.0, "b": 3.0}) == 0.0  # zero spread
+
+
+def test_propagate_merge_assigns_by_dominant_overlap():
+    node_sigs = {
+        "seedX": {"r1": 1.0},
+        "seedY": {"r2": 1.0},
+        "u1":    {"r1": 0.9, "hub": 0.1},   # strong r1 overlap with X
+        "u2":    {"hub": 1.0},              # only a hub ancestor -> weak leaked overlap
+    }
+    seeds = {"seedX": "X", "seedY": "Y"}
+    rarity = {"r1": 1, "r2": 1, "hub": 500}
+    out = propagate_merge(node_sigs, seeds, rarity, theta=0.5, min_score=0.1)
+    assert out["u1"] == "X"
+    assert "u2" not in out            # leaked hub overlap (~0.006) is below the floor
+
+
+def test_propagate_merge_idempotent():
+    node_sigs = {"s": {"r": 1.0}, "u": {"r": 0.8, "h": 0.2}}
+    seeds = {"s": "S"}
+    rarity = {"r": 1, "h": 400}
+    first = propagate_merge(node_sigs, seeds, rarity, theta=0.5, min_score=0.1)
+    # feeding the result back as seeds changes nothing
+    second = propagate_merge(node_sigs, first, rarity, theta=0.5, min_score=0.1)
+    assert first == second
