@@ -182,20 +182,21 @@ def cluster_refined(nodes, combiner, cospend_prior=COSPEND_PRIOR, link_above=4.0
                     provenance=False, signatures=None, rarity=None, prov_refuse_bits=-3.0,
                     link_eps=1e-9):
     """The engine (the only fingerprint-aware clusterer; `cluster_naive` is the merge-only BlockSci
-    baseline). Order-independent partition refinement that keeps the N-S CLUSTER-LEVEL counterparty
-    accumulation (`cluster_topology_weight`, not a per-pair term). The per-pair evidence
-    `cospend_prior + fp + amt` is fixed up front (`amount=False` gives the fingerprint-only
-    corroboration — fingerprints alone refuse, §6); then a SYNCHRONOUS fixed-point unions every
-    still-separate co-spent pair whose fused bits — including the cluster-level topology recomputed on
-    the CURRENT entities each round — are net-positive, until nothing changes. Order-independent (a
-    round scores one snapshot; union-find components do not depend on merge order) and transitive; a
-    bare merge whose net stays negative is refused (§6), an established cluster's bits dominate a lone
+    baseline). Order-independent partition refinement that fuses multiple refuse channels:
+    co-spend prior, fingerprint, amount (roundness + denomination de-mix), cluster-level topology,
+    and provenance-disjointness (disjoint ancestry + divergent fingerprint → refuse). Signatures
+    supplied precomputed by caller; entity-level realization of same signal in propagate.py
+    (should_split / NSPropagator.refine). The per-pair evidence `cospend_prior + fp + amt` is
+    fixed up front (`amount=False` gives the fingerprint-only corroboration — fingerprints alone
+    refuse, §6); then a SYNCHRONOUS fixed-point unions every still-separate co-spent pair whose
+    fused bits — including the cluster-level topology recomputed on the CURRENT entities each
+    round — are net-positive, until nothing changes. Order-independent (a round scores one
+    snapshot; union-find components do not depend on merge order) and transitive; a bare merge
+    whose net stays negative is refused (§6), an established cluster's bits dominate a lone
     refusal. Also ADDS a link where two coins share a rare fingerprint the co-spend missed
-    (`fp >= link_above`). Optionally (`provenance=True`) a refuse-only channel adds `prov_refuse_bits`
-    when a co-spend's fingerprint disagrees (fp < 0) AND its precomputed `signatures` are disjoint
-    (`ancestry.provenance_link`). Monotone, so it converges in <= |nodes| rounds. Returns (groups,
-    refused, linked): refused = (a, b, t, fp, amt, fp+amt+top) for co-spent pairs left split; linked =
-    (a, b, sc)."""
+    (`fp >= link_above`). Monotone, so it converges in <= |nodes| rounds. Returns (groups,
+    refused, linked): refused = (a, b, t, fp, amt, fp+amt+top) for co-spent pairs left split;
+    linked = (a, b, sc)."""
     cbits = counterparty_bits(neigh, hubs=hubs) if neigh else None   # hubs: known super-cluster addresses forced to 0 bits (never corroborate a merge)
     ev = {}                                     # (t, fp, amt) per pair: fp is a pair property (scored
     for a, b, t in _cospent_pairs(nodes):       # once); amt kept from the most-refuting co-spend of the pair
