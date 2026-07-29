@@ -124,3 +124,15 @@ def test_holdout_reid_recovers_hidden_seed():
     res = holdout_reid(node_sigs, seeds, prop, hide_frac=0.5, seed=0)
     assert res["hidden"] >= 1
     assert res["rate"] >= 0.0
+
+
+def test_integration_driver_runs_offline():
+    # exercises the driver wiring on tiny synthetic input, no fetch/network
+    from examples.ns_propagation import run_on_signatures
+    node_sigs = {"s": {"r": 1.0}, "m": {"r": 0.9, "h": 0.1}}
+    seeds = {"s": "S"}
+    txs = {"s": "s", "m": "m"}
+    rarity = {"r": 1, "h": 200}
+    summary = run_on_signatures(node_sigs, seeds, txs, rarity)
+    assert "median_bits_before" in summary and "median_bits_after" in summary
+    assert summary["reid_rate"] >= 0.0
