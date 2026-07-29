@@ -220,12 +220,17 @@ nLockTime policy, input ordering), *not* the full 23-axis library that drives th
 an excellent *pairwise discriminator* but a poor *clustering driver* at the engine's thresholds,
 because summing agreement bits across many correlated low-entropy axes inflates spurious same-owner
 links between different-software wallets that happen to match on several policy values — exactly the
-conditional-independence double-counting §8 flags. Concretely, on the merged anchor `931d6627` (§6)
-the 3-axis engine refuses the false Cake↔sender merge (−3.1 bits) and recovers the correct
-partition, whereas plugging the 23-axis `LibraryScorer` into the same engine *resurrects* the false
-link (+11.7 bits) and re-merges the sender into the Cake cluster. The wide-axis model is therefore
-the right instrument for measuring *attribution* and the wrong one for driving *refusal*; the engine
-uses the narrow, decorrelated set on purpose.
+conditional-independence double-counting §8 flags. Concretely, on the merged anchor `931d6627` (§6) the 3-axis engine refuses the false Cake↔sender
+merge (−3.16 bits) and recovers the correct partition, whereas scoring the same edge with the
+23-axis `LibraryScorer` *resurrects* the false link (**+11.67 bits**, well past the engine's
+`link_above=4.0` threshold) and would re-merge the sender into the Cake cluster
+(`results/RESULTS-3v23-engine.md`, `examples/three_vs_23_axes.py` — measured directly, not asserted).
+The per-axis breakdown shows why: the three genuinely discriminating axes still refuse (−10.8 bits
+combined), but 19 low-entropy policy axes that both coins' ordinary SegWit wallets happen to share
+(script type, encoding, sighash, `low_r`, ...) each add a small positive weight, and summing them
+under the Fellegi–Sunter conditional-independence assumption overwhelms the real discriminators. The
+wide-axis model is therefore the right instrument for measuring *attribution* and the wrong one for
+driving *refusal*; the engine uses the narrow, decorrelated set on purpose.
 
 Three properties matter for the thesis:
 
