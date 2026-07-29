@@ -14,3 +14,16 @@ def build_rarity(signatures):
     for sig in signatures:
         c.update(sig.keys())
     return dict(c)
+
+
+def entity_signature(coin_sigs):
+    """Aggregate member coins' provenance signatures: sum per ancestor, renormalise to
+    unit total mass. The entity-level sparse quasi-identifier vector."""
+    acc = {}
+    for sig in coin_sigs:
+        for anc, m in sig.items():
+            acc[anc] = acc.get(anc, 0.0) + m
+    total = sum(acc.values())
+    if total <= 0:
+        return {}
+    return {anc: m / total for anc, m in acc.items()}
