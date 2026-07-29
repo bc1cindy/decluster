@@ -524,7 +524,7 @@ diagnostic is **delivered** (§6, `decluster/graph_metric.py`), and the communit
 (Narayanan–Shmatikov) is now **measured on a real slice** (§6, `decluster/graph_deanon.py`, AUC
 0.95); the full seed-and-extend attack at chain scale over this topology channel still needs
 adjacency infra + labels. (The provenance channel's seed-and-propagate, above, is a separate
-instantiation of the same N-S mechanism — it is built and synthetically evaluated already;
+instantiation of the same N-S mechanism — it is built and evaluated on a synthetic fixture plus a preliminary cache-bounded real run already;
 chain-scale validation is the shared pending item, §9.)
 These are named so absence is explicit, not hidden.
 
@@ -723,7 +723,7 @@ Two axes gained a qualitatively different case:
 
   Chain-scale seed-and-extend over the whole graph remains future work for this topology
   channel (§9) — see §7 for the provenance channel, where the mechanism is already built and
-  synthetically evaluated. We also *tested*
+  evaluated on a synthetic fixture plus a preliminary cache-bounded real run. We also *tested*
   a cluster's **temporal activity schedule** — the broadcast-time (§7) of its txs aggregated
   into an hour-of-day histogram (`active_hours`/`schedule_distance`, `results/RESULTS-temporal.md`) —
   as a candidate quasi-identifier, and report it as a **negative result**: on a 30-day sample
