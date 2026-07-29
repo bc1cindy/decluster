@@ -5,6 +5,7 @@ refinement on provenance-disjointness AND fingerprint-divergence. Needs no same-
 labels: it propagates from a seed set."""
 from collections import Counter
 import statistics
+import random
 from .ancestry import provenance_link
 
 
@@ -132,3 +133,26 @@ class NSPropagator:
     def run(self, cospend_clusters, seed_labels, node_sigs, node_txs):
         return {"refined": self.refine(cospend_clusters, node_sigs, node_txs),
                 "labels": self.propagate(node_sigs, seed_labels)}
+
+
+def partition_from_assignment(assigned):
+    """Group nodes by their assigned label -> list of member lists (for partition_entropy)."""
+    groups = {}
+    for node, label in assigned.items():
+        groups.setdefault(label, []).append(node)
+    return list(groups.values())
+
+
+def holdout_reid(node_sigs, seed_labels, propagator, hide_frac=0.3, seed=0):
+    """Hide a fraction of the labeled nodes, run the merge channel from the rest, and measure
+    how many hidden nodes are re-assigned their original label. No same-owner labels beyond
+    the seed set itself — this is the N-S self-validation."""
+    rng = random.Random(seed)
+    labeled = sorted(seed_labels)
+    n_hide = max(1, int(len(labeled) * hide_frac))
+    hidden = set(rng.sample(labeled, min(n_hide, len(labeled) - 1)))
+    kept = {n: l for n, l in seed_labels.items() if n not in hidden}
+    out = propagator.propagate(node_sigs, kept)
+    recovered = sum(1 for n in hidden if out.get(n) == seed_labels[n])
+    return {"hidden": len(hidden), "recovered": recovered,
+            "rate": recovered / len(hidden) if hidden else 0.0}

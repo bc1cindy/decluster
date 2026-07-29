@@ -1,4 +1,5 @@
-from decluster.propagate import build_rarity, entity_signature, label_scores, eccentricity, propagate_merge, should_split, NSPropagator
+from decluster.propagate import build_rarity, entity_signature, label_scores, eccentricity, propagate_merge, should_split, NSPropagator, holdout_reid, partition_from_assignment
+from decluster.graph_metric import partition_entropy
 
 
 def test_build_rarity_counts_supports():
@@ -100,3 +101,26 @@ def test_nspropagator_refines_and_propagates():
     groups = [sorted(g) for g in res["refined"]]
     assert ["A"] in groups and ["B"] in groups     # split channel removed the A-B edge
     assert res["labels"]["u_ok"] == "X"            # merge channel propagated X to u_ok
+
+
+class _AllAgree:
+    def score(self, a, b): return 3.0
+
+
+def test_partition_from_assignment_groups_by_label():
+    groups = partition_from_assignment({"a": "X", "b": "X", "c": "Y"})
+    assert sorted(sorted(g) for g in groups) == [["a", "b"], ["c"]]
+    assert partition_entropy(groups) >= 0.0   # smoke: feeds the existing metric
+
+
+def test_holdout_reid_recovers_hidden_seed():
+    node_sigs = {
+        "s1": {"r1": 1.0}, "s2": {"r2": 1.0},
+        "m1": {"r1": 0.9, "h": 0.1}, "m2": {"r2": 0.9, "h": 0.1},
+    }
+    seeds = {"s1": "A", "s2": "B", "m1": "A", "m2": "B"}   # full labels as the silver key
+    rarity = {"r1": 1, "r2": 1, "h": 300}
+    prop = NSPropagator(rarity, _AllAgree(), theta=0.5, min_score=0.1)
+    res = holdout_reid(node_sigs, seeds, prop, hide_frac=0.5, seed=0)
+    assert res["hidden"] >= 1
+    assert res["rate"] >= 0.0
