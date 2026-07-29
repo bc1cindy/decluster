@@ -178,7 +178,9 @@ def build_cospend_lookup(corpus_txs):
 COSPEND_PRIOR = 2.0   # common-input-ownership prior in bits; a merge survives iff prior + fp + amt + topo > 0
 
 def cluster_refined(nodes, combiner, cospend_prior=COSPEND_PRIOR, link_above=4.0, neigh=None,
-                    amount=True, topo_tau=1.0, subsetsum=False, _ss_fn=None, hubs=None):
+                    amount=True, topo_tau=1.0, subsetsum=False, _ss_fn=None, hubs=None,
+                    provenance=False, signatures=None, rarity=None, prov_refuse_bits=-3.0,
+                    link_eps=1e-9):
     """The engine (the only fingerprint-aware clusterer; `cluster_naive` is the merge-only BlockSci
     baseline). Order-independent partition refinement that keeps the N-S CLUSTER-LEVEL counterparty
     accumulation (`cluster_topology_weight`, not a per-pair term). The per-pair evidence
@@ -189,8 +191,11 @@ def cluster_refined(nodes, combiner, cospend_prior=COSPEND_PRIOR, link_above=4.0
     round scores one snapshot; union-find components do not depend on merge order) and transitive; a
     bare merge whose net stays negative is refused (§6), an established cluster's bits dominate a lone
     refusal. Also ADDS a link where two coins share a rare fingerprint the co-spend missed
-    (`fp >= link_above`). Monotone, so it converges in <= |nodes| rounds. Returns (groups, refused,
-    linked): refused = (a, b, t, fp, amt, fp+amt+top) for co-spent pairs left split; linked = (a, b, sc)."""
+    (`fp >= link_above`). Optionally (`provenance=True`) a refuse-only channel adds `prov_refuse_bits`
+    when a co-spend's fingerprint disagrees (fp < 0) AND its precomputed `signatures` are disjoint
+    (`ancestry.provenance_link`). Monotone, so it converges in <= |nodes| rounds. Returns (groups,
+    refused, linked): refused = (a, b, t, fp, amt, fp+amt+top) for co-spent pairs left split; linked =
+    (a, b, sc)."""
     cbits = counterparty_bits(neigh, hubs=hubs) if neigh else None   # hubs: known super-cluster addresses forced to 0 bits (never corroborate a merge)
     ev = {}                                     # (t, fp, amt) per pair: fp is a pair property (scored
     for a, b, t in _cospent_pairs(nodes):       # once); amt kept from the most-refuting co-spend of the pair
@@ -205,6 +210,17 @@ def cluster_refined(nodes, combiner, cospend_prior=COSPEND_PRIOR, link_above=4.0
         if k not in ev or amt < ev[k][2]:
             ev[k] = (t, fp, amt)
     base = {k: cospend_prior + fp + amt for k, (t, fp, amt) in ev.items()}
+    if provenance and signatures is not None:
+        # Refuse-only provenance channel: disjoint provenance is evidence AGAINST common
+        # ownership. Gated on fp < 0 like the amount channel, so provenance-disjointness
+        # alone never splits a benign single-owner pair. Signatures arrive precomputed
+        # (like neigh); a pair missing a signature contributes 0 (no evidence, no refusal).
+        from .ancestry import provenance_link
+        for k, (t, fp, amt) in ev.items():
+            if fp < 0:
+                sa, sb = signatures.get(k[0]), signatures.get(k[1])
+                if sa is not None and sb is not None and provenance_link(sa, sb, rarity) <= link_eps:
+                    base[k] += prov_refuse_bits
     if subsetsum:
         resolve = _ss_fn
         if resolve is None:

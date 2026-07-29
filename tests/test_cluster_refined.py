@@ -117,6 +117,52 @@ def test_link_adds_edge_common_input_misses():
         cl._cospent_pairs = orig
 
 
+def test_provenance_refuses_disjoint_when_fp_disagrees():
+    import decluster.cluster as cl
+    orig = cl._cospent_pairs
+    _stub(cl, [("A", "B", "T")])
+    sigs = {"A": {"r1": 1.0}, "B": {"r9": 1.0}}   # disjoint provenance
+    try:
+        # fp = -5 (disagrees) + prov -3 → net = 2 - 5 - 3 = -6 → refused
+        groups, refused, _ = cl.cluster_refined(
+            ["A", "B"], _Diff(), link_above=99,
+            provenance=True, signatures=sigs, rarity={"r1": 1, "r9": 1})
+        assert sorted(sorted(g) for g in groups) == [["A"], ["B"]]
+        assert any({r[0], r[1]} == {"A", "B"} for r in refused)
+    finally:
+        cl._cospent_pairs = orig
+
+
+def test_provenance_gate_holds_when_fp_agrees():
+    import decluster.cluster as cl
+    orig = cl._cospent_pairs
+    _stub(cl, [("A", "B", "T")])
+    sigs = {"A": {"r1": 1.0}, "B": {"r9": 1.0}}   # disjoint, but...
+    try:
+        # fp = 0 (neutral, not < 0) → prov gate does NOT fire → prior +2 alone → merged
+        groups, _r, _l = cl.cluster_refined(
+            ["A", "B"], _Neutral(), link_above=99,
+            provenance=True, signatures=sigs, rarity={"r1": 1, "r9": 1})
+        assert sorted(sorted(g) for g in groups) == [["A", "B"]]
+    finally:
+        cl._cospent_pairs = orig
+
+
+def test_provenance_overlap_does_not_refuse():
+    import decluster.cluster as cl
+    orig = cl._cospent_pairs
+    _stub(cl, [("A", "B", "T")])
+    sigs = {"A": {"r1": 1.0}, "B": {"r1": 1.0}}   # shared provenance -> prov term 0
+    try:
+        # fp = -1 (weak disagree), prov 0 (overlap) → net = 2 - 1 = +1 → merged
+        groups, _r, _l = cl.cluster_refined(
+            ["A", "B"], _WeakDiff(), link_above=99,
+            provenance=True, signatures=sigs, rarity={"r1": 1})
+        assert sorted(sorted(g) for g in groups) == [["A", "B"]]
+    finally:
+        cl._cospent_pairs = orig
+
+
 if __name__ == "__main__":
     fns = [v for k, v in sorted(globals().items()) if k.startswith("test_") and callable(v)]
     for fn in fns:
