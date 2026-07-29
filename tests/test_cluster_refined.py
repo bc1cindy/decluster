@@ -80,6 +80,26 @@ def test_coerced_fingerprint_cannot_bypass_topology_refusal():
         cl._cospent_pairs = orig
 
 
+class _WeakDiff:
+    def score(self, a, b, explain=False):
+        return -1.0   # contrary, but weaker than the +2.0 co-spend prior
+
+
+def test_high_weight_prior_survives_contrary_fingerprint():
+    """A high-weight co-spend prior is not overturned by a single weak contrary
+    fingerprint — the refuse gate needs corroboration, not one divergent tell."""
+    import decluster.cluster as cl
+    orig = cl._cospent_pairs
+    _stub(cl, [("A", "B", "T")])
+    try:
+        # prior +2.0, fingerprint -1.0, no disjoint topology -> net +1.0 -> stays merged
+        groups, refused, _ = cl.cluster_refined(["A", "B"], _WeakDiff(), link_above=99)
+        assert sorted(sorted(g) for g in groups) == [["A", "B"]]
+        assert not any({r[0], r[1]} == {"A", "B"} for r in refused)
+    finally:
+        cl._cospent_pairs = orig
+
+
 def test_link_adds_edge_common_input_misses():
     # two coins NOT co-spent but sharing a rare fingerprint (score >= link_above) are linked
     import decluster.cluster as cl

@@ -221,7 +221,7 @@ an excellent *pairwise discriminator* but a poor *clustering driver* at the engi
 because summing agreement bits across many correlated low-entropy axes inflates spurious same-owner
 links between different-software wallets that happen to match on several policy values — exactly the
 conditional-independence double-counting §8 flags. Concretely, on the merged anchor `931d6627` (§6)
-the 3-axis engine refuses the false Cake↔sender merge (−3.2 bits) and recovers the correct
+the 3-axis engine refuses the false Cake↔sender merge (−3.1 bits) and recovers the correct
 partition, whereas plugging the 23-axis `LibraryScorer` into the same engine *resurrects* the false
 link (+11.7 bits) and re-merges the sender into the Cake cluster. The wide-axis model is therefore
 the right instrument for measuring *attribution* and the wrong one for driving *refusal*; the engine
@@ -619,9 +619,12 @@ Two axes gained a qualitatively different case:
   practical source is a catalog of known super-clusters (SatoshiDice, Mt. Gox, exchanges,
   pools) and entity-specific signatures (address-reuse eras, vanity prefixes, BIP-47
   notification graphs; `catalog/known-entities.md`). Three such label sources are now **built**
-  as self-contained detectors (`decluster/entities.py`, validated firing on real data): BitMEX
-  vanity deposit addresses (437 hits), BIP-47 notification transactions (605), and dust
-  fan-out / "Moby Dick" (28); a curated-list loader (`entities.load_curated`) covers the named
+  as self-contained detectors (`decluster/entities.py`): BitMEX vanity deposit addresses,
+  BIP-47 notification transactions, and dust fan-out / "Moby Dick" (firing counts are
+  illustrative — no `results/` file backs a measured count for these three; the entity
+  counts that *are* measured, 42 SatoshiDice house addresses and 2,642 BitMEX deposit
+  addresses, are reported below from `results/RESULTS-entity-deanon.md`); a curated-list
+  loader (`entities.load_curated`) covers the named
   super-clusters that carry no on-chain signature; and the probe that consumes any of them as an
   independent same-owner label, disjoint from co-spend, is implemented
   (`graph_deanon.evaluate_entity`, unit-tested in `tests/test_entity_deanon.py`). Run on **real
