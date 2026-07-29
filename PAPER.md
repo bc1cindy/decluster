@@ -498,12 +498,32 @@ window). This is the load-bearing point: provenance matching is intrinsically a 
 — shared ancestry lives arbitrarily far back, unlike the few-block-local direct-counterparty structure
 of §6 — so the strong graph-scale AUC is gated on whole-connected-graph data (the §9 Utreexo/Floresta
 stream), a data-scale requirement, not a missing method (`results/RESULTS-ancestry.md`).
+
+That pairwise signal is now lifted to an entity-level **seed-and-propagate**: `NSPropagator`
+(`decluster/propagate.py`). `entity_signature` aggregates a cluster's member coins' provenance
+vectors into one entity-level signature; `propagate_merge` grows a seed labeling by rarity-weighted
+signature overlap, gated on an absolute match floor (`min_score`) AND — once a node has ≥3
+competing labels — an eccentricity check (the N-S acceptance gap between the best
+and second-best label; below three candidates it is degenerate, so the floor alone gates),
+re-aggregating and iterating to convergence (multi-hop). A two-channel
+`should_split` removes a co-spend edge only when provenance is disjoint (`provenance_link ≈ 0`)
+AND the fingerprint diverges — either channel alone leaves the edge intact. Its held-out seed
+re-identification (`holdout_reid`: hide a fraction of seed labels, re-derive them from the rest)
+is evaluated so far on a **synthetic fixture only**, not chain data (`results/RESULTS-ns-propagation.md`;
+chain-scale evaluation pending, §9). The split channel is not only a standalone module: it is now
+wired into the live engine as `cluster_refined`'s provenance-disjoint refuse term
+(`decluster/cluster.py`, `provenance=`) — a co-spent pair is refused when provenance is disjoint
+and the fingerprint already disagrees (`fp < 0`), the same fp-gating discipline as the amount
+channel (§8).
 (The one timing signal we *do* measure is the **block-feerate
 broadcast-time** estimate — a bound read from on-chain feerate ordering, not network relay — as the
 `locktime_vs_broadcast` axis; `results/RESULTS-broadcast.md`.) The relative clustering-overcount
 diagnostic is **delivered** (§6, `decluster/graph_metric.py`), and the community-structure premise
 (Narayanan–Shmatikov) is now **measured on a real slice** (§6, `decluster/graph_deanon.py`, AUC
-0.95); the full seed-and-extend attack at chain scale still needs adjacency infra + labels.
+0.95); the full seed-and-extend attack at chain scale over this topology channel still needs
+adjacency infra + labels. (The provenance channel's seed-and-propagate, above, is a separate
+instantiation of the same N-S mechanism — it is built and synthetically evaluated already;
+chain-scale validation is the shared pending item, §9.)
 These are named so absence is explicit, not hidden.
 
 ### Change identification: validating the ordering against same-owner change labels
@@ -691,9 +711,17 @@ Two axes gained a qualitatively different case:
   who both use the same **rare** counterparty score above tau and merge — a shared rare
   quasi-identifier is legitimate same-owner evidence in the FS model. (An earlier windowed N-S
   *eccentricity* was field-dependent and is replaced by this global rarity test — itself N-S's own
-  quasi-identifier weighting `wt = 1/log|supp|`.)
+  quasi-identifier weighting `wt = 1/log|supp|`. This does not contradict eccentricity's reuse in
+  the entity-level seed-and-propagate module, §7: there, eccentricity is paired with an absolute
+  score floor (`min_score`), and the floor — not the field — is what carries the small-label case.
+  Eccentricity is degenerate below three candidate labels — it returns 0 at one, and is a fixed
+  constant 2.0 at exactly two (non-discriminating for any theta<2) — so the absolute floor is
+  what carries the small-label case, and `propagate_merge` only applies the eccentricity check
+  once a node has ≥3 competing labels. The topology term's own use of global rarity, above, is unchanged.)
 
-  Chain-scale seed-and-extend over the whole graph remains future work (§9). We also *tested*
+  Chain-scale seed-and-extend over the whole graph remains future work for this topology
+  channel (§9) — see §7 for the provenance channel, where the mechanism is already built and
+  synthetically evaluated. We also *tested*
   a cluster's **temporal activity schedule** — the broadcast-time (§7) of its txs aggregated
   into an hour-of-day histogram (`active_hours`/`schedule_distance`, `results/RESULTS-temporal.md`) —
   as a candidate quasi-identifier, and report it as a **negative result**: on a 30-day sample
@@ -738,11 +766,18 @@ case-study scale.) The same scale gap applies to the change-identification valid
 labels and clusters are one-day; a multi-epoch replication is only scale, not new method.
 
 **Separate research tracks — not a scale run.** Three further directions are genuinely new
-work: first, the full Narayanan–Shmatikov **seed-and-extend attack** at chain scale — the
-rarity-threshold FP-control (§8) is delivered; what remains is running the cluster-level
-topology over the whole connected graph with richer features (community detection,
-embeddings) and the independent entity labels the co-spend heuristic cannot supply
-(bootstrapped from the known-entity catalog, `catalog/known-entities.md`); second, the
+work: first, the full Narayanan–Shmatikov **seed-and-extend attack** at chain scale, over
+two channels. The provenance channel's mechanism (§7, `NSPropagator`/`propagate_merge` in
+`decluster/propagate.py`) is **built and evaluated on a synthetic fixture**
+(`results/RESULTS-ns-propagation.md`) — not new method, but pending chain-scale validation:
+a real prevout-resolved tx sample, independent entity labels the co-spend heuristic cannot
+supply (bootstrapped from the known-entity catalog, `catalog/known-entities.md`), and
+`ancestry_signature` computed over that sample (the expensive step, network-rate-limited —
+see the results file's "reproduce on chain data" section for the concrete blockers hit).
+The topology channel is genuinely further work on top of what's delivered: the
+rarity-threshold FP-control (§8) is delivered, but running the cluster-level topology over
+the whole connected graph needs richer features (community detection, embeddings) it does
+not yet have, in addition to the same independent-labels and scale requirements; second, the
 construction-side **cost function** — feeding the measured bits back so a wallet shapes its
 own transactions to avoid these tells, the defensive counterpart and a project in its own right;
 third, generalizing the amount channel (§2) beyond the 2-in/2-out roundness test — the
