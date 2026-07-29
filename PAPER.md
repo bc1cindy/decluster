@@ -12,7 +12,7 @@ left is a whole-chain **entity-reduction rate** (§9).*
 ## Abstract
 
 On-chain Bitcoin privacy is an emergent property of the **transaction graph**, not of
-any single transaction. The transaction **graph is primary**: in general the amount channel is the
+any single transaction. The transaction **graph is primary**: in general the amount channel is, on our reading, the
 **most defeatable** layer — net-settlement and deliberately underdetermined values silence it —
 and, following the cited framework (`tx-graph-anonymity-sets`, §05), we treat the amount channel as
 *embedded within* the graph model. Within that model there is one **regime-scoped exception**:
@@ -35,7 +35,7 @@ on top of the decidable case. We present a probabilistic clustering framework th
 transaction multigraph that refuses false merges, avoiding the cluster-collapse failure of a single union-find. 
 We build a curated **library of fingerprints with evidence** (23 measured axes across the
 chain-observable transaction-construction surface, calibrated on unbiased real-chain
-samples — 16 structural axes on a whole-chain sample, and 7 on mempool samples (5 witness + OP_RETURN +
+samples — 16 construction axes on a whole-chain sample, and 7 on mempool samples (5 witness + OP_RETURN +
 a block-feerate broadcast-time axis) — anchored to chain-proven examples) and, on a real mainnet
 merged transaction whose correct owner-partition is known, show the intended false merge
 is re-partitioned by the amount structure and **again** by the fingerprints — the two
@@ -127,7 +127,7 @@ Three facts defeat it, in order of importance:
 
 We catalog the chain-observable transaction-construction axes (nSequence, nLockTime,
 input/output ordering, change script type, tx version, coin-selection/UIH, low-R grinding,
-SIGHASH type, **fee-rate**, **input script type**), grouping six reference wallet
+SIGHASH type, **fee-rate**, **input script type**), grouping seven reference
 integrations per axis (`catalog/tx-construction-matrix.md`). Each axis carries an
 **extractor**, **measured bits**, and a **chain-proven example** (`decluster/library.py`);
 the library carries **23 measured axes** in total (the base set plus the granular additions
@@ -247,7 +247,7 @@ Naive sampling of recent block tops is fee-biased. We first de-biased via mempoo
 definitively on a **uniform random sample of the whole chain via Google BigQuery's public
 Bitcoin dataset** (`results/RESULTS-bigquery.txt`, `bigquery/sample.sql` — no archival node; the
 query exports transactions in the pipeline's JSON schema so the same extractors run at
-scale). **The 16 structural axes are estimated from a ~105,000-tx uniform sample across the whole chain**; the
+scale). **The 16 construction axes are estimated from a ~105,000-tx uniform sample across the whole chain**; the
 witness axes (low-R, SIGHASH, pubkey compression, multisig, nested segwit) *and OP_RETURN* are measured on
 a ~3,500-tx mempool sample, since BigQuery's schema carries no witness data (and OP_RETURN is degenerate
 in the whole-chain export — all-`none`, 0 bits — so its 4.00 bits come from the mempool sample too).
@@ -306,8 +306,8 @@ robustness claim; the **graph-topology leg is measured too** (`results/RESULTS-c
 Fusing the counterparty-overlap term into the clustering (`cluster_refined(neigh=…)`, §8) and sweeping the
 same `c`, the owner-partition is byte-identical across the whole range (Adjusted Rand Index **1.0**)
 while a fingerprint-only clustering moves at both ends of the sweep — the >100 identifying bits of graph
-structure (§1) swamp the per-axis weight uncertainty, exactly the "enough fingerprints *and* graph
-structure" the conjecture names.
+structure (§1) swamp the per-axis weight uncertainty — fingerprint uniformity is necessary but
+graph structure is what decides.
 
 **Bayesian record linkage vs Fellegi-Sunter (`results/RESULTS-bayes-vs-fs.md`).** The engine's F-S score
 is the point-estimate (plug-in) special case of Bayesian record linkage. We build the Bayesian variant on
@@ -447,7 +447,7 @@ bits; **◐** = captured coarsely, not as the granular tell; **❌** = not built
 | More than 2 outputs | ◐ subsumed by `io_shape`; scoring it separately moves AUC by only a few thousandths — and the delta *flips sign* across cache samples (noise, not signal; `results/RESULTS-catalog-axes.md`) |
 | Spend unconfirmed outputs (zero-conf) | ❌ not a single-tx fingerprint — needs the tx's ancestry (parent-in-same-block), like the amount/time edges |
 | Coin Control | ❌ not cleanly chain-observable — a UX behavior; UIH (its on-chain proxy) is now measured (8.3%, 3.6 bits) but does not *uniquely* identify manual coin control |
-| Taproot script-tree depth from a round fee | ❌ not built — a niche *derived* leak: a round-number fee at the nominal rate can betray taproot script-tree depth (Kogman). We model `fee_rate` (round/precise) and taproot script type, but not the depth inference |
+| Taproot script-tree depth from a round fee | ❌ not built — a niche *derived* leak: a round-number fee at the nominal rate can betray taproot script-tree depth. We model `fee_rate` (round/precise) and taproot script type, but not the depth inference |
 | SegWit serialization / SegWit-conform | ◐ subsumed by `input_script_type` + `nested_segwit`; M&N's weakest tell (TPR ≈ 0.02). Scoring it separately adds only a ~±0.002 AUC double-counting artifact (within noise) — the redundant axis produces the *larger* swing — so it stays unscored (`results/RESULTS-catalog-axes.md`) |
 
 † conditional on a round-number change-identification heuristic (payment is the rounder
@@ -476,12 +476,12 @@ relay / network-timing fingerprints, JSON/HTTP serialization, and — most conse
 high-dimensional provenance features (where a coin came from — its ancestry signature) are a distinct
 and stronger attack surface, the origin of the sparse-high-dimension curse of dimensionality. Its
 first rung *is* now built and measured: `ancestry_entropy` (`decluster/ancestry.py`) computes the
-absorber-model provenance entropy — a backward walk weighted by the exact subset-sum link matrix
+absorber-model provenance entropy — a backward walk weighted by the subset-sum link matrix
 (`dss.pairwise_link_prob`), solved as an absorbing Markov chain — a per-coin lower bound on provenance
 ambiguity. On real coins it confirms the framework's premise directly: for typical coins the bound is
 **≈0 bits** (the origin resolves to a single ancestral coin — "every coin is sparsely represented"),
 rising only through genuine fan-out (`results/RESULTS-ancestry.md`). The **deep-feature matching**
-attack — using that sparse ancestry signature as a Narayanan–Shmatikov quasi-identifier to *link*
+attack — using that sparse ancestry signature as a Narayanan–Shmatikov distinguishing feature to *link*
 coins — has a first demonstration too: `provenance_link` (`ancestry.py`) scores the rarity-weighted
 overlap of two provenance signatures, and on the merged anchor `931d6627` it independently separates
 the Cake and sender lineages (link **0.000** — disjoint provenance), a third channel agreeing with the
@@ -553,6 +553,58 @@ label-consistency upper bound, not a fingerprint result.)
 
 This is a case study: one day, labels skewed to fast-spending wallets (only change spent inside the
 window is revealed) over one-day clusters. A multi-epoch replication is future work (§9).
+
+### Wallet updates since the pinned snapshot
+
+The fingerprint cells are pinned to the versions this research read (Cake Wallet
+`@dc1b369`, 2026-06-10). Several of the Cake divergences the tracking-issue review
+surfaced have since been merged upstream, which **bounds** — but does not erase —
+the corresponding backward-channel signal: a fix only stops *new* txs from leaking;
+every already-confirmed tx built by a pre-fix version still carries the tell, so the
+demonstration txs (§6, and Ex.3 `8fb80573…`) remain re-partitionable. Merged fixes,
+with the release that first ships them:
+
+- **Output ordering** — change is now shuffled, not appended last (`#3420`
+  software+RBF / `#3432` hardware-wallet+Bitcoin-Cash; v6.3.0/v6.4.0). Removes the
+  deterministic change-last position for post-fix txs.
+- **Input ordering** — inputs now shuffled, not BIP-69 sorted (`#3379`; v6.3.0).
+- **Receiver input selection (UIH2)** — the payjoin receiver now routes candidates
+  through `try_preserving_privacy` instead of contributing `unspent[0]` (`#3304`;
+  v6.3.0), lowering (not closing) the unnecessary-input leak rate on the
+  receiver-contributed input.
+- **Spending unconfirmed (receiver candidates)** — the receiver now excludes 0-conf
+  UTXOs (Cake `#3389`, v6.3.0; ldk-node PR `#746`, still open), so a
+  0-conf-ancestor contributed input rules the confirmed-only wallets out by
+  elimination — a temporal/ancestry signal, not a single-tx one (§7).
+
+Still divergent (fix in flight): nSequence group-C (`bitcoin_base#12`), nLockTime`=0`
+(`#3385`), greedy coin selection (`#3408`).
+
+Two axes gained a qualitatively different case:
+
+- **Anti-fingerprinting randomization (BTCPay/NBitcoin).** BTCPay is the first
+  integration that *deliberately blends* rather than emitting a fixed value: NBXplorer
+  keeps a 5-block window of the joint on-chain fingerprint distribution and, at build
+  time, samples **nVersion, nLockTime/fee-sniping, and low-R** to fill any field the
+  caller left unset — so on those axes it carries ~no per-tx partition signal (a
+  random draw from the real distribution). Its residual fixed tells are structural
+  and shared with the mainstream cluster (always-RBF `0xFFFFFFFD`, default-P2WPKH
+  single-type vin, change-matches-wallet, the NBitcoin knapsack's `0.01 BTC`
+  min-change). It is the reference for how a wallet defeats these axes without a
+  library-side conformance pass.
+- **Coin-selection prediction.** Coin selection carries a stronger technique than a
+  static fingerprint value: an adversary who knows the algorithm can *replay* a
+  suspected cluster's selection and, if a strictly-better coin was left unspent,
+  argue the coin is mis-assigned to that cluster. This bites only against a
+  **deterministic** selector — Cake (greedy, pre-`#3408`), Liana (BnB + deterministic
+  fallback), a smallest-fit receiver, or Electrum (`CoinChooserPrivacy`, PRNG seeded
+  from the candidate UTXO set) — and is defeated by a **randomized** one (Core's
+  least-waste multi-solver with shuffles and a randomized change target; BTCPay's
+  stochastic knapsack; BDK's SingleRandomDraw fallback), where a "better" unselected
+  coin is consistent with normal behaviour. Against the randomized selectors only the
+  *parameters* (min-change, cost-of-change, long-term feerate) fingerprint the
+  algorithm, not the selection. The full per-integration split is in
+  `catalog/tx-construction-matrix.md`.
 
 ## 8. Limitations (honest)
 
@@ -710,17 +762,17 @@ only), so the unsupervised EM/Splink and Bayesian paths are the ones pursued her
 ## 10. Related work
 
 - <sub>**Yuval Kogman (nothingmuch), [*Anonymity Sets on the Transaction Graph*](https://github.com/nothingmuch/tx-graph-anonymity-sets)**: the theoretical framework this paper calibrates empirically — entropic anonymity sets (§6), the sub-transaction and absorber models (§2/§6), and the graph-as-quasi-identifiers argument the topology term realizes (§8). We measure and implement what it models.</sub>
-- <sub>**Yuval Kogman (nothingmuch), [*Collaborative Transaction Privacy*](https://gist.github.com/nothingmuch/d84ba390d89b5b08897af2d95009c2a1)**: the failure-mode taxonomy this paper calibrates against — CIOH violation by collaborative transactions, the NS1R / NSNR / net-settlement progression, and the robust-connectivity / own-origin / deep-feature program (§2/§8/§9). It frames the amount channel as the *most defeatable* layer — net-settlement with cycles and deliberately underdetermined values silence it — which is why our *primary* amount signal is scoped to the decidable regime (§2), and the provenance / deep-feature channel it develops is exactly the one §7 defers as out of scope.</sub>
+- <sub>**Yuval Kogman (nothingmuch), [*Collaborative Transaction Privacy*](https://gist.github.com/nothingmuch/d84ba390d89b5b08897af2d95009c2a1)**: the failure-mode taxonomy this paper calibrates against — CIOH violation by collaborative transactions, the NS1R / NSNR / net-settlement progression, and the robust-connectivity / own-origin / deep-feature program (§2/§8/§9). It shows how net-settlement with cycles and deliberately underdetermined values can *silence* amount analysis — on our reading the most defeatable layer — which is why our *primary* amount signal is scoped to the decidable regime (§2), and the provenance / deep-feature channel it develops is exactly the one §7 defers as out of scope.</sub>
 - <sub>**Armin Sabouri, [*How Fingerprints Damage PayJoin Privacy*](https://github.com/payjoin/research-docs/blob/main/fingerprints/payjoin.md)** (payjoin/research-docs): the applied payjoin case for this program — it walks real payjoin transactions through the same construction tells this paper measures (low-R, SIGHASH serialization, nSequence, value-conservation/round-number, input ordering/locktime, coin-selection residuals), across intra- and inter-transaction layers, and concludes that "PayJoin's privacy extends only as far as the uniformity of the participating wallets." That is precisely the collaborative-transaction failure our engine quantifies: the merge is refused by the amount structure and again by the fingerprints (§2/§6), and the same per-axis bits, inverted, define the construction-side uniformity a payjoin must reach (§9).</sub>
 - <sub>**Cindy (bc1cindy)**, [*Tracking: chain-observable transaction-level fingerprinting*](https://github.com/payjoin/rust-payjoin/issues/1597) (payjoin/rust-payjoin #1597): the venue for this program and its review discussion — the tracking issue that scopes the fingerprint checklist (§7) this paper measures against.</sub>
 - <sub>**Maurer, Neudecker & Florian**, *Anonymous CoinJoin Transactions with Arbitrary Values* (2017): the **sub-transaction model** — a transaction with arbitrary amounts can be re-partitioned into the plausible original transactions, and their number and plausibility bound its anonymity. The origin of the amount-based re-partition we take as the *primary* signal (§2/§6).</sub>
 - <sub>**LaurentMT**, *Boltzmann* (OXT, 2015): operationalized the sub-transaction model as transaction **entropy** `E = log₂N` over the N plausible input→output interpretations. §1 refines this: what bounds anonymity is the *entropy of the distribution* over partitions, not the count `log₂N`.</sub>
 - <sub>**Fellegi & Sunter**, *A Theory for Record Linkage* (JASA 64(328):1183–1210, 1969; [doi:10.1080/01621459.1969.10501049](https://doi.org/10.1080/01621459.1969.10501049)): the record-linkage weight-of-evidence the engine scores in — an agreement on a value of frequency `p` contributes `−log₂p` bits (§4; this value-specific *frequency-based* weighting is due to Newcombe, 1959/1962); the topology term internalizes counterparty overlap as an FS quasi-identifier, and the rarity threshold is its rarity-weighting of that match (§8).</sub>
-- <sub>**Winkler**, *Using the EM Algorithm for Weight Computation in the Fellegi–Sunter Model of Record Linkage* (1988; 2000), and **Splink** (UK Ministry of Justice, [moj-analytical-services/splink](https://github.com/moj-analytical-services/splink)): the unsupervised EM that estimates the FS model's per-field agreement probability `m` without same-owner labels, and its open-source reference implementation. Our per-axis `m` fit (§5, `results/RESULTS-em-m.md`) is Splink-style — `u` fixed at the measured collision, the reuse label withheld for validation — and the Bayesian variant (`results/RESULTS-bayes-vs-fs.md`) is its posterior generalization.</sub>
-- <sub>**Narayanan & Shmatikov**, *Robust De-anonymization of Large Sparse Datasets* (IEEE S&P 2008; [arXiv:cs/0610105](https://arxiv.org/abs/cs/0610105)) and *De-anonymizing Social Networks* (IEEE S&P 2009; [arXiv:0903.3276](https://arxiv.org/abs/0903.3276)): structure alone re-identifies nodes. Their rarity-weighted quasi-identifier score `wt(i) = 1/log|supp(i)|` is the basis of our topology distinctiveness threshold (`−log₂(share)`, §8). §6 tests the *premise* on a real connected Bitcoin slice — payment-graph structure predicts same-owner at AUC 0.95 beyond co-spend (`results/RESULTS-graph-deanon.md`); the full seed-and-extend attack at chain scale, and richer features (community detection, embeddings), remain future work (§9).</sub>
-- <sub>**Möser & Narayanan**, *Resurrecting Address Clustering in Bitcoin* (FC 2023; [arXiv:2107.05749](https://arxiv.org/abs/2107.05749)): the non-interactive change-labeling method — the change of a 2-output transaction is revealed when its address is later co-spent with the inputs' cluster — and the "consistent fingerprint" change heuristics (their Table 4, incl. ordered ins/outs). We reproduce their labeling and §2.2 filters, and their per-axis validation, on a real slice (§7; `results/RESULTS-change-id.md`).</sub>
+- <sub>**Winkler**, *Overview of Record Linkage and Current Research Directions* (2005), building on his EM weight-computation work (1988), and **Splink** (UK Ministry of Justice, [moj-analytical-services/splink](https://github.com/moj-analytical-services/splink)): the unsupervised EM that estimates the FS model's per-field agreement probability `m` without same-owner labels, and its open-source reference implementation. Our per-axis `m` fit (§5, `results/RESULTS-em-m.md`) is Splink-style — `u` fixed at the measured collision, the reuse label withheld for validation — and the Bayesian variant (`results/RESULTS-bayes-vs-fs.md`) is its posterior generalization.</sub>
+- <sub>**Narayanan & Shmatikov**, *Robust De-anonymization of Large Sparse Datasets* (IEEE S&P 2008; [arXiv:cs/0610105](https://arxiv.org/abs/cs/0610105)) and *De-anonymizing Social Networks* (IEEE S&P 2009; [arXiv:0903.3276](https://arxiv.org/abs/0903.3276)): structure alone re-identifies nodes. Their high-dimensional sparsity result — rare structure re-identifies, distinctive attributes rarity-weighted `wt(i) = 1/log|supp(i)|` — is the *premise* our topology term operationalizes (the `−log₂(share)` weight it scores in is the Newcombe/FS frequency weight, §4/§8). §6 tests that premise on a real connected Bitcoin slice — payment-graph structure predicts same-owner at AUC 0.95 beyond co-spend (`results/RESULTS-graph-deanon.md`); the full seed-and-extend attack at chain scale, and richer features (community detection, embeddings), remain future work (§9).</sub>
+- <sub>**Möser & Narayanan**, *Resurrecting Address Clustering in Bitcoin* (FC 2023; [arXiv:2107.05749](https://arxiv.org/abs/2107.05749)): the non-interactive change-labeling method — the change of a 2-output transaction is revealed when its address is later co-spent with the inputs' cluster — and the "consistent fingerprint" change heuristics (their Table 1, incl. ordered ins/outs). We reproduce their labeling and §2.2 filters, and their per-axis validation, on a real slice (§7; `results/RESULTS-change-id.md`).</sub>
 - <sub>**Kappos et al.**, *How to Peel a Million: Validating and Expanding Bitcoin Clusters* (USENIX Security 2022; [paper](https://www.usenix.org/system/files/sec22-kappos.pdf)): change identification by whether an output's onward-spend belongs to the same peel chain — the cluster-feature `findNext` (TFC/AFC/changeC). We implement `findNext` (§7, `change_cluster.py`), but note it cannot be *validated against* an M&N co-spend label: the two share the co-spend-cluster signal, so `findNext` scores that label by construction (§7 circularity caveat). Our label-disjoint validation is the per-axis fingerprint test instead.</sub>
-- <sub>**Wang et al.**, *Exploring Unconfirmed Transactions for Effective Bitcoin Address Clustering*: the closest model — a clustering-effectiveness paper reporting **entity reduction** on the whole chain (co-spend +2.3%, novel heuristics +9.8%). We follow the same anonymity-collapse framing but at **case-study scale** (the entropy metric on the merged-transaction graph, §6); a whole-chain measurement needs the whole connected chain, not an archival node (§9).</sub>
+- <sub>**Wang et al.**, *Exploring Unconfirmed Transactions for Effective Bitcoin Address Clustering*: the closest model — a clustering-effectiveness paper reporting **entity reduction** by mining unconfirmed/mempool transactions (co-spend on unconfirmed txs +2.3%, three novel mempool heuristics +9.8%, against whole-chain entity counts). We follow the same anonymity-collapse framing but at **case-study scale** (the entropy metric on the merged-transaction graph, §6); a whole-chain measurement needs the whole connected chain, not an archival node (§9).</sub>
 - <sub>**Ron & Shamir**, *Quantitative Analysis of the Full Bitcoin Transaction Graph* (FC 2013): the first quantitative graph analysis of Bitcoin and the tracking of specific large entities by their on-chain patterns — the lineage of the **special-case** de-anonymization this paper's known-entity catalog and optimal-change labels extend (`catalog/known-entities.md`, §7). The special cases are the next lever (§9).</sub>
 - <sub>**Dingledine & Mathewson**, *Anonymity Loves Company*: uniformity is a network-effect property — a wallet that de-biases one axis but stands out on another gains nothing. This grounds our recommendation to randomize *between legitimate behaviors* (same distribution), not merely to fix single fingerprints.</sub>
 - <sub>**Syverson**, *Why I'm Not an Entropist*: caution on the entropy framing; we report bits as weight-of-evidence for pairwise linkage, not as a single anonymity scalar.</sub>

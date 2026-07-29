@@ -1,10 +1,10 @@
-# Tx-construction fingerprint matrix (issue )
+# Tx-construction fingerprint matrix (issue #1597)
 
 Companion to `research-docs/fingerprints/merged transaction.md` and to the network-level
 harness seed (`docs/superpowers/specs/2026-05-27-fingerprint-verification-harness-design.md`,
 #1586). This is the **chain-level** analog: it audits each integration's
 *standard* transaction builder — the code that produces the **prior transactions**
-feeding a merged transaction — across 10 observable fingerprint axes, and groups the six
+feeding a merged transaction — across 10 observable fingerprint axes, and groups the seven
 integrations per axis (the way the issue grouped nSequence into A/B/C).
 
 ## Why the standard builder, not the merged transaction code
@@ -65,24 +65,59 @@ in each wallet's standard tx builder — that is what this matrix audits.
   Liana #2011 (`merged transaction-receiver`). The merged transaction code is secondary context; the
   prior-tx fingerprint comes from each wallet's standard builder / underlying lib
   (Core, bdk_wallet, rust-bitcoin, cake-tech/bitcoin_base).
+- **Liana fee rate (axis 10) is manual-input only** — Liana calls no
+  `estimatesmartfee` / backend estimator; the spend `feerate_vb` is caller-supplied and
+  the GUI fills it from a user-typed field. So the cell is `caller (manual)`, **not**
+  bitcoind-derived.
+- **Liana taproot changes the input-script-type reading** — under a Simple Inheritance
+  taproot wallet, ordinary spends are a plain taproot **key-path** spend
+  (indistinguishable from any single-sig P2TR); only a *recovery* spend takes the taptree
+  branch. So the "distinctive `wsh()`/`tr()` witness" reading holds for non-taproot
+  (miniscript `wsh`) or recovery spends — a taproot wallet's normal sends carry no
+  distinctive witness. `library.py` bits are wallet-agnostic, so this is a prose caveat,
+  not a weight change.
+- **Liana nLockTime** — most integrations emit exact-tip, so Liana's anti-fee-sniping
+  backdate can itself fingerprint a Liana payjoin, reinforcing the axis-4 tension
+  (fee-sniping resistance vs cross-wallet uniformity).
+
+## Version anchoring & temporal validity
+
+Cells are pinned to the versions this research read (Cake Wallet `@dc1b369`,
+2026-06-10). Because the matrix is a **backward-channel** de-anonymization surface,
+a fingerprint is exploitable for every prior tx built by the version that emitted
+it — a fix does not erase the signal from already-confirmed chain history, it only
+bounds it. Cake's cells therefore carry a **fix/open marker**: `(vX · #PR)` = the
+divergence was fixed as of Cake release `vX` (merged `#PR`), so txs built by
+`< vX` still leak it; `(open · #PR)` = still divergent, fix in flight. Example 3
+(`8fb80573…`, 2026-06) predates **every** Cake fix and remains chain-proven.
 
 ## Master matrix
 
 `✓` = converges with the canonical (Core-baseline) value · `✗` = diverges (leaks) ·
+`rand` = **sampled per-tx from the recent on-chain distribution → carries ~no
+per-tx signal** (BTCPay/NBitcoin deliberately blends into the crowd) ·
 severity is for the divergence as a backward-channel partition signal.
 
-| # | Axis | the sender wallet (Core) | ldk-node (BDK) | Liana | Boltz | BBM (BDK) | Cake | Sev |
-|---|------|----|----|----|----|----|----|----|
-| 1 | nSequence | `FD` ✓ | `FD` ✓ | `FD` ✓ | `FD` ✓ | `FD` ✓ | **mixed `01`/`FF` ✗** | **high** |
-| 2 | Low-R grind | ✓ | ✓ | ✓ | ✓ | ✓ | ✓ | low |
-| 3 | Taproot sighash | ✓ | ✓ | ✓ | ✓ | ✓ | ✓ | low |
-| 4 | nLockTime | tip exact ✓ | tip exact ✓ | **tip −Δ~10% ✗** | **swap/0 ✗** | tip exact ✓ | **0 always ✗** | **high** |
-| 5 | tx version | `2` ✓ | `2` ✓ | `2` ✓ | `2` ✓ | `2` ✓ | `2` ✓ | low |
-| 6 | Input order | shuffle ✓ | shuffle ✓ | **selection-order ✗** | **BIP-69 ✗** | shuffle ✓ | shuffle ✓ | med |
-| 7 | Output order | shuffle ✓ | shuffle ✓ | **change-last ✗** | sweep (n/a) | shuffle ✓ | **insertion ✗** | **high** |
-| 8 | Change spk type | match ✓ | match ✓ | match ✓ | sweep (n/a) | match ✓ | **fixed p2wpkh ✗** | med |
-| 9 | Coin select/UIH | Core BnB | BDK BnB | BnB+desc-fallback | sweep | **greedy ✗** | **greedy ✗** | med |
-| 10 | Fee rate | CLI/Core est | fee_estimator | caller/bitcoind | caller/Core | rounded ext | **Electrum buckets** | low |
+| # | Axis | Core (sender) | ldk-node (BDK) | Liana | Boltz | BBM (BDK) | Cake | BTCPay/NBitcoin | Sev |
+|---|------|----|----|----|----|----|----|----|----|
+| 1 | nSequence | `FD` ✓ | `FD` ✓ | `FD` ✓ | `FD` ✓ | `FD` ✓ | **mixed `01`/`FF` ✗** (open · bitcoin_base#12) | `FD` ✓ | **high** |
+| 2 | Low-R grind | ✓ | ✓ | ✓ | ✓ | ✓ | ✓ | **rand** | low |
+| 3 | Taproot sighash | ✓ | ✓ | ✓ | ✓ | ✓ | ✓ | ✓ | low |
+| 4 | nLockTime | tip exact ✓ | tip exact ✓ | **tip −Δ~10% ✗** | **swap/0 ✗** | tip exact ✓ | **0 always ✗** (open · #3385) | **rand** | **high** |
+| 5 | tx version | `2` ✓ | `2` ✓ | `2` ✓ | `2` ✓ | `2` ✓ | `2` ✓ | **rand** (`1`/`2`) | low |
+| 6 | Input order | shuffle ✓ | shuffle ✓ | **selection-order ✗** | **BIP-69 ✗** | shuffle ✓ | shuffle ✓ (v6.3.0 · #3379) | shuffle ✓ | med |
+| 7 | Output order | shuffle ✓ | shuffle ✓ | **change-last ✗** | sweep (n/a) | shuffle ✓ | shuffle ✓ (v6.3.0/v6.4.0 · #3420/#3432) | shuffle ✓ | **high** |
+| 8 | Change spk type | match ✓ | match ✓ | match ✓ | sweep (n/a) | match ✓ | **fixed p2wpkh ✗** | match ✓ | med |
+| 9 | Coin select/UIH | Core BnB | BDK BnB | BnB+desc-fallback | sweep | **greedy ✗** | **greedy ✗** (open · #3408) | stochastic knapsack | med |
+| 10 | Fee rate | CLI/Core est | fee_estimator | caller (manual) | caller/Core | rounded ext | **Electrum buckets** | manual + rec | low |
+
+BTCPay/NBitcoin is the outlier: it is the only integration that **actively
+randomizes** version, nLockTime, and low-R (sampled from a 5-block window of the
+on-chain distribution) instead of emitting a fixed per-wallet value — so on those
+axes it carries no partition signal. Its residual fixed tells are structural
+(always-RBF `0xFFFFFFFD`, default-P2WPKH, change-matches-wallet, the NBitcoin
+knapsack's `0.01 BTC` min-change) and none separate it from the Group-A cluster.
+See the anti-fingerprinting subsection below.
 
 ## Per-axis detail (high & medium severity)
 
@@ -130,8 +165,10 @@ both sources:
   resistance against cross-wallet uniformity.
 
 ### Axis 6 — Input ordering · MEDIUM · *holds*
-Three-way split: **shuffle** (Core/BDK → the sender wallet, ldk-node, BBM, Cake) ·
-**BIP-69 lexicographic** (Boltz) · **selection/insertion order** (Liana). A non-BIP-69 wallet
+Three-way split: **shuffle** (Core/BDK → the sender wallet, ldk-node, BBM,
+BTCPay/NBitcoin, and Cake **as of v6.3.0** · #3379 — `@dc1b369` sorted BIP-69, so
+pre-v6.3.0 Cake txs still carry it) · **BIP-69 lexicographic** (Boltz) ·
+**selection/insertion order** (Liana). A non-BIP-69 wallet
 sorts by chance with probability `1/n!` (½ at n=2, ⅙ at n=3), so a small-`n` sorted set is
 coincidental, not a brand. That `1/n!` sets the **gate**, not the emitted weight: `x_input_order`
 labels a sorted set `bip69` only at **n≥4** (accidental sort <5%); at n≤3 it returns `small_n`
@@ -142,11 +179,14 @@ the same wallet). A randomized order excludes BIP-69 at any n.
 
 ### Axis 7 — Output ordering / change position · HIGH · *holds*
 Directly defeats merged transaction's change-ambiguity goal.
-- **shuffle** (Core/BDK): the sender wallet, ldk-node, BBM.
+- **shuffle** (Core/BDK, BTCPay/NBitcoin): the sender wallet, ldk-node, BBM; **and
+  Cake as of v6.3.0/v6.4.0** — `outputOrdering: BitcoinOrdering.shuffle`, #3420
+  (software + RBF) then #3432 (hardware-wallet + Bitcoin-Cash paths).
 - **change always LAST** (Liana): `spend.rs:750-752`, explicit `TODO: shuffle
   once we have Taproot`.
-- **insertion order, change appended** (Cake): `BitcoinOrdering.none` at
-  `electrum_wallet.dart:1360`.
+- ~~**insertion order, change appended** (Cake): `BitcoinOrdering.none` at
+  `electrum_wallet.dart:1360`~~ — the pinned `@dc1b369` value; **exploitable for
+  pre-v6.3.0 Cake txs** (Ex.3 is one), fixed forward by #3420/#3432.
 - **single-output sweep** (Boltz): no change axis, but the shape is its own brand.
 - A wallet whose prior txs always put change last makes change-identification
   trivial, re-partitioning the merged merged transaction.
@@ -160,11 +200,57 @@ cheapest type` TODO). A non-p2wpkh Cake wallet emits change whose type mismatche
 its inputs — a deterministic tell no other integration produces.
 
 ### Axis 9 — Coin selection / UIH · MEDIUM · *holds*
-Five regimes: Core BnB · BDK `BranchAndBound<SingleRandomDraw>` (ldk-node, BBM) ·
-Liana BnB + descending-value-per-wu fallback (dust=500, long-term feerate 5) ·
-Boltz no-selection sweep · **Cake greedy accumulation with residual change, no
-BnB**. Greedy/exotic fallbacks leave UIH1/UIH2 peel-chain residuals distinguishable
-from BnB. Probabilistic — needs repeated observations.
+Six regimes: Core `SelectCoins` (BnB + Knapsack + CoinGrinder + SRD, least-waste) ·
+BDK `BranchAndBound<SingleRandomDraw>` (ldk-node, BBM) · Liana `bdk_coin_select`
+BnB + descending-value-per-wu fallback (dust=500, long-term feerate 5) · Boltz
+no-selection sweep · BTCPay/NBitcoin `DefaultCoinSelector` (Core-style **stochastic
+knapsack**, `0.01 BTC` min-change) · **Cake greedy accumulation with residual
+change, no BnB** (open · #3408 would move it to `BranchAndBound<SingleRandomDraw>`).
+Greedy/exotic fallbacks leave UIH1/UIH2 peel-chain residuals distinguishable from
+BnB. Probabilistic — needs repeated observations.
+
+Beyond the leak-*value*, this axis carries a second, stronger technique —
+**coin-selection prediction** — treated as its own de-anon lens below: a
+*deterministic* selector lets an adversary replay the suspected cluster's selection
+and refute a mis-join (a strictly-better unselected coin argues the coin is
+mis-assigned); a *randomized* selector turns the selected set into a random variable
+and defeats the test.
+
+### BTCPay/NBitcoin · anti-fingerprinting randomization
+Unlike every other integration — each of which emits a fixed per-wallet value that
+convergence could eliminate — BTCPay (via NBXplorer) **samples** several axes to
+imitate the on-chain crowd. NBXplorer keeps a 5-block sliding window of the joint
+fingerprint distribution over every tx, and at build time conditions on what it
+knows (script type, non-mixed inputs/sequence, RBF) and samples **nVersion (1/2),
+nLockTime/fee-sniping, and low-R enforcement** to fill any field the caller left
+unset. So on those axes BTCPay is `rand` — a random draw from the real
+distribution, carrying ~no per-tx partition signal, the opposite of Cake's
+deterministic tells. Active on ordinary sends; disabled only on the RBF fee-bump
+path (which must reuse the original tx). Residual **fixed** tells are structural
+and shared with the Group-A cluster: always-RBF `0xFFFFFFFD`, default-P2WPKH
+(one script type per wallet → no multi-type vin), change matching the wallet type,
+and the NBitcoin knapsack's `0.01 BTC` min-change — none of which single it out.
+It is the reference for *how a wallet should behave* on these axes.
+
+### Coin-selection prediction (de-anon lens)
+The heuristic works only if the selector is **reproducible**: given {UTXO set,
+feerate, outputs}, is the selection deterministic (predictable) or randomized
+(resistant)?
+- **Predictable (deterministic):** **Cake** (greedy address-then-age accumulation,
+  no RNG; open · #3408) · **Liana** (`bdk_coin_select` BnB + deterministic
+  descending-value fallback) · **Boltz receiver** (smallest-UTXO-that-fits) ·
+  **Electrum** (`CoinChooserPrivacy`, PRNG **seeded from the UTXO set**, not the
+  outputs — enumerating the coins yields the whole seed). These let the adversary
+  replay the selection over a suspected cluster and test whether a "better" coin was
+  wrongly joined.
+- **Resistant (randomized):** **Core / payjoin-cli** (BnB + Knapsack/SRD/CoinGrinder,
+  least-waste, with shuffles + a randomized change target — deterministic only when
+  a changeless BnB solution dominates) · **BTCPay/NBitcoin** (stochastic knapsack) ·
+  **BDK** SingleRandomDraw fallback (ldk-node/BBM — predictable only in the
+  changeless-BnB regime) · **Boltz** ordinary send (delegates to Core). A "better"
+  unselected coin here is consistent with normal behaviour, so only the selector's
+  *parameters* (min-change, cost-of-change, long-term feerate) fingerprint the
+  algorithm, not the selection.
 
 ## New bugs / tells surfaced
 

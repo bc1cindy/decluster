@@ -5,7 +5,17 @@ Bit provenance:
 - structural/amount/type/change: uniform ~105k whole-chain sample via BigQuery
   (`bigquery/` SQL), accumulated over several TABLESAMPLE runs.
 - witness (low_r, sighash, pubkey_compression, multisig, nested_segwit) and op_return:
-  ~3.5k mempool.space txs (`engine.sample_recent_txs`) — BigQuery's schema has no witness."""
+  ~3.5k mempool.space txs (`engine.sample_recent_txs`) — BigQuery's schema has no witness.
+
+Weights are **wallet-agnostic**: each bit is −log2 of a *value*'s chain share, so a
+wallet-side fix (e.g. Cake input BIP-69→shuffle #3379, output insertion→shuffle
+#3420/#3432) changes only *which* wallets land on a value, not the value's weight.
+Historical values persist: `cake_group_c` stays (nSequence still open, and every
+pre-fix tx carries it). Two cases live in `catalog/tx-construction-matrix.md`, not
+here, because they are not static extracted values: **BTCPay/NBitcoin** samples
+version/locktime/low-R from the on-chain distribution, so it lands on the common
+values (~0 distinctive bits, no new entry); **coin-selection prediction** is a
+replay technique against a deterministic selector, not a per-tx fingerprint bit."""
 
 _EX3 = "8fb80573d8871efee060a34dcb97fd12d5229444b7262b26358cd84912a04a75"
 
