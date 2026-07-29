@@ -134,5 +134,5 @@ def test_integration_driver_runs_offline():
     txs = {"s": "s", "m": "m"}
     rarity = {"r": 1, "h": 200}
     summary = run_on_signatures(node_sigs, seeds, txs, rarity)
-    assert "median_bits_before" in summary and "median_bits_after" in summary
+    assert "partition_bits_before" in summary and "partition_bits_after" in summary
     assert summary["reid_rate"] >= 0.0

@@ -1,17 +1,18 @@
 """Driver: run the N-S seed-and-propagate build-out on a tx sample and emit
 results/RESULTS-ns-propagation.md. `run_on_signatures` is the offline-testable core;
-`run` wires the real ancestry/entities/combiner modules."""
-import statistics
+`run` wires the real ancestry/entities/combiner modules. Summary includes whole-partition
+bits (entropy over the full label partition) before vs. after merge propagation."""
 from decluster.propagate import (NSPropagator, holdout_reid,
                                  partition_from_assignment)
 from decluster.graph_metric import partition_entropy
 from decluster.combiner import Combiner
 
 
-def _median_cluster_bits(assigned):
-    groups = partition_from_assignment(assigned)
-    per = [partition_entropy([g]) for g in groups] or [0.0]
-    return statistics.median(per)
+def _partition_bits(assigned):
+    """Entropy (bits) of the WHOLE label partition at once — the uncertainty about which
+    cluster a random node falls in. `partition_entropy` of a single group is 0 by
+    construction, so this must be computed over all groups together, NOT per-group."""
+    return partition_entropy(partition_from_assignment(assigned))
 
 
 def run_on_signatures(node_sigs, seed_labels, node_txs, rarity, combiner=None,
@@ -28,8 +29,8 @@ def run_on_signatures(node_sigs, seed_labels, node_txs, rarity, combiner=None,
     after = prop.propagate(node_sigs, seed_labels)
     reid = holdout_reid(node_sigs, seed_labels, prop)
     refined = prop.refine(cospend_clusters or [], node_sigs, node_txs)
-    return {"median_bits_before": _median_cluster_bits(before),
-            "median_bits_after": _median_cluster_bits(after),
+    return {"partition_bits_before": _partition_bits(before),
+            "partition_bits_after": _partition_bits(after),
             "reid_rate": reid["rate"], "n_nodes": len(node_sigs),
             "n_refined_groups": len(refined)}
 
