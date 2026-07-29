@@ -1,4 +1,4 @@
-from decluster.propagate import build_rarity, entity_signature, label_scores, eccentricity, propagate_merge
+from decluster.propagate import build_rarity, entity_signature, label_scores, eccentricity, propagate_merge, should_split
 
 
 def test_build_rarity_counts_supports():
@@ -61,3 +61,21 @@ def test_propagate_merge_idempotent():
     # feeding the result back as seeds changes nothing
     second = propagate_merge(node_sigs, first, rarity, theta=0.5, min_score=0.1)
     assert first == second
+
+
+class _FakeCombiner:
+    def __init__(self, s): self._s = s
+    def score(self, a, b): return self._s
+
+def test_should_split_requires_both_channels():
+    disjoint_a, disjoint_b = {"x": 1.0}, {"y": 1.0}   # provenance_link == 0
+    overlap_a, overlap_b = {"x": 1.0}, {"x": 1.0}     # provenance_link > 0
+    rarity = {"x": 1, "y": 1}
+    diverge = _FakeCombiner(-5.0)     # fingerprint says different owner
+    agree = _FakeCombiner(+3.0)       # fingerprint says same owner
+    # both channels agree -> split
+    assert should_split(disjoint_a, disjoint_b, {}, {}, diverge, rarity) is True
+    # provenance disjoint but fingerprint agrees -> no split
+    assert should_split(disjoint_a, disjoint_b, {}, {}, agree, rarity) is False
+    # fingerprint diverges but provenance overlaps -> no split
+    assert should_split(overlap_a, overlap_b, {}, {}, diverge, rarity) is False

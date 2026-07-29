@@ -80,3 +80,14 @@ def propagate_merge(node_sigs, seed_labels, rarity, theta, min_score=0.0):
             assigned[node] = max(scores, key=scores.get)
             changed = True
     return assigned
+
+
+def should_split(sig_a, sig_b, tx_a, tx_b, combiner, rarity,
+                 link_eps=1e-9, refuse_below=-2.0):
+    """Two-channel edge-removal gate: split only when provenance is disjoint
+    (provenance_link <= link_eps) AND the fingerprint diverges (combiner.score <
+    refuse_below). Requiring both independent channels blocks a false split from either
+    channel alone."""
+    if provenance_link(sig_a, sig_b, rarity) > link_eps:
+        return False
+    return combiner.score(tx_a, tx_b) < refuse_below
