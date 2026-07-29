@@ -509,8 +509,10 @@ re-aggregating and iterating to convergence (multi-hop). A two-channel
 `should_split` removes a co-spend edge only when provenance is disjoint (`provenance_link ≈ 0`)
 AND the fingerprint diverges — either channel alone leaves the edge intact. Its held-out seed
 re-identification (`holdout_reid`: hide a fraction of seed labels, re-derive them from the rest)
-is evaluated so far on a **synthetic fixture only**, not chain data (`results/RESULTS-ns-propagation.md`;
-chain-scale evaluation pending, §9). The split channel is not only a standalone module: it is now
+is evaluated on a **synthetic fixture** and a preliminary **cache-bounded real run**
+(`results/RESULTS-ns-propagation.md`); the real run mostly truncates at the cache boundary — most
+signatures collapse to a single ancestral atom, the whole-graph limit of §7 — so it exercises the
+mechanism on real data but does **not yet establish its strength**; proper chain-scale evaluation pending (§9). The split channel is not only a standalone module: it is now
 wired into the live engine as `cluster_refined`'s provenance-disjoint refuse term
 (`decluster/cluster.py`, `provenance=`) — a co-spent pair is refused when provenance is disjoint
 and the fingerprint already disagrees (`fp < 0`), the same fp-gating discipline as the amount
@@ -768,8 +770,9 @@ labels and clusters are one-day; a multi-epoch replication is only scale, not ne
 **Separate research tracks — not a scale run.** Three further directions are genuinely new
 work: first, the full Narayanan–Shmatikov **seed-and-extend attack** at chain scale, over
 two channels. The provenance channel's mechanism (§7, `NSPropagator`/`propagate_merge` in
-`decluster/propagate.py`) is **built and evaluated on a synthetic fixture**
-(`results/RESULTS-ns-propagation.md`) — not new method, but pending chain-scale validation:
+`decluster/propagate.py`) is **built and evaluated on a synthetic fixture plus a preliminary cache-bounded real run**
+(`results/RESULTS-ns-propagation.md`; the real run mostly truncates at the cache boundary, §7) — not
+new method, and its real-data strength is not yet established, pending chain-scale validation:
 a real prevout-resolved tx sample, independent entity labels the co-spend heuristic cannot
 supply (bootstrapped from the known-entity catalog, `catalog/known-entities.md`), and
 `ancestry_signature` computed over that sample (the expensive step, network-rate-limited —
