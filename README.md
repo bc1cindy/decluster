@@ -36,6 +36,14 @@ two people into one).
 
 - `decluster/` — the attacker (the measurement half that runs): extractors, library, combiner, cluster (engine: `cluster_refined`), propagate (entity-level N-S seed-and-propagate via provenance signatures; synthetic evaluation), graph_deanon
 - the construction/cost half (deferred — PAPER §9): `cost` (leak / amount-cut / topology leaf terms + the deferred `construction_cost`), `ancestry` (the absorber-model provenance target; feeds propagate), `report` (fuses the terms on a real tx), `subsetsum`/`coinjoin_demix` (the amount de-mix channel); consumes the `dense-subset-sum` engine (build: `maturin develop`); `cluster_refined` optionally refuses links when provenance and fingerprints diverge
+- chain-analysis channels that select what to ask and read the answer, all outside the engine:
+  `conservation` (what the other participants could not have funded — arithmetic on one transaction,
+  no client model), `provenance` (which inputs descend from known transactions), `monitor` (watches
+  tracked coins for the co-spend an intersection argument needs), `intersect` (the N-ary origin
+  intersection, handed to `cluster_refined` to score rather than asserted)
 - `PAPER.md` — the manuscript; `results/` — reproducible outputs; `catalog/`, `bigquery/`
+
+Installable (`pip install -e .`), so a protocol-specific client model can consume these primitives
+from above without this repository knowing the protocol exists.
 
 Every number is reproducible. MIT — see `LICENSE`.
