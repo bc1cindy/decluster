@@ -8,3 +8,4 @@ slice*.json
 slice*.err
 day-*.json
 day-*.err
+decluster.egg-info/
