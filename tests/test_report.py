@@ -67,3 +67,35 @@ def test_report_targets_arg_restricts_walk():
                         oracle=lambda i, o: {"coins": []}, link_oracle=lambda i, o: [[1.0, 0.0]],
                         targets=[0])
     assert set(rep["targets"]) == {0}      # only the requested vout walked
+
+
+def _round(total_in, outs):
+    """A round reduced to what conservation reads: the total consumed and the outputs."""
+    return {"txid": "R", "fee": 1000, "weight": 4000,
+            "vin": [{"txid": "P", "vout": 0, "prevout": {"value": total_in}}],
+            "vout": [{"value": v, "scriptpubkey_type": "v0_p2wpkh"} for v in outs]}
+
+
+def test_the_forced_term_is_absent_rather_than_assumed():
+    """Conservation needs one participant's input, which the transaction alone
+    does not give — so without it the term is None, like leak and topology."""
+    tx = _round(100, [20, 20, 20])
+    rep = report.report(tx, fetch=lambda t: tx, oracle=lambda i, o: {"coins": []},
+                        link_oracle=lambda i, o: [[1.0, 0.0, 0.0]])
+    assert rep["forced"] is None
+
+
+def test_the_forced_term_reports_what_the_others_could_not_have_funded():
+    """others hold 50, so they afford two of the three 20s; the third has no source."""
+    tx = _round(90, [20, 20, 20])
+    rep = report.report(tx, fetch=lambda t: tx, oracle=lambda i, o: {"coins": []},
+                        link_oracle=lambda i, o: [[1.0, 0.0, 0.0]], known_input=40)
+    assert rep["forced"] == [(20, 1, 3)]
+
+
+def test_the_forced_term_is_empty_when_the_inequality_does_not_bite():
+    """The common answer: a participant small relative to the round forces nothing."""
+    tx = _round(100, [20, 20, 20])
+    rep = report.report(tx, fetch=lambda t: tx, oracle=lambda i, o: {"coins": []},
+                        link_oracle=lambda i, o: [[1.0, 0.0, 0.0]], known_input=10)
+    assert rep["forced"] == []

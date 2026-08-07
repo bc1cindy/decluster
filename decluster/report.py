@@ -2,10 +2,16 @@
 Assembles existing tested terms (NO new science): the per-tx amount cuts and the per-output
 ancestry target are ALWAYS computed (they are intrinsic to the tx); the pairwise leak and topology
 are computed ONLY when the caller supplies the graph context that makes a pair meaningful, else they
-are None (never fabricated). Every number is an attacker lower bound under no auxiliary information,
-not a privacy score; the target's headline is min_entropy (the conservative, defender-side read)."""
+are None (never fabricated). `forced` joins them on the same footing: conservation needs one
+participant's input to be known, which the transaction alone does not give. Every number is an
+attacker lower bound under no auxiliary information, not a privacy score; the target's headline is
+min_entropy (the conservative, defender-side read).
+
+`forced` is reported here, not scored: it is an attribution, and the engine's amount channel may only
+refuse (PAPER §1), so it never reaches `cluster_refined`."""
 from .cost import amount_cuts, topology_bits, leak_bits, dss_oracle
 from .ancestry import ancestry_entropy, dss_link_oracle
+from .conservation import forced_in_round
 
 FOOTING = ("attacker lower bounds under no auxiliary information; not a privacy score. target "
            "headline is min_entropy (the conservative, defender-side read); shannon is the "
@@ -25,7 +31,8 @@ def _spendable_vouts(tx):
 
 
 def report(tx, combiner=None, neigh=None, entities=None, pair=None,
-           oracle=None, link_oracle=None, fetch=None, depth=6, targets=None):
+           oracle=None, link_oracle=None, fetch=None, depth=6, targets=None,
+           known_input=None):
     """Fused measurement view of a real transaction `tx` (esplora/mempool.space JSON). See module
     docstring for the always-vs-conditional term policy and the lower-bound footing."""
     if oracle is None:
@@ -53,8 +60,15 @@ def report(tx, combiner=None, neigh=None, entities=None, pair=None,
     topology = None
     if neigh is not None and entities is not None:
         topology = topology_bits(entities[0], entities[1], neigh)
+    forced = None
+    if known_input is not None:
+        # `[(value, forced, present)]` — outputs no other participant could have
+        # funded. Empty is the common answer; it takes a participant large
+        # relative to the round for the inequality to bite (PAPER §9).
+        forced = forced_in_round(tx, known_input)
     return {"txid": txid, "amount": amount, "targets": targets_out,
-            "leak": leak, "topology": topology, "footing": FOOTING}
+            "leak": leak, "topology": topology, "forced": forced,
+            "footing": FOOTING}
 
 
 def print_report(rep):
@@ -66,5 +80,12 @@ def print_report(rep):
     for vout, t in rep["targets"].items():
         print(f"  target vout {vout}: min_entropy={t['min_entropy']:.3f} bits (lower bound) "
               f"shannon={t['shannon']:.3f} absorbers={t['n_absorbers']} truncated={t['truncated']}")
+    if rep["forced"] is None:
+        print("  forced: n/a (no participant input supplied)")
+    elif not rep["forced"]:
+        print("  forced: none — the others could have funded every output")
+    else:
+        for value, n, present in rep["forced"]:
+            print(f"  forced: {n} of {present} output(s) at {value} sat are the participant's")
     print(f"  leak: {rep['leak']}   topology: {rep['topology']}")
     print(f"  [{rep['footing']}]")
