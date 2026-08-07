@@ -154,3 +154,67 @@ if __name__ == "__main__":
     fns = [v for k, v in sorted(globals().items()) if k.startswith("test_") and callable(v)]
     for fn in fns: fn(); print(f"ok  {fn.__name__}")
     print(f"\n{len(fns)} passed")
+
+# --- Detectors that read a payment's shape must not read a coinjoin's ---
+# Measured on six mainnet Wasabi 2 rounds and their funders: of 387 transactions
+# scanned, 312 were mixes, `batching` fired on 312 of them, and `bitmex` fired
+# twice — both times on a coinjoin output whose bech32 encoding happens to begin
+# `bc1qmex`. Neither detector was wrong about payments. Both were being asked
+# about a population where their signature carries no information.
+
+def _mix(n_in=324, n_out=382, addr=None):
+    """A coinjoin's shape: many non-dust outputs, and no fan-out at all."""
+    vout = [{"value": 1_000_000, "scriptpubkey_address": f"bc1qout{i}"} for i in range(n_out)]
+    if addr:
+        vout[0]["scriptpubkey_address"] = addr
+    return {"vin": [{"txid": f"f{i}", "vout": 0} for i in range(n_in)], "vout": vout}
+
+def test_batching_refuses_a_coinjoin_however_many_outputs_it_pays():
+    """A mix meets every other test — hundreds of outputs, almost no dust — and is
+    separated only by the fan-out the description always claimed."""
+    assert detect_batching(_mix()) is None
+    assert detect_batching(_mix(n_in=454, n_out=502)) is None
+    assert detect_batching(_mix(n_in=12, n_out=21)) is None      # a JoinMarket round
+
+def test_batching_still_fires_on_a_payout_that_actually_fans_out():
+    """The fix must not cost the pattern it exists for: one input, many payees."""
+    assert detect_batching(_mix(n_in=1, n_out=101))["entity"] == "batching"
+    assert detect_batching(_mix(n_in=3, n_out=12))["entity"] == "batching"
+
+def test_the_fan_out_threshold_refuses_the_gap_rather_than_guessing():
+    """A mix runs near 1.2 outputs per input, a payout to tens; between them the
+    detector declines instead of picking a side."""
+    assert detect_batching(_mix(n_in=5, n_out=15)) is None       # 3.0, under the bar
+    assert detect_batching(_mix(n_in=5, n_out=20))["entity"] == "batching"
+
+def test_a_bech32_prefix_match_is_discounted_by_how_many_addresses_were_scanned():
+    """`bc1qmex` fixes three bech32 characters, so one address in 32768 carries it
+    by chance. A two-output payment offers two chances and a coinjoin offers
+    hundreds, and reporting both at a flat 0.98 is what let a mix's change be
+    labelled an exchange.
+
+    The discount within one transaction is real but small — a 382-output round
+    still only expects 0.012 coincidences. It is the corpus that produces them:
+    scanning 312 such rounds expects about 3.6, and 2 were found. Deciding that
+    needs the scan size, which no detector sees, so what this reports is the
+    per-transaction rate the caller has to multiply."""
+    payment = _tx([{"value": 1, "scriptpubkey_type": "v0_p2wpkh",
+                    "scriptpubkey_address": "bc1qmexdeadbeef"},
+                   {"value": 1, "scriptpubkey_type": "v0_p2wpkh",
+                    "scriptpubkey_address": "bc1qchange"}])
+    strong = detect_bitmex(payment)[0]
+    weak = detect_bitmex(_mix(addr="bc1qmexcollision"))[0]
+    assert weak["confidence"] < strong["confidence"]
+    assert weak["expected_collisions"] > 100 * strong["expected_collisions"]
+    # monotone in the crowd: a bigger scan discounts the same prefix further
+    # 32768 addresses is where a coincidence becomes the expectation, not the surprise
+    bigger = detect_bitmex(_mix(n_in=1, n_out=65_536, addr="bc1qmexcollision"))[0]
+    assert bigger["expected_collisions"] == 2 and bigger["confidence"] < 0.34
+
+def test_the_base58_prefix_survives_the_same_transaction():
+    """`3BMEX` fixes four base58 characters, a space three hundred times larger, so
+    the same crowd does not erode it. The discount is per prefix, not per shape."""
+    hit = detect_bitmex(_mix(addr="3BMEXcollision"))[0]
+    weak = detect_bitmex(_mix(addr="bc1qmexcollision"))[0]
+    assert hit["confidence"] > 0.97
+    assert hit["expected_collisions"] < weak["expected_collisions"] / 100

@@ -54,27 +54,64 @@ def detect_bip47_notification(tx):
 
 # --- BitMEX: 3BMEX (base58 P2SH) / bc1qmex (bech32) vanity deposit addresses, 3-of-4 P2SH multisig ---
 
-_BITMEX_PREFIXES = ("3BMEX", "bc1qmex")
+# Each prefix mapped to the space it leaves free, which is what decides whether a
+# match is a label or a coincidence. "3BMEX" fixes four base58 characters past the
+# P2SH version's '3'; "bc1qmex" fixes only three bech32 characters past the hrp and
+# witness version, and 32**3 is small enough that a transaction with hundreds of
+# addresses is expected to contain one by chance.
+_BITMEX_PREFIXES = {"3BMEX": 58 ** 4, "bc1qmex": 32 ** 3}
 
 
 def _is_bitmex_addr(addr):
-    return bool(addr) and addr.startswith(_BITMEX_PREFIXES)
+    return _bitmex_space(addr) is not None
+
+
+def _bitmex_space(addr):
+    """How many addresses share the matched prefix by chance, or None if none matches."""
+    if not addr:
+        return None
+    for prefix, space in _BITMEX_PREFIXES.items():
+        if addr.startswith(prefix):
+            return space
+    return None
 
 
 def detect_bitmex(tx):
     """BitMEX deposit addresses carry a `3BMEX…`/`bc1qmex…` vanity prefix (3-of-4 P2SH multisig in the
     legacy era; reissued to native bech32 in Oct 2023). Returns per-address entity labels for any output
-    paying such an address (a deposit) or any input spending one (BitMEX moving funds)."""
+    paying such an address (a deposit) or any input spending one (BitMEX moving funds).
+
+    A vanity prefix is worth exactly its improbability, and that is a property of the transaction it is
+    found in as much as of the prefix. Each hit carries `expected_collisions` — how many addresses of
+    this transaction would carry the prefix by chance — and a `confidence` discounted by it. In a
+    two-output payment the bech32 prefix is worth as much as the base58 one; in a coinjoin with hundreds
+    of outputs it is worth almost nothing, and a flat 0.98 there labels a mix's change as an exchange.
+
+    Within one transaction the discount stays small — a 382-output round expects 0.014 coincidences — so
+    this discloses the rate rather than refusing the hit. It is the corpus that turns the rate into
+    coincidences: 312 rounds of that size expect about four, and a caller scanning a corpus has to
+    multiply. No structural test separates them here, because deciding whether a bech32 BitMEX deposit
+    is P2WPKH or P2WSH would settle it by assumption rather than by evidence."""
+    addresses = [o.get("scriptpubkey_address") for o in tx.get("vout", [])]
+    addresses += [(v.get("prevout") or {}).get("scriptpubkey_address") for v in tx.get("vin", [])]
+    scanned = sum(1 for a in addresses if a)
+
+    def label(role, index, addr, space):
+        expected = scanned / space
+        return {"role": role, "index": index, "address": addr, "entity": "bitmex",
+                "kind": "service", "confidence": round(0.98 / (1 + expected), 4),
+                "expected_collisions": expected, "source": "detector"}
+
     hits = []
     for i, o in enumerate(tx.get("vout", [])):
-        if _is_bitmex_addr(o.get("scriptpubkey_address")):
-            hits.append({"role": "output", "index": i, "address": o["scriptpubkey_address"],
-                         "entity": "bitmex", "kind": "service", "confidence": 0.98, "source": "detector"})
+        space = _bitmex_space(o.get("scriptpubkey_address"))
+        if space:
+            hits.append(label("output", i, o["scriptpubkey_address"], space))
     for i, v in enumerate(tx.get("vin", [])):
         addr = (v.get("prevout") or {}).get("scriptpubkey_address")
-        if _is_bitmex_addr(addr):
-            hits.append({"role": "input", "index": i, "address": addr,
-                         "entity": "bitmex", "kind": "service", "confidence": 0.98, "source": "detector"})
+        space = _bitmex_space(addr)
+        if space:
+            hits.append(label("input", i, addr, space))
     return hits
 
 
@@ -180,12 +217,20 @@ def detect_consolidation(tx, min_inputs=10, max_outputs=2):
             "n_inputs": nin, "n_outputs": nout}
 
 
-def detect_batching(tx, min_outputs=10, dust_limit=DUST_LIMIT, max_dust_frac=0.5):
+def detect_batching(tx, min_outputs=10, dust_limit=DUST_LIMIT, max_dust_frac=0.5, min_fanout=4):
     """Batched-payout pattern — few inputs paying many *non-dust* outputs at once (distinct from a dust
     spray, which `detect_dust_fanout` handles). The on-chain **proxy** for an exchange's batched
-    withdrawals; a behaviour flag, not a brand attribution. Returns a pattern label or None."""
+    withdrawals; a behaviour flag, not a brand attribution. Returns a pattern label or None.
+
+    `min_fanout` is what "few inputs" costs in code: a payout fans out, so its outputs outnumber its
+    inputs several times over. Without it the remaining tests are met by every coinjoin — hundreds of
+    non-dust outputs and no fan-out at all — and what the detector reports is the protocol rather than a
+    service. A mix runs near 1.2 outputs per input and a batch runs to tens or hundreds, so the two are
+    not close; the threshold sits between them and refuses rather than guesses in the gap."""
     vout = tx.get("vout", [])
     if len(vout) < min_outputs:
+        return None
+    if len(vout) < min_fanout * max(1, len(tx.get("vin", []))):
         return None
     dust = sum(1 for o in vout if isinstance(o.get("value"), int) and o["value"] <= dust_limit)
     if dust > max_dust_frac * len(vout):                 # mostly dust -> a spray, not a batch payout
