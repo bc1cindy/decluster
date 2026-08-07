@@ -148,6 +148,19 @@ def ancestry_signature(target, depth=6, fetch=None, link_oracle=dss_link_oracle)
     return absorber_distribution(g, target)
 
 
+def ancestry_signature_and_truncation(target, depth=6, fetch=None, link_oracle=dss_link_oracle):
+    """The signature, plus how many of its absorbers are the oracle refusing rather than an origin.
+
+    Both come from one walk. The count is what makes an *empty* intersection readable: a boundary
+    that is entirely truncation contains no observed origin, so two such signatures fail to overlap
+    whatever their provenance is. Without it, "no shared origin" and "no view" are the same answer."""
+    if fetch is None:
+        from .fetch import fetch_tx
+        fetch = fetch_tx
+    g = build_extended_graph(target, depth=depth, fetch=fetch, link_oracle=link_oracle)
+    return absorber_distribution(g, target), g.truncated
+
+
 def provenance_link(sig_a, sig_b, rarity=None):
     """Narayanan–Shmatikov quasi-identifier overlap of two provenance signatures: the shared ancestral
     coins, each scored by the mass it carries in *both* and, optionally, its global rarity

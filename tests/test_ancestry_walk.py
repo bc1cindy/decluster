@@ -68,3 +68,31 @@ def test_flat_link_splits_provenance():
     dist = ancestry.absorber_distribution(g, ("C", 0))
     assert dist[("P", 0)] == pytest.approx(0.5)
     assert dist[("R", 0)] == pytest.approx(0.5)
+
+
+def test_signature_and_truncation_come_from_one_walk():
+    """The count is what makes an empty intersection readable, so it has to be
+    the same walk the signature came from, not a second one."""
+    txs = {
+        "C": {"vin": [vin("P", 0, 5), vin("R", 0, 5)], "vout": [{"value": 10}]},
+        "P": {"vin": cb_vin(), "vout": [{"value": 5}]},
+        "R": {"vin": cb_vin(), "vout": [{"value": 5}]},
+    }
+    sig, truncated = ancestry.ancestry_signature_and_truncation(
+        ("C", 0), depth=6, fetch=make_fetch(txs), link_oracle=lambda i, o: [[0.5], [0.5]]
+    )
+    assert set(sig) == {("P", 0), ("R", 0)}
+    assert truncated == 0, "a coinbase boundary is an origin, not a refusal"
+
+
+def test_an_oracle_refusal_is_counted_as_truncation():
+    """A boundary the oracle declined to walk is not an observed origin."""
+    txs = {
+        "C": {"vin": [vin("P", 0, 3), vin("P", 1, 4)], "vout": [{"value": 7}]},
+        "P": {"vin": cb_vin(), "vout": [{"value": 3}, {"value": 4}]},
+    }
+    sig, truncated = ancestry.ancestry_signature_and_truncation(
+        ("C", 0), depth=6, fetch=make_fetch(txs), link_oracle=lambda i, o: None
+    )
+    assert sig == {("C", 0): 1.0}, "the coin becomes its own boundary"
+    assert truncated == 1
