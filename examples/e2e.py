@@ -8,38 +8,12 @@ deterministically; `run_live` sources it from mempool.space via a real, bounded 
 (network + subprocess; see its own docstring) — the live-only imports it needs are deferred
 inside the function body so the offline path (and the offline test suite) never touches them.
 """
-from collections import Counter
-
 from decluster import cluster as cluster_mod
 from decluster.anonymity_set import cluster_of_from_tx_groups
 from decluster.combiner import Combiner
 from decluster.partition_model import build_evidence, contract_cospend
 from decluster.report import report as fused_report
-from decluster.split_merge import sample as sm_sample, enumerate_posterior
-
-M3_MAX_SUPERNODES = 5
-
-
-def _partition_key(labels, n):
-    return tuple(sorted(tuple(sorted(k for k in range(n) if labels[k] == c))
-                        for c in set(labels)))
-
-
-def _m3_gap_and_samples(ev, seed):
-    """Worst per-partition gap between the split-merge sampler's stationary distribution and
-    exact enumeration (test_split_merge.py::test_sample_stationary_matches_enumeration's pattern),
-    plus the raw post-burn label samples (reused by `run_live` for co-assignment agreement).
-    ev.n == 0 has no partitions to compare; treat as an exact match with no samples."""
-    if ev.n == 0:
-        return 0.0, []
-    out = sm_sample(ev, n_iter=4000, burn=1000, seed=seed)
-    exact = {tuple(sorted(part)): p for part, p in enumerate_posterior(ev)}
-    counts = Counter(_partition_key(s, ev.n) for s in out["labels_samples"])
-    tot = sum(counts.values()) or 1
-    emp = {k: v / tot for k, v in counts.items()}
-    keys = set(exact) | set(emp)
-    gap = max(abs(exact.get(k, 0.0) - emp.get(k, 0.0)) for k in keys)
-    return gap, out["labels_samples"]
+from decluster.split_merge import M3_MAX_SUPERNODES, m3_gap_and_samples as _m3_gap_and_samples
 
 
 def _m3_worst_partition_gap(ev, seed):

@@ -8,3 +8,5 @@ from .conservation import forced_in_round
 from .provenance import candidate_coins, rank_by_overlap
 from .monitor import walk_frontier
 from .intersect import evaluate, score_candidate
+from .analyze import analyze, cluster_map, cluster_posterior
+from .oracle import bounded_link_oracle, subprocess_link_oracle

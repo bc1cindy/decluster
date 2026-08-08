@@ -68,18 +68,21 @@ def provenance_overlap_hypothesis(reference_sig, origins, *, sig_of, rarity=None
     return (name, factors)
 
 
-def provenance_anonymity_fused(target, subjective_oracle, *, depth=6, fetch=None, link_oracle=None):
+def provenance_anonymity_fused(target, subjective_oracle, *, depth=6, fetch=None, link_oracle=None,
+                                value_weighted=False):
     """§04-faithful provenance anonymity set: the absorption distribution of the backward walk whose
     per-tx link matrices are combined with the subjective matrix BEFORE solving (subjective_oracle
     folded into build_extended_graph). A concentrating subjective oracle sharpens the distribution
     (lower entropy) by routing mass through same-owner links — the link-level fusion the post-solve
-    `reweight` cannot do."""
+    `reweight` cannot do. `value_weighted` (default False, backward-compatible) passes through to
+    build_extended_graph's Gap C satoshi-flow weighting."""
     from .ancestry import build_extended_graph, absorber_distribution, dss_link_oracle
     if fetch is None:
         from .fetch import fetch_tx
         fetch = fetch_tx
     g = build_extended_graph(target, depth=depth, fetch=fetch,
                              link_oracle=link_oracle or dss_link_oracle,
+                             value_weighted=value_weighted,
                              subjective_oracle=subjective_oracle)
     return absorber_distribution(g, target)
 
@@ -189,6 +192,18 @@ def cluster_pairs(tx, cluster_of):
             if oa is not None and cluster_of.get(oa) == ci:
                 pairs.add((i, j))
     return pairs
+
+
+def subjective_oracle_for(cluster_of=None):
+    """The §04 subjective link oracle from the default detectors: address-reuse self-transfer, plus
+    (when `cluster_of` is given) the same-owner clustering source. Shared by report.report and
+    analyze()."""
+    if cluster_of is not None:
+        srcs = (address_reuse_pairs, lambda t: cluster_pairs(t, cluster_of))
+        pairs_fn = lambda t: subjective_same_owner_pairs(t, sources=srcs)
+    else:
+        pairs_fn = subjective_same_owner_pairs
+    return sameowner_link_oracle(pairs_fn)
 
 
 def subjective_same_owner_pairs(tx, sources=None):

@@ -15,55 +15,23 @@ ones (277 in / 325 out), but also small-looking ones with dense/similar values (
 >30s; a 27-in/2-out tx with near-equal input values likewise). `budget_ms` is cooperative and the
 native call does not appear to check it (or does not release control) inside the blow-up; a
 Python-level `signal.alarm` also failed to preempt it (the call never yields to the interpreter).
-So `hard_bounded_link_oracle` below runs each link computation in a throwaway subprocess and
-kills it on a wall-clock deadline — an OS-level bound that works regardless of what the native
-code does internally. A kill returns None, which is exactly `ancestry`'s own oracle-refusal
-boundary: `build_extended_graph` already truncates cleanly on None, so no core-code change is
-needed."""
+So the link oracle used here is `decluster.oracle.subprocess_link_oracle` (re-exported below as
+`hard_bounded_link_oracle`), which runs each link computation in a throwaway subprocess and kills
+it on a wall-clock deadline — an OS-level bound that works regardless of what the native code does
+internally. A kill returns None, which is exactly `ancestry`'s own oracle-refusal boundary:
+`build_extended_graph` already truncates cleanly on None, so no core-code change is needed."""
 import json
-import multiprocessing as mp
 
 from decluster.ancestry import build_extended_graph, absorber_distribution
 from decluster.anonymity_set import (
     anonymity_bits, provenance_anonymity, decay, provenance_overlap_hypothesis,
 )
+from decluster.oracle import subprocess_link_oracle as hard_bounded_link_oracle
 from examples.ns_propagation_cache_run import cache_fetch_tx, load_cache_txs, build_sample
 
 DEPTH = 2
 N_TARGETS = 40  # generous cap; the real same-owner pool (address-reuse clusters) is smaller
-WALL_MS = 1200
 MAX_ORIGIN_SIGS = 12  # cap per-origin sub-walks so one wide boundary can't blow up the run
-
-
-def _link_worker(inputs, outputs, budget_ms, q):
-    import dss
-    try:
-        q.put(dss.pairwise_link_prob(inputs, outputs, budget_ms))
-    except BaseException:
-        # dss can hard-panic (pyo3_runtime.PanicException, a BaseException) on pathological
-        # inputs, e.g. a `set.len() <= 64` assertion seen on a 27-input tx during this harness's
-        # own probing; treat that the same as a normal refusal.
-        q.put(None)
-
-
-def hard_bounded_link_oracle(inputs, outputs, wall_ms=WALL_MS):
-    """dss_link_oracle wrapped with a hard, non-cooperative wall-clock bound (see module docstring).
-    Times out -> None (truncate), same contract as `ancestry.dss_link_oracle`."""
-    q = mp.Queue()
-    p = mp.Process(target=_link_worker, args=(inputs, outputs, wall_ms, q))
-    p.start()
-    p.join(wall_ms / 1000.0 + 0.5)
-    if p.is_alive():
-        p.terminate()
-        p.join(0.5)
-        if p.is_alive():
-            p.kill()
-            p.join()
-        return None
-    try:
-        return q.get_nowait()
-    except Exception:
-        return None
 
 
 def _same_owner_pairs(all_txs, n):

@@ -149,7 +149,12 @@ def dss_link_oracle(inputs, outputs, budget_ms=DEFAULT_LINK_BUDGET_MS):
     wall-clock budget so a dense mix truncates on time rather than on coin count. Lazy import so
     decluster.ancestry loads without the compiled `dss` module (build: maturin develop)."""
     import dss
-    return dss.pairwise_link_prob(list(inputs), list(outputs), budget_ms)
+    try:
+        return dss.pairwise_link_prob(list(inputs), list(outputs), budget_ms)
+    except BaseException:
+        # dss can hard-panic (pyo3_runtime.PanicException, a BaseException, NOT an Exception) on
+        # wide transactions; treat that the same as any other oracle refusal -> None (truncate).
+        return None
 
 
 def _shannon(probs):

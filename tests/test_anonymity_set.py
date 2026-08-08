@@ -188,3 +188,44 @@ def test_cluster_pairs_empty_when_no_shared_cluster():
     tx = {"vin": [{"prevout": {"scriptpubkey_address": "a"}}],
           "vout": [{"scriptpubkey_address": "b"}]}
     assert cluster_pairs(tx, {"a": 0, "b": 1}) == set()
+
+
+from decluster.anonymity_set import subjective_oracle_for
+
+
+def test_subjective_oracle_for_default_fires_address_reuse_only():
+    tx = {"vin": [{"prevout": {"value": 500, "scriptpubkey_address": "a"}},
+                  {"prevout": {"value": 500, "scriptpubkey_address": "b"}}],
+          "vout": [{"value": 600, "scriptpubkey_address": "z"},
+                   {"value": 399, "scriptpubkey_address": "a"}]}   # out1 reuses input0's addr "a"
+    orc = subjective_oracle_for()
+    m = orc(tx, [500, 500], [600, 399])
+    assert m is not None and m[0][1] > 1.0 and m[0][0] == 1.0 and m[1][1] == 1.0
+
+
+def test_subjective_oracle_for_folds_cluster_of_beyond_address_reuse():
+    tx = {"vin": [{"prevout": {"value": 500, "scriptpubkey_address": "a"}},
+                  {"prevout": {"value": 500, "scriptpubkey_address": "b"}}],
+          "vout": [{"value": 600, "scriptpubkey_address": "z"},
+                   {"value": 399, "scriptpubkey_address": "a"}]}
+    cluster_of = {"a": 0, "z": 0}   # input0 "a" clustered with output0 "z" -> pair beyond reuse's (0,1)
+    orc = subjective_oracle_for(cluster_of)
+    m = orc(tx, [500, 500], [600, 399])
+    assert m is not None and m[0][0] > 1.0 and m[0][1] > 1.0
+
+
+def test_provenance_anonymity_fused_passes_value_weighted_to_the_walk():
+    def fetch(txid):
+        txs = {
+            "t1": {"vin": [{"txid": "p0", "vout": 0, "prevout": {"value": 100}},
+                           {"txid": "p1", "vout": 0, "prevout": {"value": 900}}],
+                   "vout": [{"value": 1000}]},
+            "p0": {"vin": [{"is_coinbase": True}], "vout": [{"value": 100}]},
+            "p1": {"vin": [{"is_coinbase": True}], "vout": [{"value": 900}]},
+        }
+        return txs[txid]
+    oracle = lambda ins, outs: [[1.0] for _ in ins]     # uniform link -> value breaks the tie
+    sub_oracle = sameowner_link_oracle(lambda tx: set())   # abstains -> no fusion effect
+    dist = provenance_anonymity_fused(("t1", 0), sub_oracle, depth=2, fetch=fetch,
+                                       link_oracle=oracle, value_weighted=True)
+    assert dist[("p1", 0)] > dist[("p0", 0)]            # 900-sat parent gets more mass

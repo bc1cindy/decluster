@@ -63,15 +63,9 @@ def report(tx, combiner=None, neigh=None, entities=None, pair=None,
     for vout in vouts:
         entry = dict(ancestry_entropy((txid, vout), depth=depth, fetch=fetch, link_oracle=link_oracle))
         if subjective:
-            from .anonymity_set import (provenance_anonymity_fused, sameowner_link_oracle,
-                                         subjective_same_owner_pairs, anonymity_bits,
-                                         address_reuse_pairs, cluster_pairs)
-            if cluster_of is not None:
-                srcs = (address_reuse_pairs, lambda t: cluster_pairs(t, cluster_of))
-                pairs_fn = lambda t: subjective_same_owner_pairs(t, sources=srcs)
-            else:
-                pairs_fn = subjective_same_owner_pairs
-            sub_oracle = sameowner_link_oracle(pairs_fn)
+            from .anonymity_set import (provenance_anonymity_fused, subjective_oracle_for,
+                                         anonymity_bits)
+            sub_oracle = subjective_oracle_for(cluster_of)
             fdist = provenance_anonymity_fused((txid, vout), sub_oracle, depth=depth, fetch=fetch,
                                                 link_oracle=link_oracle)
             fb = anonymity_bits(fdist)

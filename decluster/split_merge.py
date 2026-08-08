@@ -4,7 +4,10 @@ Deterministic under an explicit RNG. Offline, stdlib only. Every readout is a we
 lower bound, not a privacy score."""
 import math
 import random
+from collections import Counter
 from .partition_model import log_posterior
+
+M3_MAX_SUPERNODES = 5   # M3 exactness gate: cap on super-nodes enumerate_posterior can afford
 
 
 def _relabel(labels):
@@ -194,3 +197,25 @@ def run_chains(ev, inits, **kw):
     """One `sample` per init, with distinct seeds, for R-hat convergence checks."""
     base = kw.pop("seed", 0)
     return [sample(ev, seed=base + c, init=init, **kw) for c, init in enumerate(inits)]
+
+
+def _partition_key(labels, n):
+    return tuple(sorted(tuple(sorted(k for k in range(n) if labels[k] == c))
+                        for c in set(labels)))
+
+
+def m3_gap_and_samples(ev, seed):
+    """Worst per-partition gap between the split-merge sampler's stationary distribution and
+    exact enumeration (test_split_merge.py::test_sample_stationary_matches_enumeration's pattern),
+    plus the raw post-burn label samples (reused by callers needing co-assignment posteriors).
+    ev.n == 0 has no partitions to compare; treat as an exact match with no samples."""
+    if ev.n == 0:
+        return 0.0, []
+    out = sample(ev, n_iter=4000, burn=1000, seed=seed)
+    exact = {tuple(sorted(part)): p for part, p in enumerate_posterior(ev)}
+    counts = Counter(_partition_key(s, ev.n) for s in out["labels_samples"])
+    tot = sum(counts.values()) or 1
+    emp = {k: v / tot for k, v in counts.items()}
+    keys = set(exact) | set(emp)
+    gap = max(abs(exact.get(k, 0.0) - emp.get(k, 0.0)) for k in keys)
+    return gap, out["labels_samples"]
