@@ -163,6 +163,42 @@ def test_provenance_overlap_does_not_refuse():
         cl._cospent_pairs = orig
 
 
+def test_cospent_pairs_skips_bare_coinbase_vin():
+    # a bare coinbase vin ({"is_coinbase": True}, no "txid") must not KeyError; it simply
+    # contributes no funder, same as any other vin whose txid falls outside the node set.
+    import decluster.cluster as cl
+    orig = cl.fetch_tx
+    txs = {
+        "T": {"vin": [{"txid": "A"}, {"txid": "B"}]},
+        "A": {"vin": [{"is_coinbase": True}]},
+        "B": {"vin": [{"is_coinbase": True}]},
+    }
+    cl.fetch_tx = lambda t: txs[t]
+    try:
+        assert cl._cospent_pairs(["T", "A", "B"]) == [("A", "B", "T")]
+    finally:
+        cl.fetch_tx = orig
+
+
+def test_cluster_refined_survives_bare_coinbase_node():
+    # end-to-end: A and B are coinbase-funded leaves (bare vin, no "txid") sitting in the node
+    # set alongside their co-spending child T. cluster_refined must not crash on A/B's own
+    # bare-coinbase vin, and should union A,B via T's real co-spend edge.
+    import decluster.cluster as cl
+    orig = cl.fetch_tx
+    txs = {
+        "T": {"vin": [{"txid": "A"}, {"txid": "B"}]},
+        "A": {"vin": [{"is_coinbase": True}]},
+        "B": {"vin": [{"is_coinbase": True}]},
+    }
+    cl.fetch_tx = lambda t: txs[t]
+    try:
+        groups, _refused, _linked = cl.cluster_refined(["T", "A", "B"], _Neutral(), link_above=99)
+        assert sorted(sorted(g) for g in groups) == [["A", "B"], ["T"]]
+    finally:
+        cl.fetch_tx = orig
+
+
 if __name__ == "__main__":
     fns = [v for k, v in sorted(globals().items()) if k.startswith("test_") and callable(v)]
     for fn in fns:

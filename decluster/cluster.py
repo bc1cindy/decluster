@@ -6,10 +6,12 @@ from .unionfind import UF
 
 def _cospent_pairs(nodes):
     """common-input-ownership: coins co-spent in one tx -> same owner. A node is the txid
-    that funded a coin; if tx T spends coins funded by F1,F2..., F1,F2 get a same-owner edge."""
+    that funded a coin; if tx T spends coins funded by F1,F2..., F1,F2 get a same-owner edge.
+    A bare-coinbase vin (`{"is_coinbase": True}`, no "txid") has no funder to record — skip it,
+    rather than KeyError on a well-formed coinbase input."""
     pairs = []
     for t in nodes:
-        funders = [vin["txid"] for vin in fetch_tx(t)["vin"] if vin["txid"] in nodes]
+        funders = [vin["txid"] for vin in fetch_tx(t)["vin"] if vin.get("txid") in nodes]
         for i in range(len(funders)):
             for j in range(i+1, len(funders)):
                 pairs.append((funders[i], funders[j], t))

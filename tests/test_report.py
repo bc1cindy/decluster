@@ -99,3 +99,80 @@ def test_the_forced_term_is_empty_when_the_inequality_does_not_bite():
     rep = report.report(tx, fetch=lambda t: tx, oracle=lambda i, o: {"coins": []},
                         link_oracle=lambda i, o: [[1.0, 0.0, 0.0]], known_input=10)
     assert rep["forced"] == []
+
+
+def _subjective_fetch_factory():
+    txs = {
+        "t1": {"txid": "t1",
+               "vin": [{"txid": "p0", "vout": 0, "prevout": {"value": 500, "scriptpubkey_address": "a"}},
+                       {"txid": "p1", "vout": 0, "prevout": {"value": 500}}],
+               "vout": [{"value": 600, "scriptpubkey_address": "z"},
+                        {"value": 399, "scriptpubkey_address": "a"}]},   # out1 reuses input-0 addr
+        "p0": {"txid": "p0", "vin": [{"is_coinbase": True}], "vout": [{"value": 500}]},
+        "p1": {"txid": "p1", "vin": [{"is_coinbase": True}], "vout": [{"value": 500}]},
+    }
+    return lambda txid: txs[txid]
+
+
+def _uniform_link_oracle(ins, outs):
+    return [[1.0] * len(outs) for _ in ins]
+
+
+def test_report_adds_fused_headline_and_is_conservative():
+    fetch = _subjective_fetch_factory()
+    tx = fetch("t1")
+    rep = report.report(tx, oracle=lambda i, o: {"coins": []}, link_oracle=_uniform_link_oracle,
+                        fetch=fetch, depth=2, targets=[1], subjective=True)   # target the change/reused vout
+    t = rep["targets"][1]
+    assert "min_entropy" in t and "fused_min_entropy" in t
+    # subjective same-owner evidence never raises the cut bound
+    assert t["fused_min_entropy"] <= t["min_entropy"] + 1e-9
+
+
+def test_fused_headline_is_clamped_when_subjective_pin_favors_graph_minority():
+    """Reproduces the widening bug: a same-owner pin (via address reuse) on the graph-MINORITY
+    input boosts it enough that the raw fused distribution is more spread than graph-only — which
+    would violate the 'never widen' claim. The fused headline must be clamped to graph-only."""
+    txs = {
+        "t1": {"txid": "t1",
+               "vin": [{"txid": "p0", "vout": 0, "prevout": {"value": 500}},
+                       {"txid": "p1", "vout": 0, "prevout": {"value": 500,
+                                                              "scriptpubkey_address": "shared"}}],
+               "vout": [{"value": 990, "scriptpubkey_address": "shared"}]},  # reuse pins input 1
+        "p0": {"txid": "p0", "vin": [{"is_coinbase": True}], "vout": [{"value": 500}]},
+        "p1": {"txid": "p1", "vin": [{"is_coinbase": True}], "vout": [{"value": 500}]},
+    }
+    fetch = lambda txid: txs[txid]
+
+    def skewed_link_oracle(ins, outs):
+        # graph heavily favors input 0 (0.99) over input 1 (0.01) — input 1 is the graph-minority.
+        if len(ins) == 2 and len(outs) == 1:
+            return [[0.99], [0.01]]
+        return [[1.0] * len(outs) for _ in ins]
+
+    rep = report.report(txs["t1"], oracle=lambda i, o: {"coins": []}, link_oracle=skewed_link_oracle,
+                        fetch=fetch, depth=2, targets=[0], subjective=True)
+    t = rep["targets"][0]
+    assert t["min_entropy"] < 0.1                    # graph-only: near-certain it's input 0's origin
+    assert t["fused_min_entropy"] <= t["min_entropy"] + 1e-9   # clamp holds despite the minority boost
+
+
+def test_report_subjective_false_is_graph_only_backward_compatible():
+    fetch = _subjective_fetch_factory()
+    tx = fetch("t1")
+    rep = report.report(tx, oracle=lambda i, o: {"coins": []}, link_oracle=_uniform_link_oracle,
+                        fetch=fetch, depth=2, targets=[0], subjective=False)
+    t = rep["targets"][0]
+    assert "min_entropy" in t and "fused_min_entropy" not in t   # unchanged graph-only shape
+
+
+def test_report_cluster_of_feeds_subjective_source():
+    fetch = _subjective_fetch_factory()
+    tx = fetch("t1")
+    # cluster that links input-0 addr "a" with output-0 addr "z" (from _subjective_fetch_factory's t1)
+    from decluster.anonymity_set import cluster_of_from_groups
+    cof = cluster_of_from_groups([["a", "z"]])
+    rep = report.report(tx, oracle=lambda i, o: {"coins": []}, link_oracle=_uniform_link_oracle,
+                        fetch=fetch, depth=2, targets=[0], subjective=True, cluster_of=cof)
+    t = rep["targets"][0]
+    assert "fused_min_entropy" in t and t["fused_min_entropy"] <= t["min_entropy"] + 1e-9

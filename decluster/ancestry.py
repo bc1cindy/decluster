@@ -65,7 +65,8 @@ def _is_coinbase(tx):
     return bool(vin) and vin[0].get("is_coinbase", False)
 
 
-def build_extended_graph(target, depth=6, fetch=None, link_oracle=None):
+def build_extended_graph(target, depth=6, fetch=None, link_oracle=None, value_weighted=False,
+                          subjective_oracle=None):
     """Backward provenance walk from `target = (txid, vout)` to `depth` transactions. Each coin is a
     state keyed by (txid, vout); interior coins get backward link edges to their source coins,
     boundary coins (coinbase / depth-cutoff / oracle-None) become absorbers. Refuses to fabricate a
@@ -83,7 +84,16 @@ def build_extended_graph(target, depth=6, fetch=None, link_oracle=None):
     and the theory's provenance measure is satoshi-weighted, not link-weighted. `L` already encodes
     the value multiset via subset-sum feasibility, but satoshi-flow value-weighting is deferred to the
     flow rung. `L` is uniform over non-derived mappings (the crate's definition), not
-    multiplicity-weighted."""
+    multiplicity-weighted.
+
+    `value_weighted` (opt-in, default False) implements that deferred flow rung: the link column is
+    scaled by each input's satoshi value before normalising (`col[i]*in_val_i / Σ_k col[k]*in_val_k`),
+    so a coin's provenance mass tilts toward its larger-value parents. Default stays link-probability-
+    only so existing results remain reproducible.
+
+    `subjective_oracle` implements post-04's subjective matrix that combines with the graph-derived
+    link matrix, applied at the link level before the absorbing solve (the §04-faithful fusion);
+    default None keeps the graph-only walk."""
     g = Graph()
     kind = {}                       # coin -> "transient" | "absorber"
     queue = [(target, depth)]       # BFS from target: first dequeue = largest remaining depth
@@ -104,7 +114,14 @@ def build_extended_graph(target, depth=6, fetch=None, link_oracle=None):
         matrix = link_oracle(in_vals, out_vals)
         if matrix is None:
             kind[coin] = "absorber"; g.truncated += 1; continue   # refuse to fabricate
+        if subjective_oracle is not None:
+            sub = subjective_oracle(tx, in_vals, out_vals)
+            if sub is not None:
+                matrix = [[matrix[i][j] * sub[i][j] for j in range(len(out_vals))]
+                          for i in range(len(in_vals))]
         col = [matrix[i][vout] for i in range(len(matrix))]
+        if value_weighted:
+            col = [c * in_vals[i] for i, c in enumerate(col)]
         s = sum(col)
         if s <= 0:
             kind[coin] = "absorber"; continue        # no link info -> boundary

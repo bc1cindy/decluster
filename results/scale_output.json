@@ -1,0 +1,150 @@
+{
+  "summary": {
+    "tried": 30,
+    "resolved": 15,
+    "resolve_rate": 0.5,
+    "coverage": 3,
+    "coverage_frac": 0.2,
+    "sharpened": 2,
+    "mean_graph_bits": 2.476643629734048,
+    "mean_fused_bits_covered": 2.3838965738686415,
+    "mean_reduction_covered": 0.29606303515822513
+  },
+  "rows": [
+    {
+      "txid": "022c9335d25705e376bd5ae267d5b4bf44451231c5bc6fab6e981e749e9c2089",
+      "inputs": 2,
+      "absorbers": 7,
+      "graph_bits": 2.2091479170272446,
+      "reuse_fired": false,
+      "fused_bits": 2.2091479170272446,
+      "value_weighted_bits": 2.0582064011171206
+    },
+    {
+      "txid": "43892750cb4a6e411072d83f208fdb31aeb0a4b48f3d3a5ca3154baa4481dd82",
+      "inputs": 2,
+      "absorbers": 4,
+      "graph_bits": 1.75,
+      "reuse_fired": false,
+      "fused_bits": 1.75,
+      "value_weighted_bits": 0.3057984959662892
+    },
+    {
+      "txid": "69a5253a19bc3e3542a5eb7f45e292c0854919a280edcf72d38a103393e25922",
+      "inputs": 9,
+      "absorbers": 162,
+      "graph_bits": 3.9293864958142013,
+      "reuse_fired": false,
+      "fused_bits": 3.9293864958142013,
+      "value_weighted_bits": 3.2473846982456256
+    },
+    {
+      "txid": "ffe45931ccc7b1d7f66b50f4706a68b9a5c6d2bcb5dbbd16d257a5279c0a03c0",
+      "inputs": 2,
+      "absorbers": 5,
+      "graph_bits": 2.0,
+      "reuse_fired": false,
+      "fused_bits": 2.0,
+      "value_weighted_bits": 1.878975595918427
+    },
+    {
+      "txid": "7787e8b66839c45aca8b4924e58c4faf420ced9b90194b757e362148939d65fa",
+      "inputs": 2,
+      "absorbers": 15,
+      "graph_bits": 3.096135932841805,
+      "reuse_fired": true,
+      "fused_bits": 2.268422837109042,
+      "value_weighted_bits": 2.2424661985855354
+    },
+    {
+      "txid": "c44d58d39d35557ccd71b85ded9b35922b73ce8e68ba9c587f9d5e201d8a18f3",
+      "inputs": 8,
+      "absorbers": 8,
+      "graph_bits": 3.0,
+      "reuse_fired": false,
+      "fused_bits": 3.0,
+      "value_weighted_bits": 2.342834366399559
+    },
+    {
+      "txid": "eca6fd595b91c2e14abf0566fcf471afe02d569bd1e1a5560065acafe267d9c1",
+      "inputs": 2,
+      "absorbers": 2,
+      "graph_bits": 1.0,
+      "reuse_fired": false,
+      "fused_bits": 1.0,
+      "value_weighted_bits": 0.7494763322715285
+    },
+    {
+      "txid": "c3c680d84a446eaf6a285c6f3ca375777686940d7b296fc8c2071a8ac8569faf",
+      "inputs": 2,
+      "absorbers": 2,
+      "graph_bits": 1.0,
+      "reuse_fired": true,
+      "fused_bits": 1.0,
+      "value_weighted_bits": 0.0013306372660948083
+    },
+    {
+      "txid": "51f2018e5b2abedd0ead23608e5d091361353a860fbb2493320055de38a5d92e",
+      "inputs": 2,
+      "absorbers": 4,
+      "graph_bits": 1.792481250360578,
+      "reuse_fired": false,
+      "fused_bits": 1.792481250360578,
+      "value_weighted_bits": 1.2387646831653683
+    },
+    {
+      "txid": "a7fff057aa2ff50997ad374dee2f9af6f5c816bf0b4a58a33529ee3ebc770177",
+      "inputs": 7,
+      "absorbers": 67,
+      "graph_bits": 3.9437428942387944,
+      "reuse_fired": true,
+      "fused_bits": 3.8832668844968823,
+      "value_weighted_bits": 4.039036411146358
+    },
+    {
+      "txid": "a467e531a1fb1fa4284242d76ce582e5f03680f32d0169b12dadc5b731902c03",
+      "inputs": 6,
+      "absorbers": 6,
+      "graph_bits": 2.584962500721156,
+      "reuse_fired": false,
+      "fused_bits": 2.584962500721156,
+      "value_weighted_bits": 2.584962500721156
+    },
+    {
+      "txid": "8193e0acad5a5f4b43629b73144bb4006f4f8389d9b220210a873e2dd04cc7ee",
+      "inputs": 3,
+      "absorbers": 3,
+      "graph_bits": 1.584962500721156,
+      "reuse_fired": false,
+      "fused_bits": 1.584962500721156,
+      "value_weighted_bits": 1.1581290172829772
+    },
+    {
+      "txid": "f4ccdb66d7f845e3befde9e7641039bbe7f7441460c4bc03b118e333200a12fd",
+      "inputs": 2,
+      "absorbers": 19,
+      "graph_bits": 3.4216775617930995,
+      "reuse_fired": false,
+      "fused_bits": 3.4216775617930995,
+      "value_weighted_bits": 3.1453556555914055
+    },
+    {
+      "txid": "400984947ff6dace7150082d3f78457dd2e1ead8b3c6287415c7f5ff4fca82bc",
+      "inputs": 3,
+      "absorbers": 62,
+      "graph_bits": 4.837157392492686,
+      "reuse_fired": false,
+      "fused_bits": 4.837157392492686,
+      "value_weighted_bits": 1.8103560615897434
+    },
+    {
+      "txid": "044ff8a8c78dc45e7792f729dfdff857609698dd955c5f4803883861c5b1a9d7",
+      "inputs": 2,
+      "absorbers": 2,
+      "graph_bits": 1.0,
+      "reuse_fired": false,
+      "fused_bits": 1.0,
+      "value_weighted_bits": 0.03699369242626288
+    }
+  ]
+}

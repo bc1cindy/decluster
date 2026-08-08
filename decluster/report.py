@@ -4,8 +4,16 @@ ancestry target are ALWAYS computed (they are intrinsic to the tx); the pairwise
 are computed ONLY when the caller supplies the graph context that makes a pair meaningful, else they
 are None (never fabricated). `forced` joins them on the same footing: conservation needs one
 participant's input to be known, which the transaction alone does not give. Every number is an
-attacker lower bound under no auxiliary information, not a privacy score; the target's headline is
-min_entropy (the conservative, defender-side read).
+attacker lower bound under no auxiliary information, not a privacy score. By default (`subjective=
+True`) the target's headline is fused_min_entropy — the §04 subjective-fused anonymity set, read as a
+conservative lower bound on the number of graph cuts an adversary needs to de-anonymize the coin (the
+post-06 reading); min_entropy is the graph-only (no-subjective) baseline it can only narrow, never
+widen. The fused reading is the CONSERVATIVE minimum of the graph-only and subjective-fused
+min-entropy/shannon: subjective evidence can only narrow the anonymity set, never widen it, so a raw
+fusion that (via a same-owner boost favoring a graph-minority input) ends up spreading mass instead of
+concentrating it is clamped down to the graph-only baseline. This makes fused_min_entropy <= min_entropy
+(and fused_shannon <= shannon) an invariant by construction, not just an empirical tendency. Pass
+`subjective=False` to opt out to the graph-only baseline alone.
 
 `forced` is reported here, not scored: it is an attribution, and the engine's amount channel may only
 refuse (PAPER §1), so it never reaches `cluster_refined`."""
@@ -32,9 +40,13 @@ def _spendable_vouts(tx):
 
 def report(tx, combiner=None, neigh=None, entities=None, pair=None,
            oracle=None, link_oracle=None, fetch=None, depth=6, targets=None,
-           known_input=None):
+           known_input=None, subjective=True, cluster_of=None):
     """Fused measurement view of a real transaction `tx` (esplora/mempool.space JSON). See module
-    docstring for the always-vs-conditional term policy and the lower-bound footing."""
+    docstring for the always-vs-conditional term policy and the lower-bound footing. `subjective=True`
+    (default) adds the §04 subjective-fused readout (fused_min_entropy/fused_shannon) to each target,
+    on top of the graph-only keys; `subjective=False` opts out to the graph-only shape. `cluster_of`
+    (a `{address: cluster_id}` from `cluster_refined`) folds the clustering into the §04 subjective
+    matrix — the cluster result feeds the anonymity set — alongside the default address-reuse source."""
     if oracle is None:
         oracle = dss_oracle
     if link_oracle is None:
@@ -49,8 +61,23 @@ def report(tx, combiner=None, neigh=None, entities=None, pair=None,
     vouts = targets if targets is not None else _spendable_vouts(tx)
     targets_out = {}
     for vout in vouts:
-        targets_out[vout] = ancestry_entropy(
-            (txid, vout), depth=depth, fetch=fetch, link_oracle=link_oracle)
+        entry = dict(ancestry_entropy((txid, vout), depth=depth, fetch=fetch, link_oracle=link_oracle))
+        if subjective:
+            from .anonymity_set import (provenance_anonymity_fused, sameowner_link_oracle,
+                                         subjective_same_owner_pairs, anonymity_bits,
+                                         address_reuse_pairs, cluster_pairs)
+            if cluster_of is not None:
+                srcs = (address_reuse_pairs, lambda t: cluster_pairs(t, cluster_of))
+                pairs_fn = lambda t: subjective_same_owner_pairs(t, sources=srcs)
+            else:
+                pairs_fn = subjective_same_owner_pairs
+            sub_oracle = sameowner_link_oracle(pairs_fn)
+            fdist = provenance_anonymity_fused((txid, vout), sub_oracle, depth=depth, fetch=fetch,
+                                                link_oracle=link_oracle)
+            fb = anonymity_bits(fdist)
+            entry["fused_min_entropy"] = min(fb["min_entropy"], entry["min_entropy"])
+            entry["fused_shannon"] = min(fb["shannon"], entry["shannon"])
+        targets_out[vout] = entry
     leak = None
     if pair is not None:
         if combiner is None:
@@ -78,8 +105,12 @@ def print_report(rep):
     for c in rep["amount"]:
         print(f"    cut idx {c.index} value {c.value} log_w {c.log_w}")
     for vout, t in rep["targets"].items():
-        print(f"  target vout {vout}: min_entropy={t['min_entropy']:.3f} bits (lower bound) "
-              f"shannon={t['shannon']:.3f} absorbers={t['n_absorbers']} truncated={t['truncated']}")
+        base = (f"  target vout {vout}: min_entropy={t['min_entropy']:.3f} bits (graph-only) "
+                f"shannon={t['shannon']:.3f} absorbers={t['n_absorbers']} truncated={t['truncated']}")
+        if "fused_min_entropy" in t:
+            base += (f"  | FUSED min_entropy={t['fused_min_entropy']:.3f} bits "
+                     "(>= graph cuts to de-anon)")
+        print(base)
     if rep["forced"] is None:
         print("  forced: n/a (no participant input supplied)")
     elif not rep["forced"]:
