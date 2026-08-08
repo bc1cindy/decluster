@@ -120,11 +120,19 @@ def build_extended_graph(target, depth=6, fetch=None, link_oracle=None):
     return g
 
 
-def dss_link_oracle(inputs, outputs):
-    """Default production link oracle: the exact subset-sum pairwise link matrix. Lazy import so
+# Per-link wall-clock budget for the subset-sum oracle. Coin count is a poor cost predictor
+# (same-size calls ranged 54ms-69s in dss's own measurements), so the walk truncates on time,
+# admitting the cheap large mixes the old count guard refused and cutting only the genuine
+# exponential blow-ups. Expiry is the same safe boundary as any other oracle-None refusal.
+DEFAULT_LINK_BUDGET_MS = 2000
+
+
+def dss_link_oracle(inputs, outputs, budget_ms=DEFAULT_LINK_BUDGET_MS):
+    """Default production link oracle: the exact subset-sum pairwise link matrix, bounded by a
+    wall-clock budget so a dense mix truncates on time rather than on coin count. Lazy import so
     decluster.ancestry loads without the compiled `dss` module (build: maturin develop)."""
     import dss
-    return dss.pairwise_link_prob(list(inputs), list(outputs))
+    return dss.pairwise_link_prob(list(inputs), list(outputs), budget_ms)
 
 
 def _shannon(probs):
