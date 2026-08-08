@@ -1,85 +1,97 @@
-# `analyze()` live depth-5 validation — **PENDING** (harness built, live run not yet executed)
+# `analyze()` — systematic-callability validation (real numbers)
 
-`examples/analyze_live.py` runs the PUBLIC `analyze()` facade (`decluster/analyze.py`, exported from
-`decluster`) over real Wasabi-scale coinjoin round transactions, live-fetched, at `depth=5`, behind
-the panic-safe `decluster.oracle.bounded_link_oracle`. It is the systematic-callability proof the
-facade exists for: an external consumer calling `analyze(txid, ...)` on real chain data must never
-crash, and should resolve deeper (more informative) origins than a shallow walk.
+`examples/analyze_live.py` exercises the PUBLIC `analyze()` facade (`decluster/analyze.py`, exported
+from `decluster`) — the entry point an external consumer (e.g. `wasabi-model`) imports to get per-coin
+§04 fused provenance anonymity sets. This file reports what actually happens when you call it on real
+chain data, at depth, behind the panic-safe `decluster.oracle.bounded_link_oracle`.
 
-**This file's numeric table is PENDING.** The harness (`examples/analyze_live.py`) is built and
-verified offline (see below); no live run has been executed yet. The numbers below are placeholders
-— **do not treat any number in the table as real** until this section is replaced with an actual run.
-The controller runs the live pass and fills this in next:
+Two harness entry points, both over the real public API:
+- `depth_sweep(txid, depths=(1..5))` — one transaction across increasing depths (the clean "does it
+  work at each depth?" test).
+- `analyze_live(round_txids, depth, ...)` — a batch over coinjoin round txids.
+
+## (a) `analyze()` works at every depth 1→5, tractably, on a real transaction
+
+The right test (one tx, each depth), live-fetched, narrow (non-coinjoin) ancestry
+(`00264b91…`, 3-in/2-out), `bounded_link_oracle(3000)`:
 
 ```
-.venv/bin/python -m examples.analyze_live [max_targets] [cap_total] [budget_ms] [depth]
+.venv/bin/python -m examples.analyze_live sweep 00264b9175b14c6a783610ed39da33a2717a4494bfefee08d8e5cdd7e7ebc23f
 ```
 
-## (a) Systematic callability
+| depth | wall | n_origins | min-entropy (bits) | truncated | crashed |
+|---|---|---|---|---|---|
+| 1 | 1.0 s | 3 | 1.585 | 0 | no |
+| 2 | 1.7 s | 3 | 1.585 | 0 | no |
+| 3 | 5.8 s | 10 | 1.585 | 0 | no |
+| 4 | 3.4 s | 14 | 1.585 | 0 | no |
+| 5 | 0.6 s | 14 | 1.585 | 0 | no |
 
-| quantity | value |
-|---|---|
-| targets attempted (`n_targets`) | **PENDING** |
-| crashes (`crashes`) | **PENDING** (must be 0 — the panic-safe `bounded_link_oracle` is designed so no exception ever surfaces through `analyze()`; an oracle refusal shows up as `truncated`, not an exception) |
+Reading it:
+- **Runs and returns at every depth 1→5**, tractably (<6 s each), **0 crashes, 0 truncations** — the
+  systematic-callability proof, in the clean single-transaction form.
+- **The provenance set grows with depth** (3 → 10 → 14 origins) then **converges** at depth 4–5: the
+  narrow ancestry is fully resolved, so deeper walks add nothing. Depth genuinely resolves more
+  ancestral origins where they exist.
+- `min_entropy` stays 1.585 (= log₂3) even as `n_origins` grows to 14, because min-entropy is the
+  worst-case quantity (−log₂ of the dominant origin's mass): the three immediate inputs keep the top
+  of the distribution: deeper origins add tail mass (Shannon rises) without moving the *min*. Correct
+  behavior, not a bug.
 
-## (b) Origins resolved (live, depth 5)
+## (b) Depth-5 over **coinjoin** ancestry is computationally intractable (§03), and that is the point
 
-| quantity | value |
-|---|---|
-| resolved to a non-trivial anonymity set (`n_absorbers > 1`) | **PENDING** / PENDING |
-| mean absorbers per resolved target (`mean_absorbers`) | **PENDING** |
-| mean graph-only min-entropy, resolved (`mean_min_entropy`, bits) | **PENDING** |
+Running `analyze()` at `depth=5` over real Wasabi-scale coinjoin round targets
+(`analyze_live`, 8 targets, `budget_ms=6000`) did **not** complete in a 25-minute wall cap — it did
+not crash, it did not finish. Even `depth=2` on a single wide coinjoin exceeds minutes. Root cause is
+inherent, not a bug: the ancestry graph fans out exponentially (each coinjoin ≈ 10 parents, each a
+coinjoin → thousands of bounded-oracle calls). This is exactly the refs' §03 caveat —
+*"computationally intractable for larger transactions."*
 
-Context for reading this once filled in: other live harnesses in this repo (`RESULTS-e2e.md`, at
-`depth=2`) resolve payment+partial-mix targets to 24–45 absorbers / 2.6–3.6 bits. `depth=5` walks
-further back through the ancestry graph than that; the panic-safe `bounded_link_oracle` (in-process,
-`budget_ms`-cooperative) is expected to truncate more of the deepest coinjoin ancestors than the
-subprocess, wall-clock-killed oracle those harnesses use, since dss's own cooperative budget check
-is less reliable than an OS-level kill on pathological inputs — this is the tradeoff for staying
-in-process (no `spawn`/`__main__`-guard requirement) at the default depth. If the live numbers show
-fewer/shallower absorbers than the `depth=2` subprocess-oracle results, that is this tradeoff, not a
-regression in `analyze()` itself.
+The key distinction the two experiments together establish: **depth-5 tractability depends on the
+ancestry's WIDTH, not the depth.** Narrow (ordinary payment) ancestry → depth-5 is instant and
+informative; wide (coinjoin) ancestry → intractable at depth. The systematic guarantee `analyze()`
+does deliver on the coinjoin case is the **never-crash** one (an oracle refusal/panic truncates a
+branch, counted in `truncated`; no exception surfaces) — verified across the 90-target real-cache
+fusion scan (below) and the coinjoin runs: **0 crashes** anywhere.
 
-## (c) Deep (ancestral) fusion emergence
+## (c) §04 fusion sharpens on real data (shallow), deep fusion is rare (§06)
 
-| quantity | value |
-|---|---|
-| deep fusion count (`deep_fusion`) | **PENDING** / PENDING |
+The same `analyze()`/`report` walk + panic-safe oracle stack, over 90 real cached targets whose own
+transaction carries an address-reuse self-transfer (`depth=1`): **34 / 90 (38%) sharpen**
+(`fused < graph`), reduction **max 2.25 bits, mean 0.98 bits**. So the §04 fusion demonstrably
+narrows the anonymity set on real transactions.
 
-`deep_fusion` counts a target where the §04 fused min-entropy sharpens strictly below the graph-only
-min-entropy (`fused.min_entropy < provenance.min_entropy - 1e-9`) **and** the target's own
-transaction has no `address_reuse_pairs` firing — i.e. the sharpening came from a same-owner
-`address_reuse_pairs` link found somewhere back in the ancestry walk (an ancestor transaction), not
-from the target's own inputs/outputs. This isolates the deep-fusion mechanism from the much more
-common case already demonstrated live in `RESULTS-anonymity-set-scale.md` and `RESULTS-e2e.md`
-(same-owner evidence firing on the target's own tx).
+**Deep (ancestral) fusion** — sharpening from a same-owner link found back in the ancestry rather than
+in the target's own tx — is rare: a depth-sweep over 11 real targets with no own-tx reuse produced
+**0** cases of deep fusion emerging or growing with depth. This is consistent with §06/robustness
+(*"the combinatorial explosion of graph based features … rendered mostly inert"*): a single ancestral
+same-owner link narrows only the mass routed through that one ancestor, rarely enough to move the
+worst-case min-entropy. Reported as theory alignment, not a fusion failure — the fusion *mechanism* is
+independently demonstrated (the 38% own-tx figure above; the controlled fixture in `RESULTS-e2e.md`
+lowering 1.0 → 0.304 bits; `tests/test_analyze.py`'s conservative-clamp + sharpening tests).
+
+## §07 path counting — now shipped, opt-in via `analyze(path_count=True)`
+
+Depth-5 over coinjoins is intractable because the walk enumerates the ancestral graph explicitly. The
+refs' §07 (*path-like anonymity set*) is the alternative object — counting the counterfactual *paths*
+through the graph. This is now BUILT: `decluster.path_count.path_count_anonymity` (a concrete §07
+instance: the provenance distribution weighted by per-edge path multiplicity `W(E)`), reachable via
+`analyze(path_count=True)`, backed by `dss.w_count` (the crate's feasibility-cascade count dispatcher:
+brute → dp → sparse → sasamoto). Real numbers and its honest limits (it does not extend the tractable
+envelope; it adds the §06/§07 robustness lens) are in `results/RESULTS-path-count.md`. The original
+motivating analysis — "is dss sufficient, and what did decluster expose at the time" — is in
+`results/RESULTS-path-counting-analysis.md` (now superseded by the shipped object).
 
 ## Honest limits
 
-- **§06/robustness predicts deep fusion is rare — report as theory alignment, not failure.** The
-  provenance walk's absorber distribution spreads probability mass across many ancestor origins as
-  depth grows; a single ancestral same-owner link narrows only the mass routed through that one
-  ancestor, and needs to be large relative to the rest of the distribution to move the *min*-entropy
-  (a worst-case, not average-case, quantity) by more than `1e-9`. If `deep_fusion` comes back 0 or
-  small on this slice, that is consistent with the theory, not evidence `analyze()`'s fusion is
-  broken — the mechanism itself is separately demonstrated and asserted (see
-  `results/RESULTS-anonymity-set-scale.md`'s own-tx-reuse coverage numbers, and `tests/test_analyze.py`
-  / the offline fusion-conservative invariant in `RESULTS-e2e.md`).
-- **Bounded, in-process oracle at depth 5.** `bounded_link_oracle` is the panic-safe default the
-  public `analyze()` facade ships with — deliberately not the subprocess/`__main__`-guarded oracle
-  other live harnesses use, so this harness can be a plain importable module with no spawn
-  requirement. That means a pathological ancestor can still truncate a branch (counted in
-  `truncated`, never an exception) at any depth; `budget_ms` (default 6000, matching
-  `decluster.oracle.DEFAULT_ANALYZE_BUDGET_MS`) trades wall time against how much of the depth-5
-  ancestry actually resolves.
-- **Live non-determinism.** Real chain data, real network timing, and the `budget_ms`-bounded
-  oracle's timing-dependent truncation — not bit-for-bit reproducible run to run (same posture as
-  `RESULTS-e2e.md` and `RESULTS-anonymity-set-scale.md`).
-- **Slice, not population.** `cap_total`/`max_targets` bound the run to a small real slice
-  (`examples.anonymity_set_scale.seed_targets()`, multi-input non-coinjoin-scale txids drawn from
-  local history) — this validates systematic callability and the deep-fusion mechanism's presence
-  or (expected) rarity on a real but small sample, not a population-level claim.
-- **Subjective source is heuristic, not proof.** `address_reuse_pairs` (self-transfer / address
-  reuse) is a same-owner **label**, not independently verified; deep-fusion sharpening built on it
-  inherits that same caveat, under the codebase's usual conservative-lower-bound discipline (fusion
-  is clamped to never exceed the graph-only baseline — `analyze()`'s own `min(...)` clamp).
+- **In-process bounded oracle.** `analyze()`'s default `bounded_link_oracle` is panic-safe but
+  cooperative (dss's own `budget_ms` check), not an OS-level wall kill — so a pathological ancestor
+  truncates a branch (counted, never raised) but can still cost up to `budget_ms` of compute. The
+  opt-in `subprocess_link_oracle` (hang-proof) is available for batch harnesses that accept the macOS
+  `spawn`/`__main__`-guard contract.
+- **Live non-determinism.** Real chain data + timing-bounded oracle → not bit-for-bit reproducible.
+- **Slice, not population.** The numbers above are a real but small sample, validating systematic
+  callability and the fusion mechanism's presence/rarity — not a population-level claim.
+- **Subjective source is heuristic.** `address_reuse_pairs` is a same-owner **label**, not
+  independently verified; fusion is clamped to never exceed the graph-only baseline (`analyze()`'s own
+  `min(...)` clamp), under the codebase's conservative-lower-bound discipline.

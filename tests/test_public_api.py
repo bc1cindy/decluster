@@ -11,6 +11,7 @@ def test_public_api_names_are_importable_and_callable():
         "cluster_posterior",
         "bounded_link_oracle",
         "subprocess_link_oracle",
+        "path_count_anonymity",
     ):
         assert hasattr(decluster, name)
         assert callable(getattr(decluster, name))

@@ -42,6 +42,28 @@ def test_amount_cuts_skips_unreachable_none_log_w():
     assert [c.index for c in cuts] == [1]
 
 
+def test_amount_cuts_default_no_count_oracle_is_candidate_only():
+    coins = [{"role": "in", "index": 0, "value": 100, "log_w": 0.0, "kappa_c": 0.9}]
+    cuts = cost.amount_cuts([100, 200], [150, 150], _fake_oracle(coins))
+    assert cuts[0].exact is False
+
+
+def test_amount_cuts_exact_count_oracle_corroborates_rigorous_cut():
+    coins = [{"role": "in", "index": 0, "value": 100, "log_w": 0.0, "kappa_c": 0.9}]
+    exact_count_oracle = lambda inputs, outputs: {"kind": "exact", "count": 3, "log_w": 1.58}
+    cuts = cost.amount_cuts([100, 200], [150, 150], _fake_oracle(coins),
+                             count_oracle=exact_count_oracle)
+    assert cuts[0].exact is True
+
+
+def test_amount_cuts_approx_count_oracle_stays_candidate():
+    coins = [{"role": "in", "index": 0, "value": 100, "log_w": 0.0, "kappa_c": 0.9}]
+    approx_count_oracle = lambda inputs, outputs: {"kind": "unknown", "count": None, "log_w": None}
+    cuts = cost.amount_cuts([100, 200], [150, 150], _fake_oracle(coins),
+                             count_oracle=approx_count_oracle)
+    assert cuts[0].exact is False
+
+
 def test_topology_bits_disjoint_penalises():
     # two clusters with disjoint counterparties -> negative (refuse) weight
     neigh = {"A": {"x"}, "B": {"y"}}
@@ -60,10 +82,23 @@ def test_ancestry_entropy_is_wired_not_a_stub():
     assert not hasattr(cost, "privacy_of_transaction")
 
 
-def test_construction_cost_is_a_stub():
-    # composition deferred: construction_cost raises until the metric design lands
-    with pytest.raises(NotImplementedError):
-        cost.construction_cost(leak=1.0, topology=0.0)
+def test_construction_cost_returns_structured_terms_with_path_count_target():
+    # the target is no longer missing (path_count_anonymity is wired) -> no raise, structured terms
+    from decluster.path_count import path_count_anonymity
+    terms = cost.construction_cost(leak=1.0, topology=0.0, target_fn=path_count_anonymity)
+    assert terms == {"leak": 1.0, "topology": 0.0, "target": path_count_anonymity}
+
+
+def test_construction_cost_default_target_is_path_count_anonymity():
+    from decluster.path_count import path_count_anonymity
+    terms = cost.construction_cost(leak=1.0, topology=0.0)
+    assert terms["target"] is path_count_anonymity
+
+
+def test_construction_cost_combine_still_raises_citing_only_combination():
+    # channel COMBINATION into one scalar is the only remaining deferred piece
+    with pytest.raises(NotImplementedError, match="combin"):
+        cost.construction_cost(leak=1.0, topology=0.0, combine=True)
 
 
 def test_dss_oracle_shape_when_available():

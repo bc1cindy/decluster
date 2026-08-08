@@ -11,12 +11,14 @@ from .anonymity_set import anonymity_bits, cluster_of_from_tx_groups, provenance
     subjective_oracle_for
 from .combiner import Combiner
 from .partition_model import build_evidence, contract_cospend
+from .path_count import path_count_anonymity
 from .report import _spendable_vouts
 from .split_merge import M3_MAX_SUPERNODES, m3_gap_and_samples
 
 
 def analyze(tx, targets=None, depth=5, *, fetch=None, link_oracle=None,
-            value_weighted=False, cluster_of=None, subjective=True, with_origins=True):
+            value_weighted=False, cluster_of=None, subjective=True, with_origins=True,
+            max_nodes=None, path_count=False):
     """Public entry point: fused provenance anonymity-set analysis of a transaction's outputs (§04
     of tx-graph-anonymity-sets). Thin orchestration over the tested walk/fusion stack — NO new
     science. Robust at any depth (default 5): an oracle refusal or dss panic on a tx it cannot handle
@@ -28,11 +30,19 @@ def analyze(tx, targets=None, depth=5, *, fetch=None, link_oracle=None,
     spendable outputs). link_oracle default = oracle.bounded_link_oracle() (panic-safe, resolves
     coinjoins). value_weighted = Gap C satoshi-flow weighting. cluster_of = {address: owner} folded
     into the §04 subjective source. with_origins includes the absorber distribution per target.
+    max_nodes (default None = uncapped, backward-compatible) is the deep-coinjoin tractability knob:
+    bounds both walks' cost to O(max_nodes) fetch/oracle calls regardless of depth (a lower bound on
+    the coin's ambiguity, never an overstatement — see build_extended_graph). path_count (default
+    False, backward-compatible) is an opt-in §06/§07 robustness lens: folds in the dss W(E)
+    counterfactual path-multiplicity count on top of the §04 link-probability-only walk, at the cost
+    of an extra per-tx W(E) count.
 
     Returns {vout: {
         "provenance": {"min_entropy", "shannon", "n_absorbers", ["origins": {ancestor: mass}]},
         ["fused": {"min_entropy", "shannon"}],   # when subjective
-        "truncated": int,
+        ["path_count": {"log_W_paths", "min_entropy", "shannon", "origins_weighted"}],  # when path_count
+        "truncated": int,   # the provenance (graph) walk's truncation count (oracle-None + max_nodes);
+                            # the fused/path_count walks cap identically under the same max_nodes.
     }}. `provenance.min_entropy` is the §06 lower bound on the graph cuts to de-anonymize the coin;
     `fused` is clamped to <= provenance (subjective evidence never widens the set)."""
     if fetch is None:
@@ -49,7 +59,7 @@ def analyze(tx, targets=None, depth=5, *, fetch=None, link_oracle=None,
     out = {}
     for vout in vouts:
         g = build_extended_graph((txid, vout), depth=depth, fetch=fetch, link_oracle=link_oracle,
-                                  value_weighted=value_weighted)
+                                  value_weighted=value_weighted, max_nodes=max_nodes)
         dist = absorber_distribution(g, (txid, vout))
         gb = anonymity_bits(dist)
         provenance = {"min_entropy": gb["min_entropy"], "shannon": gb["shannon"],
@@ -60,10 +70,16 @@ def analyze(tx, targets=None, depth=5, *, fetch=None, link_oracle=None,
         if subjective:
             sub_oracle = subjective_oracle_for(cluster_of)
             fdist = provenance_anonymity_fused((txid, vout), sub_oracle, depth=depth, fetch=fetch,
-                                                link_oracle=link_oracle, value_weighted=value_weighted)
+                                                link_oracle=link_oracle, value_weighted=value_weighted,
+                                                max_nodes=max_nodes)
             fb = anonymity_bits(fdist)
             entry["fused"] = {"min_entropy": min(fb["min_entropy"], provenance["min_entropy"]),
                               "shannon": min(fb["shannon"], provenance["shannon"])}
+        if path_count:
+            pc = path_count_anonymity((txid, vout), depth=depth, max_nodes=max_nodes, fetch=fetch,
+                                       link_oracle=link_oracle)
+            entry["path_count"] = {k: pc[k] for k in
+                                    ("log_W_paths", "min_entropy", "shannon", "origins_weighted")}
         out[vout] = entry
     return out
 

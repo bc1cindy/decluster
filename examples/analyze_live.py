@@ -89,15 +89,51 @@ def analyze_live(round_txids=None, depth=5, budget_ms=6000, max_targets=8, cap_t
     }
 
 
+def depth_sweep(txid, depths=(1, 2, 3, 4, 5), vout=0, budget_ms=3000, fetch=None):
+    """Run the PUBLIC analyze() facade on ONE transaction across increasing `depths` — the clean
+    "does it work at each depth?" test. On a NARROW (non-coinjoin) ancestry this completes at every
+    depth and the provenance set GROWS with depth then converges as the ancestral boundary is reached;
+    on a WIDE (coinjoin) ancestry the deep levels are computationally intractable (exponential graph
+    fan-out, §03) — the never-crash guarantee still holds. `fetch` defaults to the live
+    decluster.fetch.fetch_tx; pass a cache fetch for an offline (shallower) run.
+
+    Returns [{"depth", "n_origins", "min_entropy", "fused_min_entropy", "truncated", "crashed"}].
+    """
+    from decluster import analyze, bounded_link_oracle
+    if fetch is None:
+        from decluster.fetch import fetch_tx as fetch
+    oracle = bounded_link_oracle(budget_ms)
+    rows = []
+    for d in depths:
+        row = {"depth": d, "crashed": False}
+        try:
+            e = analyze(txid, targets=[vout], depth=d, fetch=fetch, link_oracle=oracle,
+                        with_origins=True)[vout]
+            row.update({"n_origins": e["provenance"]["n_absorbers"],
+                        "min_entropy": e["provenance"]["min_entropy"],
+                        "fused_min_entropy": (e.get("fused") or {}).get("min_entropy"),
+                        "truncated": e["truncated"]})
+        except BaseException as ex:
+            row.update({"crashed": True, "error": repr(ex)})
+        rows.append(row)
+    return rows
+
+
 if __name__ == "__main__":
     import json
     import sys
 
-    max_targets = int(sys.argv[1]) if len(sys.argv) > 1 else 8
-    cap_total = int(sys.argv[2]) if len(sys.argv) > 2 else 60
-    budget_ms = int(sys.argv[3]) if len(sys.argv) > 3 else 6000
-    depth = int(sys.argv[4]) if len(sys.argv) > 4 else 5
+    if len(sys.argv) > 1 and sys.argv[1] == "sweep":
+        # .venv/bin/python -m examples.analyze_live sweep <txid> [budget_ms]
+        txid = sys.argv[2]
+        budget_ms = int(sys.argv[3]) if len(sys.argv) > 3 else 3000
+        print(json.dumps(depth_sweep(txid, budget_ms=budget_ms), indent=2, default=str))
+    else:
+        max_targets = int(sys.argv[1]) if len(sys.argv) > 1 else 8
+        cap_total = int(sys.argv[2]) if len(sys.argv) > 2 else 60
+        budget_ms = int(sys.argv[3]) if len(sys.argv) > 3 else 6000
+        depth = int(sys.argv[4]) if len(sys.argv) > 4 else 5
 
-    summary = analyze_live(depth=depth, budget_ms=budget_ms, max_targets=max_targets,
-                           cap_total=cap_total)
-    print(json.dumps(summary, indent=2, default=str))
+        summary = analyze_live(depth=depth, budget_ms=budget_ms, max_targets=max_targets,
+                               cap_total=cap_total)
+        print(json.dumps(summary, indent=2, default=str))

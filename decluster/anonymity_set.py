@@ -69,13 +69,14 @@ def provenance_overlap_hypothesis(reference_sig, origins, *, sig_of, rarity=None
 
 
 def provenance_anonymity_fused(target, subjective_oracle, *, depth=6, fetch=None, link_oracle=None,
-                                value_weighted=False):
+                                value_weighted=False, max_nodes=None):
     """§04-faithful provenance anonymity set: the absorption distribution of the backward walk whose
     per-tx link matrices are combined with the subjective matrix BEFORE solving (subjective_oracle
     folded into build_extended_graph). A concentrating subjective oracle sharpens the distribution
     (lower entropy) by routing mass through same-owner links — the link-level fusion the post-solve
     `reweight` cannot do. `value_weighted` (default False, backward-compatible) passes through to
-    build_extended_graph's Gap C satoshi-flow weighting."""
+    build_extended_graph's Gap C satoshi-flow weighting. `max_nodes` (default None, backward-
+    compatible) passes through to build_extended_graph's node-count cap."""
     from .ancestry import build_extended_graph, absorber_distribution, dss_link_oracle
     if fetch is None:
         from .fetch import fetch_tx
@@ -83,7 +84,8 @@ def provenance_anonymity_fused(target, subjective_oracle, *, depth=6, fetch=None
     g = build_extended_graph(target, depth=depth, fetch=fetch,
                              link_oracle=link_oracle or dss_link_oracle,
                              value_weighted=value_weighted,
-                             subjective_oracle=subjective_oracle)
+                             subjective_oracle=subjective_oracle,
+                             max_nodes=max_nodes)
     return absorber_distribution(g, target)
 
 

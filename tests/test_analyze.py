@@ -70,6 +70,37 @@ def test_address_reuse_pin_sharpens_the_fused_reading():
     assert t["fused"]["min_entropy"] < t["provenance"]["min_entropy"]
 
 
+def test_path_count_true_adds_path_count_block():
+    fetch, txs = _fetch_factory()
+    out = analyze(txs["t1"], targets=[0], depth=1, fetch=fetch, link_oracle=_uniform,
+                  path_count=True)
+    pc = out[0]["path_count"]
+    assert set(pc) == {"log_W_paths", "min_entropy", "shannon", "origins_weighted"}
+
+
+def test_path_count_false_by_default_omits_the_key():
+    fetch, txs = _fetch_factory()
+    out = analyze(txs["t1"], targets=[0], depth=1, fetch=fetch, link_oracle=_uniform)
+    assert "path_count" not in out[0]
+
+
+def test_max_nodes_bounds_the_walk():
+    txs = _cospend_fixture()
+    fetch = lambda txid: txs[txid]
+    out_full = analyze(txs["t3"], targets=[0], depth=6, fetch=fetch, link_oracle=_uniform)
+    out_capped = analyze(txs["t3"], targets=[0], depth=6, fetch=fetch, link_oracle=_uniform,
+                         max_nodes=1)
+    assert out_capped[0]["truncated"] > out_full[0]["truncated"]
+
+
+def test_new_params_default_preserves_prior_entry_shape():
+    fetch, txs = _fetch_factory()
+    out = analyze(txs["t1"], targets=[0], depth=1, fetch=fetch, link_oracle=_uniform)
+    t = out[0]
+    assert set(t) == {"provenance", "fused", "truncated"}
+    assert set(t["provenance"]) == {"min_entropy", "shannon", "n_absorbers", "origins"}
+
+
 def _cospend_fixture():
     # Same t1/t2/t3 shape as tests/test_e2e.py::_fixture(): t1 (inputs "a"/"b"), t2 (input "c"),
     # t3 co-spends t1's and t2's outputs as its own two inputs -> a real common-input-ownership

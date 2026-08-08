@@ -15,7 +15,7 @@ class Graph:
         self.transient = []   # interior coins with backward link edges
         self.absorbers = []   # boundary coins: coinbase / depth-cutoff / oracle-None
         self.edges = {}       # coin -> [(next_coin, weight), ...], row-stochastic over next_coin
-        self.truncated = 0    # count of coins made absorbers by the oracle-None refusal
+        self.truncated = 0    # count of coins made absorbers by the oracle-None refusal or the max_nodes cap
 
 
 def _solve(a, b):
@@ -66,7 +66,7 @@ def _is_coinbase(tx):
 
 
 def build_extended_graph(target, depth=6, fetch=None, link_oracle=None, value_weighted=False,
-                          subjective_oracle=None):
+                          subjective_oracle=None, max_nodes=None):
     """Backward provenance walk from `target = (txid, vout)` to `depth` transactions. Each coin is a
     state keyed by (txid, vout); interior coins get backward link edges to their source coins,
     boundary coins (coinbase / depth-cutoff / oracle-None) become absorbers. Refuses to fabricate a
@@ -93,7 +93,22 @@ def build_extended_graph(target, depth=6, fetch=None, link_oracle=None, value_we
 
     `subjective_oracle` implements post-04's subjective matrix that combines with the graph-derived
     link matrix, applied at the link level before the absorbing solve (the §04-faithful fusion);
-    default None keeps the graph-only walk."""
+    default None keeps the graph-only walk.
+
+    `max_nodes` (default None = no cap, reproduces prior behavior exactly) bounds the walk's cost to
+    O(max_nodes) fetch/oracle calls regardless of depth -- the tractability lever for deep coinjoins,
+    where exponential ancestor fan-out can otherwise hang. Once the graph has committed max_nodes
+    coins (graph size = len(kind), the count already classified transient or absorber), every further
+    dequeued coin is made a truncation absorber WITHOUT fetching or oracle-linking it, using the same
+    boundary semantics as an oracle-None refusal (kind[coin]="absorber", g.truncated += 1, its parents
+    are never enqueued). BFS expands nearest coins first, so truncation falls on the deepest, least
+    informative frontier, and the resulting absorber_distribution is a conservative LOWER BOUND:
+    unexpanded ancestry is lumped into truncation, which can only add origins later, never remove.
+    The bound is on fetch/oracle COST (<= max_nodes); the final coin count can exceed max_nodes by up
+    to the one BFS frontier layer already queued when the cap trips (those extra coins are cheap
+    no-fetch truncation absorbers). A coin that would have resolved to a genuine coinbase/depth-cutoff
+    origin but is dequeued after the cap trips is folded into truncation instead — conservative (its
+    mass becomes a truncation atom, never an invented origin)."""
     g = Graph()
     kind = {}                       # coin -> "transient" | "absorber"
     queue = [(target, depth)]       # BFS from target: first dequeue = largest remaining depth
@@ -103,6 +118,8 @@ def build_extended_graph(target, depth=6, fetch=None, link_oracle=None, value_we
         if coin in seen:
             continue
         seen.add(coin)
+        if max_nodes is not None and len(kind) >= max_nodes:
+            kind[coin] = "absorber"; g.truncated += 1; continue   # node cap reached: truncate, no fetch
         txid, vout = coin
         tx = fetch(txid)
         if _is_coinbase(tx):

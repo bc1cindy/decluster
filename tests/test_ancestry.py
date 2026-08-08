@@ -112,3 +112,55 @@ def test_subjective_oracle_none_return_abstains():
                              subjective_oracle=sub)
     edges = dict(g.edges[("t1", 0)])
     assert abs(edges[("p0", 0)] - 0.5) < 1e-9               # unchanged uniform
+
+
+def _binary_tree_fetch(max_len):
+    """Deterministic full binary ancestry tree: each non-coinbase coin has 2 inputs, keyed by the
+    txid's bit-path; a coin becomes coinbase once its path length reaches max_len. The full graph
+    at a sufficient depth has 2**(max_len+1) - 1 coins -- strictly more than any small max_nodes cap."""
+    def fetch(txid):
+        if len(txid) >= max_len:
+            return {"vin": [{"is_coinbase": True}], "vout": [{"value": 100}]}
+        left, right = txid + "0", txid + "1"
+        return {"vin": [{"txid": left, "vout": 0, "prevout": {"value": 100}},
+                        {"txid": right, "vout": 0, "prevout": {"value": 100}}],
+                "vout": [{"value": 200}]}
+    return fetch
+
+
+_tree_oracle = lambda ins, outs: [[1.0] * len(outs) for _ in ins]
+
+
+def test_max_nodes_caps_graph_size_and_truncates():
+    # full tree at max_len=6 has 127 coins; a cap of 10 must stay near k, not blow up toward 127.
+    fetch = _binary_tree_fetch(max_len=6)
+    g = build_extended_graph(("", 0), depth=8, fetch=fetch, link_oracle=_tree_oracle, max_nodes=10)
+    total = len(g.transient) + len(g.absorbers)
+    assert 10 <= total <= 3 * 10       # bounded near k (k committed + one branching layer to drain)
+    assert g.truncated > 0
+
+
+def test_max_nodes_none_reproduces_current_behavior():
+    fetch = _two_parent_fetch()
+    oracle = lambda ins, outs: [[1.0] for _ in ins]
+    g_default = build_extended_graph(("t1", 0), depth=2, fetch=fetch, link_oracle=oracle)
+    g_explicit_none = build_extended_graph(("t1", 0), depth=2, fetch=fetch, link_oracle=oracle,
+                                           max_nodes=None)
+    dist_default = ancestry.absorber_distribution(g_default, ("t1", 0))
+    dist_none = ancestry.absorber_distribution(g_explicit_none, ("t1", 0))
+    expected = {("p0", 0): 0.5, ("p1", 0): 0.5}
+    assert dist_default == pytest.approx(expected)
+    assert dist_none == pytest.approx(expected)
+    assert dist_default == dist_none
+
+
+def test_max_nodes_only_truncates_never_invents():
+    # max_len=3, cap=6: cap lands mid-tree (levels 0-2 alone total 7 coins), so some non-coinbase
+    # interior coins get truncated in the capped run instead of being expanded to their origins.
+    fetch = _binary_tree_fetch(max_len=3)
+    uncapped = build_extended_graph(("", 0), depth=8, fetch=fetch, link_oracle=_tree_oracle)
+    capped = build_extended_graph(("", 0), depth=8, fetch=fetch, link_oracle=_tree_oracle,
+                                  max_nodes=6)
+    uncapped_coins = set(uncapped.transient) | set(uncapped.absorbers)
+    assert set(capped.absorbers) <= uncapped_coins
+    assert capped.truncated > 0
