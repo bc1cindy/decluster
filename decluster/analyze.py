@@ -43,8 +43,11 @@ def analyze(tx, targets=None, depth=5, *, fetch=None, link_oracle=None,
         ["path_count": {"log_W_paths", "min_entropy", "shannon", "origins_weighted"}],  # when path_count
         "truncated": int,   # the provenance (graph) walk's truncation count (oracle-None + max_nodes);
                             # the fused/path_count walks cap identically under the same max_nodes.
-    }}. `provenance.min_entropy` is the §06 lower bound on the graph cuts to de-anonymize the coin;
-    `fused` is clamped to <= provenance (subjective evidence never widens the set)."""
+    }}. `provenance.min_entropy` is a conservative lower bound on the coin's provenance ENTROPY under no
+    auxiliary information (§04); §06 reads such entropy as a lower bound on the graph cuts to
+    de-anonymize, but that transfer is NOT adopted for this absorber-model entropy (see PAPER §10) — the
+    number is an entropy bound, not a cut count. `fused` is clamped to <= provenance (subjective evidence
+    never widens the set)."""
     if fetch is None:
         from .fetch import fetch_tx
         fetch = fetch_tx
