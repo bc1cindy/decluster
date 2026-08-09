@@ -40,10 +40,13 @@ reported beside the engine rather than inside it — it appears in the fused per
 (`report(known_input=…)`) on the same footing as the pairwise leak and topology terms, absent rather
 than assumed when the participant's input is not supplied (§1, §10,
 `results/RESULTS-conservation.md`). Wallet fingerprints are a **corroborating** layer
-on top of the decidable case. We present a probabilistic clustering framework that fuses the two — an
-**amount-based subtransaction re-partition** and a **fingerprint** weight-of-evidence in
-**bits** (Fellegi–Sunter) — into a single partition-refinement clustering over the labeled
-transaction multigraph that refuses false merges, avoiding the cluster-collapse failure of a single union-find. 
+on top of the decidable case. We present a **partition-refinement clustering** that fuses signed bits of evidence over the labeled
+transaction multigraph — refusing false merges rather than only growing them (the cluster-collapse
+failure of a single union-find). Its dominant, most robust term is the **Narayanan–Shmatikov
+cluster-level counterparty structure** — the graph itself; onto it fuse the **amount-based
+subtransaction re-partition** and the **fingerprint** weight-of-evidence (Fellegi–Sunter, summed over
+the least-correlated axis subset, which curbs rather than removes the independence-violating
+double-counting §8 notes). 
 We build a curated **library of fingerprints with evidence** (23 measured axes across the
 chain-observable transaction-construction surface, calibrated on unbiased real-chain
 samples — 16 construction axes on a whole-chain sample, and 7 on mempool samples (5 witness + OP_RETURN +
@@ -107,8 +110,8 @@ multi-transaction, using the whole graph, not any single tx). That argument is c
 `decluster/monitor.py` walks tracked coins forward to the occasion — a later transaction spending two
 of them — `decluster/intersect.py` intersects their candidate origin sets, and the co-spend then enters
 `cluster_refined` as a prior the fingerprint, amount, topology and provenance channels can still
-refuse, the origin sets being handed to the engine rather than only reported, which is what separates
-an intersection attack from the common-input heuristic it would otherwise assert. The occasion is an
+refuse — a refutable prior, not a verdict, which is what separates
+an intersection attack from the common-input heuristic it would otherwise be. The occasion is an
 external event and is not guaranteed: branches that stay unspent, or that re-enter a mix, never supply
 one. Where one exists the pipeline runs end to end on chain data, and what surfaces there — including
 which channel ends up carrying the decision, and which is gated shut — is reported in §9.
@@ -200,11 +203,9 @@ agrees with the true order only ~1.5% of the time — so it was branding coincid
 display-sorted transactions rather than real BIP-69, measuring noise. Correcting it roughly halves
 the `bip69` incidence on the witness cache (0.95%→0.46%), i.e. the true tell is rarer (higher-bit)
 than the prior number, and leaves the attribution AUC unchanged within run-to-run variation (≈0.93→
-≈0.95). The `3.00`-bit weight above is calibrated on the pre-correction structural BigQuery sample;
-**re-deriving `input_order`'s bits on that sample with the corrected extractor is a pending
-follow-up** (the BigQuery structural sample is not reproduced offline, §5) — the local witness-cache
-frequency puts the corrected tell nearer 7–8 bits, so the current `3.00` is a conservative
-(under-weighting) placeholder, not an over-claim.
+≈0.95). The `3.00`-bit weight is calibrated on the pre-correction BigQuery sample; the corrected extractor
+puts the tell nearer 7–8 bits on the local witness cache, so `3.00` under-weights it — a conservative
+placeholder, not an over-claim (recomputing on the structural sample is a pending follow-up, §5).
 
 **Honesty note.** Two catalog example transactions (Ex.1 low-R, Ex.2 SIGHASH) were
 originally cited from the source write-up as a testnet tx (`8dba6657…`, resolves on
@@ -354,7 +355,7 @@ Splink-style; `u` fixed at the measured collision) recovers the address-reuse la
 without being shown it, and yields per-axis `m` ranging from 0.60 to 1.00 — far from the flat 0.95 —
 yet the pair-AUC rises only from 0.933 to 0.937: the same flat plateau, now measured per axis. The
 divergence of the correlated axes' EM `m` from their label-implied value is the expected
-conditional-independence artifact, reported not hidden. This establishes the *fingerprint* leg of the
+conditional-independence artifact. This establishes the *fingerprint* leg of the
 robustness claim; the **graph-topology leg is measured too** (`results/RESULTS-cluster-robustness.md`).
 Fusing the counterparty-overlap term into the clustering (`cluster_refined(neigh=…)`, §9) and sweeping the
 same `c`, the owner-partition is byte-identical across the whole range (Adjusted Rand Index **1.0**)
@@ -528,9 +529,10 @@ thousandths — an unstable double-counting artifact within the noise floor (the
 delta even flips sign across cache samples), larger in magnitude for the *more* redundant
 axis — so the model correctly leaves both unscored (`results/RESULTS-catalog-axes.md`).
 
-**Deliberately out of scope (separate tracks, not part of the chain-observable fingerprint checklist):**
-relay / network-timing fingerprints, JSON/HTTP serialization, and — most consequentially — the
-**provenance / "deep-feature" channel**. The 23 axes here are all *low-dimensional* construction tells
+**Separate tracks, not part of this chain-observable fingerprint checklist:** relay / network-timing
+fingerprints and JSON/HTTP serialization. The most consequential of them — the
+**provenance / "deep-feature" channel** — is not out of scope but developed as its own channel in §8:
+the 23 axes here are all *low-dimensional* construction tells
 (nSequence, ordering, low-R, …), which standardizing construction can drive toward zero; the
 high-dimensional provenance features (where a coin came from — its ancestry signature) are a distinct
 and stronger attack surface, the origin of the sparse-high-dimension curse of dimensionality. This
@@ -690,7 +692,7 @@ value-bearing slice does *worse* — every signature collapses to a single bound
 because a tractable-width slice cannot contain multi-hop ancestry (a coin's parents are older than the
 window). This is the load-bearing point: provenance matching is intrinsically a **whole-graph** attack
 — shared ancestry lives arbitrarily far back, unlike the few-block-local direct-counterparty structure
-of §6 — so the strong graph-scale AUC is gated on whole-connected-graph data (the §10 Utreexo/Floresta
+of §6 — so the strong graph-scale AUC is gated on whole-connected-graph data (the §10 prevout
 stream), a data-scale requirement, not a missing method (`results/RESULTS-ancestry.md`).
 
 That pairwise signal is now lifted to an entity-level **seed-and-propagate**: `NSPropagator`
@@ -769,71 +771,26 @@ prerequisite for designing against them.
 
 ## 9. Limitations (honest)
 
-- **Scope, not scale.** The fingerprint model *is* validated at mainnet scale — attribution
-  AUC ≈0.93 on pairs drawn from a 165k-tx witness-bearing mainnet cache (§5) — and structural
-  de-anonymization is measured across five eras (§6), both **without an archival node**. What we do not claim is a whole-chain
-  **entity-reduction rate** (à la Wang et al.: "X% of all entities collapse") — that single
-  number needs the full connected chain and is a separate follow-on (§10). The
-  community-structure slices are also thin (a handful of blocks per era; the 2013 k=1 null
-  shows one slice conflates slice-noise with era-trend), and the *stronger* N-S form
-  (structure links what co-spend leaves separate) needs **independent** entity labels — whose
-  practical source is a catalog of known super-clusters (SatoshiDice, Mt. Gox, exchanges,
-  pools) and entity-specific signatures (address-reuse eras, vanity prefixes, BIP-47
-  notification graphs; `catalog/known-entities.md`). Three such label sources are now **built**
-  as self-contained detectors (`decluster/entities.py`): BitMEX vanity deposit addresses,
-  BIP-47 notification transactions, and dust fan-out / "Moby Dick" (firing counts are
-  illustrative — no `results/` file backs a measured count for these three; the entity
-  counts that *are* measured, 42 SatoshiDice house addresses and 2,642 BitMEX deposit
-  addresses, are reported below from `results/RESULTS-entity-deanon.md`); a curated-list
-  loader (`entities.load_curated`) covers the named
-  super-clusters that carry no on-chain signature; and the probe that consumes any of them as an
-  independent same-owner label, disjoint from co-spend, is implemented
-  (`graph_deanon.evaluate_entity`, unit-tested in `tests/test_entity_deanon.py`). Run on **real
-  BigQuery slices** the strong claim is **demonstrated, with a sharp boundary condition**
-  (`results/RESULTS-entity-deanon.md`). For **SatoshiDice** — a gambling service detected by its
-  `1dice…` vanity prefix (2013-08, blocks 250000–250150, 38.9k txs, 42 house addresses) — payment
-  structure re-links the house addresses beyond co-spend at **AUC ≈0.72** (k=1–3), because a returning
-  bettor population gives the addresses a dense shared neighbourhood. For **BitMEX** — a custodial
-  exchange, `3BMEX…` vanity (2019-06, 74k txs, 2,642 deposit addresses) — the same probe is a **null**
-  (AUC 0.50), because deposit addresses are a **hub-and-spoke star**: each links only to its own
-  distinct depositor, and the shared hot wallet is reached only through consolidation that is a
-  co-spend (excluded) or out of window. The boundary is the claim's real content: independent labels
-  are necessary but not sufficient — the entity must sit in an **economic graph with recurring peers**
-  (a service with returning customers), not a custodial hub or a mining pool (whose coinbase pays a
-  near-single reused address, its miners a hop downstream). Notably the positive case needed **no
-  external data** — a vanity-prefix detector on an entity already in `catalog/known-entities.md`; a
-  curated address list (`catalog/entities.ndjson`) would extend this to the non-detectable named
-  entities (Mt. Gox, Binance) but is not a prerequisite for the demonstration.
-- **The intersection channel runs, and recovers nothing yet.** `decluster/monitor.py` and
-  `decluster/intersect.py` implement the multi-transaction argument §1 leans on, and are exercised on
-  a real mainnet co-spend, not only on fixtures (`results/RESULTS-intersection.md`). What works there
-  is the walk and the engine step: the monitor produces a candidate, and `score_candidate` hands the
-  funders *and the co-spend itself* to `cluster_refined`, which scores it. The backward walk also
-  resolves — signature sizes of 2, 24 and 5 ancestors, the complement of the §10 discussion measured
-  from the other side, since these small funders resolve within the oracle's wall-clock budget. What does not follow is
-  an entity, and the reason is worth stating exactly. The three branches share no ancestor — but one
-  branch's boundary is *entirely* the oracle declining to walk further (2 absorbers, both truncation),
-  and the intersection is bounded by the smallest set. An empty result there says the walk could not
-  see, not that the coins came from different places: the ambiguity `shared_origins` documents,
-  observed on the first real run. `evaluate` now reports `truncated` and `blind` so that an empty
-  intersection cannot be read as a refusal it did not earn. Re-seeded on four branches that do see
-  (`blind=False`), the intersection is genuinely empty *and* the engine **refuses**: three funders
-  agree at +6.82 bits of fingerprint, a fourth disagrees at −4.06 against each, and the fused score
-  goes negative on those pairs despite the co-spend prior, splitting the partition 4/1. That is the
-  step this channel exists for — co-spending is the common-input heuristic, and the engine declined
-  it on the evidence. What is still not claimed is an entity: an empty intersection narrows nothing,
-  and the refusal was carried by the fingerprint, with the provenance term able only to corroborate
-  (and not readable in the verdict, which reports `fp`, `amt` and topology but not that term). That gate is right in general — disjoint
-  provenance alone should not split a single-owner pair — but in a population adjacent to one
-  coordinator, fingerprint agreement is the same-software false positive this section already lists,
-  so the gate holds shut exactly where the provenance channel would have had something to say. The
-  mechanism and its subordination to the engine are claimed; no entity recovered by it is. The
-  candidate rule is deliberately asymmetric: `monitor`'s stop test wants `COINJOIN_MIN_PARTICIPANTS`
-  on *both* sides, so a symmetric large mix halts the walk (two tracked coins meeting inside it is
-  what a mix is for), while a many-in/few-out consolidation — a 300-in/2-out payment — passes as an
-  ordinary co-spend candidate, exactly the shape where the common-input heuristic pulls hardest and
-  the 2-in/2-out amount channel is silent, left for the engine to score on fingerprint and topology
-  alone.
+- **Scope, not scale.** The fingerprint model is validated at mainnet scale (attribution AUC ≈0.93,
+  §5) and structural de-anonymization across five eras (§6), both **without an archival node** — but a
+  whole-chain **entity-reduction rate** ("X% of all entities collapse") needs the full connected chain
+  and is a separate follow-on (§10). The *stronger* N-S form (structure links what co-spend leaves
+  separate) needs **independent** entity labels; those are built as self-contained detectors and a
+  same-owner probe disjoint from co-spend (`decluster/entities.py`, `graph_deanon.evaluate_entity`),
+  demonstrated on real slices with a sharp boundary (`results/RESULTS-entity-deanon.md`): the entity
+  must sit in an **economic graph with recurring peers** (SatoshiDice re-links at AUC ≈0.72), not a
+  custodial hub-and-spoke or a mining pool (BitMEX is a null, AUC 0.50).
+- **The intersection channel runs, and recovers nothing yet.** `monitor.py`/`intersect.py` implement
+  the multi-transaction argument §1 leans on, wired into `cluster_refined` and exercised on a real
+  co-spend (`results/RESULTS-intersection.md`). The walk and engine step work, but no entity follows:
+  on the sampled co-spend one branch's boundary is entirely oracle truncation, so the empty
+  intersection means "the walk could not see", not different origins (`evaluate` reports `truncated`
+  and `blind` to keep the two apart). Re-seeded on four non-blind branches the intersection is
+  genuinely empty *and* the engine refuses (three funders agree at +6.82 bits, a fourth disagrees,
+  splitting 4/1) — the step this channel exists for. The mechanism and its subordination to the engine
+  are claimed; no entity recovered by it is. (The candidate rule is asymmetric: a symmetric large mix
+  halts the walk, while a many-in/few-out consolidation passes as a co-spend candidate — where the
+  common-input heuristic pulls hardest and the amount channel is silent.)
 - **Low-R is a base-rate signal.** A non-grinding wallet emits a 71-byte signature ~50%
   of the time; low-R is a per-cluster *consistency* tell, low severity — the measured
   bits reflect this.
@@ -842,60 +799,25 @@ prerequisite for designing against them.
   strongly identifying. Per-axis specificity is modeled but not yet fully calibrated.
 - **Independence assumption.** The engine sums per-axis bits assuming axis independence;
   real intra-wallet correlations (e.g. RBF ↔ locktime) may double-count.
-- **Same-software false positives.** Fingerprints separate only *different* wallet software;
-  two owners sharing a wallet, timezone, and fee policy emit matching fingerprints, so the
-  fingerprint channel goes silent and cannot refuse merging their clusters in a shared
-  payjoin. The amount channel does **not** fill this gap: its round-ness refuse is gated on a
-  fingerprint disagreement (§4), which is exactly what is absent here, so a same-software merge is
-  not split on amounts — the flip side of the same gate that stops a benign single-owner round
-  2-in/2-out from being *falsely* split. The control rests instead on graph topology, scored as a
-  quasi-identifier: even with identical
-  fingerprints, Alice's counterparties differ from Bob's, and few such distinguishing
-  relationships suffice (Narayanan–Shmatikov). We *measure* that structure separates owners
-  (§6, AUC 0.95). The engine *scores* it as a Fellegi–Sunter quasi-identifier
-  (`topology_weight`, `cluster_topology_weight`, `results/RESULTS-topology.md`): a shared
-  rare counterparty carries mean `+3.57` bits for same-owner pairs (AUC 0.84 on a real
-  slice). The *per-pair* disjoint mismatch is weak (`−1.65` bits, `P(disjoint|same)=0.32` vs
-  `1.00`) and cannot refuse alone — the strength must come from *accumulation*, exactly the
-  "enough distinguishing relationships" the N-S argument needs. Aggregated to the cluster
-  level it does: same-owner clusters *never* have disjoint aggregate neighbourhoods
-  (`P=0.00` of 272) while different owners almost always do (`0.997`) → `~−8` calibrated bits.
-  Evaluating co-spent merges confident-first, this refuses a same-software payjoin end-to-end
-  (`fp +2.78 − 8 = −5.2` → split; without topology the co-spend collapses them).
-
-  A subtler false positive arises when two clusters share counterparties but only
-  non-distinctive ones (common hubs). Without a check, hub-only overlap could rescue a
-  spurious merge. This is handled by a **global rarity threshold** (`cluster_topology_weight`,
-  `topo_tau`): the shared counterparties are rarity-weighted (`−log2(share)`, so a hub is ~0 bits)
-  and summed; an overlap **below `topo_tau = 1.0` bit** — disjoint, or only non-distinctive hubs —
-  is treated as disjoint (`−8`), refusing the merge, while a distinctive rare shared counterparty
-  (≥ tau) corroborates same owner. Because rarity is global, this is field-independent (a universal
-  hub is always refused). The threshold **discriminates cleanly** on a real slice: same-owner
-  cluster pairs share **11.7** mean overlap bits vs different-owner **0.004** (99.97% share
-  nothing) → **AUC ≈1.00 (0.9997)** (`calibrate_topo_tau`; see `results/RESULTS-topology.md`). The residual
-  limit is inherent to the counterparty quasi-identifier, not the threshold: two *different* owners
-  who both use the same **rare** counterparty score above tau and merge — a shared rare
-  quasi-identifier is legitimate same-owner evidence in the FS model. (An earlier windowed N-S
-  *eccentricity* was field-dependent and is replaced by this global rarity test — itself N-S's own
-  quasi-identifier weighting `wt = 1/log|supp|`. This does not contradict eccentricity's reuse in
-  the entity-level seed-and-propagate module, §8: there, eccentricity is paired with an absolute
-  score floor (`min_score`), and the floor — not the field — is what carries the small-label case.
-  Eccentricity is degenerate below three candidate labels — it returns 0 at one, and is a fixed
-  constant 2.0 at exactly two (non-discriminating for any theta<2) — so the absolute floor is
-  what carries the small-label case, and `propagate_merge` only applies the eccentricity check
-  once a node has ≥3 competing labels. The topology term's own use of global rarity, above, is unchanged.)
-
-  Chain-scale seed-and-extend over the whole graph remains future work for this topology
-  channel (§10) — see §7 for the provenance channel, where the mechanism is already built and
-  evaluated on a synthetic fixture plus a preliminary cache-bounded real run. We also *tested*
-  a cluster's **temporal activity schedule** — the broadcast-time (§7) of its txs aggregated
-  into an hour-of-day histogram (`active_hours`/`schedule_distance`, `results/RESULTS-temporal.md`) —
-  as a candidate quasi-identifier, and report it as a **negative result**: on a 30-day sample
-  of 20 000 reused-address clusters a naive split-half gives AUC 0.92, but that number is a
-  concentration artifact — under a persistence (time-ordered) split with negatives matched on
-  active-hours count the AUC collapses to **0.49 (chance)**. So the hour-of-day schedule does
-  *not* identify owners in this data; disjoint active hours remain at most weak evidence of
-  *different* owners. The mechanism is available, but unvalidated (§10).
+- **Same-software false positives.** Fingerprints separate only *different* wallet software; two
+  owners sharing a wallet, timezone, and fee policy emit matching fingerprints, so the fingerprint
+  channel goes silent — and the amount channel does not fill the gap, since its round-ness refuse is
+  gated on a fingerprint disagreement (§4) that is absent here. The control rests instead on **graph
+  topology, scored as a Fellegi–Sunter quasi-identifier**: even with identical fingerprints Alice's
+  counterparties differ from Bob's, and few distinguishing relationships suffice (N-S; §6 measures
+  structure separates owners at AUC 0.95). The engine's cluster-level term — rarity-thresholded so
+  common hubs count for nothing (`−log₂(share)`, N-S's own `1/log|supp|`) — separates same-owner from
+  different-owner cluster pairs at AUC ≈1.00 and refuses a same-software payjoin end-to-end where
+  fingerprints alone would collapse it (§4, `cluster_topology_weight`/`topo_tau`,
+  `results/RESULTS-topology.md`). The residual limit is inherent to the quasi-identifier: two
+  *different* owners who both use the same *rare* counterparty score as same-owner — a shared rare
+  quasi-identifier is legitimate same-owner evidence in the FS model.
+- **Topology at chain scale, and a negative result.** Chain-scale seed-and-extend over the whole
+  graph is future work for this channel (§10; the provenance channel's own seed-and-propagate is built
+  and cache-bounded-evaluated, §8). A cluster's temporal activity schedule (hour-of-day histogram) was
+  tested as a candidate quasi-identifier and reported as a **negative result**: a naive split-half
+  gives AUC 0.92, but a persistence split with matched negatives collapses it to **0.49 (chance)**, so
+  the schedule does not identify owners in this data (`results/RESULTS-temporal.md`).
 
 ## 10. Future work
 
@@ -904,147 +826,60 @@ is, inverted, a bit a wallet must avoid emitting. The offensive engine is the ca
 instrument for a defensive **cost function** — the bridge to collaborative multi-party
 transactions where privacy can be *quantified and designed for* rather than hoped for.
 
-**Two halves, one boundary.** What this repository delivers is the *measurement* half — an
-evidence-measurement instrument (fingerprint extraction + decluster + record-linkage/ML) whose natural
-scope is privacy *research*: analyzing and sharing findings, or explorer-style analyses. Whole-graph
-analysis carries heavy data-trust and modeling assumptions, and taint or identifiability scores are a
-poor basis for coin selection — discriminating against coins fights the fungibility and the
-cost-function *monotonicity* a coordination protocol needs for stable coalition formation. The
-*actionable* half a client uses to choose among construction proposals is a distinct construction-side
-**cost function**: it reads the path-counting provenance anonymity set (§8) — assuming no auxiliary
-information, with the subset-sum density entering strictly as a *cut*, pruning infeasible input→output
-edges so paths are not overcounted, never as a positive score — and picks the proposal that improves
-connectivity. The anonymity-set measurement it reads is present (§8), and the individual leak,
-topology, and path-count terms are already wired (`cost.construction_cost` accepts the path-count
-target and returns the terms); only their combination into a single scalar (Liebig-min vs weighted)
-is the open design question, so that combined cost is deferred. It is the natural continuation of this
-one. (The amount channel's cut candidates are corroborated tx-level-exact where the subset-sum count is
-exact — `cost.amount_cuts`, refuse-only, never a positive score.)
+**Two halves, one boundary.** This repository is the *measurement* half — a research instrument
+(fingerprint extraction + decluster + record-linkage/ML); taint scores are a poor basis for coin
+selection, fighting the fungibility a coordination protocol needs. The *actionable* half a client
+would use to choose among construction proposals is a distinct construction-side **cost function**: it
+reads the path-counting provenance anonymity set (§8) — the subset-sum density entering strictly as a
+*cut*, never a positive score — and picks the proposal that improves connectivity. Its leak, topology,
+and path-count terms are already wired (`cost.construction_cost`); only their combination into one
+scalar (Liebig-min vs weighted) is the open design question, so the combined cost is deferred.
 
 What remains splits into one item that is only scale and several that are separate research.
 
-**Only scale — the whole-chain rate.** The method is validated (§5/§6); it does not yet
-report a whole-chain **entity-reduction rate** over the full connected graph. This needs no
-archival node in principle: a small-disk Utreexo node (e.g. Floresta) already carries each
-block's spent prevouts in order to validate them against its accumulator, so it is the
-right architecture to stream `(block, prevouts)` at ~GB of disk rather than the ~600 GB of
-an archival node. The remaining work is an integration spike — surfacing those prevouts
-through the node's library API and running the scaled engine over the stream — not new
-method. (That scaled engine, and its real-block / cached-tx runners, currently live in a
-separate `tx-indexer` crate; the Python prototype here reproduces the method at
-case-study scale.) The same scale gap applies to the change-identification validation (§7): its
-labels and clusters are one-day; a multi-epoch replication is only scale, not new method.
+**Only scale — the whole-chain rate.** The method is validated (§5/§6) but does not yet report a
+whole-chain **entity-reduction rate** over the full connected graph. This needs no archival node — a
+small-disk node that streams each block's spent prevouts suffices — so the remaining work is an
+integration spike over that stream, not new method (the scaled engine lives in a separate `tx-indexer`
+crate; the Python prototype here reproduces the method at case-study scale). The one-day
+change-identification validation (§7) is likewise only scale.
 
-**Separate research tracks — not a scale run.** Three further directions are genuinely new
-work: first, the full Narayanan–Shmatikov **seed-and-extend attack** at chain scale, over
-two channels. The provenance channel's mechanism (§8, `NSPropagator`/`propagate_merge` in
-`decluster/propagate.py`) is **built and evaluated on a synthetic fixture plus a preliminary cache-bounded real run**
-(`results/RESULTS-ns-propagation.md`; the real run mostly truncates at the cache boundary, §7) — not
-new method, and its real-data strength is not yet established, pending chain-scale validation:
-a real prevout-resolved tx sample, independent entity labels the co-spend heuristic cannot
-supply (bootstrapped from the known-entity catalog, `catalog/known-entities.md`), and
-`ancestry_signature` computed over that sample (the expensive step, network-rate-limited —
-see that results file's chain-data reproduction section for the concrete blockers hit).
-A different blocker bounds the *depth* this channel reaches. The backward walk weights its edges by the
-subset-sum link matrix, and that oracle now truncates on a **wall-clock budget**, not a coin count: a
-dss **radix** fast path resolves fully-dense coinjoins to a uniform link matrix, and
-`build_extended_graph(max_nodes=…)` bounds a deep walk to a fast truncated lower bound. So large
-coinjoins do resolve — to real ancestral sets (24–67 origins / ~3 bits on the live slice,
-`results/RESULTS-e2e.md`, `results/RESULTS-path-count.md`), a conservative lower bound — rather than
-degenerating immediately to a point mass. What counting does **not** do is make that §04 walk
-*tractable to full depth* over coinjoin ancestry: the exponential is the number of distinct ancestor
-transactions, and `W(E)` — the subset-sum mapping count that grounds the §07 path-count *robustness*
-lens (§8), not a graph-level shortcut — is per-transaction; on instances small enough to check,
-holding W exact while relaxing the partition constraint still misranks the inputs against the
-enumeration, so no counter — asymptotic, sparse-convolution or exact — lifts the walk itself.
+**Separate research tracks.** First, the full Narayanan–Shmatikov **seed-and-extend attack** at chain
+scale. The provenance channel's mechanism (`NSPropagator`/`propagate_merge`, §8) is built and
+cache-bounded-evaluated (`results/RESULTS-ns-propagation.md`); its real-data strength awaits a
+prevout-resolved sample with independent entity labels the co-spend heuristic cannot supply. A separate
+blocker bounds the walk's *depth*: `build_extended_graph(max_nodes=…)` returns real ancestral sets
+(24–67 origins on the live slice), but counting `W(E)` does not make the §04 walk tractable to full
+coinjoin depth — the exponential is the number of distinct ancestor transactions, and per-transaction
+`W` does not lift it. The tractable route is **sampling**: a valid mapping is a balanced input/output
+partition, and local moves (split/merge/transfer preserving balance) give the pairwise marginal from
+how often two coins share a block, validated below the enumeration guard against the exact marginal
+(`pairwise_input_output_prob`, in the dss engine; mixing time, not correctness, is the risk). In a
+dense round the marginal comes out near-uniform — amount-privacy turned from a verdict into the entropy
+of the link distribution, in the same bits as every channel here.
 
-Sampling does. It is the usual move when a marginal is wanted from a #P-hard space: a valid mapping is
-a matched partition of inputs and outputs whose blocks balance, and from any starting mapping local
-moves — split a block where a subset balances, merge two, transfer a coin preserving balance — walk
-that space, with the pairwise marginal falling out of how often two coins share a block. Finding a
-balancing split is the subset-sum question this engine already answers, and in the dense regime
-solutions are abundant, so the moves are cheap. Validation is the same standard as everything else
-here: below the enumeration guard the sampled marginal must reproduce the exact mapping enumeration
-(`pairwise_input_output_prob`, in the `dense-subset-sum` engine rather than here). The risk is mixing time rather than correctness — a chain that stalls in one region
-of the partition space returns a biased marginal that looks converged — so the diagnostic is part of
-the work, not an afterthought.
+Second, cluster-level **topology over the whole connected graph** needs richer features (community
+detection, embeddings) beyond the delivered rarity-threshold FP-control (§9). Third, the
+construction-side **cost function** itself — the defensive counterpart, a project in its own right. And
+generalizing the **amount channel** (§2) beyond the delivered de-mix (§1/§6): it already carries two
+secondary readings.
 
-The expected yield is a measurement, not an attack. In a dense round nearly every input is compatible
-with nearly every block, which is what amount-privacy *is*; the marginal should come out close to
-uniform. That is the point of building it: it turns "dense coinjoins are amount-private" from a
-qualitative verdict into the entropy of the link distribution, reported in the same bits as every
-other channel here.
+**Conservation** (`results/RESULTS-conservation.md`) asks not which participant owns each output but
+what the others could afford: on a six-round spine it forces outputs only in the rounds where the
+participant holds above ~half the input (fragmenting defeats it, entering at once exposes), and a
+**provenance-overlap ranking** (`results/RESULTS-provenance.md`) ranks rounds by inputs descending from
+a known tx — complementary (conservation bites by *value*; overlap peaks where the value share has
+collapsed), a cut worth taking, not a test. Both are delivered; a further generalization stays outside
+the refuse-only engine, since a channel that may only refuse cannot be handed an attributing argument
+(§1).
 
-Back to the enumeration. The topology channel — the second of the two under that first
-direction — is genuinely further work on top of what's delivered: the
-rarity-threshold FP-control (§9) is delivered, but running the cluster-level topology over
-the whole connected graph needs richer features (community detection, embeddings) it does
-not yet have, in addition to the same independent-labels and scale requirements; second, the
-construction-side **cost function** — feeding the measured bits back so a wallet shapes its
-own transactions to avoid these tells, the defensive counterpart and a project in its own right;
-third, generalizing the amount channel (§2) beyond the 2-in/2-out roundness test — the
-current amount channel is the coinjoin de-mix (`input = mix + change − fee`, `decluster/coinjoin_demix.py`),
-whose refuse verdict (`amount_refuse_demix`) fuses with the fingerprint channel in the same engine. On a
-real JoinMarket coinjoin (11 participants) it recovers **8 of the makers** uniquely, with maker fees
-matching the reference tool (`examples/coinjoin_demix_demo.py`, `results/RESULTS-subtx-demix.md`). The
-de-mix does not false-fire on ordinary payments, which carry no mix+change+fee structure. Dense
-coinjoins are amount-private *to the de-mix*: the labelled real dense coinjoins recover 0
-participants, so there the fused decision is carried by the fingerprint and cluster-level topology
-channels — the intended, decidability-dependent behaviour.
-
-Amount-privacy is relative to the question the channel asks, and a second question survives where the
-de-mix abstains. The de-mix asks which participant each output belongs to and declines under
-ambiguity; **conservation** (`decluster/conservation.py`, `results/RESULTS-conservation.md`) asks only
-what the other participants could afford. If a set of equal outputs is worth more than every other
-participant brought to the round, the excess has no other source, and the count follows from the
-transaction alone — no denomination lattice, no client model, no null, and output fees ignored so the
-bound is a floor that any real fee raises. On a six-round mainnet spine it forces two of seven equal
-outputs in the round where the participant holds 52% of the input, at a margin of 3.6 BTC from the
-boundary; it forces the change outputs in the two rounds above 69%, agreeing with a fact the forward
-walk established independently; and it forces nothing in the three rounds where the participant holds
-2.2%, 0.2% and 0.0%. That is the whole regime: the inequality bites only above roughly half the
-round's input, so fragmenting defeats it and entering at once exposes.
-
-A third reading of the same chain comes from provenance rather than amounts, and it is worth reporting
-because it fails where conservation works. `decluster/provenance.py` ranks rounds by the share of a
-round's inputs descending from a known transaction, on the premise that a round the participant joined
-stands above a background rate. Measured over every ordered pair of 129 cached coinjoins
-(`results/RESULTS-provenance.md`), **11% of pairs overlap at all** — so a nonzero share is ordinary
-rather than evidence — and the five hops of the chain above land at ranks 176, 47, **2**, **8** and 607
-of the 1828 that overlap. Three of five sit in the top 3%, one at the 90th percentile, one near the
-median. The ranking is a cut worth taking, not a test.
-
-It is also complementary rather than redundant, and the two peak at opposite ends of one chain:
-conservation bites where a participant is large by *value* and falls silent below half the round,
-while overlap ranks by how many *coins* flow forward and peaks at exactly the hops where the value
-share has already collapsed. The chain is covered only because they fail in different places. The
-population is not a random sample — it was assembled by walking a chain and its neighbourhood — so
-the 11% is a property of that set and not a background rate for mainnet.
-
-Whether that regime is forced or chosen depends on the construction, and the two cases differ. In
-equal-amount designs a participant must consolidate inputs up to a denomination before joining at
-all, and the collaborative-transaction taxonomy (§11) calls the change linkage this produces
-practically inherent to the approach — there the precondition conservation needs is manufactured by
-the protocol. In the ladder designs measured here no such consolidation is required: a client
-registers what it holds and receives a decomposition, so entering large is a choice, and the rounds
-above half the input were exposed by a single large input entering at once rather than by anything
-the protocol demanded. What both share is the change. It stays linked to the inputs by amount, and
-re-registering it carries the participant's identified input from one round into the next, which is
-why the bound applies at every hop rather than once. It is a third mode of this
-channel rather than a generalization of the roundness test, and — per §1 — it stays outside the
-engine, because a channel that may only refuse cannot be handed an argument that attributes.
-
-The three method directions the motivating comment raised are all delivered and reported in §5: tuning
-the per-axis disagreement weights (`results/RESULTS-em-m.md`); the robustness of the verdict to those
-weights across the fingerprint and graph-topology legs (`results/RESULTS-weight-sensitivity.md`,
-`results/RESULTS-cluster-robustness.md`); and the Bayesian-vs-Fellegi-Sunter comparison
-(`results/RESULTS-bayes-vs-fs.md`). A full **partition-level** Bayesian entity resolution — MCMC over the
-linkage partition itself for joint cluster-level posteriors — remains open (and, as the record-linkage
-literature notes, computationally heavy at scale); the pair-level comparison here is its tractable
-counterpart. **Supervised** record-linkage classifiers (SVM, hybrid human-in-the-loop RL, as in the
-record-linkage toolkits) are a further unbuilt comparison: they need *labeled* same-owner pairs, which
-this design deliberately withholds from fitting (the address-reuse label is held out for validation
-only), so the unsupervised EM/Splink and Bayesian paths are the ones pursued here.
+The three method directions the motivating comment raised are delivered (§5): per-axis weight tuning
+(`results/RESULTS-em-m.md`), verdict robustness to those weights (`results/RESULTS-weight-sensitivity.md`,
+`results/RESULTS-cluster-robustness.md`), and the Bayesian-vs-Fellegi-Sunter comparison
+(`results/RESULTS-bayes-vs-fs.md`). Still open: a full **partition-level** Bayesian entity resolution
+(MCMC over the linkage partition, heavy at scale — the pair-level comparison here is its tractable
+counterpart), and **supervised** record-linkage classifiers (they need labeled same-owner pairs this
+design withholds for validation, so the unsupervised EM/Splink and Bayesian paths are pursued instead).
 
 ## 11. Related work
 
