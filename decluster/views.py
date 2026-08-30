@@ -23,6 +23,7 @@ be read relative to its own view before it crosses the boundary.
 """
 from collections import Counter, defaultdict
 
+from .coinjoin_demix import coinjoin_demix
 from .extractors import locktime_policy, x_fee_rate, x_input_order, x_version
 from .monitor import is_coinjoin
 from .unionfind import UF
@@ -45,13 +46,67 @@ def _out_addrs(tx):
             for o in tx.get("vout", []) if o.get("scriptpubkey_address")]
 
 
-def cluster_addresses(sample):
-    """{address: cluster id} by common-input ownership over the WHOLE sample. The lookup is
-    global on purpose: it is what lets a cluster keep one identity across the partition."""
+def cluster_addresses(sample, refuse=True):
+    """{address: cluster id} over the WHOLE sample. The lookup is global on purpose: it is
+    what lets a cluster keep one identity across the partition.
+
+    `refuse` declines to apply common-input ownership where the transaction itself argues
+    against it, which is the difference between the framework's competent adversary and the
+    one whose blind merging collapses clusters. Two rules, both decidable from the spending
+    transaction alone:
+
+      coinjoin shape    many inputs against many outputs is where co-spending stops implying
+                        common ownership, so no input is merged with any other.
+      de-mix partition  when `coinjoin_demix` resolves inputs to distinct participants, only
+                        inputs of the same participant merge. Inputs it could not resolve
+                        merge with nobody: under refusal, an unresolved input is unknown
+                        ownership, not shared ownership.
+
+    Two channels the engine has are absent here and their absence is a real limitation, not
+    a simplification: the fingerprint channel compares the *funding* transactions, which for
+    a two-day slice lie almost entirely outside it, and the roundness channel is gated on
+    the fingerprint disagreeing, so using it alone would refuse ordinary round payments.
+    """
     uf = UF()
     for tx, _ in sample:
-        union_input_addrs(tx, uf)
+        if not refuse:
+            union_input_addrs(tx, uf)
+            continue
+        if is_coinjoin(tx):
+            continue
+        ins = _in_addrs(tx)
+        if len(ins) < 2:
+            continue
+        parts = _demix_participants(tx)
+        if parts is None:
+            union_input_addrs(tx, uf)
+            continue
+        for group in parts.values():
+            first = group[0]
+            for a in group[1:]:
+                uf.union(first, a)
     return {a: uf.find(a) for g in uf.groups() for a in g}
+
+
+def _demix_participants(tx):
+    """{participant: [input addresses]} when the de-mix resolves the transaction into two or
+    more participants, else None. Returning the partition rather than per-pair verdicts is
+    what keeps this linear: a wide consolidation has quadratically many pairs but only as
+    many groups as participants."""
+    vin = tx.get("vin", [])
+    values = [(v.get("prevout") or {}).get("value") for v in vin]
+    outs = [o.get("value") for o in tx.get("vout", [])]
+    if any(v is None for v in values) or any(o is None for o in outs):
+        return None
+    assign = coinjoin_demix(values, outs)
+    if len(set(assign.values())) < 2:
+        return None
+    groups = {}
+    for i, participant in assign.items():
+        addr = (vin[i].get("prevout") or {}).get("scriptpubkey_address")
+        if addr:
+            groups.setdefault(participant, []).append(addr)
+    return {k: v for k, v in groups.items() if v} or None
 
 
 def partition_coins(sample, scheme="epoch", bounds=None, ambiguity=None, theta=1.0):

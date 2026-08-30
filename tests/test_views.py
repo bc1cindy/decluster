@@ -210,3 +210,51 @@ def test_filtering_leaves_does_not_change_what_the_matcher_finds():
     on_full = m.match(full_a, full_b, seed_full)
     on_lean = m.match(lean_a, lean_b, seed_full)
     assert {k: v for k, v in on_full.items() if k in lean_a.vertices} == on_lean
+
+
+# --- refusing to apply CIOH blindly -----------------------------------------
+
+def vtx(in_vals, out_vals, addrs=None, height=100):
+    """A transaction carrying real values, so the de-mix and coinjoin-shape rules can fire."""
+    addrs = addrs or [f"i{n}" for n in range(len(in_vals))]
+    return {"txid": f"t{height}", "height": height, "version": 2, "locktime": 0,
+            "fee": 100, "weight": 400,
+            "vin": [{"txid": f"p{a}", "vout": 0, "sequence": 0xFFFFFFFF,
+                     "prevout": {"value": v, "scriptpubkey_type": "v0_p2wpkh",
+                                 "scriptpubkey_address": a}}
+                    for a, v in zip(addrs, in_vals)],
+            "vout": [{"value": v, "scriptpubkey_type": "v0_p2wpkh",
+                      "scriptpubkey_address": f"o{n}"} for n, v in enumerate(out_vals)]}
+
+
+# mix 100000 seen three times; input i = mix + change - fee, so each input resolves to one change
+DEMIX_INS = [104_500, 106_500]
+DEMIX_OUTS = [100_000, 100_000, 100_000, 5_000, 7_000]
+
+
+def test_demix_merges_within_a_participant_and_refuses_across():
+    s = S(vtx(DEMIX_INS, DEMIX_OUTS, ["a", "b"]))
+    assert cluster_addresses(s, refuse=False).get("a") == cluster_addresses(
+        s, refuse=False).get("b")                       # naive CIOH merges them
+    lk = cluster_addresses(s, refuse=True)
+    assert lk.get("a") != lk.get("b") or not lk         # refusal keeps them apart
+
+
+def test_an_input_the_demix_cannot_resolve_merges_with_nobody():
+    """Under refusal an unresolved input is unknown ownership, not shared ownership."""
+    s = S(vtx(DEMIX_INS + [50_000], DEMIX_OUTS, ["a", "b", "c"]))
+    lk = cluster_addresses(s, refuse=True)
+    assert lk.get("c") is None or (lk.get("c") != lk.get("a") and lk.get("c") != lk.get("b"))
+
+
+def test_coinjoin_shape_declines_cioh_entirely():
+    n = 20
+    s = S(vtx([10_000] * n, [9_000] * n, [f"cj{i}" for i in range(n)]))
+    assert cluster_addresses(s, refuse=True) == {}
+    assert len(set(cluster_addresses(s, refuse=False).values())) == 1
+
+
+def test_an_ordinary_co_spend_still_merges_under_refusal():
+    s = S(vtx([10_000, 20_000], [25_000, 4_000], ["a", "b"]))
+    lk = cluster_addresses(s, refuse=True)
+    assert lk["a"] == lk["b"]

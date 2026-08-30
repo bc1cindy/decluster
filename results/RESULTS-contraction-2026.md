@@ -55,11 +55,11 @@ everything.
 ## Scope, and one deliberate simplification to remove
 
 The clustering here is **naive common-input union-find**, which is precisely the adversary
-the framework calls incompetent: applying it blindly across collaborative transactions is
-what produces cluster collapse. The 30 304-address cluster may well be such an artifact
-rather than one owner. `cluster_refined`, which can refuse a co-spend on fingerprint and
-amount evidence, is the clusterer this should use, and swapping it in is a prerequisite for
-reading the vertex set as pseudonyms rather than as merge products.
+the framework calls incompetent. That simplification has since been measured rather than
+left standing: `RESULTS-refusing-clusterer.md` finds a refusing clusterer changes 0.33 % of
+merge decisions on this slice and leaves the 30 304-address cluster byte-identical, so the
+suspicion above is narrowed rather than confirmed. The refusal that would bear on it is the
+fingerprint channel, which compares *funding* transactions lying outside a two-day slice.
 
 Vertex attributes are stored as raw counts against each view's own base rates, never as
 bare shares, because a median 54 % of an axis value's variance tracks epoch volume
