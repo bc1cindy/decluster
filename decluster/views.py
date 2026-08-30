@@ -256,6 +256,7 @@ class PseudonymGraph:
         self.edge_sig = {}              # (src, dst) -> the axis values of its first transfer
         self.base_rates = {axis: Counter() for axis in AXES}
         self.skipped = Counter()      # axis -> transactions it could not be read from
+        self.unattributed = 0         # transactions whose transfers could not be attributed
         self._out = defaultdict(set)
         self._in = defaultdict(set)
 
@@ -286,10 +287,12 @@ class PseudonymGraph:
         return out
 
 
-def transfer_counts(sample, lookup=None, min_value=0):
+def transfer_counts(sample, lookup=None, min_value=0, max_sources=1):
     """How many transfers each cluster takes part in, in one cheap pass. Distinct degree is
     at most this, so thresholding on it never drops a vertex that would have cleared the
-    same threshold on degree — which is what makes it safe as a pre-filter."""
+    same threshold on degree — which is what makes it safe as a pre-filter. `max_sources`
+    must match the value `contract` will be called with, or the pre-filter counts edges the
+    contraction never creates."""
     lookup = {} if lookup is None else lookup
     counts = Counter()
     for tx, _ in sample:
@@ -297,6 +300,9 @@ def transfer_counts(sample, lookup=None, min_value=0):
         if not ins:
             continue
         srcs = {lookup.get(a, a) for a in ins}
+        if len(srcs) > max_sources:
+            g.unattributed += 1
+            continue
         for addr, val in _out_addrs(tx):
             if val < min_value:
                 continue
@@ -308,7 +314,8 @@ def transfer_counts(sample, lookup=None, min_value=0):
     return counts
 
 
-def contract(sample, indices=None, lookup=None, min_value=0, axes=True, keep=None):
+def contract(sample, indices=None, lookup=None, min_value=0, axes=True, keep=None,
+             max_sources=1):
     """Contract one view: fuse each cluster's coins into a vertex and fold the transfers
     between clusters into one attributed directed edge per ordered pair.
 
@@ -323,6 +330,16 @@ def contract(sample, indices=None, lookup=None, min_value=0, axes=True, keep=Non
 
     A vertex counts its coins rather than listing them; the addresses stay recoverable from
     the clustering lookup.
+
+    `max_sources` bounds how many distinct source pseudonyms a transaction may have before
+    its transfers are treated as unattributable and contribute no edges. An edge is supposed
+    to be a transfer of bitcoin from one cluster to another; where several pseudonyms fund a
+    transaction, which of them paid which output is exactly what is not observable, and
+    asserting every source-destination pair invents relationships. In a coinjoin it invents
+    the one relationship the construction is defined not to have, since its participants
+    need no economic tie at all. Measured on this slice: 211 transactions with six or more
+    source pseudonyms were generating 3.4 million of 4.4 million pairs, 77% of the graph.
+    Transactions above the bound still register their vertices and their activity.
 
     `keep` restricts the graph to a vertex set, dropping edges with an endpoint outside it.
     Paired with `transfer_counts` this excludes the leaves — 57% of a contracted 2026 view
@@ -359,6 +376,9 @@ def contract(sample, indices=None, lookup=None, min_value=0, axes=True, keep=Non
             v = g._vertex(s)
             v["txs"] += 1
             v["coins"] += sum(1 for a in ins if lookup.get(a, a) == s)
+        if len(srcs) > max_sources:
+            g.unattributed += 1
+            continue
         for addr, val in _out_addrs(tx):
             if val < min_value:
                 continue

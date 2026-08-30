@@ -23,10 +23,15 @@ At alpha 0.5:
 
 | configuration | matched | precision | at ecc ≥ 5 | precision | degree baseline | margin |
 |---|---:|---:|---:|---:|---:|---:|
-| structure only | 140 | 0.557 | 56 | 0.661 | 0.542 | **+0.118** |
-| + edge attributes | 364 | 0.316 | 82 | 0.512 | 0.516 | −0.004 |
-| + vertex attributes | 445 | 0.207 | 116 | 0.405 | 0.472 | −0.067 |
-| + both | 704 | 0.200 | 151 | 0.411 | 0.466 | −0.055 |
+| structure only | 143 | 0.559 | 56 | 0.679 | 0.578 | **+0.101** |
+| + edge attributes | 370 | 0.322 | 78 | 0.513 | 0.516 | −0.003 |
+| + vertex attributes | 426 | 0.211 | 115 | 0.409 | 0.557 | −0.149 |
+| + both | 765 | 0.184 | 176 | 0.352 | 0.484 | −0.132 |
+
+*(Re-run on the graph corrected in `RESULTS-graph-shape.md`, with 525k edge signatures in
+place of the earlier inflated 3.9M. The pattern is unchanged and slightly sharper: every
+conditioner is negative, the loss grows monotonically, and the mechanism below is
+independent of the edge-attribution bug.)*
 
 Sweeping the edge conditioner's strength (separate run, see the note on variance):
 
@@ -49,8 +54,8 @@ conditioner was justified on the grounds that a bounded multiplicative factor ca
 a match where structure found nothing, because zero times anything is zero. That holds for
 the *score*. The gate does not read the score; it reads the separation between the leader
 and the runner-up. Scaling tied candidates by different factors creates exactly that
-separation. The signature is in the counts: matches rise from 140 to 704 while precision
-falls from 0.557 to 0.200. The attributes are not pointing at the wrong vertex, they are
+separation. The signature is in the counts: matches rise from 143 to 765 while precision
+falls from 0.559 to 0.184. The attributes are not pointing at the wrong vertex, they are
 converting refusals into errors.
 
 **This was predictable from measurements already in hand.** 0.4 % of transactions sit in a

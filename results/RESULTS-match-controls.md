@@ -22,19 +22,26 @@ matches, 50 at eccentricity ≥ 5.
 
 | control | all matched | at eccentricity ≥ 5 |
 |---|---:|---:|
-| **matcher** | **0.580** | **0.680** |
+| **matcher** | **0.561** | **0.700** |
 | shuffle | 0.000 | 0.000 |
-| degree rank | 0.095 | 0.184 |
+| degree rank | 0.087 | 0.170 |
 | nearest degree, greedy | 0.000 | 0.000 |
-| **degree class, exact upper bound** | **0.428** | **0.499** |
+| **degree class, exact upper bound** | **0.440** | **0.553** |
 
-B-vertices sharing the true partner's degree: median 8, minimum 1, maximum 82 247.
+B-vertices sharing the true partner's degree: median 8, minimum 1, maximum 82 185.
+148 graded matches, 60 at eccentricity ≥ 5.
+
+*(Re-run on the graph corrected in `RESULTS-graph-shape.md`. The earlier figures — 0.580 /
+0.680 for the matcher, 0.428 / 0.499 for the baseline — ran on a graph with four times too
+many edges, almost all of them on hubs the matcher already discards, so every conclusion
+holds and the numbers move within the run-to-run band. The margin over degree is +0.12
+overall and +0.15 in the high-confidence band.)*
 
 ## Reading
 
 **The matcher wins, by less than the shuffle control implied.** Against an upper bound of
-0.428 overall and 0.499 in the high-confidence band, it reaches 0.580 and 0.680. The
-structural propagation is worth roughly fifteen points overall and eighteen in the band
+0.428 overall and 0.499 in the high-confidence band, it reaches 0.561 and 0.700. The
+structural propagation is worth roughly twelve points overall and fifteen in the band
 where the framework locates the value. That is a real margin against a generous baseline,
 and it is a long way from the near-zero baseline a shuffle control suggests.
 

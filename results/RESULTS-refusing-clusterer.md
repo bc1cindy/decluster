@@ -31,17 +31,23 @@ or more distinct input addresses** and so present a CIOH merge decision at all.
 | naive | 633 933 | 55 850 | 30 304, 21 912, 15 216, 15 177, 11 556 |
 | refusing | 605 463 | 55 515 | 30 304, 21 912, 15 216, 14 859, 11 556 |
 
-Downstream, at seed 400:
+Downstream, matcher margin over a degree-only guess at eccentricity ≥ 5, seed 400:
 
-| clustering | vertices | spanning | seedable | matched | correct | precision |
-|---|---:|---:|---:|---:|---:|---:|
-| naive | 395 547 | 33 033 | 5 132 | 145 | 83 | 0.572 |
-| refusing | 411 376 | 33 114 | 5 167 | 139 | 81 | 0.583 |
+| clustering | edges | spanning | links | margin over degree |
+|---|---:|---:|---:|---:|
+| naive | 534 652 | 33 033 | 61 | +0.257 |
+| refusing | 525 010 | 32 857 | 59 | +0.229 |
+
+*(This row was re-measured after the edge-attribution fix in `RESULTS-graph-shape.md`. The
+earlier version compared the naive graph against a refusing graph with four times too many
+edges — 4.4M against 534k — so it was not a fair comparison even though it happened to give
+similar precision. With both graphs corrected to comparable edge counts the two remain
+indistinguishable, so the "inert" conclusion now holds for the right reason.)*
 
 ## Reading
 
-**The refusal is inert on this data.** It touches 0.33 % of the merge decisions, and
-precision moves from 0.572 to 0.583, which at n ≈ 140 is noise. The distinction between the
+**The refusal is inert on this data.** It touches 0.33 % of the merge decisions, and the
+matcher's margin over degree moves from +0.257 to +0.229, which is noise. The distinction between the
 blind adversary and the cautious one, which the framework treats as decisive, does not
 separate them here.
 

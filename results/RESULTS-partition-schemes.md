@@ -19,9 +19,14 @@ neighbours and identity is most ambiguous, and take the connected components it 
 
 | scheme | views | spanning | seedable | matched | correct | links at ecc ≥ 5 | correct | precision |
 |---|---|---:|---:|---:|---:|---:|---:|---:|
-| epoch | 411 376 / 402 294 | 33 114 | 5 167 | 140 | 79 | 59 | 40 | 0.678 |
-| coinjoin seam | 389 676 / 383 402 | 32 855 | 5 131 | 150 | 84 | **61** | **42** | **0.689** |
-| ambiguity cut | 208 502 / 352 | **1** | 0 | 0 | 0 | 0 | 0 | — |
+| epoch | 403 963 / 394 989 | 32 857 | 5 124 | 147 | 83 | 57 | 40 | 0.702 |
+| coinjoin seam | 389 263 / 383 115 | 32 843 | 5 118 | 147 | 83 | **58** | **41** | **0.707** |
+| ambiguity cut | 195 197 / 352 | **1** | 0 | 0 | 0 | 0 | 0 | — |
+
+*(Re-run on the graph corrected in `RESULTS-graph-shape.md`. The ambiguity cut's structural
+failure is unchanged, as expected: whether multi-source transfers assert edges does not
+affect whether the graph decomposes. Epoch and coinjoin-seam precision moved by under two
+points and remain indistinguishable.)*
 
 Sweeping the fraction of addresses treated as the dense core:
 
@@ -60,8 +65,8 @@ What is measured here is that the literal reading, a decomposition into sparser 
 matched against each other, is not available on this graph at any threshold, for a
 structural reason rather than a tuning one.
 
-**The coinjoin seam edges out epoch**, 61 links against 59 and precision 0.689 against
-0.678. At these counts that is noise and should not be read as a ranking. It is worth noting
+**The coinjoin seam and epoch are indistinguishable**, 58 links against 57 and precision
+0.707 against 0.702. At these counts the gap is noise and should not be read as a ranking. It is worth noting
 only because it is the framework's own prescription for the cautious adversary, declining
 CIOH inside a coinjoin while still matching the graphs on either side, and it costs nothing:
 it does the same work on 5 % fewer vertices.

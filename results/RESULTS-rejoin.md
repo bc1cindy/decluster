@@ -21,7 +21,7 @@ seeding from a split cluster would hand the adversary the answer it is meant to 
 | split | clusters split | seed | matched | identity | **rejoin** | error | rejoins per split cluster |
 |---|---:|---:|---:|---:|---:|---:|---:|
 | random, half | 27 871 | 400 | 67 | 47 | **2** | 18 | 0.007 % |
-| boundary, all | 2 986 | 381 | 56 | 32 | **5** | 19 | 0.17 % |
+| boundary, all | 2 986 | 361 | 53 | 29 | **4** | 20 | 0.13 % |
 | boundary, half | 1 474 | 400 | 84 | 47 | **1** | 36 | 0.07 % |
 
 At eccentricity ≥ 5 the rejoin counts are 1, 1 and 1 respectively.
@@ -31,7 +31,10 @@ At eccentricity ≥ 5 the rejoin counts are 1, 1 and 1 respectively.
 **The discovery almost never happens.** Across every configuration the matcher produces
 between one and five genuine new links, from thousands of users whose pseudonyms were
 separated. Under the sharpest test, 2 986 users split across the view boundary, it joined
-five. Ninety-nine point eight percent kept their pseudonymity.
+four. Ninety-nine point nine percent kept their pseudonymity.
+
+*(Re-run on the graph corrected in `RESULTS-graph-shape.md`; the pre-fix figure was five of
+2 986. The correction does not touch the conclusion.)*
 
 **Seed starvation does not explain it.** Splitting consumes exactly the spanning clusters
 that make good seeds, so the boundary runs are seed-poor by construction and that is the

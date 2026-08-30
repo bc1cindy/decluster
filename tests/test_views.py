@@ -319,3 +319,24 @@ def test_a_cluster_confined_to_one_view_is_left_whole():
     out, origin = split_clusters_by_view(lookup, {"a1", "a2"}, frac=1.0,
                                          rng=random.Random(0))
     assert out == lookup and origin == {"C": "C"}
+
+
+def test_a_transaction_funded_by_several_pseudonyms_asserts_no_edges():
+    """An edge is a transfer from one cluster to another. Where several pseudonyms fund a
+    transaction, which of them paid which output is exactly what is unobservable, and
+    asserting every pair invents relationships — in a coinjoin, the one relationship the
+    construction is defined not to have."""
+    s = S(vtx([10_000, 20_000], [15_000, 14_000], ["a", "b"]))
+    g = contract(s, [0], {"a": "A", "b": "B"})       # two distinct source pseudonyms
+    assert g.edges == {}
+    assert g.unattributed == 1
+    assert set(g.vertices) >= {"A", "B"}             # the vertices still exist
+
+    merged = contract(s, [0], {"a": "A", "b": "A"})  # one owner: attributable again
+    assert merged.edges and merged.unattributed == 0
+
+
+def test_max_sources_can_be_raised_deliberately():
+    s = S(vtx([10_000, 20_000], [15_000, 14_000], ["a", "b"]))
+    g = contract(s, [0], {"a": "A", "b": "B"}, max_sources=2)
+    assert len(g.edges) == 4 and g.unattributed == 0
