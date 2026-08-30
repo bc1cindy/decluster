@@ -1,5 +1,5 @@
 """§07 path-count anonymity object: provenance over ancestral origins weighted by counterfactual
-PATH MULTIPLICITY (the §06/§07 robustness lens), distinct from §04's set-size entropy
+subset-sum PATH MULTIPLICITY, distinct from §04's set-size entropy
 (`ancestry.absorber_distribution`, which weighs origins by link-probability mass alone). Reuses
 `ancestry.build_extended_graph`'s walk verbatim (same graph, same `max_nodes` bound) and folds in
 the dss W(E) mapping-count (`counting.w_total`) per edge: how many counterfactual subset-sum
@@ -46,7 +46,11 @@ def _topological_order(target, edges):
 def path_count_anonymity(target, *, depth=6, max_nodes=None, fetch=None, link_oracle=None,
                           count_oracle=None):
     """§07 path-count anonymity set: provenance over ancestral origins weighted by counterfactual
-    PATH MULTIPLICITY (the §06/§07 robustness lens), from the dss W(E) counts. Reuses
+    subset-sum PATH MULTIPLICITY, from the dss W(E) counts. This is the §07 path-like object (how
+    many amount-consistent counterfactual routes reach each origin); it is NOT the §06 robustness
+    metric, which is edge-disjoint path count / min-cut (k-routes max-flow) and is a separate,
+    not-yet-implemented component — W(E) multiplicity and edge-disjoint connectivity are different
+    quantities. Reuses
     `build_extended_graph`'s walk (honoring `max_nodes` for deep-coinjoin tractability) -- does not
     re-walk. Returns {"origins_weighted": {origin: weight}, "log_W_paths": float,
     "min_entropy": float, "shannon": float, "truncated": int}.
