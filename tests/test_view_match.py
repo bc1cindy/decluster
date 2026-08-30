@@ -126,3 +126,54 @@ def test_an_unopposed_candidate_reads_as_maximally_confident():
     m = ViewMatcher(theta=0.5)
     m.match(ga, gb, {"s": "s'"})
     assert m.confidence["x"][0] == float("inf")
+
+
+# --- attributes as conditioners ---------------------------------------------
+
+def test_agreement_counts_matching_axes_and_abstains_when_a_signature_is_missing():
+    from decluster.view_match import agreement
+    assert agreement(("a", "b", "c"), ("a", "b", "c")) == 1.0
+    assert agreement(("a", "b", "c"), ("a", "x", "y")) == 1 / 3
+    assert agreement(("a",), None) is None and agreement(None, ("a",)) is None
+    assert agreement(("a", "b"), ("a",)) is None
+
+
+def test_the_conditioner_is_bounded_and_neutral_at_half_agreement():
+    """An attribute may promote or demote a candidate that structure already found. It must
+    never manufacture one, so the factor is bounded and zero score stays zero."""
+    from decluster.view_match import _condition
+    assert _condition(10.0, 0.5, 0.4) == 10.0
+    assert _condition(10.0, 1.0, 0.4) == 14.0
+    assert _condition(10.0, 0.0, 0.4) == 6.0
+    assert _condition(0.0, 1.0, 0.4) == 0.0
+    assert _condition(10.0, None, 0.4) == 10.0
+
+
+def test_edge_signature_agreement_reorders_candidates():
+    """Two candidates equally supported by structure; the one whose edge to the matched
+    neighbour looks like the reference edge must win."""
+    from decluster.views import contract
+
+    def tx(a, b, version=2, txid="t"):
+        return {"txid": txid, "height": 1, "version": version, "locktime": 0,
+                "fee": 100, "weight": 400,
+                "vin": [{"txid": "p" + a, "vout": 0, "sequence": 0xFFFFFFFF,
+                         "prevout": {"value": 1000, "scriptpubkey_type": "v0_p2wpkh",
+                                     "scriptpubkey_address": a}}],
+                "vout": [{"value": 500, "scriptpubkey_type": "v0_p2wpkh",
+                          "scriptpubkey_address": b}]}
+
+    sa = [(tx("u", "m", version=2), None)]
+    sb = [(tx("good", "m'", version=2), None), (tx("bad", "m'", version=1), None)]
+    ga = contract(sa, [0], {})
+    gb = contract(sb, [0, 1], {})
+    flat = candidate_scores("u", ga, gb, {"m": "m'"}, edge_alpha=0.0)
+    cond = candidate_scores("u", ga, gb, {"m": "m'"}, edge_alpha=0.5)
+    assert flat["good"] == flat["bad"]                    # structure alone cannot separate
+    assert cond["good"] > cond["bad"]                     # the edge attribute can
+
+
+def test_attributes_are_off_by_default():
+    """The conditioners change scores, so they must be opt-in rather than silently on."""
+    m = ViewMatcher()
+    assert m.edge_alpha == 0.0 and m.vertex_alpha == 0.0

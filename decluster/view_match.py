@@ -25,7 +25,54 @@ from math import sqrt
 from .propagate import eccentricity
 
 
-def candidate_scores(u, src, dst, mapping, hubcap=100, damping=True, stat=None):
+def agreement(sa, sb):
+    """Share of axes on which two signatures agree, or None when either is missing."""
+    if not sa or not sb or len(sa) != len(sb):
+        return None
+    return sum(1 for x, y in zip(sa, sb) if x == y) / len(sa)
+
+
+def _sig(g, a, b):
+    return g.edge_sig.get((a, b)) or g.edge_sig.get((b, a))
+
+
+def _condition(weight, agree, alpha):
+    """Bounded multiplicative conditioner. Half agreement is neutral, and zero score stays
+    zero, so an attribute cannot manufacture a *score* where structure found none.
+
+    It can, however, manufacture *eccentricity*, and that is what the gate reads. Scaling
+    tied candidates by different factors creates the separation the gate tests for, turning
+    refusals into accepted matches. `RESULTS-attribute-conditioning.md` measures the cost:
+    the margin over a degree-only guess falls monotonically as alpha rises from zero, and
+    even alpha 0.05 gives most of the loss away. Both conditioners therefore default to off,
+    and they are kept as the instrument that measured this rather than as a feature to
+    enable."""
+    return weight if agree is None else weight * ((1 - alpha) + 2 * alpha * agree)
+
+
+def vertex_agreement(src, u, dst, v, axes=None):
+    """Cosine between two vertices' attribute lifts. Each lift is already normalised
+    against its own view's base rates, which is what makes the two comparable at all: a
+    median 54% of an axis value's variance tracks epoch volume, a covariate that moves
+    every vertex in a view together (`RESULTS-attribute-drift.md`)."""
+    axes = axes or list(src.base_rates)
+    num = na = nb = 0.0
+    for axis in axes:
+        pa, pb = src.attribute(u, axis), dst.attribute(v, axis)
+        for value, x in pa.items():
+            if x == float("inf"):
+                continue
+            y = pb.get(value, 0.0)
+            num += x * (0.0 if y == float("inf") else y)
+            na += x * x
+        for y in pb.values():
+            if y != float("inf"):
+                nb += y * y
+    return num / ((na * nb) ** 0.5) if na and nb else None
+
+
+def candidate_scores(u, src, dst, mapping, hubcap=100, damping=True, stat=None,
+                     edge_alpha=0.0):
     """Score dst-vertices as candidates for src-vertex `u`, by the images of u's already
     matched neighbours. Only matched neighbours carry information, so an unmatched
     neighbourhood scores nothing and u simply waits for a later round.
@@ -44,8 +91,12 @@ def candidate_scores(u, src, dst, mapping, hubcap=100, damping=True, stat=None):
         if image is None or conn(image) > hubcap:
             continue
         w = 1.0 / sqrt(conn(image) or 1) if damping else 1.0
+        sa = _sig(src, u, n) if edge_alpha else None
         for v in dst.neighbours(image):
-            scores[v] += w
+            wv = w
+            if edge_alpha:
+                wv = _condition(w, agreement(sa, _sig(dst, v, image)), edge_alpha)
+            scores[v] += wv
     return scores
 
 
@@ -54,13 +105,17 @@ class ViewMatcher:
     resolve are absent from the result rather than guessed at."""
 
     def __init__(self, theta=0.5, hubcap=100, min_score=0.0, damping=True,
-                 reversible=True, stat=None):
+                 reversible=True, stat=None, edge_alpha=0.0, vertex_alpha=0.0,
+                 vertex_top=10):
         self.theta = theta
         self.hubcap = hubcap
         self.min_score = min_score
         self.damping = damping
         self.reversible = reversible
         self.stat = stat or {}          # {view: {vertex: unfiltered connectedness}}
+        self.edge_alpha = edge_alpha    # 0 disables the attribute conditioners entirely
+        self.vertex_alpha = vertex_alpha
+        self.vertex_top = vertex_top    # only the leaders can change the gate's verdict
         self.confidence = {}
 
     def _best(self, u, src, dst, mapping, detail=False):
@@ -70,7 +125,12 @@ class ViewMatcher:
         so a match has to carry how confident it was."""
         miss = (None, 0.0, 0.0) if detail else None
         scores = candidate_scores(u, src, dst, mapping, self.hubcap, self.damping,
-                                  self.stat.get(id(dst)))
+                                  self.stat.get(id(dst)), self.edge_alpha)
+        if self.vertex_alpha and len(scores) >= 2:
+            for v, _ in scores.most_common(self.vertex_top):
+                scores[v] = _condition(scores[v],
+                                       vertex_agreement(src, u, dst, v),
+                                       self.vertex_alpha)
         for taken in mapping.values():
             scores.pop(taken, None)              # a dst vertex is claimed at most once
         if not scores:

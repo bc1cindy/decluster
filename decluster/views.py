@@ -196,6 +196,7 @@ class PseudonymGraph:
     def __init__(self):
         self.vertices = {}
         self.edges = {}
+        self.edge_sig = {}              # (src, dst) -> the axis values of its first transfer
         self.base_rates = {axis: Counter() for axis in AXES}
         self.skipped = Counter()      # axis -> transactions it could not be read from
         self._out = defaultdict(set)
@@ -283,7 +284,9 @@ def contract(sample, indices=None, lookup=None, min_value=0, axes=True, keep=Non
             srcs &= keep
             if not srcs:
                 continue
+        sig = None
         if axes:
+            sig = []
             for axis, fn in AXES.items():
                 try:
                     value = fn(tx)
@@ -291,8 +294,10 @@ def contract(sample, indices=None, lookup=None, min_value=0, axes=True, keep=Non
                     g.skipped[axis] += 1            # counted, never silent: an axis that
                     continue                        # dies on every tx must be visible
                 g.base_rates[axis][value] += 1
+                sig.append(value)
                 for s in srcs:
                     g._vertex(s)["axes"][axis][value] += 1
+            sig = tuple(sig)
         for s in srcs:
             v = g._vertex(s)
             v["txs"] += 1
@@ -308,9 +313,18 @@ def contract(sample, indices=None, lookup=None, min_value=0, axes=True, keep=Non
                 if s == dst:
                     g.vertices[s]["self_transfers"] += 1
                     continue
-                e = g.edges.setdefault((s, dst), {"transfers": 0, "value": 0})
+                key = (s, dst)
+                e = g.edges.setdefault(key, {"transfers": 0, "value": 0})
                 e["transfers"] += 1
                 e["value"] += val
+                if axes and key not in g.edge_sig:
+                    # The framework wants the statistical features to inform the EDGE
+                    # attributes too, not only the vertices. Stored as the axis values of
+                    # the transfer that created the edge rather than a distribution over
+                    # all of them: 93% of edges carry a single transfer, so for almost all
+                    # of them the two are the same thing, and a Counter per edge is not
+                    # affordable at slice scale.
+                    g.edge_sig[key] = sig
                 g._out[s].add(dst)
                 g._in[dst].add(s)
     return g
