@@ -106,3 +106,23 @@ def test_stat_overrides_the_graph_degree_for_damping_and_the_hub_cap():
     assert max(as_if_full.values()) < max(lean.values())        # damped as the full degree
     assert candidate_scores("a", ga, gb, seed, hubcap=100, stat={"m'": 400}) == Counter()
     assert candidate_scores("a", ga, gb, seed, hubcap=500, stat={"m'": 400}) != Counter()
+
+
+def test_confidence_is_recorded_per_match_and_ranks_a_clear_win_above_a_close_one():
+    """The framework locates the value in the *high confidence* links rather than in
+    coverage, so a match that barely cleared the gate must be distinguishable from one that
+    won outright."""
+    ga, gb = graph(RING), graph(relabel(RING))
+    m = ViewMatcher(theta=0.0)
+    out = m.match(ga, gb, {"a": "a'", "b": "b'"})
+    assert set(m.confidence) == set(out) - {"a", "b"}
+    assert all(ecc > 0 and sc > 0 for ecc, sc in m.confidence.values())
+
+
+def test_an_unopposed_candidate_reads_as_maximally_confident():
+    """A single candidate has no runner-up to be separated from, so eccentricity is
+    undefined; it must read as certain rather than as zero, which would sort it last."""
+    ga, gb = graph([("s", "x")]), graph([("s'", "x'")])
+    m = ViewMatcher(theta=0.5)
+    m.match(ga, gb, {"s": "s'"})
+    assert m.confidence["x"][0] == float("inf")

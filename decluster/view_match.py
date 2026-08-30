@@ -61,20 +61,27 @@ class ViewMatcher:
         self.damping = damping
         self.reversible = reversible
         self.stat = stat or {}          # {view: {vertex: unfiltered connectedness}}
+        self.confidence = {}
 
-    def _best(self, u, src, dst, mapping):
+    def _best(self, u, src, dst, mapping, detail=False):
+        """Returns the accepted candidate, or None. With `detail`, returns
+        (candidate, eccentricity, score) so a caller can rank matches by how clearly they
+        won — the framework's value lies in the *high confidence* links, not in coverage,
+        so a match has to carry how confident it was."""
+        miss = (None, 0.0, 0.0) if detail else None
         scores = candidate_scores(u, src, dst, mapping, self.hubcap, self.damping,
                                   self.stat.get(id(dst)))
         for taken in mapping.values():
             scores.pop(taken, None)              # a dst vertex is claimed at most once
         if not scores:
-            return None
+            return miss
         best = max(scores, key=scores.get)
         if scores[best] <= self.min_score:
-            return None
-        if len(scores) >= 2 and eccentricity(scores) <= self.theta:
-            return None                          # a diffuse tie is a refusal
-        return best
+            return miss
+        ecc = eccentricity(scores) if len(scores) >= 2 else float("inf")
+        if len(scores) >= 2 and ecc <= self.theta:
+            return miss                          # a diffuse tie is a refusal
+        return (best, ecc, scores[best]) if detail else best
 
     def match(self, ga, gb, seed, stat_a=None, stat_b=None):
         """Propagate along the frontier rather than rescanning every vertex each round: a
@@ -84,6 +91,7 @@ class ViewMatcher:
             self.stat[id(ga)] = stat_a
         if stat_b is not None:
             self.stat[id(gb)] = stat_b
+        self.confidence = {}                 # vertex -> (eccentricity, winning score)
         mapping = dict(seed)
         reverse = {b: a for a, b in mapping.items()}
         frontier = {n for u in mapping for n in ga.neighbours(u) if n not in mapping}
@@ -92,7 +100,7 @@ class ViewMatcher:
             for u in frontier:
                 if u in mapping:
                     continue
-                v = self._best(u, ga, gb, mapping)
+                v, ecc, sc = self._best(u, ga, gb, mapping, detail=True)
                 if v is not None and self.reversible \
                         and self._best(v, gb, ga, reverse) != u:
                     v = None                     # must win from the other side too
@@ -100,6 +108,7 @@ class ViewMatcher:
                     refused.add(u)
                     continue
                 mapping[u] = v
+                self.confidence[u] = (ecc, sc)
                 reverse[v] = u
                 matched += 1
                 nxt.update(n for n in ga.neighbours(u) if n not in mapping)

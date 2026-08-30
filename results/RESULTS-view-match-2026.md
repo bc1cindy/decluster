@@ -32,6 +32,15 @@ propagation contributes nothing by construction.
 
 ## Reading
 
+**A framing correction, added after the fact.** The absence of a cascade is measured
+correctly below, but it was judged against a stricter criterion than the source states.
+The framework explicitly anticipates that "a proliferation of pseudonyms may limit the
+effectiveness of this approach for any particular run of the propagation algorithm" and
+locates the value in the *high confidence* links that feed other clustering heuristics.
+Precision stratified by the matcher's own confidence is the criterion it actually states,
+and it is measured in `RESULTS-match-confidence.md`: 0.727 at eccentricity 5, ten of ten
+above eccentricity 10. Read what follows as a result about coverage, not about the attack.
+
 **The signal is real.** Precision between 0.48 and 0.80 against a shuffle control of
 exactly zero, over a candidate set of 33 033. Structure does carry identity across the
 boundary, and the matcher finds it.
