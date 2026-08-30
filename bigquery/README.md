@@ -106,3 +106,8 @@ What remains is linear and splits as follows, per 144-block epoch:
 Time is no longer a concern. Memory is, and it is now the ordinary linear cost of holding
 a parsed epoch rather than a quadratic blow-up, so the fix if it binds is a streaming
 loader, not a different data structure.
+
+Those figures are for `graph_deanon.build`, the address-level probe. The contraction the
+cross-view pipeline actually runs, `views.contract`, is lighter: **800 MB** for a 144-block
+view, 653 MB with attributes off, and 624 MB for *both* views once vertices below transfer
+count two are dropped.

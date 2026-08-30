@@ -73,7 +73,7 @@ def test_cluster_members_fuse_into_one_vertex():
     lk = cluster_addresses(s)
     g = contract(s, [0], lk)
     assert lk["a"] in g.vertices and lk["b"] == lk["a"]
-    assert g.vertices[lk["a"]]["coins"] == {"a", "b"}
+    assert g.vertices[lk["a"]]["coins"] == 2
 
 
 def test_parallel_transfers_fold_into_one_attributed_edge():
@@ -146,6 +146,15 @@ def test_every_axis_is_populated():
     assert not g.skipped
 
 
+def test_axes_can_be_skipped_for_a_structure_only_run():
+    """The attribute counters dominate the vertex record; a wide view may only have room
+    for the structure the matcher actually propagates along."""
+    s = S(tx(["a"], [("x", 100)]))
+    g = contract(s, [0], {}, axes=False)
+    assert g.edges and not any(sum(g.base_rates[ax].values()) for ax in AXES)
+    assert g.attribute("a", "version") == {}
+
+
 def test_an_axis_that_cannot_be_read_is_counted_not_swallowed():
     """An extractor raising on a partial transaction is abstention, not a bug — but an axis
     that dies on every transaction would otherwise leave an empty distribution and no trace
@@ -156,3 +165,48 @@ def test_an_axis_that_cannot_be_read_is_counted_not_swallowed():
     g = contract(S(t), [0], {})
     assert g.skipped["input_order"] == 1
     assert sum(g.base_rates["version"].values()) == 1
+
+
+# --- degree pre-filter ------------------------------------------------------
+
+def test_transfer_counts_bound_the_degree():
+    """Distinct degree is at most the transfer count, which is what makes the cheap count
+    safe as a pre-filter: it never drops a vertex that degree would have kept."""
+    from decluster.views import transfer_counts
+    s = S(tx(["a"], [("x", 100), ("x", 200), ("y", 300)]))
+    counts = transfer_counts(s)
+    g = contract(s, [0], {})
+    assert counts["a"] == 3 and g.degree("a") == 2
+    assert all(counts[v] >= g.degree(v) for v in g.vertices)
+
+
+def test_keep_drops_edges_with_an_excluded_endpoint():
+    s = S(tx(["a"], [("x", 100), ("y", 100)]))
+    g = contract(s, [0], {}, keep={"a", "x"})
+    assert set(g.edges) == {("a", "x")}
+    assert "y" not in g.vertices
+
+
+def test_filtering_leaves_does_not_change_what_the_matcher_finds():
+    """The pre-filter is only legitimate if it is invisible to the result: a vertex below
+    degree two can neither be matched (no neighbourhood to discriminate on) nor bridge two
+    others, and contributes nothing to scoring while unmatched."""
+    from decluster.views import transfer_counts
+    from decluster.view_match import ViewMatcher
+    core = [("c1", "c2"), ("c2", "c3"), ("c3", "c4"), ("c4", "c1"), ("c1", "c3")]
+    leaves = [("c1", "l1"), ("c2", "l2"), ("c3", "l3")]
+    s = S(*[tx([a], [(b, 1000)]) for a, b in core + leaves])
+    t = S(*[tx([a + "*"], [(b + "*", 1000)]) for a, b in core + leaves])
+
+    full_a, full_b = contract(s, range(len(s)), {}), contract(t, range(len(t)), {})
+    keep_a = {v for v, n in transfer_counts(s).items() if n >= 2}
+    keep_b = {v for v, n in transfer_counts(t).items() if n >= 2}
+    lean_a = contract(s, range(len(s)), {}, keep=keep_a)
+    lean_b = contract(t, range(len(t)), {}, keep=keep_b)
+
+    assert len(lean_a.vertices) < len(full_a.vertices)
+    m = ViewMatcher(theta=0.0)
+    seed_full = {"c1": "c1*", "c2": "c2*"}
+    on_full = m.match(full_a, full_b, seed_full)
+    on_lean = m.match(lean_a, lean_b, seed_full)
+    assert {k: v for k, v in on_full.items() if k in lean_a.vertices} == on_lean

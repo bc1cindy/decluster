@@ -112,7 +112,7 @@ class PseudonymGraph:
 
     def _vertex(self, vid):
         return self.vertices.setdefault(
-            vid, {"coins": set(), "txs": 0, "self_transfers": 0,
+            vid, {"coins": 0, "txs": 0, "self_transfers": 0,
                   "axes": {axis: Counter() for axis in AXES}})
 
     def neighbours(self, vid):
@@ -137,7 +137,29 @@ class PseudonymGraph:
         return out
 
 
-def contract(sample, indices=None, lookup=None, min_value=0):
+def transfer_counts(sample, lookup=None, min_value=0):
+    """How many transfers each cluster takes part in, in one cheap pass. Distinct degree is
+    at most this, so thresholding on it never drops a vertex that would have cleared the
+    same threshold on degree — which is what makes it safe as a pre-filter."""
+    lookup = {} if lookup is None else lookup
+    counts = Counter()
+    for tx, _ in sample:
+        ins = _in_addrs(tx)
+        if not ins:
+            continue
+        srcs = {lookup.get(a, a) for a in ins}
+        for addr, val in _out_addrs(tx):
+            if val < min_value:
+                continue
+            dst = lookup.get(addr, addr)
+            for s in srcs:
+                if s != dst:
+                    counts[s] += 1
+                    counts[dst] += 1
+    return counts
+
+
+def contract(sample, indices=None, lookup=None, min_value=0, axes=True, keep=None):
     """Contract one view: fuse each cluster's coins into a vertex and fold the transfers
     between clusters into one attributed directed edge per ordered pair.
 
@@ -147,6 +169,16 @@ def contract(sample, indices=None, lookup=None, min_value=0):
 
     `indices` selects from a materialised sample; passing None instead iterates `sample`
     directly, so a whole-epoch view can be streamed off disk without holding it in memory.
+    `axes=False` skips the attribute counters, which dominate the vertex record: a matcher
+    run that uses structure alone does not need them and a wide view may not have room.
+
+    A vertex counts its coins rather than listing them; the addresses stay recoverable from
+    the clustering lookup.
+
+    `keep` restricts the graph to a vertex set, dropping edges with an endpoint outside it.
+    Paired with `transfer_counts` this excludes the leaves — 57% of a contracted 2026 view
+    sits at degree below two — which propagation can neither match nor bridge through, so
+    the restriction leaves the matching unchanged while roughly halving the graph.
     """
     lookup = {} if lookup is None else lookup
     g = PseudonymGraph()
@@ -156,24 +188,31 @@ def contract(sample, indices=None, lookup=None, min_value=0):
         if not ins:
             continue
         srcs = {lookup.get(a, a) for a in ins}
-        for axis, fn in AXES.items():
-            try:
-                value = fn(tx)
-            except Exception:                       # a malformed or partial tx, not a bug
-                g.skipped[axis] += 1                # counted, never silent: an axis that
-                continue                            # dies on every tx must be visible
-            g.base_rates[axis][value] += 1
-            for s in srcs:
-                g._vertex(s)["axes"][axis][value] += 1
+        if keep is not None:
+            srcs &= keep
+            if not srcs:
+                continue
+        if axes:
+            for axis, fn in AXES.items():
+                try:
+                    value = fn(tx)
+                except Exception:                   # a malformed or partial tx, not a bug
+                    g.skipped[axis] += 1            # counted, never silent: an axis that
+                    continue                        # dies on every tx must be visible
+                g.base_rates[axis][value] += 1
+                for s in srcs:
+                    g._vertex(s)["axes"][axis][value] += 1
         for s in srcs:
             v = g._vertex(s)
             v["txs"] += 1
-            v["coins"].update(a for a in ins if lookup.get(a, a) == s)
+            v["coins"] += sum(1 for a in ins if lookup.get(a, a) == s)
         for addr, val in _out_addrs(tx):
             if val < min_value:
                 continue
             dst = lookup.get(addr, addr)
-            g._vertex(dst)["coins"].add(addr)
+            if keep is not None and dst not in keep:
+                continue
+            g._vertex(dst)["coins"] += 1
             for s in srcs:
                 if s == dst:
                     g.vertices[s]["self_transfers"] += 1

@@ -92,3 +92,17 @@ def test_damping_discounts_evidence_from_a_popular_neighbour():
 def test_an_unmatched_neighbourhood_scores_nothing():
     ga, gb = graph(RING), graph(relabel(RING))
     assert candidate_scores("a", ga, gb, {}) == Counter()
+
+
+def test_stat_overrides_the_graph_degree_for_damping_and_the_hub_cap():
+    """Both guards read connectedness, so they must be able to read it from the *unfiltered*
+    graph. Dropping leaves to fit a wide view in memory otherwise lowers the degree of
+    everything they hung off and silently reweights every score."""
+    edges = [("m", "a"), ("m", "b")]
+    ga, gb = graph(edges), graph(relabel(edges))
+    seed = {"m": "m'"}
+    lean = candidate_scores("a", ga, gb, seed, hubcap=100)
+    as_if_full = candidate_scores("a", ga, gb, seed, hubcap=100, stat={"m'": 64})
+    assert max(as_if_full.values()) < max(lean.values())        # damped as the full degree
+    assert candidate_scores("a", ga, gb, seed, hubcap=100, stat={"m'": 400}) == Counter()
+    assert candidate_scores("a", ga, gb, seed, hubcap=500, stat={"m'": 400}) != Counter()
