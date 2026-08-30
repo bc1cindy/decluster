@@ -109,7 +109,7 @@ def _demix_participants(tx):
     return {k: v for k, v in groups.items() if v} or None
 
 
-def partition_coins(sample, scheme="epoch", bounds=None, ambiguity=None, theta=1.0):
+def partition_coins(sample, scheme="epoch", bounds=None, core_frac=0.01):
     """Split the sample into views, returning one list of sample indices per view.
 
     epoch             by block height, the trivial partition the framework names as its
@@ -119,10 +119,8 @@ def partition_coins(sample, scheme="epoch", bounds=None, ambiguity=None, theta=1
                       it is a natural seam: transactions before and after form the views and
                       the coinjoins themselves are the boundary, in no view.
     ambiguity_cut     the framework's preferred scheme, the "opposite" of expander
-                      decomposition: cut where the evidence is most ambiguous so each
-                      component comes out sparser. `ambiguity(tx) -> float` supplies the
-                      per-transaction evidence balance; transactions under `theta` are the
-                      boundary and are excluded rather than assigned.
+                      decomposition. See `ambiguity_partition`; note it needs two passes,
+                      so `sample` must be a list rather than an iterator here.
 
     A cut removes the boundary from the views and keeps the rest; it does not discard the
     vertices incident to it.
@@ -142,13 +140,51 @@ def partition_coins(sample, scheme="epoch", bounds=None, ambiguity=None, theta=1
                 [i for i in range(cut + 1, len(sample)) if i not in boundary]]
 
     if scheme == "ambiguity_cut":
-        if ambiguity is None:
-            raise ValueError("ambiguity_cut needs an `ambiguity` callable")
-        keep = [i for i, (tx, _) in enumerate(sample) if abs(ambiguity(tx)) >= theta]
-        half = len(keep) // 2
-        return [keep[:half], keep[half:]]
+        return ambiguity_partition(sample, sample, core_frac=core_frac)
 
     raise ValueError(f"unknown scheme: {scheme}")
+
+
+def ambiguity_partition(pass_one, pass_two, core_frac=0.01, n_views=2):
+    """The framework's preferred partition, "the opposite of expander decomposition".
+
+    Expander decomposition finds a *sparse* cut and leaves well-connected components. The
+    opposite cuts through the dense core and leaves components that are relatively sparser,
+    which is the regime the matching needs: in a dense region every vertex looks like its
+    neighbours and identity is ambiguous, while a sparse neighbourhood is distinctive.
+
+    The core is the busiest `core_frac` of addresses. Transactions touching it are the cut
+    and join no view; what remains decomposes into connected components, and the largest
+    `n_views` become the views. A cluster whose activity only reached across through the
+    core now appears in two components under separate pseudonyms, which is exactly the
+    correspondence the matcher exists to recover.
+
+    Takes two independent iterators over the same transactions so a slice can be partitioned
+    without being held in memory.
+    """
+    seen = Counter()
+    for tx, _ in pass_one:
+        for a in set(_in_addrs(tx)) | {a for a, _ in _out_addrs(tx)}:
+            seen[a] += 1
+    if not seen:
+        return [[] for _ in range(n_views)]
+    cut = max(1, int(len(seen) * core_frac))
+    core = {a for a, _ in seen.most_common(cut)}
+
+    uf = UF()
+    members = {}
+    for i, (tx, _) in enumerate(pass_two):
+        addrs = set(_in_addrs(tx)) | {a for a, _ in _out_addrs(tx)}
+        if not addrs or addrs & core:
+            continue                                     # the cut itself joins no view
+        addrs = sorted(addrs)
+        for a in addrs[1:]:
+            uf.union(addrs[0], a)
+        members[i] = addrs[0]
+    comps = {}
+    for i, anchor in members.items():
+        comps.setdefault(uf.find(anchor), []).append(i)
+    return sorted(comps.values(), key=len, reverse=True)[:n_views]
 
 
 class PseudonymGraph:

@@ -51,14 +51,25 @@ def test_a_cut_removes_the_boundary_and_keeps_the_rest():
     assert sorted(parts[0] + parts[1]) == [0, 2]
 
 
-def test_ambiguity_cut_excludes_low_evidence_and_needs_a_callable():
-    s = S(tx(["a"], [("x", 1)]), tx(["b"], [("y", 1)]), tx(["c"], [("z", 1)]),
-          tx(["d"], [("w", 1)]))
-    amb = lambda t: 0.0 if t["vin"][0]["prevout"]["scriptpubkey_address"] == "b" else 5.0
-    parts = partition_coins(s, "ambiguity_cut", ambiguity=amb, theta=1.0)
-    assert sorted(sum(parts, [])) == [0, 2, 3]
-    with pytest.raises(ValueError):
-        partition_coins(s, "ambiguity_cut")
+def test_ambiguity_cut_removes_the_dense_core_and_returns_the_components_it_leaves():
+    """Two otherwise separate neighbourhoods joined only through a busy hub. Cutting the hub
+    is what lets them come out as two views; keeping it would leave one component."""
+    from decluster.views import ambiguity_partition
+    left = [tx(["l1"], [("l2", 1)]), tx(["l2"], [("l3", 1)])]
+    right = [tx(["r1"], [("r2", 1)]), tx(["r2"], [("r3", 1)])]
+    via_hub = [tx(["l3"], [("hub", 1)]), tx(["hub"], [("r1", 1)]),
+               tx(["hub"], [("l1", 1)]), tx(["hub"], [("r3", 1)])]
+    s = S(*(left + right + via_hub))
+    parts = ambiguity_partition(iter(s), iter(s), core_frac=0.1)
+    assert len(parts) == 2
+    flat = sorted(sum(parts, []))
+    assert all(i < 4 for i in flat)                     # every hub transaction was cut
+    assert {tuple(sorted(p)) for p in parts} == {(0, 1), (2, 3)}
+
+
+def test_ambiguity_cut_on_an_empty_sample_returns_empty_views():
+    from decluster.views import ambiguity_partition
+    assert ambiguity_partition(iter([]), iter([])) == [[], []]
 
 
 def test_unknown_scheme_is_rejected():
