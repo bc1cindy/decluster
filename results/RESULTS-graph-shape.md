@@ -48,7 +48,12 @@ would not decompose the graph (`RESULTS-partition-schemes.md`), attributes only 
 (`RESULTS-rejoin.md`). These are not four independent disappointments. They are what a
 matching algorithm designed for social graphs does when handed a graph that is nearly a tree
 of one-shot transfers: there is no community structure to propagate through, because at this
-timescale the graph does not have any.
+timescale the graph does not have any. To be exact about scope, what fails here is the
+*cascade* — the strong form that would recover most of the graph. The matcher still returns a
+few high-confidence links above a degree baseline (`RESULTS-match-controls.md`), which is the
+modest outcome the framework actually claims for a single run; those are not among the
+"negatives" above. It is the runaway propagation, not all output, that the missing structure
+denies.
 
 **And it says which of the remaining levers can and cannot help.** A wider view raises degree
 but does not manufacture clustering where transfers are genuinely one-shot; the persistence

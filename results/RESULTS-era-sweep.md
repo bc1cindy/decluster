@@ -42,16 +42,22 @@ structure the propagation attack rides; the two are different, and this measures
 **The trend is mildly upward through 2019, not downward.** 0.0033 → 0.0101 → 0.0166 across
 2013–2019, then 2026 lower. So there is no clean "the graph became less matchable over time"
 story; the ratio moves within a narrow band far below 1, and the qualitative verdict —
-not a social network — is invariant. The framework's social-graph route is defeated by a
-structural property of the transaction graph that has held for over a decade.
+not a social network — is invariant. The framework's *strong* social-graph route — cascade to most of the graph — is held back
+by a structural property of the transaction graph that has held for over a decade; the
+modest route (high-confidence links feeding clustering) is what the graph does support.
 
 ## Where this leaves the two attacks
 
 Combined with `RESULTS-ancestry-sparsity.md`, the picture is now consistent and complete for
 this data:
 
-- **social-graph matching (cit. 24):** precondition (a social-network pseudonym graph) fails
-  in every era. This route does not work on the Bitcoin pseudonym graph.
+- **social-graph matching (cit. 24):** the pseudonym graph lacks the social-network
+  structure in every era, so the *strong* form of this route — cascading propagation that
+  recovers most of the graph — does not ignite. Its *modest* form does: `view_match` still
+  recovers a few high-confidence links above a degree baseline, which is exactly what the
+  framework claims for it ("high confidence links... can feed into other clustering
+  heuristics"). The measurement confirms the modest claim and finds the strong claim's
+  precondition absent from the topology.
 - **sparse-dataset / record linkage (cit. 19–20):** precondition (a sparse feature space)
   holds — in the *ancestry* features, not the statistical or topological ones. This route is
   the applicable one, and it is `propagate.py`'s.
