@@ -43,3 +43,51 @@ re-implementing the fingerprint logic in SQL.
 - ~500k txs is a **large representative sample**, not literally every tx — but for
   calibrating fingerprint frequencies it is publication-solid (rare values become
   estimable). Every-tx exactness would still want an archival node.
+
+## Graph slices vs frequency samples
+
+`sample.sql` is a uniform `TABLESAMPLE`, which is right for calibrating fingerprint
+frequencies and **useless for anything about the graph**: a random sample of transactions
+is disconnected. Graph work needs a contiguous block range.
+
+| file | what it exports | for |
+|---|---|---|
+| `sample.sql` | uniform ~0.05 % sample | per-axis fingerprint frequencies |
+| `graph.sql` | contiguous range, addresses only, no coinbase | the community-structure probe |
+| `slice.sql` | contiguous range, lean, forward-spend links | change-label validation |
+| `slice_gate.sql` | aggregates only, no export | go/no-go before paying for a slice |
+| `pseudonym_slice.sql` | contiguous range, full schema incl. coinbase | cross-view pseudonym matching |
+
+### Traps this dataset sets, all of them silent
+
+Each of these was hit while building `pseudonym_slice.sql`. None raises an error; each
+just produces wrong numbers.
+
+- **Coinbase transactions carry no inputs** (`input_count = 0`), so `UNNEST(inputs)` drops
+  them entirely via the implicit cross join, and the coinbase scriptSig is simply not in
+  `transactions`. It is in `blocks.coinbase_param`. Without that join, pool detection has
+  nothing to fire on.
+- **`UNNEST` does not preserve array order.** The input-order and output-order axes and
+  BIP-69 all depend on it. `ORDER BY index` is mandatory, not tidiness.
+- **Script types use a different vocabulary** (`witness_v0_keyhash`, not `v0_p2wpkh`), and
+  **there is no OP_RETURN type at all**: OP_RETURN outputs are reported as `nonstandard`
+  (15 916 of 16 024 in a 10-block probe; the other 108 are bare multisig). Untranslated,
+  every type and encoding axis reads unknown and the OP_RETURN axis never fires.
+- **Filtering on `block_number` alone does not prune partitions.** The filter must be on
+  `block_timestamp_month` (`transactions`) or `timestamp_month` (`blocks`).
+- **835 blocks are missing above height 959 194** (largest gap 962 010–962 489). A slice
+  spanning that range has holes in its graph.
+
+Verified while building it: values are satoshis; 17 of 22 axes fire correctly on the
+export. Of the five that do not, `low_r`, `sighash` and `pubkey_compression` abstain
+honestly as `na`, but **`multisig` and `nested_segwit` report `none`**, a false negative
+rather than a missing value. Exclude those two rather than trusting them.
+
+### Scale of the result
+
+A 10-block probe is 29 213 transactions and 39 MB of JSON, giving 49 109 addresses and
+1 727 entities of two or more addresses. `graph_deanon.build` takes 2.8 s on it but 823 MB
+of RSS, because `_cospent_pairs` is quadratic in a transaction's input count and a single
+consolidation of 1 059 addresses contributes ~560 000 pairs on its own. Extrapolated to a
+144-block epoch that is ~39 s but ~11.6 GB, so consuming a full-epoch slice needs the
+co-spend clique stored as a star (n − 1 unions) rather than as its pair set.
