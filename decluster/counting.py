@@ -11,7 +11,8 @@ _UNKNOWN = {"kind": "unknown", "count": None, "log_w": None}
 
 
 def w_total(inputs, outputs, max_size=64):
-    """Total subset-sum mapping multiplicity W(E) of ONE transaction, as {"kind", "count", "log_w",
+    """Total subset-sum multiplicity W(E) of ONE transaction (a per-target subset count, NOT
+    Maurer's full matched-partition mapping count |M| nor a mapping-entropy), as {"kind", "count", "log_w",
     "method"}. Delegates to `dss.w_count`, which cascades the four exact/approx counting primitives by
     feasibility (brute for tiny N, exact DP, sparse convolution, then the Sasamoto saddle-point for the
     Dense regime) and returns the strongest guarantee available — Exact where tractable, a LowerBound
