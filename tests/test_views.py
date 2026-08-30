@@ -269,3 +269,53 @@ def test_an_ordinary_co_spend_still_merges_under_refusal():
     s = S(vtx([10_000, 20_000], [25_000, 4_000], ["a", "b"]))
     lk = cluster_addresses(s, refuse=True)
     assert lk["a"] == lk["b"]
+
+
+# --- deliberately incomplete clustering -------------------------------------
+
+def test_splitting_produces_two_pseudonyms_that_trace_to_one_cluster():
+    """The premise is an incomplete clustering: one user, several pseudonyms. A matcher run
+    against a clustering contracted from itself can only recover the identity map, which is
+    not new information; splitting creates the object the matching is for."""
+    import random
+    from decluster.views import split_clusters
+    lookup = {f"a{i}": "C" for i in range(10)}
+    out, origin = split_clusters(lookup, frac=1.0, rng=random.Random(0))
+    tags = set(out.values())
+    assert len(tags) == 2
+    assert all(origin[t] == "C" for t in tags)
+    assert sorted(out) == sorted(lookup)                 # every address still placed
+
+
+def test_splitting_leaves_singletons_and_unselected_clusters_alone():
+    import random
+    from decluster.views import split_clusters
+    lookup = {"a": "A", "b": "A", "solo": "S"}
+    out, origin = split_clusters(lookup, frac=0.0, rng=random.Random(0))
+    assert out == lookup and origin == {"A": "A", "S": "S"}
+    out, _ = split_clusters({"solo": "S"}, frac=1.0, rng=random.Random(0))
+    assert out == {"solo": "S"}                          # nothing to split below min_size
+
+
+def test_splitting_along_the_view_boundary_puts_one_pseudonym_on_each_side():
+    """Random splitting leaves both halves in both views, so the matcher can take the
+    identity match and never attempt the rejoin. Splitting on the boundary removes that
+    escape: the discovery becomes the only correspondence available."""
+    import random
+    from decluster.views import split_clusters_by_view
+    lookup = {"a1": "C", "a2": "C", "b1": "C", "b2": "C", "solo": "S"}
+    out, origin = split_clusters_by_view(lookup, {"a1", "a2", "solo"}, frac=1.0,
+                                         rng=random.Random(0))
+    assert out["a1"] == out["a2"] == "C#a"
+    assert out["b1"] == out["b2"] == "C#b"
+    assert origin["C#a"] == origin["C#b"] == "C"
+    assert out["solo"] == "S"                    # wholly on one side: nothing to split
+
+
+def test_a_cluster_confined_to_one_view_is_left_whole():
+    import random
+    from decluster.views import split_clusters_by_view
+    lookup = {"a1": "C", "a2": "C"}
+    out, origin = split_clusters_by_view(lookup, {"a1", "a2"}, frac=1.0,
+                                         rng=random.Random(0))
+    assert out == lookup and origin == {"C": "C"}

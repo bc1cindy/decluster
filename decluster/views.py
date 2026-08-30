@@ -88,6 +88,63 @@ def cluster_addresses(sample, refuse=True):
     return {a: uf.find(a) for g in uf.groups() for a in g}
 
 
+def split_clusters(lookup, frac, rng, min_size=2):
+    """Fragment a fraction of the clusters into two pseudonyms each, returning
+    (split lookup, {pseudonym: original cluster}).
+
+    The framework's premise is that the clustering is *incomplete*, so one user holds
+    several pseudonyms and keeps their pseudonymity until the adversary can join them. A
+    matcher run against a clustering contracted from itself can only ever recover the
+    identity map, which is not new information and cannot feed anything back. Splitting
+    deliberately creates the object the matching exists to find: two pseudonyms that are one
+    user, with the answer known.
+    """
+    members = {}
+    for addr, cid in lookup.items():
+        members.setdefault(cid, []).append(addr)
+    out, origin = {}, {}
+    for cid, addrs in members.items():
+        if len(addrs) < min_size or rng.random() >= frac:
+            out.update({a: cid for a in addrs})
+            origin[cid] = cid
+            continue
+        addrs = sorted(addrs)
+        rng.shuffle(addrs)
+        half = len(addrs) // 2
+        for tag, part in ((f"{cid}#0", addrs[:half]), (f"{cid}#1", addrs[half:])):
+            origin[tag] = cid
+            out.update({a: tag for a in part})
+    return out, origin
+
+
+def split_clusters_by_view(lookup, view_a_addrs, frac, rng):
+    """Fragment clusters along the view boundary: the addresses a cluster uses in view A
+    become one pseudonym, the rest another.
+
+    `split_clusters` fragments by drawing addresses at random, which leaves both halves
+    present in both views, so the matcher can satisfy itself with the identity match and
+    never has to attempt the rejoin. Splitting along the boundary removes that escape: one
+    pseudonym lives on each side, and the only correspondence available is the discovery.
+    It is also the natural form of the premise, a clustering that has failed to link a
+    user's activity across time.
+    """
+    members = {}
+    for addr, cid in lookup.items():
+        members.setdefault(cid, []).append(addr)
+    out, origin = {}, {}
+    for cid, addrs in members.items():
+        left = [a for a in addrs if a in view_a_addrs]
+        right = [a for a in addrs if a not in view_a_addrs]
+        if not left or not right or rng.random() >= frac:
+            out.update({a: cid for a in addrs})
+            origin[cid] = cid
+            continue
+        for tag, part in ((f"{cid}#a", left), (f"{cid}#b", right)):
+            origin[tag] = cid
+            out.update({a: tag for a in part})
+    return out, origin
+
+
 def _demix_participants(tx):
     """{participant: [input addresses]} when the de-mix resolves the transaction into two or
     more participants, else None. Returning the partition rather than per-pair verdicts is
