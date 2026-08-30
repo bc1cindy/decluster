@@ -28,6 +28,12 @@ because the interesting bins are small.
 
 ## Reading
 
+**Read every figure here against the degree baseline, not against zero.**
+`RESULTS-match-controls.md` measures what degree alone is worth on the same matched
+vertices: 0.428 overall and 0.499 above eccentricity 5. The matcher's margin over that is
+about fifteen and eighteen points respectively, which is what the numbers below actually
+buy. The shuffle control used up to this point excluded chance and not this.
+
 **Precision is monotone in the matcher's own confidence, across the whole range.** It rises
 from 0.574 over all matches to 0.727 at eccentricity 5 and 10 of 10 above eccentricity 10.
 The matcher knows which of its answers are good, which is the property the framework's
