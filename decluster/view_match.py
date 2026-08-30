@@ -1,0 +1,100 @@
+"""Match the vertices of two pseudonym-graph views, seeded and propagated.
+
+The cited construction: two overlapping views of one social graph, a small seed of
+confidently matched pairs, and an iterative propagation that identifies further vertices by
+the identities of their already-matched neighbours. A "dimension" here is roughly *is this
+vertex related to that specific vertex*, which is where the sparsity the attack needs comes
+from — not from the vertex's own attributes, which measure out far too coarse
+(`RESULTS-fingerprint-sparsity.md`).
+
+Three guards, each answering something measured rather than assumed:
+
+  hub cap        degree in a contracted 2026 view is heavy-tailed, median 2 against a
+                 maximum above 15 000 (`RESULTS-contraction-2026.md`). A hub is adjacent to
+                 thousands of candidates and would vote for all of them, so propagation
+                 must not route through one.
+  eccentricity   a match is accepted only when its score stands clear of the runner-up,
+                 the same gap test the provenance propagator uses. A diffuse tie is a
+                 refusal, not a coin flip.
+  reversibility  the match must also win scoring from the other side. Two views need not
+                 agree, and a vertex with no counterpart is meant to stay unmatched.
+"""
+from collections import Counter
+from math import sqrt
+
+from .propagate import eccentricity
+
+
+def _damped(g, v, damping):
+    """Down-weight evidence arriving through a well-connected vertex: a shared obscure
+    neighbour says far more about identity than a shared popular one."""
+    return 1.0 / sqrt(g.degree(v)) if damping else 1.0
+
+
+def candidate_scores(u, src, dst, mapping, hubcap=100, damping=True):
+    """Score dst-vertices as candidates for src-vertex `u`, by the images of u's already
+    matched neighbours. Only matched neighbours carry information, so an unmatched
+    neighbourhood scores nothing and u simply waits for a later round."""
+    scores = Counter()
+    for n in src.neighbours(u):
+        image = mapping.get(n)
+        if image is None or dst.degree(image) > hubcap:
+            continue
+        w = _damped(dst, image, damping)
+        for v in dst.neighbours(image):
+            scores[v] += w
+    return scores
+
+
+class ViewMatcher:
+    """`match` returns {vertex in A: vertex in B} including the seed. Vertices it cannot
+    resolve are absent from the result rather than guessed at."""
+
+    def __init__(self, theta=0.5, hubcap=100, min_score=0.0, damping=True,
+                 reversible=True):
+        self.theta = theta
+        self.hubcap = hubcap
+        self.min_score = min_score
+        self.damping = damping
+        self.reversible = reversible
+
+    def _best(self, u, src, dst, mapping):
+        scores = candidate_scores(u, src, dst, mapping, self.hubcap, self.damping)
+        for taken in mapping.values():
+            scores.pop(taken, None)              # a dst vertex is claimed at most once
+        if not scores:
+            return None
+        best = max(scores, key=scores.get)
+        if scores[best] <= self.min_score:
+            return None
+        if len(scores) >= 2 and eccentricity(scores) <= self.theta:
+            return None                          # a diffuse tie is a refusal
+        return best
+
+    def match(self, ga, gb, seed):
+        """Propagate along the frontier rather than rescanning every vertex each round: a
+        vertex only becomes scorable once one of its neighbours is matched, so the work is
+        proportional to the matched region, not to the graph."""
+        mapping = dict(seed)
+        reverse = {b: a for a, b in mapping.items()}
+        frontier = {n for u in mapping for n in ga.neighbours(u) if n not in mapping}
+        while frontier:
+            nxt, refused, matched = set(), set(), 0
+            for u in frontier:
+                if u in mapping:
+                    continue
+                v = self._best(u, ga, gb, mapping)
+                if v is not None and self.reversible \
+                        and self._best(v, gb, ga, reverse) != u:
+                    v = None                     # must win from the other side too
+                if v is None:
+                    refused.add(u)
+                    continue
+                mapping[u] = v
+                reverse[v] = u
+                matched += 1
+                nxt.update(n for n in ga.neighbours(u) if n not in mapping)
+            if not matched:
+                break
+            frontier = nxt | refused             # a refusal can turn into a match once a
+        return mapping                           # rival candidate is claimed elsewhere
