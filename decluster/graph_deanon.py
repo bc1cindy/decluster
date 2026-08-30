@@ -9,6 +9,33 @@ from .measure import load_unique
 from .unionfind import UF
 from .change_gt import union_input_addrs
 
+class CoSpent:
+    """Membership test for "were these two addresses inputs to one transaction?", answered
+    without materialising the pair set. A consolidation of n inputs implies n(n-1)/2 pairs,
+    so the pair set is quadratic in the widest transaction: one 1059-input consolidation
+    contributes ~560k pairs on its own, and a 144-block slice does not fit in memory.
+    Storing address -> the transactions it funded is linear in inputs and answers the same
+    question by set intersection. Supports `in` with a 2-element frozenset, so call sites
+    read unchanged."""
+
+    def __init__(self):
+        self._txs = {}
+
+    def add(self, key, addrs):
+        """`key` identifies the transaction and must be unique per call; callers pass the
+        sample index rather than the txid, which synthetic samples may not carry (keying on
+        an absent txid collapses every transaction onto None and makes every pair co-spent)."""
+        for a in addrs:
+            self._txs.setdefault(a, set()).add(key)
+
+    def __contains__(self, pair):
+        it = iter(pair)
+        a = next(it, None)
+        b = next(it, a)                                  # a 1-element frozenset means a == b
+        ta = self._txs.get(a)
+        return bool(ta and ta & self._txs.get(b, frozenset()))
+
+
 HUBCAP = 100      # don't expand through hubs (degree > this) — avoids small-world collapse
 SIZECAP = 6000    # cap neighborhood growth
 
@@ -24,17 +51,15 @@ def build(sample, dust_guard=False):
     test needs output values, absent from the address-only BigQuery export)."""
     from .entities import detect_dust_fanout
     uf = UF()
-    neigh_full, neigh_pay, cospent = {}, {}, set()
-    for tx, _ in sample:
+    neigh_full, neigh_pay, cospent = {}, {}, CoSpent()
+    for n, (tx, _) in enumerate(sample):
         union_input_addrs(tx, uf)                        # co-spend is a real, unforgeable signal — keep it
         if dust_guard and detect_dust_fanout(tx):
             continue                                     # dust spray: its output edges are not counterparty structure
         in_addr = [v.get("prevout", {}).get("scriptpubkey_address") for v in tx.get("vin", [])]
         in_addr = [a for a in in_addr if a]
         out_addr = [o.get("scriptpubkey_address") for o in tx.get("vout", []) if o.get("scriptpubkey_address")]
-        for i in range(len(in_addr)):
-            for j in range(i + 1, len(in_addr)):
-                cospent.add(frozenset((in_addr[i], in_addr[j])))
+        cospent.add(n, in_addr)
         parts = set(in_addr) | set(out_addr)
         for a in parts:
             neigh_full.setdefault(a, set()).update(parts - {a})

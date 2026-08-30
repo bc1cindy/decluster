@@ -86,8 +86,23 @@ rather than a missing value. Exclude those two rather than trusting them.
 ### Scale of the result
 
 A 10-block probe is 29 213 transactions and 39 MB of JSON, giving 49 109 addresses and
-1 727 entities of two or more addresses. `graph_deanon.build` takes 2.8 s on it but 823 MB
-of RSS, because `_cospent_pairs` is quadratic in a transaction's input count and a single
-consolidation of 1 059 addresses contributes ~560 000 pairs on its own. Extrapolated to a
-144-block epoch that is ~39 s but ~11.6 GB, so consuming a full-epoch slice needs the
-co-spend clique stored as a star (n − 1 unions) rather than as its pair set.
+1 727 entities of two or more addresses.
+
+`graph_deanon.build` originally took 2.8 s and 823 MB of RSS on it, because the co-spend
+pair set is quadratic in a transaction's input count: one consolidation of 1 059 addresses
+contributes ~560 000 pairs on its own. Extrapolated to a 144-block epoch that was ~39 s and
+~11.6 GB, which does not fit. `CoSpent` replaces the pair set with address → funded
+transactions, answering the same membership query by intersection in linear space, and the
+build drops to 0.25 s.
+
+What remains is linear and splits as follows, per 144-block epoch:
+
+| | probe (29 213 txs) | extrapolated to one epoch |
+|---|---:|---:|
+| parsing the transactions | 190 MB | ~2.7 GB |
+| graph structures | 306 MB | ~4.3 GB |
+| `build` | 0.25 s | ~4 s |
+
+Time is no longer a concern. Memory is, and it is now the ordinary linear cost of holding
+a parsed epoch rather than a quadratic blow-up, so the fix if it binds is a streaming
+loader, not a different data structure.
