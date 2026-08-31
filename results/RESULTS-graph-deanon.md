@@ -87,3 +87,11 @@ component membership than to a pairwise structural tell. (2023's 1.00 also rests
   this self-contained design cannot (no external labels; the standing data wall).
 - **Link-prediction feature is common-neighbors**, deliberately simple/stdlib. Community
   detection (Louvain) or embeddings would be a richer follow-on, not needed for the premise.
+
+## Reproducibility / provenance
+
+The 2016 slice (blocks 400000-400004) is committed and band-pinned: `bigquery/graph.sql` re-run
+reproduces full AUC 0.990, payment 0.950, shuffle 0.500 (matching the table above).
+`tests/fixtures/graph_deanon_2016.ndjson.gz` + `tests/test_graph_deanon_real.py` assert payment
+AUC ≥ 0.85, full ≥ 0.90, shuffle at chance. The other four eras remain data-runs (state 3 in
+`results/REPRODUCIBILITY.md`).

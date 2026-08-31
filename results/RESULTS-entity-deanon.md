@@ -61,3 +61,11 @@ it is no longer a prerequisite for the demonstration itself.
 Reproduce: pull with `bigquery/graph.sql` (2013-08 / 250000–250150 for SatoshiDice; 2019-06 /
 581000–581030 for BitMEX), then
 `graph_deanon.evaluate_entity(sample, entities.detect_satoshidice)` (resp. `detect_bitmex`).
+
+## Reproducibility / provenance
+
+The 2013-08 SatoshiDice slice (blocks 250000-250150) re-run via `bigquery/graph.sql` reproduces
+AUC 0.726 and mean shared neighbours 7.95. The committed fixture
+`tests/fixtures/entity_satoshidice_2013.ndjson.gz` is the SatoshiDice sub-graph (kept small); on it
+`tests/test_entity_deanon_real.py` asserts AUC ≥ 0.65 (0.68 on the sub-graph) and the shared-neighbour
+figure 7.95 exactly. The BitMEX negative control remains a data-run.
