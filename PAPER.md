@@ -39,7 +39,10 @@ magnitude engine draws it at **κ = log₂(L)/N < κ_c** (Sasamoto eq 4.3,
 dense-regime saddle-point W(E) estimate is valid, routing the subset-sum count between an
 exact / lower-bound tier and a log-magnitude approximation. The gate governs the *counting
 estimator's* validity, not the clusterer's refuse decision, which reads the per-coin `log_w`
-rather than κ_c. A second question survives it: conservation asks not
+rather than κ_c. This amount-channel κ_c is a distinct object from the (ε, δ)-sparsity of the
+fingerprint and ancestry feature spaces (the record-linkage precondition, where *sparse* means
+de-anonymizable — the opposite sign for privacy); the amount density neither measures nor implies
+it, and the two are never composed into one "density". A second question survives it: conservation asks not
 which participant owns each output but what the others could have afforded, and forces ownership
 whenever one participant's input exceeds the rest of the round — arithmetic on the transaction alone,
 reported beside the engine rather than inside it — it appears in the fused per-transaction view
