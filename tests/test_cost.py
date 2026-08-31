@@ -106,3 +106,16 @@ def test_dss_oracle_shape_when_available():
     rep = cost.dss_oracle([100, 200], [150, 150])
     assert "kappa" in rep and "coins" in rep
     assert all({"index", "value", "log_w", "kappa_c"} <= set(c) for c in rep["coins"])
+
+
+def test_density_gate_kappa_vs_kappa_c_orients_dense_and_sparse():
+    """The density gate PAPER.md §2 names: the dss magnitude engine draws the dense/decidable
+    boundary at kappa = log2(L)/N < kappa_c (Sasamoto eq 4.3). Pin its orientation on the exposed
+    per_coin_density variables: a near-uniform (dense) instance lands kappa below the per-coin
+    kappa_c; a spread (sparse/decidable) instance lands it above. This is the counting-estimator
+    validity gate, not the clusterer's refuse threshold (which reads log_w)."""
+    dss = pytest.importorskip("dss")
+    dense = dss.per_coin_density([100 + (k % 7) for k in range(40)], [2000, 1900])
+    assert dense["kappa"] < dense["coins"][0]["kappa_c"]      # kappa < kappa_c -> dense regime
+    sparse = dss.per_coin_density([3, 7, 19, 41], [10, 60])
+    assert sparse["kappa"] > sparse["coins"][0]["kappa_c"]    # kappa > kappa_c -> sparse/decidable

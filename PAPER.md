@@ -33,7 +33,13 @@ participants) the de-mix recovers 8 of the makers uniquely, with fees matching t
 **Where the amounts are dense** — a well-mixed coinjoin, where many input→output mappings balance —
 the de-mix is silent and the wallet fingerprints and cluster-level graph structure carry the
 weight; the labelled real dense coinjoins recover 0 participants, so they are amount-private *to that
-question* (`results/RESULTS-subtx-demix.md`). A second question survives it: conservation asks not
+question* (`results/RESULTS-subtx-demix.md`). That dense/decidable boundary is not a metaphor: the
+magnitude engine draws it at **κ = log₂(L)/N < κ_c** (Sasamoto eq 4.3,
+`dense-subset-sum/src/count/density_regime.rs`) — the density gate that decides when the
+dense-regime saddle-point W(E) estimate is valid, routing the subset-sum count between an
+exact / lower-bound tier and a log-magnitude approximation. The gate governs the *counting
+estimator's* validity, not the clusterer's refuse decision, which reads the per-coin `log_w`
+rather than κ_c. A second question survives it: conservation asks not
 which participant owns each output but what the others could have afforded, and forces ownership
 whenever one participant's input exceeds the rest of the round — arithmetic on the transaction alone,
 reported beside the engine rather than inside it — it appears in the fused per-transaction view

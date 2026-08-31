@@ -66,3 +66,10 @@ One slice, one era, one feature construction. The survival curve is a sampled es
 (3 000 queries, 30 000 background), reported as such. The structural descriptors are a weak
 proxy for the ancestry features the framework means; the result bounds the low-dimensional
 space and does not speak to the high-dimensional one.
+
+## Reproducibility / provenance
+
+The sparsity **mechanism** (cosine similarity, nearest-neighbour survival curve, its
+monotonicity) is unit-tested in `tests/test_def1_sparsity.py`. The specific **(epsilon, delta)
+survival table** here is a **data-run** over the feature vectors built from unversioned local
+data, and is **not** pinned as asserted values in a unit test.
