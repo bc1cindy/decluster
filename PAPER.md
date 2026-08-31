@@ -778,6 +778,41 @@ score — the same discipline as the clustering half. Read as a penalty rather t
 and the path count are the quantities a constructed transaction must raise; measuring them is the
 prerequisite for designing against them.
 
+### The sparse-dataset attack these signatures enable: record linkage
+
+The provenance signature is a sparse, high-dimensional record — the precondition for the
+Narayanan–Shmatikov sparse-dataset attack (cit 19–20). Two measurements close that framing. First
+the **(ε,δ)-sparsity precondition**: on real signatures the ancestry feature space is sparse (a coin's
+provenance signature typically has no near-twin), while the low-dimensional statistical fingerprint
+space is *not* sparse on its own — so the distinguishing signal lives in the structural/ancestry
+channel, which is exactly where record linkage bites (`results/RESULTS-def1-sparsity.md`,
+`results/RESULTS-ancestry-sparsity.md`; a data-run over unversioned signatures under the conservative
+uniform oracle). Second the **record-linkage attack** itself: stratifying signatures by their own
+sparsity and running Algorithm 1B (rarity-weighted overlap, eccentricity gate φ = 1.5) makes the gap
+explicit — **sparse coins are pinned to the exact coin ~95% of the time, dense coins ~20%**, the ~5×
+separation Theorem 2 predicts, with the gate abstaining where a near-twin exists
+(`results/RESULTS-reid.md`, band-pinned on committed `tests/fixtures/reid_sigs.json.gz`). Honest
+scope: this is the demonstrated *link* between sparsity and de-anonymization on those signatures, not
+a chain-wide rate — the fixture is a depth-bounded, non-representative sample; the representative rate
+needs a uniform deep collection (§10).
+
+### Social graph: cross-view matching
+
+The contracted pseudonym graph is, per the framework, a social network (cit 24): two time-separated
+views of it should be matchable from a small seed. Contracting two views, seeding a mining-pool /
+high-degree correspondence, and propagating (`view_match`) tests the framework's own "*if* the social
+network structure is recoverable" premise. On one-day views a week apart the result is honestly
+**modest and negative**: the cascade does not ignite, attribute conditioners hurt rather than help,
+and the ambiguity-cut partition does not decompose the graph — all against degree-baseline and
+shuffle controls (`results/RESULTS-view-match-2026.md`, `results/RESULTS-graph-shape.md`,
+`results/RESULTS-attribute-conditioning.md`, `results/RESULTS-partition-schemes.md`). The measurement
+is thin — two one-day views, ~5 000 overlapping active clusters — far from the wide-view,
+many-epoch, active-user attack the framework actually specifies (active, consistent users accumulate
+stable representations over time). The result is therefore best read as **underpowered, not a robust
+falsification**; the strong test — wide multi-epoch views over a long period, seeded on high-degree
+entities — is a data-scale requirement (§10), and would land either as a qualified positive on active
+users or a robust negative.
+
 ## 9. Limitations (honest)
 
 - **Scope, not scale.** The fingerprint model is validated at mainnet scale (attribution AUC ≈0.93,
@@ -856,7 +891,12 @@ change-identification validation (§7) is likewise only scale.
 **Separate research tracks.** First, the full Narayanan–Shmatikov **seed-and-extend attack** at chain
 scale. The provenance channel's mechanism (`NSPropagator`/`propagate_merge`, §8) is built and
 cache-bounded-evaluated (`results/RESULTS-ns-propagation.md`); its real-data strength awaits a
-prevout-resolved sample with independent entity labels the co-spend heuristic cannot supply. A separate
+prevout-resolved sample with independent entity labels the co-spend heuristic cannot supply. The
+record-linkage and (ε,δ)-sparsity results (§8) need the same kind of representative input — a
+**uniform, deep** ancestry sample rather than the accreted cache — to turn the demonstrated
+sparsity→de-anonymization *link* into a chain-wide *rate*; the cross-view social-graph result needs
+**wide, multi-epoch** views over a long period, seeded on high-degree entities, to move its
+underpowered negative to a robust one. A separate
 blocker bounds the walk's *depth*: `build_extended_graph(max_nodes=…)` returns real ancestral sets
 (24–67 origins on the live slice), but counting `W(E)` does not make the §04 walk tractable to full
 coinjoin depth — the exponential is the number of distinct ancestor transactions, and per-transaction
