@@ -26,6 +26,7 @@ survives subsampling** can it be pinned as a **band** on a committed fixture.
 | W(E) multiplicity / path-count object | synthetic | `test_counting.py`, `test_path_count.py` |
 | survey metadata + consistency | `tests/fixtures/lumen_explorer_data.json` | `test_lumen_survey_fixture.py` |
 | graph structural de-anon (payment/full AUC) | `tests/fixtures/graph_deanon_2016.ndjson.gz` | `test_graph_deanon_real.py` |
+| known-entity de-anon (SatoshiDice, shared neighbours) | `tests/fixtures/entity_satoshidice_2013.ndjson.gz` | `test_entity_deanon_real.py` |
 
 ## 2. Mechanism unit-tested, headline number is a data-run (proven algorithm, labelled number)
 
@@ -49,7 +50,6 @@ Run the query, commit the small output as a fixture, and the number becomes band
 
 | Claim | Query | Notes |
 |---|---|---|
-| entity-deanon (SatoshiDice vs BitMEX) | `bigquery/graph.sql` | a vanity-prefix labelled slice |
 | slice-gate spanning material | `bigquery/slice_gate.sql` | aggregate, few rows |
 | persistence curve | `bigquery/persistence_curve.sql` | 5-row aggregate |
 | change-id validation | `bigquery/slice.sql` | 1-day labelled slice |
