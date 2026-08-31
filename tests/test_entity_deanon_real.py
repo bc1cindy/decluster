@@ -25,3 +25,22 @@ def test_satoshidice_relinked_by_shared_neighbours():
     assert r["entity_clusters"] >= 1 and r["pos_pairs"] > 100
     assert r["auc_payment"] >= 0.65            # structural de-anon well above chance (doc ~0.72)
     assert 7.0 <= r["pos_mean"] <= 9.0          # mean shared neighbours (doc 7.95)
+
+
+BITMEX_FIX = os.path.join(os.path.dirname(__file__), "fixtures", "entity_bitmex_2019.ndjson.gz")
+
+
+def _bitmex_sample():
+    with gzip.open(BITMEX_FIX, "rt") as f:
+        return [(json.loads(l), 0) for l in f]
+
+
+def test_bitmex_hub_is_a_null_control():
+    """The paired negative control (RESULTS-entity-deanon.md): BitMEX, a custodial hub whose deposit
+    addresses do NOT share returning counterparties, is NOT re-linked by graph structure — AUC at
+    chance. This is what makes SatoshiDice a positive rather than an artefact: a service with recurring
+    bettors de-anonymizes (0.72), a hub does not (0.50). Slice: 2019-06 blocks 581000-581030."""
+    from decluster.entities import detect_bitmex
+    r = evaluate_entity(_bitmex_sample(), detect_bitmex)
+    assert 0.45 <= r["auc_payment"] <= 0.55        # at chance — no shared-neighbour structure
+    assert r["pos_mean"] < 1.0                       # BitMEX deposit addresses share ~no neighbours

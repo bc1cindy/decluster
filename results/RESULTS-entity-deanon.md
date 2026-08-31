@@ -68,4 +68,4 @@ The 2013-08 SatoshiDice slice (blocks 250000-250150) re-run via `bigquery/graph.
 AUC 0.726 and mean shared neighbours 7.95. The committed fixture
 `tests/fixtures/entity_satoshidice_2013.ndjson.gz` is the SatoshiDice sub-graph (kept small); on it
 `tests/test_entity_deanon_real.py` asserts AUC ≥ 0.65 (0.68 on the sub-graph) and the shared-neighbour
-figure 7.95 exactly. The BitMEX negative control remains a data-run.
+figure 7.95 exactly. The BitMEX negative control is now committed too (`tests/fixtures/entity_bitmex_2019.ndjson.gz`, 2019-06 slice): `test_entity_deanon_real.py::test_bitmex_hub_is_a_null_control` asserts AUC at chance (0.50) — the paired positive (service) + null (hub) result.

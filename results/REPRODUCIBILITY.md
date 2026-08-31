@@ -26,7 +26,7 @@ survives subsampling** can it be pinned as a **band** on a committed fixture.
 | W(E) multiplicity / path-count object | synthetic | `test_counting.py`, `test_path_count.py` |
 | survey metadata + consistency | `tests/fixtures/lumen_explorer_data.json` | `test_lumen_survey_fixture.py` |
 | graph structural de-anon (payment/full AUC) | `tests/fixtures/graph_deanon_2016.ndjson.gz` | `test_graph_deanon_real.py` |
-| known-entity de-anon (SatoshiDice, shared neighbours) | `tests/fixtures/entity_satoshidice_2013.ndjson.gz` | `test_entity_deanon_real.py` |
+| known-entity de-anon (SatoshiDice positive + BitMEX null control) | `entity_satoshidice_2013.ndjson.gz`, `entity_bitmex_2019.ndjson.gz` | `test_entity_deanon_real.py` |
 
 ## 2. Mechanism unit-tested, headline number is a data-run (proven algorithm, labelled number)
 
