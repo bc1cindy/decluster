@@ -49,6 +49,7 @@ subsampled fixture would assert a different number.
 | Fellegi-Sunter fit early / scored late — the reported AUCs, thresholds and calibration (`RESULTS-fs-temporal.md`; manifest + recomputed invariants; the *direction* is pinned in state 1 above) | `test_fs_temporal.py` | `.blkcache/` |
 | N-S propagation on contracted Bitcoin views — the reported precision, coverage and controls (`RESULTS-ns-bitcoin.md`; manifest + recomputed configuration; the direction at 5% / 10% seeding is **state 5**, at 25% it separates) | `test_ns_bitcoin.py`, `test_ns_social_baseline.py` | `epoch_2016_*.ndjson.gz` |
 | broadcast timing, temporal | `test_broadcast.py` | live |
+| exact versus explicit fee allocation (`RESULTS-boltzmann-fee-audit.md`; manifest + recomputed invariants) | `test_boltzmann_fee_audit.py` | `sample.ndjson` |
 
 ## 3. Reproducible once a small BigQuery window is committed
 
