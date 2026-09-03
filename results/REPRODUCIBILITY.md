@@ -1,6 +1,6 @@
 # Reproducibility policy
 
-Every claim in `results/` falls into one of four states. This is the single index; per-doc
+Every claim in `results/` falls into one of five states. This is the single index; per-doc
 "Reproducibility / provenance" footers point back here.
 
 ## The rule
@@ -20,13 +20,14 @@ survives subsampling** can it be pinned as a **band** on a committed fixture.
 | fingerprint clustering separates same-owner (FS + NS AUC) | `tests/fixtures/fingerprint_blkcache_sample.json` | `test_fingerprint_auc.py` |
 | intersection attack narrows candidates | seeds in-test | `test_intersection_real.py` |
 | coinjoin de-mix recovers makers | amounts inlined | `test_coinjoin_demix.py`, `test_amount_refuse_demix.py` |
-| conservation forces ownership | tx inlined | `test_conservation_round_three.py` |
+| conservation traces output funding | tx inlined | `test_conservation_round_three.py` |
 | §04 anonymity set at scale | `results/scale_output.json` | `test_anonymity_set_scale.py` |
 | amount density gate κ < κ_c orientation | synthetic | `test_cost.py` |
 | W(E) multiplicity / path-count object | synthetic | `test_counting.py`, `test_path_count.py` |
 | survey metadata + consistency | `tests/fixtures/lumen_explorer_data.json` | `test_lumen_survey_fixture.py` |
 | graph structural de-anon (payment/full AUC) | `tests/fixtures/graph_deanon_2016.ndjson.gz` | `test_graph_deanon_real.py` |
 | known-entity de-anon (SatoshiDice positive + BitMEX null control) | `entity_satoshidice_2013.ndjson.gz`, `entity_bitmex_2019.ndjson.gz` | `test_entity_deanon_real.py` |
+| entity-attribute space is dense not sparse (Def-1 negative) + graph disassortative | `tests/fixtures/slice_a_channels_2016.ndjson.gz` | `test_slice_a_channels.py` |
 
 ## 2. Mechanism unit-tested, headline number is a data-run (proven algorithm, labelled number)
 
@@ -37,9 +38,9 @@ subsampled fixture would assert a different number.
 | Claim family | Mechanism test | Data source |
 |---|---|---|
 | refusal shares (declining CIOH) | `test_cluster_refined.py`, `test_cluster.py` | `slice_2026.ndjson` |
-| cross-view matcher precision vs baseline | `test_view_match.py` | `slice_2026.ndjson` |
+| cross-view matcher precision vs baseline **(direction — owes migration, see state 5)** | `test_view_match.py` | `slice_2026.ndjson` |
 | (ε,δ) feature sparsity survival | `test_def1_sparsity.py` | `slice_2026.ndjson` |
-| fingerprint-regime / bayes-vs-fs / em-m / weight-sensitivity | `test_fingerprint_ns.py`, `test_fs_bayes.py`, `test_fs_em.py` | `.blkcache/` |
+| fingerprint-regime / **bayes-vs-fs (direction — owes migration, see state 5)** / em-m / weight-sensitivity | `test_fingerprint_ns.py`, `test_fs_bayes.py`, `test_fs_em.py` | `.blkcache/` |
 | cluster-bits, graph-shape, contraction | `test_cluster_bits.py`, `test_graph_shape.py`, `test_views.py` | `slice_2026.ndjson` |
 | entropy overcount, provenance overlap | `test_metric.py`, `test_provenance*.py` | live / `.cache/` |
 | broadcast timing, temporal | `test_broadcast.py` | live |
@@ -61,3 +62,55 @@ Run the query, commit the small output as a fixture, and the number becomes band
   in-file parents. The definitive run is a deep contiguous export at dss-oracle depth.
 - **definitive reid** — the chain-wide de-anonymization *rate* (not the link, which is pinned in
   state 1) needs a uniform chain sample at real depth with the dss oracle, an API collection.
+- **the amount channel at graph scale** — the de-mix arm of the refusing clusterer, the
+  unnecessary-input axis, conservation and the conspicuousness ranking all need prevout **values**
+  and **script types**. The graph-scale exports (`epoch_2016_*`, the committed graph fixtures)
+  carry addresses only. They are measurable today on `sample.ndjson` (5,491 txs, blocks
+  812,695-812,831, complete) and `.blkcache/` (22,371 txs, complete, but block-sampled rather than
+  contiguous); what is missing is a *graph-scale* contiguous export carrying them, which is a
+  re-collection of the existing query with two more columns rather than new method.
+
+## 5. Measured, not separable
+
+The number exists and the run is recorded, but the *direction* it is read for is not established:
+`decluster.reproducibility.separable` does not clear all three of its gates — the discordant win
+count favoring one arm, the pre-registered significance threshold, and the pre-registered minimum
+effect size — on a committed fixture. The document reports the value and states that the direction
+is not established.
+
+This state exists because a published comparison inverted its sign while the suite stayed green — and
+the instructive part is *where* it was filed. It was not an unasserted data-run. It was state 1: a
+committed green test (`test_multiplicity_upweights_higher_w_e_origin`) on a synthetic fixture, and
+the fixture had been built to exhibit the very direction the test asserted. A fixture constructed
+from the same belief as the claim cannot refute it, so the assertion held while the claim was wrong.
+
+**Being asserted is not the same as being tested.** For a direction claim, state 1 counts only if
+the fixture could have shown the opposite — the claim has to be falsifiable by the data it is pinned
+on, not merely consistent with data chosen to display it. Where no such fixture exists, the honest
+filing is state 5: report the value, decline the direction.
+
+A direction filed under state 2 is worse still, since by policy nothing there is asserted at all.
+Two rows of the state-2 table are direction claims by their own names — "cross-view matcher precision
+vs baseline" and "bayes-vs-fs" — and are flagged in that table as owing a migration to state 1 or 5. They are
+recorded rather than quietly relabelled, because the number each reports is real; it is the direction
+read off it that is not yet established.
+
+No document is filed under state 5 yet: `separable` exists and is unit-tested
+(`tests/test_reproducibility.py`), but nothing in `results/` currently calls it, so this state has
+no open gate to close. A later phase is expected to file the first direction claim here, or to close
+it into state 1 on a committed fixture.
+
+### Manifests
+
+This section is the standing rule, not a description of the current tree: `results/manifests/` is
+empty today. As state-2 and state-5 results are migrated, each should carry
+`results/manifests/<doc>.json`, recording the source's identity (files, bytes, digest) and the
+population invariants the claim depends on — the facts a byte digest cannot see.
+`tests/test_results_manifests.py` checks every manifest that exists against its live source and
+**skips with a message** when the source is absent, or when the manifest's invariants were not
+recomputed; it also requires every `RESULTS-*.md` to either carry a manifest or be named in that
+test's `NOT_YET_MIGRATED` allowlist, so a document cannot silently fall outside both. For a number
+produced by the Rust crate, a manifest's identity should be `dss.__version__` / `dss.__rev__` plus
+the seed and parameters rather than a data path — no manifest records that today, since
+`fingerprint_source` only fingerprints file globs; a crate-identity manifest is a later phase's
+work.
