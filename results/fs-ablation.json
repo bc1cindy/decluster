@@ -1,0 +1,391 @@
+{
+  "association": {
+    "cap": 8000,
+    "cluster_threshold": 0.6,
+    "clusters": [
+      [
+        "input_script_type",
+        "input_types_present",
+        "nested_segwit",
+        "pubkey_compression",
+        "sighash"
+      ],
+      [
+        "change_index",
+        "change_matches_output",
+        "change_type_match"
+      ],
+      [
+        "input_order",
+        "io_shape",
+        "output_order"
+      ],
+      [
+        "change_spk",
+        "output_encoding"
+      ]
+    ],
+    "min_n": 30,
+    "most_dependent_pairs": [
+      {
+        "fields": [
+          "input_script_type",
+          "input_types_present"
+        ],
+        "phi_match": 1.0,
+        "phi_non_match": 1.0
+      },
+      {
+        "fields": [
+          "change_index",
+          "change_type_match"
+        ],
+        "phi_match": 0.9771748425133048,
+        "phi_non_match": 0.9504188383893803
+      },
+      {
+        "fields": [
+          "change_type_match",
+          "change_matches_output"
+        ],
+        "phi_match": 0.9514396601979146,
+        "phi_non_match": 0.9488625417567522
+      },
+      {
+        "fields": [
+          "change_index",
+          "change_matches_output"
+        ],
+        "phi_match": 0.948238892195268,
+        "phi_non_match": 0.9439472436623789
+      },
+      {
+        "fields": [
+          "input_order",
+          "io_shape"
+        ],
+        "phi_match": 0.9240721623848165,
+        "phi_non_match": 0.3483023536831875
+      },
+      {
+        "fields": [
+          "output_order",
+          "io_shape"
+        ],
+        "phi_match": 0.4464026907612012,
+        "phi_non_match": 0.8835975092563046
+      },
+      {
+        "fields": [
+          "input_types_present",
+          "pubkey_compression"
+        ],
+        "phi_match": null,
+        "phi_non_match": 0.8710892396271737
+      },
+      {
+        "fields": [
+          "input_script_type",
+          "pubkey_compression"
+        ],
+        "phi_match": 0.12234074079149918,
+        "phi_non_match": 0.8573879183300378
+      },
+      {
+        "fields": [
+          "input_types_present",
+          "sighash"
+        ],
+        "phi_match": 0.6323339722032228,
+        "phi_non_match": 0.7796930590904457
+      },
+      {
+        "fields": [
+          "input_script_type",
+          "nested_segwit"
+        ],
+        "phi_match": 0.7778619346906303,
+        "phi_non_match": 0.4146258686696284
+      },
+      {
+        "fields": [
+          "input_script_type",
+          "sighash"
+        ],
+        "phi_match": 0.30093369922075924,
+        "phi_non_match": 0.7762328774306926
+      },
+      {
+        "fields": [
+          "sighash",
+          "pubkey_compression"
+        ],
+        "phi_match": 0.547409275927606,
+        "phi_non_match": 0.7141626042403821
+      },
+      {
+        "fields": [
+          "change_spk",
+          "output_encoding"
+        ],
+        "phi_match": 0.6897140359061489,
+        "phi_non_match": 0.7112779198528257
+      },
+      {
+        "fields": [
+          "input_types_present",
+          "nested_segwit"
+        ],
+        "phi_match": 0.6323359186932145,
+        "phi_non_match": 0.40994932138165746
+      },
+      {
+        "fields": [
+          "low_r",
+          "sighash"
+        ],
+        "phi_match": 0.050688483327162186,
+        "phi_non_match": 0.5353133395600167
+      }
+    ],
+    "statistic": "phi coefficient (Pearson correlation of two binary agree/disagree indicators), computed within each class separately"
+  },
+  "cutoff": 961653,
+  "group_ablation": [
+    {
+      "baseline_auc": 0.9826876875,
+      "cutoff": 961653,
+      "group": [
+        "input_script_type",
+        "input_types_present",
+        "nested_segwit",
+        "pubkey_compression",
+        "sighash"
+      ],
+      "keep_representative_auc": 0.982762375,
+      "keep_representative_delta": -7.468749999994806e-05,
+      "remove_group_auc": 0.97930734375,
+      "remove_group_delta": 0.00338034375000007,
+      "representative": "input_script_type"
+    },
+    {
+      "baseline_auc": 0.9826876875,
+      "cutoff": 961653,
+      "group": [
+        "change_index",
+        "change_matches_output",
+        "change_type_match"
+      ],
+      "keep_representative_auc": 0.98277978125,
+      "keep_representative_delta": -9.209374999996633e-05,
+      "remove_group_auc": 0.9822441875,
+      "remove_group_delta": 0.0004435000000000411,
+      "representative": "change_index"
+    },
+    {
+      "baseline_auc": 0.9826876875,
+      "cutoff": 961653,
+      "group": [
+        "input_order",
+        "io_shape",
+        "output_order"
+      ],
+      "keep_representative_auc": 0.9815711875,
+      "keep_representative_delta": 0.0011164999999999647,
+      "remove_group_auc": 0.98113525,
+      "remove_group_delta": 0.0015524375000000035,
+      "representative": "io_shape"
+    },
+    {
+      "baseline_auc": 0.9826876875,
+      "cutoff": 961653,
+      "group": [
+        "change_spk",
+        "output_encoding"
+      ],
+      "keep_representative_auc": 0.9836115,
+      "keep_representative_delta": -0.0009238124999999542,
+      "remove_group_auc": 0.983839375,
+      "remove_group_delta": -0.0011516874999999427,
+      "representative": "change_spk"
+    }
+  ],
+  "leave_one_out": {
+    "baseline": {
+      "auc": 0.9826876875,
+      "coverage": 0.92525,
+      "false_negative": 190,
+      "false_positive": 179,
+      "fields": [
+        "change_address_reuse",
+        "change_index",
+        "change_matches_output",
+        "change_spk",
+        "change_type_match",
+        "fee_rate",
+        "input_order",
+        "input_script_type",
+        "input_types_present",
+        "io_shape",
+        "locktime",
+        "low_r",
+        "multisig",
+        "nested_segwit",
+        "nsequence",
+        "op_return",
+        "output_encoding",
+        "output_order",
+        "pubkey_compression",
+        "sighash",
+        "uih",
+        "version"
+      ],
+      "precision": 0.9551265981448984,
+      "recall": 0.9525,
+      "selective_accuracy": 0.9729802756011888,
+      "true_positive": 3810
+    },
+    "cutoff": 961653,
+    "leave_one_out": {
+      "change_address_reuse": {
+        "auc": 0.97748340625,
+        "auc_delta": 0.0052042812500000535,
+        "coverage": 0.90275,
+        "selective_accuracy": 0.9637219606757131
+      },
+      "change_index": {
+        "auc": 0.98282028125,
+        "auc_delta": -0.0001325937499999652,
+        "coverage": 0.927625,
+        "selective_accuracy": 0.9726451960652204
+      },
+      "change_matches_output": {
+        "auc": 0.982797875,
+        "auc_delta": -0.0001101875000000252,
+        "coverage": 0.927375,
+        "selective_accuracy": 0.9727726108639978
+      },
+      "change_spk": {
+        "auc": 0.98372075,
+        "auc_delta": -0.0010330625000000149,
+        "coverage": 0.92425,
+        "selective_accuracy": 0.9729510413849067
+      },
+      "change_type_match": {
+        "auc": 0.98282421875,
+        "auc_delta": -0.00013653125000001598,
+        "coverage": 0.926875,
+        "selective_accuracy": 0.9728927848954821
+      },
+      "fee_rate": {
+        "auc": 0.98232065625,
+        "auc_delta": 0.00036703125000003833,
+        "coverage": 0.92625,
+        "selective_accuracy": 0.9720647773279352
+      },
+      "input_order": {
+        "auc": 0.98243978125,
+        "auc_delta": 0.00024790625000004063,
+        "coverage": 0.931375,
+        "selective_accuracy": 0.9714132331230707
+      },
+      "input_script_type": {
+        "auc": 0.9831310625,
+        "auc_delta": -0.0004433750000000236,
+        "coverage": 0.915625,
+        "selective_accuracy": 0.9752901023890785
+      },
+      "input_types_present": {
+        "auc": 0.98276846875,
+        "auc_delta": -8.078124999999492e-05,
+        "coverage": 0.915875,
+        "selective_accuracy": 0.9750238842636823
+      },
+      "io_shape": {
+        "auc": 0.98397653125,
+        "auc_delta": -0.001288843749999935,
+        "coverage": 0.923625,
+        "selective_accuracy": 0.9723913926106375
+      },
+      "locktime": {
+        "auc": 0.97993775,
+        "auc_delta": 0.002749937499999966,
+        "coverage": 0.907,
+        "selective_accuracy": 0.9681642778390298
+      },
+      "low_r": {
+        "auc": 0.979166125,
+        "auc_delta": 0.0035215625000000195,
+        "coverage": 0.92975,
+        "selective_accuracy": 0.9712288249529444
+      },
+      "multisig": {
+        "auc": 0.982671,
+        "auc_delta": 1.6687500000056588e-05,
+        "coverage": 0.9255,
+        "selective_accuracy": 0.9735278227984873
+      },
+      "nested_segwit": {
+        "auc": 0.9827461875,
+        "auc_delta": -5.849999999996136e-05,
+        "coverage": 0.92125,
+        "selective_accuracy": 0.9738127544097693
+      },
+      "nsequence": {
+        "auc": 0.97073878125,
+        "auc_delta": 0.011948906250000002,
+        "coverage": 0.8955,
+        "selective_accuracy": 0.9620323841429369
+      },
+      "op_return": {
+        "auc": 0.98122940625,
+        "auc_delta": 0.0014582812500000264,
+        "coverage": 0.921875,
+        "selective_accuracy": 0.9713898305084746
+      },
+      "output_encoding": {
+        "auc": 0.9836115,
+        "auc_delta": -0.0009238124999999542,
+        "coverage": 0.925875,
+        "selective_accuracy": 0.9725934926420953
+      },
+      "output_order": {
+        "auc": 0.9819833125,
+        "auc_delta": 0.0007043749999999793,
+        "coverage": 0.9185,
+        "selective_accuracy": 0.9708764289602613
+      },
+      "pubkey_compression": {
+        "auc": 0.982734125,
+        "auc_delta": -4.6437499999996135e-05,
+        "coverage": 0.91875,
+        "selective_accuracy": 0.9749659863945578
+      },
+      "sighash": {
+        "auc": 0.98288709375,
+        "auc_delta": -0.00019940625000003376,
+        "coverage": 0.9215,
+        "selective_accuracy": 0.9744981009224091
+      },
+      "uih": {
+        "auc": 0.9827365625,
+        "auc_delta": -4.8874999999948265e-05,
+        "coverage": 0.92875,
+        "selective_accuracy": 0.972678331090175
+      },
+      "version": {
+        "auc": 0.9737055625,
+        "auc_delta": 0.008982125000000063,
+        "coverage": 0.898125,
+        "selective_accuracy": 0.9621433542101601
+      }
+    }
+  },
+  "source": {
+    "bytes": 91367352,
+    "digest": "91c444bd4e9715d7739ccc9d68c7d9751762e25b647e3eef647c6ec0b48ba90c",
+    "files": 904,
+    "pattern": ".blkcache/*.json",
+    "transactions": 22112
+  }
+}
