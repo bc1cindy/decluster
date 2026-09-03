@@ -19,6 +19,24 @@ def build_rarity(signatures):
     return dict(c)
 
 
+def build_cluster_rarity(signatures, cluster_of):
+    """cluster -> support count, for weighting a cluster-lifted intersection.
+
+    Coin support cannot be reused once origins are coarsened into wallets: a cluster holding
+    many coins would inherit the support of the rarest of them. It must be recounted over the
+    same population `build_rarity` reads, after lifting — which is why `intersect.shared_origins`
+    refuses to weight a lifted intersection unless it is handed one of these.
+
+    `signatures` is the population corpus, not the branches under test. Counting support from
+    the two or three signatures being intersected makes every shared origin look rare.
+    """
+    from .intersect import cluster_key
+    c = Counter()
+    for sig in signatures:
+        c.update({cluster_key(a, cluster_of) for a in sig})
+    return dict(c)
+
+
 def entity_signature(coin_sigs):
     """Aggregate member coins' provenance signatures: sum per ancestor, renormalise to
     unit total mass. The entity-level sparse quasi-identifier vector."""

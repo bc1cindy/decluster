@@ -34,15 +34,47 @@ mix, or at the depth limit, reporting which.
 """
 
 COINJOIN_MIN_PARTICIPANTS = 20
+EQUAL_OUTPUT_MIN_PARTICIPANTS = 3
 
 UNSPENT = "unspent"
 COINJOIN = "coinjoin"
 DEPTH = "depth"
 
 
-def is_coinjoin(tx, min_participants=COINJOIN_MIN_PARTICIPANTS):
-    """Many inputs and many outputs — the shape where co-spending stops implying
-    common ownership, and so the shape where a forward walk must stop."""
+def equal_output_group(tx, min_participants=EQUAL_OUTPUT_MIN_PARTICIPANTS):
+    """The size of the largest set of outputs sharing one value, when it is big enough to be a
+    mix denomination and the transaction has the inputs to fund it; else 0.
+
+    This is the defining structure of an equal-amount coinjoin — interchangeable outputs of one
+    denomination, one per participant — and it is what the clustering literature detects on
+    (BlockSci's `isCoinjoin`, which Möser and Narayanan use). The size rule below cannot see it:
+    a five-participant Whirlpool round is 5-in/5-out, far under any participant threshold, and
+    refusing to notice it means applying common-input ownership across five unrelated users.
+    """
+    values = [o.get("value") for o in tx.get("vout", []) if o.get("value") is not None]
+    if len(tx.get("vin", [])) < min_participants or not values:
+        return 0
+    counts = {}
+    for v in values:
+        counts[v] = counts.get(v, 0) + 1
+    best = max(counts.values())
+    return best if best >= min_participants else 0
+
+
+def is_coinjoin(tx, min_participants=COINJOIN_MIN_PARTICIPANTS,
+                equal_min=EQUAL_OUTPUT_MIN_PARTICIPANTS):
+    """The shapes where co-spending stops implying common ownership, and so where a forward walk
+    must stop and the clusterer must decline the common-input heuristic.
+
+    Two rules, because one shape does not cover the construction. `equal_min` catches the
+    equal-amount coinjoin by its denomination, at any size. `min_participants` keeps the original
+    many-in/many-out rule, which catches arbitrary-amount mixes that carry no repeated value.
+
+    Neither sees a payjoin: two inputs and two outputs is the shape a payjoin is built to wear,
+    and detecting it needs the amount channel, not a shape rule.
+    """
+    if equal_output_group(tx, equal_min):
+        return True
     return (
         len(tx.get("vin", [])) >= min_participants
         and len(tx.get("vout", [])) >= min_participants

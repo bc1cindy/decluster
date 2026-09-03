@@ -79,7 +79,7 @@ def test_x_uih():
     from decluster.extractors import x_uih
     assert x_uih(_tx([{"value": 100, "scriptpubkey_type": "a"}],
                      vin=[{"txid": "p", "vout": 0, "sequence": 1, "value": 4000},
-                          {"txid": "q", "vout": 0, "sequence": 1, "value": 4000}])) == "uih1"
+                          {"txid": "q", "vout": 0, "sequence": 1, "value": 4000}])) == "uih2"
     assert x_uih(_tx([{"value": 5000, "scriptpubkey_type": "a"}],
                      vin=[{"txid": "p", "vout": 0, "sequence": 1, "value": 6000}])) == "none"
 

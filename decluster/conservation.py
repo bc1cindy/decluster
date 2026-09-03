@@ -1,17 +1,23 @@
-"""Force ownership of coinjoin outputs by conservation alone.
+"""Trace the value of coinjoin outputs by conservation alone.
 
 If a set of equal outputs is worth more than every other participant brought to
-the round, the excess had to come from the one participant whose input we can
+the round, the excess had to *come from* the one participant whose input we can
 name. No model of the client is involved: not the denomination lattice, not the
 decomposer, not fee accounting beyond a conservative floor. Just arithmetic on
 what the transaction shows.
 
-That makes this the sharpest tool here and the one with the fewest ways to be
-wrong. It is also refusal-shaped in the sense PAPER §1 requires, though it reads
-as attribution: what it establishes is that the alternative — every one of those
-outputs belonging to somebody else — is impossible. The engine's invariant is
-about the amount channel inventing same-owner *links*; this invents nothing, it
-eliminates the only competing assignment.
+What that establishes is provenance of value, and only that. It is not ownership,
+and the gap between the two is the whole reason multi-party protocols are built:
+under net settlement a participant may both pay and receive inside one round, so
+their satoshi legitimately end up in a counterparty's output and the surplus is
+forced onto their *input* without any output being theirs. The inference to
+ownership needs the extra premise that every participant's sub-transaction is
+self-funded -- true of a plain batch, false of anything that settles obligations,
+and the adversary cannot assume its absence from a protocol that permits it.
+
+So this is refusal-shaped in the sense PAPER §1 requires: it eliminates the
+reading that none of that value came from the named participant. Reporting it as
+"these outputs are theirs" overstates it by exactly one assumption.
 
 The bound is deliberately conservative in one direction. Output fees are ignored,
 which understates what the other participants must have paid, so the count
@@ -24,7 +30,7 @@ def others_input(total_input, known_input):
 
 
 def forced_count(total_input, known_input, output_value, output_count):
-    """How many outputs of `output_value` must belong to the known participant.
+    """How many outputs of `output_value` the known participant must have funded.
 
     The others can fund at most `others_input // output_value` of them. Anything
     beyond that has no other source. Returns 0 when the others could have funded
@@ -37,11 +43,13 @@ def forced_count(total_input, known_input, output_value, output_count):
 
 
 def forced_in_round(tx, known_input, min_count=1):
-    """Every output value in `tx` that conservation forces onto the known input.
+    """Every output value in `tx` whose funding conservation traces to the known input.
 
-    Returns `[(value, forced, present)]`, largest forced value first: `forced` of
-    the `present` outputs at that value cannot belong to anyone else. `min_count`
-    filters out values that force fewer than that many.
+    Returns `[(value, forced, present)]`, largest first: `forced` of the `present`
+    outputs at that value could not have been funded by anyone else. That is a claim
+    about where the satoshi came from, not about who holds the outputs -- see the
+    module docstring on why net settlement separates the two. `min_count` filters out
+    values that force fewer than that many.
 
     Empty is the expected result. It takes a participant large relative to the
     round for the inequality to bite at all.
@@ -60,7 +68,7 @@ def forced_in_round(tx, known_input, min_count=1):
 
 
 def forced_value(tx, known_input, min_count=1):
-    """Total satoshi conservation forces onto the known input in this round."""
+    """Total satoshi in this round whose funding conservation traces to the known input."""
     return sum(value * forced for value, forced, _ in forced_in_round(tx, known_input, min_count))
 
 

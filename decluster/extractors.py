@@ -42,12 +42,17 @@ def x_change_spk_type(tx):
     return f"uniform_{next(iter(types))}" if len(types) == 1 else "mixed"
 
 def x_uih(tx):
-    # UIH1: some single input alone exceeds the largest output -> an input was unnecessary
+    # UIH2, the input-side unnecessary-input heuristic: some single input already covers the
+    # largest output, so the remaining inputs were not needed and another party may have
+    # contributed one. (UIH1 is the output-side rule -- an output smaller than every input is
+    # change -- and lives in `change_special.label_optimal_change`.) The predicate here is
+    # non-strict; the literature states it as strictly larger, and the measured bits in
+    # `library.py` were taken against this form, so the boundary case is a known deviation.
     in_vals = [iv for v in tx["vin"]
                if (iv := (v.get("prevout") or {}).get("value", v.get("value"))) is not None]
     out_vals = [o["value"] for o in tx["vout"]]
     if len(in_vals) < 2 or not out_vals: return "none"
-    return "uih1" if max(in_vals) >= max(out_vals) else "none"
+    return "uih2" if max(in_vals) >= max(out_vals) else "none"
 
 def _witness_sig(vin):
     w = vin.get("witness") or []

@@ -6,8 +6,8 @@ guarded by `tests/test_metric.py`.
 This is a **relative** diagnostic — how much the naive co-spend clustering *overstates* the
 attacker's residual uncertainty versus the fingerprint+amount clustering — **not** an absolute
 "bits of anonymity" of any transaction. The intrinsic anonymity of a payment (interpretations
-under no auxiliary information) is the separate path-counting / k-route estimate, not this
-partition entropy.
+under no auxiliary information) is the separate §07 path-counting object, not this partition
+entropy.
 
 ## The diagnostic
 For a clustering of N coins into groups, the Shannon entropy of the cluster-size distribution

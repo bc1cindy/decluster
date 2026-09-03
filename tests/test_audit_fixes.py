@@ -7,13 +7,13 @@ def test_uih_reads_prevout_value():
     # prevout-only shape: input value ONLY under prevout.value (no top-level vin.value)
     tx = {"vin": [{"prevout": {"value": 1000}}, {"prevout": {"value": 50}}],
           "vout": [{"value": 900}, {"value": 100}]}
-    assert x_uih(tx) == "uih1"          # max input 1000 >= max output 900
+    assert x_uih(tx) == "uih2"          # max input 1000 >= max output 900
 
 def test_uih_bigquery_shape_still_works():
     from decluster.extractors import x_uih
     tx = {"vin": [{"value": 1000, "prevout": {"value": 1000}}, {"value": 50, "prevout": {"value": 50}}],
           "vout": [{"value": 900}, {"value": 100}]}
-    assert x_uih(tx) == "uih1"
+    assert x_uih(tx) == "uih2"
 
 def test_fs_score_mismatch_clamped():
     from decluster.combiner import fs_score

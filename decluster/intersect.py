@@ -38,7 +38,19 @@ def rarity_weight(ancestor, rarity):
     return 1.0 / math.log2(support + 1) if support > 1 else 1.0
 
 
-def shared_origins(signatures, rarity=None):
+def cluster_key(ancestor, cluster_of):
+    """The wallet an origin coin belongs to, or the coin itself when it is unclustered.
+
+    Both forms fall back to the coin. A callable that answers `None` for a coin it does not
+    know would otherwise collapse every unclustered origin onto one shared pseudo-cluster, and
+    branches with nothing in common would intersect at full mass — a fabricated attribution,
+    which is the one failure this module must not have.
+    """
+    c = cluster_of(ancestor) if callable(cluster_of) else cluster_of.get(ancestor, ancestor)
+    return ancestor if c is None else c
+
+
+def shared_origins(signatures, rarity=None, cluster_of=None, cluster_rarity=None):
     """Ancestors present in *every* signature, with the mass all of them carry.
 
     `signatures` is a list of `{ancestor: mass}`. Returns
@@ -53,6 +65,22 @@ def shared_origins(signatures, rarity=None):
     """
     if not signatures:
         return []
+    if cluster_of is not None:
+        # Cluster-lift (the writeup's "the candidate origins are not coins, but rather
+        # clusters", under Robust connectivity, cit-42): coarsen each coin-origin to its
+        # owning cluster, summing masses, and intersect WALLETS rather than coins.
+        def _lift(sig):
+            out = {}
+            for a, m in sig.items():
+                c = cluster_key(a, cluster_of)
+                out[c] = out.get(c, 0) + m
+            return out
+        signatures = [_lift(s) for s in signatures]
+        if rarity is not None and cluster_rarity is None:
+            raise ValueError("cluster_rarity is required when weighting cluster-lifted origins")
+        # Cluster support must be measured over the population, not reconstructed from only the
+        # branches in this intersection. Reusing coin support or local branch counts biases hubs.
+        rarity = cluster_rarity
     common = set(signatures[0])
     for sig in signatures[1:]:
         common &= set(sig)
@@ -81,6 +109,35 @@ def collapse_bits(smallest, n_shared):
     if smallest <= 0 or n_shared <= 0:
         return None
     return math.log2(smallest / n_shared)
+
+
+def accumulate_intersections(observations, rarity=None, cluster_of=None, universe_size=None,
+                             cluster_rarity=None):
+    """Cross-event accumulation. Each observation is a list of branch signatures (one co-spend /
+    linkage event); intersecting the surviving origin set across successive linked observations is
+    where the compounding comes from — the writeup's "O(log n) observations, each cutting the
+    candidate set by a constant factor" (Robust connectivity). The rate is Danezis and Serjantov's
+    statistical-disclosure result, not Goldfeder's: the intersection paper demonstrates the attack
+    but states no shrink law. `universe_size`, when known, includes the first observation's
+    narrowing in `total_bits`; without it the returned bits are explicitly relative to the first
+    observed candidate set. Returns (survivors, total_bits)."""
+    surviving = None
+    total = 0.0
+    for sigs in observations:
+        step = {a for a, _, _ in shared_origins(sigs, rarity, cluster_of, cluster_rarity)}
+        if surviving is None:
+            surviving = step
+            if universe_size is not None and step:
+                first = collapse_bits(universe_size, len(step))
+                if first:
+                    total += first
+            continue
+        before = len(surviving)
+        surviving = surviving & step
+        b = collapse_bits(before, len(surviving)) if surviving else None
+        if b:
+            total += b
+    return (surviving or set()), total
 
 
 def score_candidate(candidate, cluster_fn, funder_of, signatures=None):
@@ -126,7 +183,8 @@ def score_candidate(candidate, cluster_fn, funder_of, signatures=None):
     }
 
 
-def evaluate(candidate, signature_of, rarity=None, truncation_of=None):
+def evaluate(candidate, signature_of, rarity=None, truncation_of=None,
+             cluster_of=None, cluster_rarity=None):
     """Intersect the origin sets of the coins one co-spend candidate consumes.
 
     `candidate` is an entry from `monitor.walk_frontier`'s `candidates`.
@@ -145,7 +203,17 @@ def evaluate(candidate, signature_of, rarity=None, truncation_of=None):
     oracle refusing rather than an origin, and adds `truncated` and `blind`. `blind` is True when
     some branch's boundary is *entirely* truncation: that branch contributes no observed origin, so
     an empty `shared` says the walk could not see, not that the branches came from different places.
-    Reading a blind empty as a refusal is the failure mode this field exists to prevent.
+    Reading a blind empty as a refusal is the failure mode this field exists to prevent. The count
+    must be over the absorbers that carry mass — `ancestry.ancestry_signature_and_truncation`
+    reports it that way — since comparing every truncated coin against only the positive-mass
+    boundary calls a branch blind while it is still resolving a full-mass origin.
+
+    `cluster_of` lifts each origin to its owning wallet before intersecting, which is what the
+    writeup asks for: the candidate origins are clusters, not coins, so two branches can overlap
+    without their origin coins being connected on the transaction graph, and the clusters being
+    intersected are the pre-mix ones where privacy is weakest. `sizes` and the narrowing are then
+    reported over wallets. Weighting a lifted intersection needs `cluster_rarity` measured over the
+    population (`propagate.build_cluster_rarity`); coin support does not survive the coarsening.
 
     `scored` is always False. The narrowing is conditional on the co-spend being
     genuine, and deciding that is [`score_candidate`], which runs the engine over
@@ -155,8 +223,13 @@ def evaluate(candidate, signature_of, rarity=None, truncation_of=None):
     """
     outpoints = list(candidate.get("outpoints", []))
     signatures = [signature_of(op) for op in outpoints]
-    sizes = [len(s) for s in signatures]
-    shared = shared_origins(signatures, rarity)
+    if cluster_of is not None:
+        # Report sizes in the same objects the intersection runs over, or `collapsed` compares
+        # a wallet count against a coin count and reads as a narrowing that never happened.
+        sizes = [len({cluster_key(a, cluster_of) for a in s}) for s in signatures]
+    else:
+        sizes = [len(s) for s in signatures]
+    shared = shared_origins(signatures, rarity, cluster_of, cluster_rarity)
     smallest = min(sizes) if sizes else 0
     truncated = [truncation_of(op) for op in outpoints] if truncation_of else None
     return {
