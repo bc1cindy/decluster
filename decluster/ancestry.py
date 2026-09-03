@@ -30,6 +30,8 @@ class Graph:
         self.unattributed = 0          # truncated by a cause this module does not name
         self.truncated_coins = {}      # coin -> cause, so truncation can be counted, and attributed,
                                        # over the mass-carrying boundary
+        self.source_absorbers = set()  # fetched coinbase boundaries (real sources)
+        self.depth_capped = set()      # artificial boundaries introduced by depth
 
 
 ORACLE_REFUSED = "oracle_refused"
@@ -128,6 +130,33 @@ def absorber_distribution(graph, target):
     return {graph.absorbers[a]: p for a, p in enumerate(row) if p > 1e-12}
 
 
+def collapsed_expected_steps(graph, target):
+    """Expected transitions to this graph's boundary, ``t = (I-Q)^-1 1``."""
+    if target in graph.absorbers:
+        return 0.0
+    t_index = {coin: index for index, coin in enumerate(graph.transient)}
+    nt = len(graph.transient)
+    im_q = [[1.0 if i == j else 0.0 for j in range(nt)] for i in range(nt)]
+    for coin, row in t_index.items():
+        for nxt, weight in graph.edges.get(coin, ()):
+            if nxt in t_index:
+                im_q[row][t_index[nxt]] -= weight
+    return _solve(im_q, [[1.0] for _ in range(nt)])[t_index[target]][0]
+
+
+def kelen_seres_expected_steps(graph, target):
+    """Expected steps in Kelen–Seres' uncollapsed UTXO transaction graph.
+
+    A collapsed coin-to-parent transition represents ``coin -> transaction ->
+    input coin`` (two paper steps). At a real coinbase boundary another two
+    steps reach ``coinbase transaction -> auxiliary source``. Artificial depth
+    or truncation boundaries have no such interpretation and are refused.
+    """
+    if graph.truncated or graph.depth_capped or set(graph.absorbers) != graph.source_absorbers:
+        raise ValueError("expected steps require an untruncated walk reaching only real sources")
+    return 2.0 * (collapsed_expected_steps(graph, target) + 1.0)
+
+
 def _is_coinbase(tx):
     vin = tx.get("vin", [])
     return bool(vin) and vin[0].get("is_coinbase", False)
@@ -199,9 +228,9 @@ def build_extended_graph(target, depth=6, fetch=None, link_oracle=None, value_we
         txid, vout = coin
         tx = fetch(txid)
         if _is_coinbase(tx):
-            kind[coin] = "absorber"; continue
+            kind[coin] = "absorber"; g.source_absorbers.add(coin); continue
         if d <= 0:
-            kind[coin] = "absorber"; continue        # depth cutoff
+            kind[coin] = "absorber"; g.depth_capped.add(coin); continue  # depth cutoff
         in_vals = [v["prevout"]["value"] for v in tx["vin"]]
         out_vals = [o["value"] for o in tx["vout"]]
         matrix = link_oracle(in_vals, out_vals)
@@ -276,9 +305,9 @@ def value_flow_signature(target, depth=6, fetch=None, max_nodes=None):
 def value_flow_untraceability(target, depth=6, fetch=None, max_nodes=None):
     """Shannon untraceability and absorption details for the nominal-value model.
 
-    ``untraceability`` is the Shannon entropy of the source absorption distribution in bits. The
-    expected number of steps is not reported because transaction nodes are collapsed here; doing so
-    would change the step-count observable even though it preserves absorption probabilities.
+    ``untraceability`` is the Shannon entropy of the source absorption distribution in bits.
+    ``expected_steps`` uses the exact two-step expansion of each collapsed UTXO transition and is
+    reported only when every boundary is a fetched coinbase source; otherwise it is ``None``.
     """
     if fetch is None:
         from .fetch import fetch_tx
@@ -286,11 +315,16 @@ def value_flow_untraceability(target, depth=6, fetch=None, max_nodes=None):
     graph = build_value_flow_graph(target, depth=depth, fetch=fetch, max_nodes=max_nodes)
     distribution = absorber_distribution(graph, target)
     probabilities = list(distribution.values())
+    try:
+        expected_steps = kelen_seres_expected_steps(graph, target)
+    except ValueError:
+        expected_steps = None
     return {
         "untraceability": _shannon(probabilities),
         "distribution": distribution,
         "n_absorbers": len(probabilities),
         "truncated": graph.truncated,
+        "expected_steps": expected_steps,
     }
 
 

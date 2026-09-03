@@ -160,6 +160,31 @@ def test_kelen_seres_figure_two_nominal_value_transition():
     assert matrix == [[0.5, 0.5, 0.5], [0.3, 0.3, 0.3], [0.2, 0.2, 0.2]]
 
 
+def test_kelen_seres_expected_steps_expand_collapsed_utxo_transitions_exactly():
+    fetch = _two_parent_fetch()
+    graph = ancestry.build_value_flow_graph(("t1", 0), depth=2, fetch=fetch)
+    # One collapsed transition reaches either coinbase parent. In the paper's
+    # graph: output -> t1 -> parent coin -> coinbase tx -> auxiliary source.
+    assert ancestry.collapsed_expected_steps(graph, ("t1", 0)) == pytest.approx(1.0)
+    assert ancestry.kelen_seres_expected_steps(graph, ("t1", 0)) == pytest.approx(4.0)
+    result = ancestry.value_flow_untraceability(("t1", 0), depth=2, fetch=fetch)
+    assert result["expected_steps"] == pytest.approx(4.0)
+
+
+def test_kelen_seres_expected_steps_refuse_depth_and_node_cap_boundaries():
+    fetch = _binary_tree_fetch(max_len=4)
+    depth_cut = ancestry.build_value_flow_graph(("", 0), depth=1, fetch=fetch)
+    with pytest.raises(ValueError, match="real sources"):
+        ancestry.kelen_seres_expected_steps(depth_cut, ("", 0))
+    assert ancestry.value_flow_untraceability(("", 0), depth=1, fetch=fetch)[
+        "expected_steps"
+    ] is None
+
+    node_cut = ancestry.build_value_flow_graph(("", 0), depth=8, fetch=fetch, max_nodes=2)
+    with pytest.raises(ValueError, match="real sources"):
+        ancestry.kelen_seres_expected_steps(node_cut, ("", 0))
+
+
 def test_max_nodes_only_truncates_never_invents():
     # max_len=3, cap=6: cap lands mid-tree (levels 0-2 alone total 7 coins), so some non-coinbase
     # interior coins get truncated in the capped run instead of being expanded to their origins.

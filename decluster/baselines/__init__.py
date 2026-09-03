@@ -32,6 +32,15 @@ from .candidate_set_intersection import (
     join_ancestors,
     narrowing_bits,
 )
+from .kelen_seres_graphs import (
+    AbsorbingTransactionChain,
+    AuxiliarySource,
+    Transfer,
+    WeightedTransactionGraph,
+    absorbing_transaction_chain,
+    stationary_account_graph,
+    temporal_account_graph,
+)
 from .link_prediction import LinkPredictionResult, Prediction
 from .ns_link_prediction_2011 import (
     CombinedPrediction,
@@ -60,6 +69,8 @@ from .oracle_audit import (
 )
 
 __all__ = [
+    "AbsorbingTransactionChain",
+    "AuxiliarySource",
     "BoltzmannReferenceAnalysis",
     "CombinedPrediction",
     "SimilarityEvidence",
@@ -75,7 +86,10 @@ __all__ = [
     "IntersectionStep",
     "LinkPredictionResult",
     "Prediction",
+    "Transfer",
+    "WeightedTransactionGraph",
     "audit",
+    "absorbing_transaction_chain",
     "algorithm2_node_distance",
     "algorithm2_pair_distance",
     "algorithm2_potential",
@@ -85,6 +99,8 @@ __all__ = [
     "similarity_evidence",
     "stage1_match",
     "stage2_candidates",
+    "stationary_account_graph",
+    "temporal_account_graph",
     "two_stage_mapping",
     "enumerate_family",
     "equal_value_mapping_count",
