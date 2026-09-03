@@ -1,7 +1,7 @@
 """Clustering-overcount diagnostic (relative, NOT a privacy score): how much the naive co-spend
 clustering overstates the attacker's residual uncertainty relative to the fingerprint+amount
 clustering. The entropy here is a property of a *clustering partition*, not the intrinsic anonymity
-of any transaction (that is the separate path-counting / k-route estimate). Read only as the
+of any transaction (that is the separate §07 path-counting object). Read only as the
 naive-vs-fused ratio; never as an absolute 'this graph has N bits of anonymity'. Not a chain-scale
 validation."""
 import math

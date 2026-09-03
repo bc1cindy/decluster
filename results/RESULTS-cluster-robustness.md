@@ -44,10 +44,8 @@ Reproduce: `python3 examples/cluster_robustness.py`.
   `LibraryScorer` of the pair-AUC validation.
 - **`cluster_refined` is case-study scale** (`fetch_tx` per pair, O(n²) linking); the scenario is sized
   accordingly.
-- **The topology signal here is counterparty-overlap, narrower than "graph connectivity."** The fused
-  term is a rarity-weighted shared-counterparty overlap (`cluster_topology_weight`) — a graph-derived
-  quasi-identifier (shared *edges* in the payment graph), the intersection-attack intuition. It is *not*
-  the connectivity / average-distance / max-flow of the whole graph that the design conversation frames
-  as the substance of robustness; those are a stronger, separate topological measure (future work). What
-  this shows is "a rare shared counterparty dominates the fingerprint weight," which is one concrete way
-  graph structure swamps the per-axis uncertainty, not the full connectivity argument.
+- **The topology signal here is counterparty-overlap.** The fused term is a rarity-weighted
+  shared-counterparty overlap (`cluster_topology_weight`) — a graph-derived quasi-identifier (shared
+  *edges* in the payment graph), the intersection-attack intuition. What this shows is "a rare shared
+  counterparty dominates the fingerprint weight," which is one concrete way graph structure swamps the
+  per-axis uncertainty.

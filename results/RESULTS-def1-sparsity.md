@@ -1,5 +1,24 @@
 # (epsilon, delta)-sparsity of cluster features: the attack's own precondition, measured
 
+> **Correction, 2 Sep 2026 — the table below was measured with a mis-scaled feature vector.**
+> `feature_vector` normalised every fingerprint axis to sum to 1.0 but accumulated the
+> neighbour-degree histogram as a raw count, so at degree 50 that one key carried 99.9% of the
+> vector's norm and the cosine read degree similarity rather than feature similarity: two clusters
+> with wholly disjoint fingerprint axes scored 0.9996. The histogram is now normalised like every
+> other axis.
+>
+> The conclusion survives and strengthens. Re-measured on the committed fixture
+> (`tests/fixtures/slice_a_channels_2016.ndjson.gz`, 12 000 txs, 3 179 clusters), the corrected
+> curve is δ(0.5)=1.000, δ(0.9)=1.000, δ(0.99)=0.990 against a documented 1.000 / 0.996 / 0.968 —
+> *less* sparse than recorded, not more. Restricting the query set to hubs weakens it only mildly
+> (min_degree 20: δ(0.9)=0.921, median top-similarity 0.999), so the density is not an artefact of
+> the one-transaction clusters that dominate the population. See the degree-stratified table in
+> `RESULTS-slice-a-channels.md`.
+>
+> The `slice_2026.ndjson` table below has **not** been re-run — that data is not committed and is
+> not present locally. Treat its specific values as superseded pending a re-run; the reading it
+> supports is unchanged.
+
 **Why this is load-bearing.** The sparse-dataset de-anonymization the framework builds on
 defines its precondition precisely: a record space is (epsilon, delta)-sparse if a random
 record has probability at most delta of having any other record more than epsilon-similar

@@ -41,7 +41,7 @@ signal that manufactures eccentricity and adds error — on top of being depth-s
 |---|---|---|
 | cit. 19–20 sparse dataset | record linkage on provenance signatures | built (`propagate.py`), measured (`ns-propagation`); richer measurement blocked on chain depth |
 | cit. 24 social graph | cross-view neighbourhood matching | built (`view_match.py`), measured; precondition fails on this slice (`graph-shape`) |
-| cit. 25 link prediction | matching on incomplete graphs | not built; would predict edges that are absent rather than censored, so poorly motivated here |
+| cit. 25 link prediction | matching on incomplete graphs | built (`view_match.predict_link`, optional ML callback in the mixed-vote and no-candidate branches); unmeasured on this slice, where predicted edges would be absent rather than censored |
 
 ## Honest recommendation
 

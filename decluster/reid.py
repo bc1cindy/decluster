@@ -20,9 +20,29 @@ from .propagate import build_rarity, eccentricity
 from .def1_sparsity import cosine
 
 
-def top_similarity(coins, sigs):
-    """Each coin's highest cosine similarity to any *other* coin: its sparsity coordinate.
-    Low = no near twin = sparse (de-anonymizable); high = has a twin = dense (protected)."""
+def top_similarity(coins, sigs, metric="cosine", rarity=None):
+    """Each coin's highest similarity to any *other* coin: its sparsity coordinate. Low = no
+    near twin = sparse (de-anonymizable); high = has a twin = dense (protected).
+
+    `metric="provlink"` measures that similarity in the *same* space the attack scores in
+    (rarity-weighted provenance overlap, normalised by the coin's self-overlap), so the
+    (epsilon,delta) stratification and the de-anonymization are internally consistent — the
+    metric-consistency the Netflix paper assumes. `cosine` (default) preserves the committed
+    fixture."""
+    if metric == "provlink":
+        selfs = {a: provenance_link(sigs[a], sigs[a], rarity) for a in coins}
+        top = {}
+        for i, a in enumerate(coins):
+            sa, best = sigs[a], 0.0
+            for j, b in enumerate(coins):
+                if i == j:
+                    continue
+                denom = (selfs[a] * selfs[b]) ** 0.5
+                s = provenance_link(sa, sigs[b], rarity) / denom if denom else 0.0
+                if s > best:
+                    best = s
+            top[a] = best
+        return top
     top = {}
     for i, a in enumerate(coins):
         sa, best = sigs[a], 0.0
@@ -38,9 +58,9 @@ def top_similarity(coins, sigs):
     return top
 
 
-def stratify(coins, sigs, sparse_below=0.5, dense_atleast=0.9):
+def stratify(coins, sigs, sparse_below=0.5, dense_atleast=0.9, metric="cosine", rarity=None):
     """Split coins into sparse and dense strata by their own top-similarity."""
-    top = top_similarity(coins, sigs)
+    top = top_similarity(coins, sigs, metric=metric, rarity=rarity)
     sparse = [c for c in coins if top[c] < sparse_below]
     dense = [c for c in coins if top[c] >= dense_atleast]
     return sparse, dense, top
@@ -71,13 +91,13 @@ def reid_attack(subset, coins, sigs, rarity, m, phi=1.5, seed=0):
 
 
 def stratified_reid(coins, sigs, ms=(4, 8), phi=1.5, seed=0,
-                    sparse_below=0.5, dense_atleast=0.9):
+                    sparse_below=0.5, dense_atleast=0.9, metric="cosine"):
     """Full measurement: split into sparse/dense strata, run the Algorithm 1B attack on each
     for each aux size in `ms`. Returns {rows, n, n_sparse, n_dense}, where each row is
     {stratum, m, declared, exact, precision, declare_rate}. The scientific quantity is the
     gap between sparse and dense precision, not the absolute level."""
     rarity = build_rarity(sigs.values())
-    sparse, dense, _ = stratify(coins, sigs, sparse_below, dense_atleast)
+    sparse, dense, _ = stratify(coins, sigs, sparse_below, dense_atleast, metric=metric, rarity=rarity)
     rows = []
     for name, subset in (("sparse", sparse), ("dense", dense)):
         for m in ms:

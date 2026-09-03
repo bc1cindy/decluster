@@ -94,6 +94,14 @@ def test_an_unmatched_neighbourhood_scores_nothing():
     assert candidate_scores("a", ga, gb, {}) == Counter()
 
 
+def test_min_common_requires_candidate_specific_mapped_neighbours():
+    ga = graph([("u", "s1"), ("u", "s2"), ("u", "s3"), ("u", "s4")])
+    gb = graph([("u'", "s1'"), ("u'", "s2'"), ("u'", "s3'"), ("u'", "s4'")])
+    seed = {f"s{i}": f"s{i}'" for i in range(1, 5)}
+    assert "u" not in ViewMatcher(theta=0.0, min_common=4).match(ga, gb, dict(list(seed.items())[:3]))
+    assert ViewMatcher(theta=0.0, min_common=4).match(ga, gb, seed)["u"] == "u'"
+
+
 def test_stat_overrides_the_graph_degree_for_damping_and_the_hub_cap():
     """Both guards read connectedness, so they must be able to read it from the *unfiltered*
     graph. Dropping leaves to fit a wide view in memory otherwise lowers the degree of
@@ -177,3 +185,92 @@ def test_attributes_are_off_by_default():
     """The conditioners change scores, so they must be opt-in rather than silently on."""
     m = ViewMatcher()
     assert m.edge_alpha == 0.0 and m.vertex_alpha == 0.0
+
+
+def test_revisit_converges_and_reproduces_the_planted_mapping():
+    """The opt-in NS'09 self-reinforcing pass must not thrash: on the ring it still lands on
+    the planted correspondence, and every match points at its true image."""
+    ga, gb = graph(RING), graph(relabel(RING))
+    base = ViewMatcher(theta=0.0).match(ga, gb, {"a": "a'", "b": "b'"})
+    ga2, gb2 = graph(RING), graph(relabel(RING))
+    rev = ViewMatcher(theta=0.0, revisit=True).match(ga2, gb2, {"a": "a'", "b": "b'"})
+    assert all(v == k + "'" for k, v in rev.items()), rev
+    assert set(rev) >= set(base)                      # revisiting never drops coverage
+    assert len(set(rev.values())) == len(rev)          # still a one-to-one map
+
+
+def test_revisit_is_off_by_default():
+    assert ViewMatcher().revisit is False
+
+
+def test_predict_link_da_path_reads_edges_off_the_mapping():
+    """cit-25 DA path: when both endpoints are uniquely mapped, an edge is read straight
+    off the target view."""
+    from decluster.view_match import predict_link
+    ga, gb = graph(RING), graph(relabel(RING))
+    m = ViewMatcher().match(ga, gb, {v: v + "'" for v in ga.vertices})
+    assert predict_link("a", "b", gb, m, {}) == 1       # a-b is a ring edge
+    assert predict_link("a", "e", gb, m, {}) == 0       # a-e is not
+    assert predict_link("a", "zzz", gb, m, {}) is None  # unknown endpoint -> abstain
+
+
+def test_predict_link_unanimous_vote_over_candidate_sets():
+    """cit-25 voting path: with candidate sets rather than unique matches, a link is
+    predicted only on a unanimous vote."""
+    from decluster.view_match import predict_link
+    gb = graph(relabel(RING))
+    cand = {"a": ["a'"], "b": ["b'"], "e": ["e'"]}
+    assert predict_link("a", "b", gb, {}, cand) == 1   # ring edge, unanimous
+    assert predict_link("a", "e", gb, {}, cand) == 0   # not a ring edge
+
+
+def test_match_candidates_returns_bounded_sets_disjoint_from_accepted():
+    ga, gb = graph(RING), graph(relabel(RING))
+    m, cand = ViewMatcher(theta=5.0).match_candidates(ga, gb, {"a": "a'", "b": "b'"}, top_k=3)
+    assert isinstance(cand, dict)
+    assert all(len(vs) <= 3 for vs in cand.values())
+    assert all(v not in set(m.values()) for vs in cand.values() for v in vs)
+
+
+def test_directional_is_off_by_default_and_runs_when_on():
+    assert ViewMatcher().directional is False
+    ga, gb = graph(RING), graph(relabel(RING))
+    out = ViewMatcher(theta=0.0, directional=True).match(ga, gb, {"a": "a'", "b": "b'"})
+    assert out["a"] == "a'" and out["b"] == "b'"            # seeds preserved, runs without error
+    assert len(set(out.values())) == len(out)               # still one-to-one
+
+
+def test_directional_scoring_separates_in_from_out():
+    """A candidate reachable only by an out-edge must not be scored from an in-neighbour."""
+    from decluster.view_match import candidate_scores
+    # u -> m, so the true candidate must also point to m'.
+    ga = graph([("u", "m")])                    # u -> m  (m is an out-neighbour of u)
+    gb = graph([("m'", "bad"), ("good", "m'")])  # m' -> bad ; good -> m'
+    mapping = {"m": "m'"}
+    # undirected: both get scored; direction-preserving scoring keeps only good -> m'.
+    flat = candidate_scores("u", ga, gb, mapping, directional=False)
+    dir_ = candidate_scores("u", ga, gb, mapping, directional=True)
+    assert "bad" in flat and "good" in flat
+    assert "good" in dir_ and "bad" not in dir_
+
+
+def test_find_seeds_matches_unique_degree_signatures():
+    from decluster.view_match import find_seeds
+    edges = ([("hub", f"n{i}") for i in range(5)]           # hub: unique high degree
+             + [("t1", "t2"), ("t2", "t3"), ("t3", "t1")])   # a triangle
+    ga, gb = graph(edges), graph(relabel(edges))
+    seeds = find_seeds(ga, gb)
+    assert seeds.get("hub") == "hub'"                        # unique signature -> seeded
+    assert all(v == k + "'" for k, v in seeds.items())      # every seed is correct
+
+
+def test_predict_link_ml_fallback_only_on_abstain():
+    from decluster.view_match import predict_link
+    gb = graph([("a'", "b1'")])                              # a'->b1' exists, a'->b2' does not
+    cand = {"a": ["a'"], "b": ["b1'", "b2'"]}
+    # mixed vote (one edge present, one absent) -> abstain without ml, ml score with it
+    assert predict_link("a", "b", gb, {}, cand) is None
+    assert predict_link("a", "b", gb, {}, cand, ml=lambda a, b: 0.7) == 0.7
+    # unanimous edge -> DA/vote wins, ml is NOT consulted
+    assert predict_link("a", "b", graph([("a'", "b1'")]), {}, {"a": ["a'"], "b": ["b1'"]},
+                        ml=lambda a, b: 0.7) == 1

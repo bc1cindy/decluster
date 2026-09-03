@@ -50,8 +50,17 @@ def feature_vector(g, vid):
     v[f"tx={_log_bin(node.get('txs', 0))}"] = 1.0
     if node.get("self_transfers"):
         v[f"self={_log_bin(node['self_transfers'])}"] = 1.0
+    # The neighbour-degree histogram is normalised like every other axis. Left as raw counts
+    # it is the only unbounded component: at degree 50 one bin carries 99.9% of the vector's
+    # norm, so the cosine reads degree similarity and two clusters with wholly disjoint
+    # fingerprints score 0.9996.
+    bins = {}
     for nb in g.neighbours(vid):
-        v[f"nbdeg={_log_bin(g.degree(nb))}"] = v.get(f"nbdeg={_log_bin(g.degree(nb))}", 0.0) + 1.0
+        key = f"nbdeg={_log_bin(g.degree(nb))}"
+        bins[key] = bins.get(key, 0.0) + 1.0
+    total = sum(bins.values())
+    for key, n in bins.items():
+        v[key] = n / total
     return v
 
 

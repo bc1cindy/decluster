@@ -72,7 +72,7 @@ def vertex_agreement(src, u, dst, v, axes=None):
 
 
 def candidate_scores(u, src, dst, mapping, hubcap=100, damping=True, stat=None,
-                     edge_alpha=0.0):
+                     edge_alpha=0.0, directional=False, return_support=False):
     """Score dst-vertices as candidates for src-vertex `u`, by the images of u's already
     matched neighbours. Only matched neighbours carry information, so an unmatched
     neighbourhood scores nothing and u simply waits for a later round.
@@ -86,18 +86,28 @@ def candidate_scores(u, src, dst, mapping, hubcap=100, damping=True, stat=None,
     seeing the degrees the full graph had."""
     conn = (lambda v: stat.get(v, 0)) if stat is not None else dst.degree
     scores = Counter()
-    for n in src.neighbours(u):
-        image = mapping.get(n)
-        if image is None or conn(image) > hubcap:
-            continue
-        w = 1.0 / sqrt(conn(image) or 1) if damping else 1.0
-        sa = _sig(src, u, n) if edge_alpha else None
-        for v in dst.neighbours(image):
-            wv = w
-            if edge_alpha:
-                wv = _condition(w, agreement(sa, _sig(dst, v, image)), edge_alpha)
-            scores[v] += wv
-    return scores
+    support = Counter()
+    # Preserve the relation to the matched neighbour. If u -> n, a candidate v must satisfy
+    # v -> image(n), so v is an in-neighbour of image(n); the converse holds for n -> u.
+    if directional:
+        sides = [(src._out[u], lambda img: dst._in[img]),
+                 (src._in[u], lambda img: dst._out[img])]
+    else:
+        sides = [(src.neighbours(u), lambda img: dst.neighbours(img))]
+    for src_nbrs, dst_nbrs in sides:
+        for n in src_nbrs:
+            image = mapping.get(n)
+            if image is None or conn(image) > hubcap:
+                continue
+            w = 1.0 / sqrt(conn(image) or 1) if damping else 1.0
+            sa = _sig(src, u, n) if edge_alpha else None
+            for v in dst_nbrs(image):
+                wv = w
+                if edge_alpha:
+                    wv = _condition(w, agreement(sa, _sig(dst, v, image)), edge_alpha)
+                scores[v] += wv
+                support[v] += 1
+    return (scores, support) if return_support else scores
 
 
 class ViewMatcher:
@@ -106,7 +116,8 @@ class ViewMatcher:
 
     def __init__(self, theta=0.5, hubcap=100, min_score=0.0, damping=True,
                  reversible=True, stat=None, edge_alpha=0.0, vertex_alpha=0.0,
-                 vertex_top=10):
+                 vertex_top=10, revisit=False, revisit_rounds=5, directional=False,
+                 min_common=1):
         self.theta = theta
         self.hubcap = hubcap
         self.min_score = min_score
@@ -116,6 +127,10 @@ class ViewMatcher:
         self.edge_alpha = edge_alpha    # 0 disables the attribute conditioners entirely
         self.vertex_alpha = vertex_alpha
         self.vertex_top = vertex_top    # only the leaders can change the gate's verdict
+        self.directional = directional  # NS'09 in/out separated scoring (default: undirected)
+        self.min_common = min_common    # paper's high-confidence stage uses k=4
+        self.revisit = revisit          # NS'09 self-reinforcing pass: re-score mapped nodes
+        self.revisit_rounds = revisit_rounds
         self.confidence = {}
 
     def _best(self, u, src, dst, mapping, detail=False):
@@ -124,8 +139,12 @@ class ViewMatcher:
         won — the framework's value lies in the *high confidence* links, not in coverage,
         so a match has to carry how confident it was."""
         miss = (None, 0.0, 0.0) if detail else None
-        scores = candidate_scores(u, src, dst, mapping, self.hubcap, self.damping,
-                                  self.stat.get(id(dst)), self.edge_alpha)
+        scores, support = candidate_scores(u, src, dst, mapping, self.hubcap, self.damping,
+                                           self.stat.get(id(dst)), self.edge_alpha,
+                                           self.directional, return_support=True)
+        if self.min_common > 1:
+            scores = Counter({v: score for v, score in scores.items()
+                              if support[v] >= self.min_common})
         if self.vertex_alpha and len(scores) >= 2:
             for v, _ in scores.most_common(self.vertex_top):
                 scores[v] = _condition(scores[v],
@@ -175,4 +194,92 @@ class ViewMatcher:
             if not matched:
                 break
             frontier = nxt | refused             # a refusal can turn into a match once a
-        return mapping                           # rival candidate is claimed elsewhere
+        if self.revisit:                         # rival candidate is claimed elsewhere
+            self._revisit(ga, gb, mapping, reverse, set(seed))
+        return mapping
+
+    def _revisit(self, ga, gb, mapping, reverse, seeds):
+        """NS'09's self-reinforcing pass: once propagation settles, re-score each mapped
+        (non-seed) vertex against the now-larger mapping. A vertex whose neighbourhood
+        became better resolved can upgrade to a candidate that only became supportable
+        later. A vertex is freed while it is re-scored, so it may reclaim its own image;
+        it never steals another's, so the pass only ever sharpens, never thrashes."""
+        for _ in range(self.revisit_rounds):
+            changed = 0
+            for u in [k for k in mapping if k not in seeds]:
+                old = mapping.pop(u)
+                reverse.pop(old, None)
+                v, ecc, sc = self._best(u, ga, gb, mapping, detail=True)
+                if v is not None and self.reversible \
+                        and self._best(v, gb, ga, reverse) != u:
+                    v = None
+                if v is None:
+                    mapping[u], reverse[old] = old, u        # keep the prior match
+                    continue
+                mapping[u], reverse[v] = v, u
+                self.confidence[u] = (ecc, sc)
+                if v != old:
+                    changed += 1
+            if not changed:
+                break
+
+    def match_candidates(self, ga, gb, seed, top_k=3, stat_a=None, stat_b=None):
+        """The cit-25 (link-prediction) relaxation for incomplete graphs: after the strict
+        match settles, every still-unmatched vertex adjacent to the matched region keeps a
+        *candidate set* of its top-`top_k` images instead of a single accepted match. Stage-2
+        sets do not feed back into propagation; they exist so a link can still be predicted
+        for a vertex the strict matcher refused. Returns (mapping, {vertex: [candidate, ...]})."""
+        mapping = self.match(ga, gb, seed, stat_a, stat_b)
+        candidates = {}
+        frontier = {n for u in mapping for n in ga.neighbours(u) if n not in mapping}
+        for u in frontier:
+            scores = candidate_scores(u, ga, gb, mapping, self.hubcap, self.damping,
+                                      self.stat.get(id(gb)), self.edge_alpha, self.directional)
+            for taken in mapping.values():
+                scores.pop(taken, None)
+            if scores:
+                candidates[u] = [v for v, _ in scores.most_common(top_k)]
+        return mapping, candidates
+
+
+def predict_link(a, b, gb, mapping, candidates, ml=None):
+    """Predict whether a->b is an edge in the target view, cit-25 Algorithm-3: de-anonymize
+    (DA) when both endpoints are uniquely mapped, else a unanimous vote over their candidate
+    sets, else the `ml` fallback. `ml` is an optional callable (a, b) -> score in [0, 1] (the
+    paper's logistic classifier over neighbourhood features); when absent, the mixed-vote and
+    no-candidate branches abstain (return None) — the high-precision default. Returns 1 (edge),
+    0 (no edge), a float (ml score), or None (abstain). Unanimous voting overwhelmingly
+    recovers *non-edges*: random pairs rarely share one."""
+    def images(x):
+        return [mapping[x]] if x in mapping else candidates.get(x)
+    ia, ib = images(a), images(b)
+    if not ia or not ib:
+        return ml(a, b) if ml is not None else None
+    votes = [(v in gb._out[u] or v in gb._in[u]) for u in ia for v in ib]
+    if all(votes):
+        return 1
+    if not any(votes):
+        return 0
+    return ml(a, b) if ml is not None else None
+
+
+def find_seeds(ga, gb, top=50):
+    """Experimental seed bootstrap: match vertices whose
+    local signature (own degree + sorted neighbour degrees) is unique and identical in both
+    views, highest degree first. Returns a seed mapping {a-vertex: b-vertex}. This is a strict,
+    local heuristic, not the cited papers' weighted global graph matching; callers must validate
+    its precision before feeding it into propagation."""
+    def sig(g, v):
+        return (g.degree(v), tuple(sorted(g.degree(n) for n in g.neighbours(v))))
+    sa, sb = {}, {}
+    for v in ga.vertices:
+        sa.setdefault(sig(ga, v), []).append(v)
+    for v in gb.vertices:
+        sb.setdefault(sig(gb, v), []).append(v)
+    seeds = {}
+    for key in sorted((k for k in sa if len(sa[k]) == 1 and len(sb.get(k, ())) == 1),
+                      key=lambda k: -k[0]):
+        seeds[sa[key][0]] = sb[key][0]
+        if len(seeds) >= top:
+            break
+    return seeds
