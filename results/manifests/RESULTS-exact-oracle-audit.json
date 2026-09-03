@@ -1,0 +1,34 @@
+{
+  "doc": "RESULTS-exact-oracle-audit.md",
+  "invariants": {
+    "dss_family_strictly_smaller_cases": 491,
+    "dss_marginal_cases_checked": 507,
+    "dss_marginal_quantized_cases": 507,
+    "dss_marginal_unit_entries_match_deterministic_links": 507,
+    "dss_rev": "c80133cb",
+    "dss_version": "0.1.0",
+    "family_size": 507,
+    "finest_only_entries_above_exact": 2253,
+    "finest_only_entries_below_exact": 2518,
+    "finest_only_missed_deterministic_links": 0,
+    "finest_only_spurious_deterministic_links": 1197,
+    "finest_selection_divergent_cases": 106,
+    "link_matrix_bound_direction": "neither",
+    "link_matrix_entries": 6228,
+    "link_matrix_entries_above_exact": 1993,
+    "link_matrix_entries_below_exact": 3869,
+    "mapping_count_overcounts": 0,
+    "mapping_count_undercounts": 491,
+    "max_block_count_missed_deterministic_links": 82,
+    "max_block_count_spurious_deterministic_links": 1168,
+    "missed_deterministic_links": 0,
+    "spurious_deterministic_links": 1197,
+    "w_count_rederivation_mismatches": 0
+  },
+  "source": {
+    "bytes": 2601,
+    "digest": "4f34641486b05c6a36f70f0453d2e06805995554f9f32dd6c3db882f019d5270",
+    "files": 1,
+    "pattern": "decluster/baselines/maurer.py"
+  }
+}

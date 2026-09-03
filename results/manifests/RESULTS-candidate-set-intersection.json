@@ -1,0 +1,23 @@
+{
+  "doc": "RESULTS-candidate-set-intersection.md",
+  "invariants": {
+    "contradictory_inconsistent_at": 1,
+    "contradictory_survivors": 0,
+    "converging_bits": 6.0,
+    "converging_identified": 0,
+    "converging_survivors": 1,
+    "identifications": 1,
+    "observations_supplied": 13,
+    "refusals": 1,
+    "scenarios": 3,
+    "stalled_bits": 3.0,
+    "stalled_survivors": 8,
+    "universe_size": 64
+  },
+  "source": {
+    "bytes": 7812,
+    "digest": "911e22540153ec91ef174e771f3ca78e020fa8157e198f447954d7b1ce4380d6",
+    "files": 1,
+    "pattern": "decluster/baselines/candidate_set_intersection.py"
+  }
+}
