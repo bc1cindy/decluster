@@ -10,7 +10,7 @@ import pytest
 
 from decluster import reproducibility as rp
 from decluster.baselines import candidate_set_intersection as csi
-from decluster.baselines import intersect_candidate_sets
+from decluster.baselines import goldfeder_cluster_intersection, intersect_candidate_sets
 
 ROOT = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 DOC = "RESULTS-candidate-set-intersection.md"
@@ -113,12 +113,53 @@ def test_the_baseline_takes_candidate_sets_and_computes_none_of_its_own():
         assert "decluster" not in line, line
 
 
-def test_the_module_states_that_the_paper_is_not_reproduced():
+def test_the_module_scopes_what_is_and_is_not_reproduced():
     """The honesty constraint is part of the deliverable, so it is checked like any other."""
     doc = " ".join(csi.__doc__.split())
-    assert "The paper is not in this checkout" in doc
-    assert "NOT reproduced" in doc
+    assert "Algorithm 2 is implemented" in doc
+    assert "empirical rates are NOT reproduced" in doc
     assert "Danezis and Serjantov" in doc and "not Goldfeder's" in doc
+
+
+def test_goldfeder_algorithm_two_uses_only_join_paths_and_identifies_unique_cluster():
+    parents = {
+        "late-a": ("mid-a", "decoy-a"),
+        "mid-a": ("alice-a", "bob-a"),
+        "late-b": ("mid-b", "decoy-b"),
+        "mid-b": ("alice-b", "carol-b"),
+        # These are deliberately absent: non-join ancestors stop traversal.
+    }
+    clusters = {
+        "late-a": "spent-a", "mid-a": "mixed-a", "decoy-a": "dave",
+        "alice-a": "alice", "bob-a": "bob",
+        "late-b": "spent-b", "mid-b": "mixed-b", "decoy-b": "erin",
+        "alice-b": "alice", "carol-b": "carol",
+    }
+
+    result = goldfeder_cluster_intersection(
+        ["late-a", "late-b"], 2, lambda coin: parents.get(coin, ()), clusters.get
+    )
+    assert result.identified == "alice"
+    assert result.surviving == frozenset({"alice"})
+    assert not result.incorrect_assumptions
+
+
+def test_goldfeder_algorithm_two_refuses_zero_or_multiple_clusters():
+    clusters = {"a": "alice", "b": "bob"}
+    none = goldfeder_cluster_intersection(
+        ["a", "b"], 0, lambda _coin: (), clusters.get
+    )
+    many = goldfeder_cluster_intersection(
+        ["a"], 0, lambda _coin: (), lambda _coin: "alice"
+    )
+    assert none.surviving == frozenset() and none.incorrect_assumptions
+    # A one-coin/one-cluster observation is mechanically unique; test the true
+    # multiple-survivor path with one join layer.
+    many = goldfeder_cluster_intersection(
+        ["a"], 1, lambda _coin: ("b",), clusters.get
+    )
+    assert many.surviving == frozenset({"alice", "bob"})
+    assert many.identified is None and many.incorrect_assumptions
 
 
 def test_scenarios_are_deterministic():

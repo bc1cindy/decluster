@@ -1,6 +1,12 @@
 """Reference baselines kept separate from experimental heuristics."""
 
-from .maurer import ExactMapping, exact_subtransaction_mappings
+from .maurer import (
+    ExactMapping,
+    exact_non_derived_mappings,
+    exact_subtransaction_mappings,
+    mapping_refines,
+    non_derived_mappings,
+)
 from .boltzmann import (
     ExactCoinLinkEvidence,
     ExactLinkAnalysis,
@@ -14,9 +20,12 @@ from .boltzmann import (
     per_coin_link_evidence,
 )
 from .candidate_set_intersection import (
+    GoldfederIntersectionResult,
     IntersectionResult,
     IntersectionStep,
+    goldfeder_cluster_intersection,
     intersect_candidate_sets,
+    join_ancestors,
     narrowing_bits,
 )
 from .link_prediction import LinkPredictionResult, Prediction
@@ -37,6 +46,7 @@ __all__ = [
     "ExactLinkCandidate",
     "ExactMapping",
     "ExactPerCoinLinkAnalysis",
+    "GoldfederIntersectionResult",
     "IntersectionResult",
     "IntersectionStep",
     "LinkPredictionResult",
@@ -45,17 +55,22 @@ __all__ = [
     "enumerate_family",
     "equal_value_mapping_count",
     "exact_link_analysis",
+    "exact_non_derived_mappings",
     "exact_per_coin_link_evidence",
     "fee_tolerant_link_analysis",
     "fee_tolerant_subtransaction_mappings",
     "exact_subtransaction_mappings",
     "finest_mappings",
     "identify_objects",
+    "goldfeder_cluster_intersection",
     "intersect_candidate_sets",
+    "join_ancestors",
     "manifest_invariants",
     "link_analysis",
     "mapping_count_mechanism",
+    "mapping_refines",
     "narrowing_bits",
+    "non_derived_mappings",
     "per_coin_link_evidence",
     "verify_dss_marginal_family",
 ]

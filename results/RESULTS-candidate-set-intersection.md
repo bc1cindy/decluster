@@ -7,10 +7,10 @@ survives is the intersection of their sets.
 
 ## What this document does not claim
 
-**The paper is not in this checkout.** The mechanism below is implemented from its description. The
-paper's own cases, datasets, figures and rates are **not reproduced**, and no number, rate or
-parameter on this page is attributed to Goldfeder et al. That cell of the fidelity matrix stays
-open until the text is available; nothing here should be read as having closed it.
+The primary text is now available and Algorithm 2's graph-independent core is implemented. The
+paper's JoinMarket dataset, figures and empirical rates are **not reproduced**, and no measured
+rate on this page is attributed to Goldfeder et al. The kernel cell is closed; empirical parity is
+not.
 
 The baseline also states **no shrink law**. The reading that each observation cuts the candidate set
 by a constant factor is Danezis and Serjantov's statistical-disclosure result, not Goldfeder's — the
@@ -20,11 +20,11 @@ of a constructed family, not of any observed shrink rate.
 
 ## Scope
 
-The baseline takes candidate sets. It does not compute them, and it imports nothing from this
-repository — no ancestry walk, no fetch, no clusterer. Where a set comes from, and whether the coins
-were really co-held, are both outside it. Those are `decluster/intersect.py`'s business: that module
-wires the same mechanism to this repository's backward provenance walk and hands the narrowing to
-`cluster_refined`, which can refuse the co-spend the whole narrowing is conditional on.
+The generic primitive takes candidate sets. `goldfeder_cluster_intersection` additionally constructs
+them at Algorithm 2's abstraction boundary: injected join-only predecessor edges, a bound `r`, and
+an injected wallet-cluster function. Join detection, recursive address clustering, and the auxiliary
+observation that the coins are co-held remain caller responsibilities. The baseline imports no
+ancestry walk, fetcher, or engine from this repository.
 
 Three answers are possible, and the third matters most:
 
@@ -106,10 +106,12 @@ different objects:
   absorbing walk, rarity weighting, cluster-lift, truncation and blindness reporting, and
   subordination to `cluster_refined`. Those additions are this repository's, not the paper's.
 
-`PAPER.md:971` claims `decluster/intersect.py` implements the Goldfeder et al. intersection attack.
-What that claim rests on today is the *mechanism* — narrowing by intersection over co-held coins,
-subordinated to the engine — and not on any reproduction of the paper's cases, because the paper is
-not in this checkout. See `results/REPRODUCIBILITY.md`'s Known-contradictions section.
+The primary text has now been checked. `goldfeder_cluster_intersection` implements Algorithm 2's
+join-only backward paths bounded by `r`, wallet-cluster lift, intersection, and unique-or-refuse
+verdict over injected join-graph and clustering callbacks. The 2015–2017 JoinMarket simulation and
+its empirical rates have not been reproduced. `decluster/intersect.py` is a different, adapted
+pipeline: it uses a probabilistic ancestry walk that is not restricted to join paths and adds engine
+gating, rarity weights and blindness accounting.
 
 ## Reproduce
 

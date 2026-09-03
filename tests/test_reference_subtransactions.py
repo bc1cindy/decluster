@@ -9,7 +9,10 @@ from decluster.baselines.boltzmann import (
     fee_tolerant_subtransaction_mappings,
     link_analysis,
 )
-from decluster.baselines.maurer import exact_subtransaction_mappings
+from decluster.baselines.maurer import (
+    exact_non_derived_mappings,
+    exact_subtransaction_mappings,
+)
 
 
 def test_maurer_exact_unique_batch_and_single_owner_readings():
@@ -33,6 +36,24 @@ def test_maurer_exact_underdetermined_values_have_three_splits():
 
 def test_maurer_exact_refuses_fees_instead_of_silently_balancing_them():
     assert exact_subtransaction_mappings([500, 500], [600, 390]) == ()
+
+
+def test_maurer_paper_figure_2_distinguishes_derived_mapping():
+    """Maurer et al. Fig. 2: the two-party split is non-derived; the merged
+    all-coins interpretation is derived from it and excluded in their evaluation.
+    """
+
+    inputs = [21, 12, 36, 28]
+    outputs = [25, 8, 50, 14]
+    all_mappings = exact_subtransaction_mappings(inputs, outputs)
+    non_derived = exact_non_derived_mappings(inputs, outputs)
+
+    assert len(all_mappings) == 2
+    assert len(non_derived) == 1
+    assert non_derived[0].blocks == (
+        ((0, 1), (0, 1)),
+        ((2, 3), (2, 3)),
+    )
 
 
 def test_fee_tolerant_balance_is_separate_and_bounded():
