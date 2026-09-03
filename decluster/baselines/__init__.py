@@ -33,6 +33,21 @@ from .candidate_set_intersection import (
     narrowing_bits,
 )
 from .link_prediction import LinkPredictionResult, Prediction
+from .ns_link_prediction_2011 import (
+    CombinedPrediction,
+    SimilarityEvidence,
+    TwoStageMapping,
+    UndefinedAlgorithm2Weight,
+    algorithm2_node_distance,
+    algorithm2_pair_distance,
+    algorithm2_potential,
+    anneal_seed_mapping,
+    combine_predictions,
+    similarity_evidence,
+    stage1_match,
+    stage2_candidates,
+    two_stage_mapping,
+)
 from .oracle_audit import (
     audit,
     enumerate_family,
@@ -46,6 +61,10 @@ from .oracle_audit import (
 
 __all__ = [
     "BoltzmannReferenceAnalysis",
+    "CombinedPrediction",
+    "SimilarityEvidence",
+    "TwoStageMapping",
+    "UndefinedAlgorithm2Weight",
     "ExactCoinLinkEvidence",
     "ExactLinkAnalysis",
     "ExactLinkCandidate",
@@ -57,7 +76,16 @@ __all__ = [
     "LinkPredictionResult",
     "Prediction",
     "audit",
+    "algorithm2_node_distance",
+    "algorithm2_pair_distance",
+    "algorithm2_potential",
+    "anneal_seed_mapping",
     "boltzmann_reference_analysis",
+    "combine_predictions",
+    "similarity_evidence",
+    "stage1_match",
+    "stage2_candidates",
+    "two_stage_mapping",
     "enumerate_family",
     "equal_value_mapping_count",
     "exact_link_analysis",

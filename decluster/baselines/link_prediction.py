@@ -13,7 +13,9 @@ The paper combines simulated-annealing weighted graph matching for seed discover
 and candidate-set de-anonymization, unanimous candidate voting, and a 25-feature random forest
 trained partly on de-anonymized test cases. This module implements none of that composite. It is
 a smaller local experiment in transferring auxiliary adjacency through a supplied mapping; no
-number or parameter here may be attributed to the paper, and its reproduction remains open.
+number or parameter here may be attributed to the paper. The paper's Algorithm 3 combiner now
+lives separately in :mod:`decluster.baselines.ns_link_prediction_2011`; its full reproduction
+remains open.
 
 Scope, narrowly: no vertex attributes, no timestamps, no edge values, no supervised model, no
 seed discovery.  The mapping is direction-aware because propagation is; the prediction is
