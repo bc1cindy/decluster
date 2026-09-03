@@ -1,0 +1,82 @@
+{
+  "schema_version": 1,
+  "id": "exact-oracle-audit-v1",
+  "claim_ids": ["ctp.amount.subtransaction_ambiguity"],
+  "code": {
+    "revision": "b8c1ea25ba2f6ac2bfe47a6ade04ea60ff7ccdde",
+    "dirty": false
+  },
+  "command": {
+    "argv": [
+      "python",
+      "-m",
+      "decluster.experiments.exact_oracle_audit",
+      "reproduce",
+      "--artifact",
+      "results/artifacts/exact-oracle-audit-v1.json",
+      "--markdown",
+      "results/generated/exact-oracle-audit-v1.md"
+    ]
+  },
+  "environment": {
+    "python": "3.13.7",
+    "lock_digest": null,
+    "platform": "macOS-26.6.2-arm64-arm-64bit-Mach-O"
+  },
+  "datasets": [],
+  "parameters": {
+    "alphabet": [1, 2, 3, 4],
+    "max_coins": 8,
+    "min_side": 2,
+    "tolerance": 1e-09
+  },
+  "rng": {
+    "algorithm": null,
+    "seeds": []
+  },
+  "outputs": [
+    {
+      "path": "results/artifacts/exact-oracle-audit-v1.json",
+      "bytes": 17692,
+      "sha256": "2ea95e4b1e9667e1e72afef7e4204665a7f912b2497d2b7234f3ecec065dc3dc"
+    },
+    {
+      "path": "results/generated/exact-oracle-audit-v1.md",
+      "bytes": 466,
+      "sha256": "1a73d2ab536f699475a94120f6042150c6d69bd417623a0ce7305c5ccaae70ef"
+    }
+  ],
+  "reproducibility": {
+    "level": "verified",
+    "availability": "complete"
+  },
+  "verification": {
+    "mode": "exact",
+    "argv": [
+      "python",
+      "-m",
+      "decluster.experiments.exact_oracle_audit",
+      "verify",
+      "--artifact",
+      "results/artifacts/exact-oracle-audit-v1.json",
+      "--markdown",
+      "results/generated/exact-oracle-audit-v1.md"
+    ],
+    "tests": [
+      "tests/test_exact_oracle_experiment.py",
+      "tests/test_oracle_audit.py"
+    ],
+    "properties": [
+      "the stored artifact equals a fresh exhaustive audit",
+      "the generated Markdown equals the canonical rendering",
+      "declared output sizes and SHA-256 digests match stored bytes"
+    ],
+    "tolerance": null
+  },
+  "limitations": [
+    "zero-fee transactions only",
+    "bounded exhaustive family over values 1 through 4",
+    "compiled dss dependency is identified by version and source revision but no lockfile is available",
+    "verification is exact only in the recorded environment until an offline bundle pins the dependency"
+  ]
+}

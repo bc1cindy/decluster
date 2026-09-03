@@ -1,0 +1,30 @@
+{
+  "schema_version": 1,
+  "id": "exact-oracle-evidence-v1",
+  "capabilities": ["verify_outputs"],
+  "runs": ["exact-oracle-audit-v1"],
+  "blobs": [
+    {
+      "name": "catalog/runs/exact-oracle-audit-v1.json",
+      "role": "run_manifest",
+      "bytes": 2244,
+      "sha256": "1dfdaed79b67578c72d7241c001a09b3adbe97c7a8ca52a57067886b3a2adc01"
+    },
+    {
+      "name": "results/artifacts/exact-oracle-audit-v1.json",
+      "role": "result",
+      "bytes": 17692,
+      "sha256": "2ea95e4b1e9667e1e72afef7e4204665a7f912b2497d2b7234f3ecec065dc3dc"
+    },
+    {
+      "name": "results/generated/exact-oracle-audit-v1.md",
+      "role": "result",
+      "bytes": 466,
+      "sha256": "1a73d2ab536f699475a94120f6042150c6d69bd417623a0ce7305c5ccaae70ef"
+    }
+  ],
+  "limitations": [
+    "This bundle verifies recorded outputs but cannot reexecute the run.",
+    "The dss dependency has no declared redistribution license or portable locked build environment."
+  ]
+}
