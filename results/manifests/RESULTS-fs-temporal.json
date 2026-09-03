@@ -1,0 +1,20 @@
+{
+  "doc": "RESULTS-fs-temporal.md",
+  "invariants": {
+    "distinct_heights": 458,
+    "height_max": 965220,
+    "height_min": 800000,
+    "split_cutoff": 961653,
+    "test_positive_pairs_available": 64521,
+    "test_transactions": 7012,
+    "train_positive_pairs_available": 153122,
+    "train_transactions": 15100,
+    "transactions": 22112
+  },
+  "source": {
+    "bytes": 91367352,
+    "digest": "91c444bd4e9715d7739ccc9d68c7d9751762e25b647e3eef647c6ec0b48ba90c",
+    "files": 904,
+    "pattern": ".blkcache/*.json"
+  }
+}

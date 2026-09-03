@@ -1,0 +1,461 @@
+{
+  "independent_entity_seeds": {
+    "entities": [
+      {
+        "bitmex": 33,
+        "satoshidice": 5
+      },
+      {
+        "bitmex": 73,
+        "satoshidice": 12
+      }
+    ],
+    "found": 0,
+    "gradeable": 0,
+    "labelled_vertices": [
+      23,
+      47
+    ],
+    "verdict": "fewer than two gradeable independent seeds; the independent attack is not identifiable on these views and the sweep below is seed-assisted"
+  },
+  "runs": [
+    {
+      "accepted_per_round": [
+        101,
+        65,
+        34,
+        17,
+        10,
+        8,
+        8,
+        4,
+        1
+      ],
+      "attack": {
+        "correct": 2,
+        "coverage": 0.0008100445524503848,
+        "declared": 248,
+        "declared_with_an_image": 17,
+        "eligible": 2469,
+        "precision": 0.008064516129032258,
+        "precision_where_an_image_exists": 0.11764705882352941
+      },
+      "overlap": {
+        "edge_overlap": 0.46734397677793904,
+        "left_internal_edges": 2756,
+        "recurring_edges": 1288,
+        "vertices": 2599
+      },
+      "rounds": 9,
+      "seed_fraction": 0.05001923816852635,
+      "seed_only_control": {
+        "correct": 0,
+        "coverage": 0.0,
+        "declared": 0,
+        "eligible": 2469,
+        "precision": null
+      },
+      "seed_provenance": "withheld-correspondence-sample",
+      "seed_size": 130,
+      "separability": {
+        "attack_only": 2,
+        "beats_shuffled": null,
+        "min_correct_gain": 1,
+        "p": 0.5,
+        "shuffled_only": 0
+      },
+      "shuffled_accepted_per_round": [
+        87,
+        49,
+        23,
+        14,
+        11,
+        3,
+        10,
+        2
+      ],
+      "shuffled_seed_control": {
+        "correct": 0,
+        "coverage": 0.0,
+        "declared": 199,
+        "declared_with_an_image": 19,
+        "eligible": 2469,
+        "fixed_points": 0,
+        "precision": 0.0,
+        "precision_where_an_image_exists": 0.0
+      },
+      "theta": 0.5
+    },
+    {
+      "accepted_per_round": [
+        99,
+        65,
+        34,
+        17,
+        10,
+        8,
+        8,
+        4,
+        1
+      ],
+      "attack": {
+        "correct": 1,
+        "coverage": 0.0004050222762251924,
+        "declared": 246,
+        "declared_with_an_image": 16,
+        "eligible": 2469,
+        "precision": 0.0040650406504065045,
+        "precision_where_an_image_exists": 0.0625
+      },
+      "overlap": {
+        "edge_overlap": 0.46734397677793904,
+        "left_internal_edges": 2756,
+        "recurring_edges": 1288,
+        "vertices": 2599
+      },
+      "rounds": 9,
+      "seed_fraction": 0.05001923816852635,
+      "seed_only_control": {
+        "correct": 0,
+        "coverage": 0.0,
+        "declared": 0,
+        "eligible": 2469,
+        "precision": null
+      },
+      "seed_provenance": "withheld-correspondence-sample",
+      "seed_size": 130,
+      "separability": {
+        "attack_only": 1,
+        "beats_shuffled": null,
+        "min_correct_gain": 1,
+        "p": 1.0,
+        "shuffled_only": 0
+      },
+      "shuffled_accepted_per_round": [
+        87,
+        49,
+        23,
+        14,
+        11,
+        3,
+        10,
+        2
+      ],
+      "shuffled_seed_control": {
+        "correct": 0,
+        "coverage": 0.0,
+        "declared": 199,
+        "declared_with_an_image": 19,
+        "eligible": 2469,
+        "fixed_points": 0,
+        "precision": 0.0,
+        "precision_where_an_image_exists": 0.0
+      },
+      "theta": 1.5
+    },
+    {
+      "accepted_per_round": [
+        182,
+        142,
+        55,
+        25,
+        22,
+        14,
+        8,
+        2
+      ],
+      "attack": {
+        "correct": 3,
+        "coverage": 0.0012825994014536127,
+        "declared": 450,
+        "declared_with_an_image": 32,
+        "eligible": 2339,
+        "precision": 0.006666666666666667,
+        "precision_where_an_image_exists": 0.09375
+      },
+      "overlap": {
+        "edge_overlap": 0.46734397677793904,
+        "left_internal_edges": 2756,
+        "recurring_edges": 1288,
+        "vertices": 2599
+      },
+      "rounds": 8,
+      "seed_fraction": 0.1000384763370527,
+      "seed_only_control": {
+        "correct": 0,
+        "coverage": 0.0,
+        "declared": 0,
+        "eligible": 2339,
+        "precision": null
+      },
+      "seed_provenance": "withheld-correspondence-sample",
+      "seed_size": 260,
+      "separability": {
+        "attack_only": 3,
+        "beats_shuffled": null,
+        "min_correct_gain": 1,
+        "p": 0.25,
+        "shuffled_only": 0
+      },
+      "shuffled_accepted_per_round": [
+        143,
+        86,
+        52,
+        32,
+        25,
+        8,
+        1,
+        2,
+        1,
+        1
+      ],
+      "shuffled_seed_control": {
+        "correct": 0,
+        "coverage": 0.0,
+        "declared": 351,
+        "declared_with_an_image": 23,
+        "eligible": 2339,
+        "fixed_points": 0,
+        "precision": 0.0,
+        "precision_where_an_image_exists": 0.0
+      },
+      "theta": 0.5
+    },
+    {
+      "accepted_per_round": [
+        180,
+        142,
+        55,
+        25,
+        22,
+        14,
+        8,
+        2
+      ],
+      "attack": {
+        "correct": 2,
+        "coverage": 0.0008550662676357417,
+        "declared": 448,
+        "declared_with_an_image": 31,
+        "eligible": 2339,
+        "precision": 0.004464285714285714,
+        "precision_where_an_image_exists": 0.06451612903225806
+      },
+      "overlap": {
+        "edge_overlap": 0.46734397677793904,
+        "left_internal_edges": 2756,
+        "recurring_edges": 1288,
+        "vertices": 2599
+      },
+      "rounds": 8,
+      "seed_fraction": 0.1000384763370527,
+      "seed_only_control": {
+        "correct": 0,
+        "coverage": 0.0,
+        "declared": 0,
+        "eligible": 2339,
+        "precision": null
+      },
+      "seed_provenance": "withheld-correspondence-sample",
+      "seed_size": 260,
+      "separability": {
+        "attack_only": 2,
+        "beats_shuffled": null,
+        "min_correct_gain": 1,
+        "p": 0.5,
+        "shuffled_only": 0
+      },
+      "shuffled_accepted_per_round": [
+        143,
+        86,
+        52,
+        32,
+        25,
+        8,
+        1,
+        2,
+        1,
+        1
+      ],
+      "shuffled_seed_control": {
+        "correct": 0,
+        "coverage": 0.0,
+        "declared": 351,
+        "declared_with_an_image": 23,
+        "eligible": 2339,
+        "fixed_points": 0,
+        "precision": 0.0,
+        "precision_where_an_image_exists": 0.0
+      },
+      "theta": 1.5
+    },
+    {
+      "accepted_per_round": [
+        410,
+        207,
+        91,
+        34,
+        15,
+        11,
+        4,
+        1,
+        5,
+        1
+      ],
+      "attack": {
+        "correct": 10,
+        "coverage": 0.00513083632632119,
+        "declared": 779,
+        "declared_with_an_image": 49,
+        "eligible": 1949,
+        "precision": 0.012836970474967908,
+        "precision_where_an_image_exists": 0.20408163265306123
+      },
+      "overlap": {
+        "edge_overlap": 0.46734397677793904,
+        "left_internal_edges": 2756,
+        "recurring_edges": 1288,
+        "vertices": 2599
+      },
+      "rounds": 10,
+      "seed_fraction": 0.2500961908426318,
+      "seed_only_control": {
+        "correct": 0,
+        "coverage": 0.0,
+        "declared": 0,
+        "eligible": 1949,
+        "precision": null
+      },
+      "seed_provenance": "withheld-correspondence-sample",
+      "seed_size": 650,
+      "separability": {
+        "attack_only": 10,
+        "beats_shuffled": "a",
+        "min_correct_gain": 1,
+        "p": 0.001953125,
+        "shuffled_only": 0
+      },
+      "shuffled_accepted_per_round": [
+        284,
+        135,
+        67,
+        22,
+        6,
+        1,
+        2
+      ],
+      "shuffled_seed_control": {
+        "correct": 0,
+        "coverage": 0.0,
+        "declared": 517,
+        "declared_with_an_image": 22,
+        "eligible": 1949,
+        "fixed_points": 2,
+        "precision": 0.0,
+        "precision_where_an_image_exists": 0.0
+      },
+      "theta": 0.5
+    },
+    {
+      "accepted_per_round": [
+        405,
+        207,
+        91,
+        34,
+        15,
+        11,
+        4,
+        1,
+        5,
+        1
+      ],
+      "attack": {
+        "correct": 9,
+        "coverage": 0.004617752693689072,
+        "declared": 774,
+        "declared_with_an_image": 47,
+        "eligible": 1949,
+        "precision": 0.011627906976744186,
+        "precision_where_an_image_exists": 0.19148936170212766
+      },
+      "overlap": {
+        "edge_overlap": 0.46734397677793904,
+        "left_internal_edges": 2756,
+        "recurring_edges": 1288,
+        "vertices": 2599
+      },
+      "rounds": 10,
+      "seed_fraction": 0.2500961908426318,
+      "seed_only_control": {
+        "correct": 0,
+        "coverage": 0.0,
+        "declared": 0,
+        "eligible": 1949,
+        "precision": null
+      },
+      "seed_provenance": "withheld-correspondence-sample",
+      "seed_size": 650,
+      "separability": {
+        "attack_only": 9,
+        "beats_shuffled": "a",
+        "min_correct_gain": 1,
+        "p": 0.00390625,
+        "shuffled_only": 0
+      },
+      "shuffled_accepted_per_round": [
+        284,
+        135,
+        67,
+        22,
+        6,
+        1,
+        2
+      ],
+      "shuffled_seed_control": {
+        "correct": 0,
+        "coverage": 0.0,
+        "declared": 517,
+        "declared_with_an_image": 22,
+        "eligible": 1949,
+        "fixed_points": 2,
+        "precision": 0.0,
+        "precision_where_an_image_exists": 0.0
+      },
+      "theta": 1.5
+    }
+  ],
+  "seconds": 345.0,
+  "views": {
+    "clustered_addresses": 613448,
+    "construction": "adjacent disjoint height windows, boundary-split clustering",
+    "left": {
+      "edges": 163567,
+      "heights": [
+        391992,
+        392111
+      ],
+      "path": "data/epochs_2016_weekly/epoch_2016_01_391104-392111.ndjson.gz",
+      "transactions": 133576,
+      "vertices": 88066
+    },
+    "min_degree": 2,
+    "right": {
+      "edges": 189919,
+      "heights": [
+        392112,
+        392231
+      ],
+      "path": "data/epochs_2016_weekly/epoch_2016_01_392112-393119.ndjson.gz",
+      "transactions": 157724,
+      "vertices": 104328
+    },
+    "split_clusters": 8030,
+    "split_frac": 1.0
+  },
+  "withheld_correspondence": {
+    "edge_overlap": 0.46734397677793904,
+    "left_internal_edges": 2756,
+    "recurring_edges": 1288,
+    "vertices": 2599
+  }
+}
