@@ -1,0 +1,94 @@
+{
+  "schema_version": 1,
+  "id": "exact-oracle-audit-v1",
+  "claim_ids": ["ctp.amount.subtransaction_ambiguity"],
+  "code": {
+    "revision": "94b4ece2a7d9ddc84521c4923e7e30fc19d51288",
+    "dirty": false
+  },
+  "command": {
+    "argv": [
+      "python",
+      "-m",
+      "decluster.experiments.exact_oracle_audit",
+      "reproduce",
+      "--artifact",
+      "results/artifacts/exact-oracle-audit-v1.json",
+      "--markdown",
+      "results/generated/exact-oracle-audit-v1.md"
+    ]
+  },
+  "environment": {
+    "python": "3.13.7",
+    "lock_digest": "c87b26aedbefac1731d03ced97dc197a86c0687c7376b3186f8752676f977fab",
+    "platform": "macOS-26.6.2-arm64-arm-64bit-Mach-O",
+    "dependencies": [
+      {
+        "name": "dss",
+        "version": "0.1.0",
+        "source": "https://github.com/bc1cindy/dense-subset-sum",
+        "revision": "30fc21ee521016061532008f8dfea31f953d7e6d",
+        "lock_sha256": "f17a02f09da28dcc603901580d695466c44e1d1a0063e110d3faa375ae6066ca",
+        "license": "MIT",
+        "redistribution": "allowed",
+        "editable": false
+      }
+    ]
+  },
+  "datasets": [],
+  "parameters": {
+    "alphabet": [1, 2, 3, 4],
+    "max_coins": 8,
+    "min_side": 2,
+    "tolerance": 1e-09
+  },
+  "rng": {
+    "algorithm": null,
+    "seeds": []
+  },
+  "outputs": [
+    {
+      "path": "results/artifacts/exact-oracle-audit-v1.json",
+      "bytes": 16598,
+      "sha256": "360746bddf437cbc5dc9318c5a756fec9ef27722fa8005f3ef895e28cd9cecce"
+    },
+    {
+      "path": "results/generated/exact-oracle-audit-v1.md",
+      "bytes": 497,
+      "sha256": "c85c556e686f88f77538425de48eef4826e4f5a83320e22dc0be1091f01e0de7"
+    }
+  ],
+  "reproducibility": {
+    "level": "bitwise_reproducible",
+    "availability": "complete"
+  },
+  "verification": {
+    "mode": "exact",
+    "argv": [
+      "python",
+      "-m",
+      "decluster.experiments.exact_oracle_audit",
+      "verify",
+      "--artifact",
+      "results/artifacts/exact-oracle-audit-v1.json",
+      "--markdown",
+      "results/generated/exact-oracle-audit-v1.md"
+    ],
+    "tests": [
+      "tests/test_exact_oracle_experiment.py",
+      "tests/test_oracle_audit.py"
+    ],
+    "properties": [
+      "the stored artifact equals a fresh exhaustive audit",
+      "the generated Markdown equals the canonical rendering",
+      "declared output sizes and SHA-256 digests match stored bytes"
+    ],
+    "tolerance": null
+  },
+  "limitations": [
+    "zero-fee transactions only",
+    "bounded exhaustive family over values 1 through 4",
+    "the recorded dss revision is MIT licensed, published and identified by commit and Cargo.lock digest",
+    "the bundled environment currently targets CPython 3.13 on macOS arm64"
+  ]
+}

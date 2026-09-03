@@ -49,4 +49,18 @@ two people into one).
 Installable (`pip install -e .`), so a protocol-specific client model can consume these primitives
 from above without this repository knowing the protocol exists.
 
-Every number is reproducible. MIT — see `LICENSE`.
+Reproducibility is tracked per result. The exact-oracle audit is the first bitwise-reproducible run:
+
+```console
+decluster-bundle --index releases/exact-oracle-evidence-v1.bundle.json \
+  --store artifacts --root /tmp/decluster-bundle bootstrap
+decluster-bundle --index releases/exact-oracle-evidence-v1.bundle.json \
+  --root /tmp/decluster-bundle --work /tmp/decluster-run reproduce
+```
+
+That environment currently requires CPython 3.13 on macOS arm64. The committed content-addressed
+store makes local cold-start execution possible. Public bootstrap remains pending until every blob
+has a canonical HTTPS location and an independent mirror. Other results retain the guarantees and
+limitations declared in `results/REPRODUCIBILITY.md` and their manifests.
+
+MIT. See `LICENSE`.

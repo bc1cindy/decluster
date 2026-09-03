@@ -23,7 +23,7 @@ from decluster.result_artifacts import (
 def manifest_for(path, payload):
     return RunManifest(
         id="run", claim_ids=("claim",), code_revision="abc", dirty=False,
-        argv=("run",), python="3.13", lock_digest=None, platform="any",
+        argv=("run",), python="3.13", lock_digest=None, platform="any", dependencies=(),
         datasets=(), parameters={}, rng_algorithm=None, rng_seeds=(),
         outputs=(RunOutput(
             path=path,

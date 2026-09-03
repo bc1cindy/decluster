@@ -288,7 +288,7 @@ def link_matrix(inputs, outputs, budget_ms=DEFAULT_LINK_BUDGET_MS, wall_ms=None)
     of the exact balanced-mapping family, and this matrix is the uniform marginal over the smaller
     one, so it can put zero where the exact marginal is positive. Measured against the exact oracle
     over a 507-transaction family (`results/RESULTS-exact-oracle-audit.md`), reading a one-entry row
-    as certain asserts 1,197 certainties the amounts do not settle, across 395 of those 507, while
+    as certain asserts 945 certainties the amounts do not settle, across 328 of those 507, while
     missing no genuinely certain link. The reading is an upper bound on certainty, not a proof of it.
 
     This is reachable from the amount channel, and unlike the counts it does not go quiet the moment

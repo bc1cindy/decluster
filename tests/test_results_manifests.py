@@ -13,6 +13,9 @@ from decluster import reproducibility as rp
 
 ROOT = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 MANIFESTS = sorted(glob.glob(os.path.join(ROOT, "results", "manifests", "*.json")))
+MIGRATED_RUN_DOCS = {
+    "RESULTS-exact-oracle-audit.md": "catalog/runs/exact-oracle-audit-v1.json",
+}
 
 
 def _doc(path):
@@ -38,12 +41,12 @@ def test_every_manifest_names_a_document_that_exists():
 
 # The walker above only checks manifest -> doc: a manifest naming a document that vanished. It has
 # no doc -> manifest direction, so a results document with no manifest is invisible to it, silently
-# — indistinguishable from one that was never meant to carry one. `results/manifests/` is empty
-# today (no document has been migrated yet), so requiring every state-2/state-5 document to carry
-# one now would be dishonest about where this phase actually left the instrument. Until a later
-# phase files real manifests, every `RESULTS-*.md` is listed here explicitly instead: a new results
-# document that lands with neither a manifest nor an entry below fails this test loudly, rather than
-# joining the pile invisibly.
+# — indistinguishable from one that was never meant to carry one. Migration to canonical run
+# manifests is incremental, so requiring every document to carry one now would be dishonest about
+# where this phase actually left the instrument. Until later phases file real run manifests, every
+# `RESULTS-*.md` is either mapped above, backed by a legacy manifest, or listed here explicitly. A
+# new results document that lands in none of those sets fails loudly rather than joining the pile
+# invisibly.
 NOT_YET_MIGRATED = {
     "RESULTS-3v23-engine.md",
     "RESULTS-amount-channel-survey.md",
@@ -109,12 +112,19 @@ NOT_YET_MIGRATED = {
 
 def test_every_results_doc_has_a_manifest_or_is_explicitly_not_yet_migrated():
     docs = {os.path.basename(p) for p in glob.glob(os.path.join(ROOT, "results", "RESULTS-*.md"))}
-    backed = {_doc(m) for m in MANIFESTS}
+    backed = {_doc(m) for m in MANIFESTS} | set(MIGRATED_RUN_DOCS)
     unaccounted = docs - backed - NOT_YET_MIGRATED
     assert not unaccounted, (
         f"no manifest and not listed in NOT_YET_MIGRATED: {sorted(unaccounted)}")
     stale = (NOT_YET_MIGRATED - docs) - backed
     assert not stale, f"NOT_YET_MIGRATED names a document that no longer exists: {sorted(stale)}"
+
+
+def test_migrated_documents_name_their_canonical_run():
+    for doc, manifest in MIGRATED_RUN_DOCS.items():
+        assert os.path.isfile(os.path.join(ROOT, manifest))
+        with open(os.path.join(ROOT, "results", doc)) as source:
+            assert manifest in source.read()
 
 
 def test_policy_documents_state_five_and_the_direction_rule():

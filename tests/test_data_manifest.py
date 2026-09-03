@@ -5,6 +5,8 @@ from pathlib import Path
 import pytest
 
 from decluster.data_manifest import ManifestError, load_dataset_manifest, load_run_manifest
+from decluster.reference_registry import load_claims, load_sources
+from decluster.result_artifacts import OutputStatus, verify_run_outputs
 
 
 DIGEST = "a" * 64
@@ -39,7 +41,7 @@ def run_document(**overrides):
         "claim_ids": ["ctp.demo"],
         "code": {"revision": "abc123", "dirty": False},
         "command": {"argv": ["python", "-m", "decluster.demo"]},
-        "environment": {"python": "3.13", "lock_digest": None, "platform": "any"},
+        "environment": {"python": "3.13", "lock_digest": None, "platform": "any", "dependencies": []},
         "datasets": [{"id": "fixture-v1", "sha256": DIGEST}],
         "parameters": {"cutoff": 2},
         "rng": {"algorithm": "MT19937", "seeds": [7]},
@@ -104,6 +106,23 @@ def test_run_manifest_resolves_claim_and_dataset(tmp_path):
     assert run.reproducibility_level.value == "bitwise_reproducible"
     assert run.verification.mode.value == "exact"
     assert run.verification.tests == ("tests/test_demo.py::test_result",)
+
+
+def test_run_manifest_preserves_dependency_provenance(tmp_path):
+    dataset = load_dataset_manifest(write_json(tmp_path / "dataset.json", dataset_document()))
+    document = run_document()
+    document["environment"]["dependencies"] = [{
+        "name": "dss", "version": "0.1.0", "source": "https://example.invalid/dss",
+        "revision": "abc123", "lock_sha256": DIGEST, "license": "unknown",
+        "redistribution": "unknown", "editable": True,
+    }]
+    run = load_run_manifest(
+        write_json(tmp_path / "run.json", document),
+        claim_ids={"ctp.demo"}, datasets={dataset.id: dataset},
+    )
+    assert run.dependencies[0].name == "dss"
+    assert run.dependencies[0].editable is True
+    assert run.dependencies[0].redistribution.value == "unknown"
 
 
 def test_run_manifest_rejects_unknown_claim(tmp_path):
@@ -227,3 +246,26 @@ def test_unknown_fixture_licensing_is_not_presented_as_redistributable():
         manifest = load_dataset_manifest(path)
         if manifest.data_license == "unknown":
             assert manifest.redistribution.value == "unknown"
+
+
+def test_all_committed_run_manifests_resolve_and_their_outputs_match():
+    sources = load_sources(ROOT / "catalog" / "ctp-sources.json")
+    claims = load_claims(
+        ROOT / "catalog" / "ctp-claims.json", {source.id for source in sources}
+    )
+    datasets = {
+        manifest.id: manifest
+        for manifest in (
+            load_dataset_manifest(path)
+            for path in (ROOT / "catalog" / "datasets").glob("*.json")
+        )
+    }
+    paths = sorted((ROOT / "catalog" / "runs").glob("*.json"))
+    assert paths
+    for path in paths:
+        manifest = load_run_manifest(
+            path, claim_ids={claim.id for claim in claims}, datasets=datasets,
+        )
+        checks = verify_run_outputs(manifest, ROOT)
+        assert checks
+        assert all(check.status is OutputStatus.VERIFIED for check in checks)

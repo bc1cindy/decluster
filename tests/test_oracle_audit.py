@@ -11,9 +11,9 @@ from math import log2
 
 import pytest
 
-from decluster import reproducibility as rp
 from decluster.baselines import exact_link_analysis, exact_subtransaction_mappings
 from decluster.baselines import oracle_audit as oa
+from decluster.experiments import exact_oracle_audit as experiment
 
 ROOT = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 DOC = "RESULTS-exact-oracle-audit.md"
@@ -156,20 +156,42 @@ def test_dss_marginal_is_verified_to_be_over_dss_own_family(reduced):
     assert evidence["verdict"].startswith("pairwise_link_prob is the uniform marginal")
 
 
-def test_the_mapping_count_mechanism_is_measured_not_asserted(reduced):
-    """An earlier draft stated a mechanism ("non-derived, equal-value permutations collapsed") that
-    is false in both halves. What replaces it is measurement."""
+def test_mapping_analysis_pairwise_matrix_and_exact_oracle_are_cross_checked(reduced):
+    """Exercise the public DSS diagnostics and the independent oracle in one differential test."""
+    pytest.importorskip("dss")
+    import dss
+
+    saw_above = saw_below = False
+    for inputs, outputs in reduced:
+        diagnostics = dss.mapping_analysis(list(inputs), list(outputs), None)
+        assert diagnostics["status"] == "complete"
+        matrix = dss.pairwise_link_prob(list(inputs), list(outputs), None)
+        claimed = {(i, o) for i, row in enumerate(matrix)
+                   for o, probability in enumerate(row) if probability == 1.0}
+        assert claimed == {tuple(link) for link in diagnostics["deterministic_links"]}
+
+        exact = exact_link_analysis(inputs, outputs).matrix
+        for approximate_row, exact_row in zip(matrix, exact):
+            for approximate, reference in zip(approximate_row, exact_row):
+                saw_above |= approximate > reference + oa.TOLERANCE
+                saw_below |= approximate < reference - oa.TOLERANCE
+
+    assert saw_above and saw_below
+
+
+def test_mapping_count_matches_refinement_maximal_family_without_collapsing_indices(reduced):
     pytest.importorskip("dss")
     import dss
 
     mechanism = oa.mapping_count_mechanism(reduced)
-    assert mechanism["different_from_the_finest_oracle_mapping_count"] > 0
+    assert mechanism["equal_to_the_finest_oracle_mapping_count"] == len(reduced)
+    assert mechanism["different_from_the_finest_oracle_mapping_count"] == 0
     assert mechanism["all_equal_value_cases"] > 0
-    assert mechanism["all_equal_value_cases_answering_one"] == mechanism["all_equal_value_cases"]
-    # (a) not the finest count: two finest mappings, dss answers one.
-    assert dss.mapping_analysis([2, 2], [1, 1, 2], None)["n_non_derived"] == 1
+    assert mechanism["all_equal_value_cases_answering_one"] == 0
+    # Two refinement-maximal mappings survive.
+    assert dss.mapping_analysis([2, 2], [1, 1, 2], None)["n_non_derived"] == 2
     assert len(oa.finest_mappings(exact_subtransaction_mappings((2, 2), (1, 1, 2)))) == 2
-    # (b) equal-value permutations do not collapse in general.
+    # Equal-value permutations do not collapse in general.
     assert dss.mapping_analysis([1, 3, 4, 4], [3, 3, 3, 3], None)["n_non_derived"] == 4
 
 
@@ -315,26 +337,16 @@ def test_an_agreeing_approximation_raises_no_flag(reduced):
 
 
 def test_published_numbers_are_reproducible_and_the_manifest_is_current():
-    """The full family, recomputed, against the manifest that backs the results document. A
-    published number nothing recomputes is the failure `reproducibility` exists to catch."""
+    """Recompute the canonical artifact and its generated Markdown, without parsing prose."""
     pytest.importorskip("dss")
-    recorded = rp.read_manifest(DOC, root=ROOT)
-    assert recorded is not None, f"{DOC} has no manifest"
-    assert recorded["source"]["pattern"] == oa.MANIFEST_SOURCE
-    measured = oa.manifest_invariants(oa.audit(include_cases=False))
-    status, message = rp.check_manifest(DOC, measured, root=ROOT)
-    assert status == "ok", message
+    artifact_path = os.path.join(ROOT, "results", "artifacts", "exact-oracle-audit-v1.json")
+    markdown_path = os.path.join(ROOT, "results", "generated", "exact-oracle-audit-v1.md")
+    artifact = experiment.verify_artifact(experiment.load_artifact(artifact_path))
+    with open(markdown_path) as generated:
+        assert generated.read() == experiment.render_markdown(artifact)
 
     text = open(os.path.join(ROOT, "results", DOC)).read()
     assert "ground truth" not in text.lower()
-    plain = text.replace(",", "")                     # the doc groups thousands; the numbers do not
+    assert "catalog/runs/exact-oracle-audit-v1.json" in text
     policy = open(os.path.join(ROOT, "results", "REPRODUCIBILITY.md")).read()
     assert DOC[:-3] in policy, f"{DOC} is not indexed in REPRODUCIBILITY.md"
-
-    for value in (measured["family_size"],
-                  measured["link_matrix_entries_above_exact"],
-                  measured["spurious_deterministic_links"],
-                  measured["max_block_count_spurious_deterministic_links"],
-                  measured["max_block_count_missed_deterministic_links"],
-                  measured["finest_selection_divergent_cases"]):
-        assert str(value) in plain, f"{value} is not stated in {DOC}"

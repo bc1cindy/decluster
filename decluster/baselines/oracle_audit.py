@@ -15,15 +15,11 @@ identified before it is compared, and the identification is *re-derived in Pytho
   exact ``|M|``            index-level balanced set partitions: every input and every output lies in
                            exactly one block, and every block conserves value on its own.  The
                            single-block (all coins, one owner) reading is included.
-  ``dss.mapping_analysis`` mappings too, but a strictly smaller family — smaller than ``|M|`` on 491
-                           of the 507 cases here.  This module does NOT specify the enumerator's
-                           rule, because it cannot see the mappings; ``mapping_count_mechanism``
-                           measures what is observable instead, and two things it is *not*: it is
-                           not the count of maximally-fine oracle mappings (equal on 150 of 270
-                           cases at ``max_coins=7``; ``[2,2] -> [1,1,2]`` has 2 finest mappings and
-                           dss answers 1), and equal-value permutations do not collapse in general
-                           (``[1,3,4,4] -> [3,3,3,3]`` answers 4).  What does hold on this family is
-                           that every all-equal-value transaction answers 1.
+  ``dss.mapping_analysis`` refinement-maximal mappings on all 507 bounded cases checked here. This
+                           is a strict sub-family of ``|M|`` on 491 cases. Equal-value permutations
+                           do not collapse in general: ``[1,3,4,4] -> [3,3,3,3]`` answers 4.
+                           Agreement with the refinement-maximal oracle is measured on this family,
+                           not asserted universally.
   ``dss.pairwise_link_prob`` the uniform marginal over *that same restricted family*, not over the
                            oracle's.  Verified rather than argued, by
                            ``verify_dss_marginal_family``: on 507/507 cases every entry is an exact
@@ -466,12 +462,7 @@ def verify_dss_marginal_family(family):
 
 
 def mapping_count_mechanism(family):
-    """What `n_non_derived` observably is and is not, since the enumerator itself is not visible.
-
-    Written because an earlier draft of this module asserted a mechanism — "non-derived mappings,
-    equal-value permutations collapsed" — that is false in both halves, and a stated mechanism is
-    what a reader builds on.
-    """
+    """Measure the relation between `n_non_derived` and refinement-maximal mappings."""
     import dss
 
     equal_to_finest = differs_from_finest = 0
@@ -500,11 +491,10 @@ def mapping_count_mechanism(family):
         "all_equal_value_cases": all_equal_value,
         "all_equal_value_cases_answering_one": all_equal_value_answering_one,
         "note": (
-            "Not the finest-mapping count, and not a collapse of equal-value permutations in "
-            "general — `[1,3,4,4] -> [3,3,3,3]` answers 4, and those four readings differ only in "
-            "which equal-valued output stands alone. The enumerator's rule is not specified here; "
-            "what is measured is that the family is strictly smaller than the oracle's, that it is "
-            "not the finest sub-family, and that every all-equal-value transaction answers 1."
+            "The current DSS count equals the independent refinement-maximal mapping count on the "
+            "entire bounded family. Equal-value permutations do not collapse in general: "
+            "`[1,3,4,4] -> [3,3,3,3]` answers 4, and those readings differ only in which "
+            "equal-valued output stands alone. Agreement on this family is measured, not universal."
         ),
     }
 
@@ -514,8 +504,8 @@ def mapping_count_mechanism(family):
 PROBES = {
     "mapping_count": (
         "scalar", RESTRICTION,
-        "mappings both sides, over dss's strictly smaller family (see mapping_count_mechanism for "
-        "what that family observably is not) against every index-level balanced set partition",
+        "mappings both sides, over dss's refinement-maximal family against every index-level "
+        "balanced set partition",
         exact_mapping_count, approx_mapping_count,
     ),
     "mapping_entropy_bits": (
