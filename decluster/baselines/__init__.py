@@ -22,6 +22,7 @@ from .boltzmann import (
 from .boltzmann_reference import (
     BoltzmannReferenceAnalysis,
     boltzmann_reference_analysis,
+    boltzmann_reference_with_linked_inputs,
 )
 from .candidate_set_intersection import (
     GoldfederIntersectionResult,
@@ -95,6 +96,7 @@ __all__ = [
     "algorithm2_potential",
     "anneal_seed_mapping",
     "boltzmann_reference_analysis",
+    "boltzmann_reference_with_linked_inputs",
     "combine_predictions",
     "similarity_evidence",
     "stage1_match",

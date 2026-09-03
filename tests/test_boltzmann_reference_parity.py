@@ -5,7 +5,10 @@ Expected values were recomputed with commit ed0b649c6ca4abf0cecb69467de6c4e97e84
 """
 
 from decluster.baselines.boltzmann import fee_tolerant_link_analysis
-from decluster.baselines.boltzmann_reference import boltzmann_reference_analysis
+from decluster.baselines.boltzmann_reference import (
+    boltzmann_reference_analysis,
+    boltzmann_reference_with_linked_inputs,
+)
 
 
 def _local_counts(inputs, outputs):
@@ -76,3 +79,31 @@ def test_merge_fees_can_make_every_link_deterministic_like_the_reference():
     assert result.fee_output_index == 2
     assert result.combination_count == 1
     assert result.link_counts == ((1, 1, 1), (1, 1, 1))
+
+
+def test_linked_inputs_reproduce_official_pack_and_expansion():
+    result = boltzmann_reference_with_linked_inputs(
+        (5, 5, 5), (5, 5, 5), [{0, 1}]
+    )
+    assert result.combination_count == 4
+    assert result.inputs == (5, 5, 5)
+    assert result.link_counts == ((3, 3, 3), (3, 3, 3), (2, 2, 2))
+    assert result.linked_input_groups == ((0, 1),)
+
+
+def test_linked_inputs_preserve_reference_unpack_order_for_asymmetric_values():
+    result = boltzmann_reference_with_linked_inputs(
+        (8, 5, 3), (7, 5, 3), [{0, 2}]
+    )
+    assert result.combination_count == 2
+    assert result.inputs == (8, 3, 5)
+    assert result.link_counts == ((2, 1, 2), (2, 1, 2), (1, 2, 1))
+
+
+def test_overlapping_owner_groups_are_transitively_merged():
+    result = boltzmann_reference_with_linked_inputs(
+        (4, 4, 4), (6, 5), [{0, 1}, {1, 2}]
+    )
+    assert result.linked_input_groups == ((0, 1, 2),)
+    assert result.combination_count == 1
+    assert result.link_counts == ((1, 1),) * 3

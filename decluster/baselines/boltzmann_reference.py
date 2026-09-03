@@ -5,9 +5,9 @@ the same object as Maurer's set of canonical sub-transaction mappings: when a
 transaction pays a fee, Boltzmann's decomposition tree can assign more than one
 occurrence to the same terminal partition.
 
-This implements the default ``LINKABILITY`` semantics only.  ``PRECHECK``,
-known-owner merges, ``MERGE_FEES`` and JoinMarket intrafees remain separate
-options and are not silently approximated here.
+This implements default ``LINKABILITY`` plus explicit ``MERGE_FEES`` and
+known-owner input packing. ``PRECHECK``, output packing and JoinMarket
+intrafees remain separate options and are not silently approximated here.
 """
 
 from collections import defaultdict, deque
@@ -24,6 +24,7 @@ class BoltzmannReferenceAnalysis:
     outputs: tuple[int, ...]
     merge_fees: bool = False
     fee_output_index: int | None = None
+    linked_input_groups: tuple[tuple[int, ...], ...] = ()
 
 
 def _aggregate_values(values):
@@ -198,4 +199,60 @@ def boltzmann_reference_analysis(inputs, outputs, *, max_coins=12, merge_fees=Fa
     return BoltzmannReferenceAnalysis(
         combination_count, frozen_counts, probabilities, fee, inputs, outputs,
         merge_fees, fee_output_index,
+    )
+
+
+def _merged_index_groups(groups, size):
+    components = []
+    for raw_group in groups:
+        group = set(raw_group)
+        if not group:
+            continue
+        if any(isinstance(index, bool) or not isinstance(index, int)
+               or not 0 <= index < size for index in group):
+            raise ValueError("linked input index out of range")
+        touching = [component for component in components if component & group]
+        for component in touching:
+            group.update(component)
+            components.remove(component)
+        components.append(group)
+    return tuple(tuple(sorted(group)) for group in sorted(components, key=lambda group: min(group)))
+
+
+def boltzmann_reference_with_linked_inputs(
+    inputs, outputs, linked_inputs, *, max_coins=12, merge_fees=False
+):
+    """Reproduce TxosLinker's input packing and matrix expansion.
+
+    ``linked_inputs`` contains sets of original input indices. Overlapping sets
+    are transitively merged. The aggregate traversal sees one summed input per
+    group; afterward its row is replicated for every original member, exactly
+    as the reference tool unpacks a known-owner input pack.
+    """
+
+    inputs = tuple(inputs)
+    groups = _merged_index_groups(linked_inputs, len(inputs))
+    grouped = {index for group in groups for index in group}
+    entries = [((index,), value) for index, value in enumerate(inputs) if index not in grouped]
+    entries.extend((group, sum(inputs[index] for index in group)) for group in groups)
+    sorted_entries = sorted(entries, key=lambda entry: entry[1], reverse=True)
+    analysis = boltzmann_reference_analysis(
+        tuple(value for _, value in entries), outputs,
+        max_coins=max_coins, merge_fees=merge_fees,
+    )
+    # The core uses the same stable descending sort as ``sorted_entries``.
+    expanded_rows = []
+    expanded_inputs = []
+    for (members, _), row in zip(sorted_entries, analysis.link_counts):
+        for index in members:
+            expanded_inputs.append(inputs[index])
+            expanded_rows.append(row)
+    counts = tuple(expanded_rows)
+    probabilities = tuple(
+        tuple(value / analysis.combination_count for value in row) for row in counts
+    ) if analysis.combination_count else ()
+    return BoltzmannReferenceAnalysis(
+        analysis.combination_count, counts, probabilities, analysis.observed_fee,
+        tuple(expanded_inputs), analysis.outputs, analysis.merge_fees,
+        analysis.fee_output_index, groups,
     )
