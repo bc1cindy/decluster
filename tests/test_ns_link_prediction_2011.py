@@ -1,6 +1,48 @@
 """Executable contract for Algorithm 3 of Narayanan–Shi–Rubinstein (2011)."""
 
-from decluster.baselines.ns_link_prediction_2011 import combine_predictions
+from decluster.baselines.ns_link_prediction_2011 import (
+    SimilarityEvidence,
+    combine_predictions,
+    similarity_evidence,
+    stage1_match,
+    stage2_candidates,
+)
+from examples.link_prediction_run import directed_graph
+
+
+def test_algorithm1_uses_in_neighbours_and_conditionally_uses_out_neighbours():
+    target = directed_graph(["k", "ki", "ko"], [("ki", "k"), ("k", "ko")])
+    auxiliary = directed_graph(["f", "fi", "fo"], [("fi", "f"), ("f", "fo")])
+    mapping = {"ki": "fi", "ko": "fo"}
+
+    uncrawled = similarity_evidence(
+        target, auxiliary, "k", "f", mapping,
+        crawled_target={"ki", "ko"}, crawled_auxiliary={"fi", "fo"},
+    )
+    assert (uncrawled.score, uncrawled.common_mapped_neighbours) == (1.0, 1)
+
+    crawled = similarity_evidence(
+        target, auxiliary, "k", "f", mapping,
+        crawled_target={"k", "ki", "ko"}, crawled_auxiliary={"f", "fi", "fo"},
+    )
+    assert (crawled.score, crawled.common_mapped_neighbours) == (1.0, 2)
+
+
+def test_published_stage1_thresholds_require_support_score_and_margin():
+    rows = [
+        SimilarityEvidence("k", "best", 0.7, 4),
+        SimilarityEvidence("k", "second", 0.49, 4),
+    ]
+    assert stage1_match(rows) == "best"
+    assert stage1_match([rows[0], SimilarityEvidence("k", "close", 0.51, 4)]) is None
+    assert stage1_match([SimilarityEvidence("k", "weak", 0.9, 3)]) is None
+
+
+def test_stage2_drops_margin_and_returns_at_most_three_eligible_candidates():
+    rows = [SimilarityEvidence("k", f"f{i}", score, support) for i, (score, support) in enumerate([
+        (0.9, 3), (0.8, 4), (0.7, 3), (0.6, 3), (0.99, 2), (0.49, 9)
+    ])]
+    assert stage2_candidates(rows) == ("f0", "f1", "f2")
 
 
 def test_deterministic_mapping_has_first_precedence():
