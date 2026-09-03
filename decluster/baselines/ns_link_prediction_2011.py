@@ -8,7 +8,8 @@ implemented and validated.
 """
 
 from dataclasses import dataclass
-from math import sqrt
+from math import exp, sqrt
+import random
 from typing import Callable, Hashable, Iterable, Mapping
 
 
@@ -30,6 +31,152 @@ class SimilarityEvidence:
     auxiliary: Vertex
     score: float
     common_mapped_neighbours: int
+
+
+class UndefinedAlgorithm2Weight(ValueError):
+    """Algorithm 2's published ratio is undefined for a zero weight."""
+
+
+def algorithm2_pair_distance(left: float, right: float, *, alpha=0.5) -> float:
+    """The paper's ``(max(x/y, y/x) - 1)^alpha`` pair distance.
+
+    The publication specifies no zero convention. Refusing that domain keeps
+    an implementation choice from being misattributed to the paper.
+    """
+
+    if left <= 0 or right <= 0:
+        raise UndefinedAlgorithm2Weight(
+            "Algorithm 2 does not define ratios involving zero weights"
+        )
+    ratio = max(left / right, right / left)
+    return (ratio - 1) ** alpha
+
+
+def algorithm2_node_distance(
+    target_nodes,
+    auxiliary_nodes,
+    target_dummies,
+    auxiliary_dummies,
+    target_weight,
+    auxiliary_weight,
+    index,
+    *,
+    alpha=0.5,
+    beta=0.5,
+) -> float:
+    """Algorithm 2's distance for one pair of mapped nodes."""
+
+    target_nodes, auxiliary_nodes = tuple(target_nodes), tuple(auxiliary_nodes)
+    if len(target_nodes) != len(auxiliary_nodes):
+        raise ValueError("mapped node sequences must have equal length")
+    if not 0 <= index < len(target_nodes):
+        raise IndexError("mapped-node index out of range")
+    target_dummies, auxiliary_dummies = set(target_dummies), set(auxiliary_dummies)
+    target_vector = tuple(
+        float(target_weight(target_nodes[index], node))
+        for position, node in enumerate(target_nodes)
+        if position != index and node not in target_dummies
+    )
+    auxiliary_vector = tuple(
+        float(auxiliary_weight(auxiliary_nodes[index], node))
+        for position, node in enumerate(auxiliary_nodes)
+        if position != index and node not in auxiliary_dummies
+    )
+    if len(target_vector) != len(auxiliary_vector) or not target_vector:
+        raise ValueError("Algorithm 2 requires paired non-dummy weight vectors")
+    target_mean = sum(target_vector) / len(target_vector)
+    auxiliary_mean = sum(auxiliary_vector) / len(auxiliary_vector)
+    if target_mean <= 0 or auxiliary_mean <= 0:
+        raise UndefinedAlgorithm2Weight("Algorithm 2 normalization has a zero mean")
+    normalized = zip(
+        (value / target_mean for value in target_vector),
+        (value / auxiliary_mean for value in auxiliary_vector),
+    )
+    distance = sum(
+        algorithm2_pair_distance(left, right, alpha=alpha)
+        for left, right in normalized
+    )
+    return (target_mean * auxiliary_mean) ** (beta / 2) * distance
+
+
+def algorithm2_potential(
+    target_nodes,
+    auxiliary_nodes,
+    target_dummies,
+    auxiliary_dummies,
+    target_weight,
+    auxiliary_weight,
+    *,
+    alpha=0.5,
+    beta=0.5,
+) -> float:
+    """Sum Algorithm 2's node distance over the current bijection."""
+
+    target_nodes, auxiliary_nodes = tuple(target_nodes), tuple(auxiliary_nodes)
+    return sum(
+        algorithm2_node_distance(
+            target_nodes, auxiliary_nodes, target_dummies, auxiliary_dummies,
+            target_weight, auxiliary_weight, index, alpha=alpha, beta=beta,
+        )
+        for index in range(len(target_nodes))
+    )
+
+
+def anneal_seed_mapping(
+    target_nodes,
+    auxiliary_nodes,
+    target_dummies,
+    auxiliary_dummies,
+    target_weight,
+    auxiliary_weight,
+    *,
+    iterations: int,
+    rng: random.Random,
+):
+    """Paper-specified swap transitions and ``T=1/t, c=20n`` schedule.
+
+    The fixed iteration budget and injected RNG are reproducibility controls,
+    not parameters reported by the paper. The best visited bijection is
+    returned rather than whichever state happens to be last.
+    """
+
+    target_nodes, auxiliary_nodes = tuple(target_nodes), list(auxiliary_nodes)
+    if len(target_nodes) != len(auxiliary_nodes) or len(target_nodes) < 2:
+        raise ValueError("annealing requires equally sized node sets of size at least two")
+    if iterations < 0:
+        raise ValueError("iterations must be non-negative")
+    if tuple(target_dummies) or tuple(auxiliary_dummies):
+        raise UndefinedAlgorithm2Weight(
+            "the published distance assigns zero incident weights to dummies "
+            "but does not define its resulting zero ratios"
+        )
+    rng.shuffle(auxiliary_nodes)
+
+    def potential(order):
+        return algorithm2_potential(
+            target_nodes, order, target_dummies, auxiliary_dummies,
+            target_weight, auxiliary_weight,
+        )
+
+    current = potential(auxiliary_nodes)
+    best_order, best = tuple(auxiliary_nodes), current
+    n = len(target_nodes)
+    for iteration in range(1, iterations + 1):
+        first, second = rng.sample(range(n), 2)
+        auxiliary_nodes[first], auxiliary_nodes[second] = (
+            auxiliary_nodes[second], auxiliary_nodes[first]
+        )
+        candidate = potential(auxiliary_nodes)
+        delta = candidate - current
+        if delta <= 0 or rng.random() < exp(-delta * iteration / (20 * n)):
+            current = candidate
+            if candidate < best:
+                best_order, best = tuple(auxiliary_nodes), candidate
+        else:
+            auxiliary_nodes[first], auxiliary_nodes[second] = (
+                auxiliary_nodes[second], auxiliary_nodes[first]
+            )
+    return dict(zip(target_nodes, best_order)), best
 
 
 def similarity_evidence(

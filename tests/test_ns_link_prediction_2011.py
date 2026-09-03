@@ -2,11 +2,17 @@
 
 from decluster.baselines.ns_link_prediction_2011 import (
     SimilarityEvidence,
+    UndefinedAlgorithm2Weight,
+    algorithm2_pair_distance,
+    algorithm2_potential,
+    anneal_seed_mapping,
     combine_predictions,
     similarity_evidence,
     stage1_match,
     stage2_candidates,
 )
+import random
+import pytest
 from examples.link_prediction_run import directed_graph
 
 
@@ -43,6 +49,53 @@ def test_stage2_drops_margin_and_returns_at_most_three_eligible_candidates():
         (0.9, 3), (0.8, 4), (0.7, 3), (0.6, 3), (0.99, 2), (0.49, 9)
     ])]
     assert stage2_candidates(rows) == ("f0", "f1", "f2")
+
+
+def test_algorithm2_pair_distance_is_symmetric_and_refuses_unspecified_zero_case():
+    assert algorithm2_pair_distance(1, 4) == algorithm2_pair_distance(4, 1) == 3 ** 0.5
+    with pytest.raises(UndefinedAlgorithm2Weight, match="zero weights"):
+        algorithm2_pair_distance(0, 1)
+
+
+def test_algorithm2_potential_prefers_the_weight_preserving_bijection():
+    nodes = ("a", "b", "c")
+    images = ("A", "B", "C")
+    target = {("a", "b"): 1, ("a", "c"): 4, ("b", "c"): 2}
+    auxiliary = {("A", "B"): 1, ("A", "C"): 4, ("B", "C"): 2}
+
+    def weight(table):
+        return lambda left, right: table.get((left, right), table.get((right, left)))
+
+    exact = algorithm2_potential(nodes, images, (), (), weight(target), weight(auxiliary))
+    swapped = algorithm2_potential(nodes, ("B", "A", "C"), (), (),
+                                   weight(target), weight(auxiliary))
+    assert exact == 0.0
+    assert swapped > exact
+
+
+def test_seed_annealing_is_reproducible_and_returns_best_visited_mapping():
+    nodes = ("a", "b", "c")
+    images = ("A", "B", "C")
+    target = {("a", "b"): 1, ("a", "c"): 4, ("b", "c"): 2}
+    auxiliary = {("A", "B"): 1, ("A", "C"): 4, ("B", "C"): 2}
+
+    def weight(table):
+        return lambda left, right: table.get((left, right), table.get((right, left)))
+
+    first = anneal_seed_mapping(nodes, images, (), (), weight(target), weight(auxiliary),
+                                iterations=200, rng=random.Random(3))
+    second = anneal_seed_mapping(nodes, images, (), (), weight(target), weight(auxiliary),
+                                 iterations=200, rng=random.Random(3))
+    assert first == second == ({"a": "A", "b": "B", "c": "C"}, 0.0)
+
+
+def test_annealing_refuses_to_invent_the_papers_missing_dummy_zero_policy():
+    with pytest.raises(UndefinedAlgorithm2Weight, match="dummies"):
+        anneal_seed_mapping(
+            ("a", "dummy-k"), ("A", "dummy-f"), {"dummy-k"}, {"dummy-f"},
+            lambda left, right: 1.0, lambda left, right: 1.0,
+            iterations=1, rng=random.Random(0),
+        )
 
 
 def test_deterministic_mapping_has_first_precedence():
