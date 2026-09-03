@@ -49,6 +49,7 @@ subsampled fixture would assert a different number.
 | Fellegi-Sunter fit early / scored late — the reported AUCs, thresholds and calibration (`RESULTS-fs-temporal.md`; manifest + recomputed invariants; the *direction* is pinned in state 1 above) | `test_fs_temporal.py` | `.blkcache/` |
 | N-S propagation on contracted Bitcoin views — the reported precision, coverage and controls (`RESULTS-ns-bitcoin.md`; manifest + recomputed configuration; the direction at 5% / 10% seeding is **state 5**, at 25% it separates) | `test_ns_bitcoin.py`, `test_ns_social_baseline.py` | `epoch_2016_*.ndjson.gz` |
 | broadcast timing, temporal | `test_broadcast.py` | live |
+| exact versus explicit fee allocation (`RESULTS-boltzmann-fee-audit.md`; manifest + recomputed invariants) | `test_boltzmann_fee_audit.py` | `sample.ndjson` |
 
 ## 3. Reproducible once a small BigQuery window is committed
 
@@ -181,8 +182,10 @@ the historical module names remain as compatibility facades so existing imports 
 `balance_model="exact"` and `balance_model="fee_tolerant"` separate. The latter requires an
 explicit integer `fee_tolerance`, permits only non-negative per-block deficits, and records the
 observed fee and selected model in its result. Roundness does not affect mapping admission or
-probability. This closes the local fee-allocation mechanism only; tool parity and paper cases stay
-open.
+probability. This closes the local fee-allocation mechanism only. Official no-fee vectors
+A/B/C/P2/P3 match. On P3-with-fees, the set-valued model reports 19 unique mappings and per-input
+counts `10/9/9`; a separate default-`LINKABILITY` aggregate-traversal port reproduces the tool's 28
+combinations and `14/13/13`. Optional precheck, merge and JoinMarket-intrafee modes remain open.
 
 The compatibility modules still disclose why their old names must not be used as evidence of a
 reference algorithm:
@@ -198,17 +201,13 @@ reference algorithm:
   large-but-finite value from it, and normalises eccentricity over the materialised scores where
   that gate normalises over the whole candidate population.
 
-**A published attack name rests on the mechanism, not on a reproduction.** `PAPER.md:971` states
-that `decluster/intersect.py` implements the Goldfeder et al. cross-transaction intersection attack.
-The Goldfeder text is **not in this checkout**, so nothing in this tree reproduces the paper's cases,
-datasets or rates, and no number anywhere here is attributed to it. What the claim rests on today is
-the *mechanism* — narrowing a coin's origins by intersecting the candidate sets of coins later shown
-to be co-held — now separated as `decluster/baselines/candidate_set_intersection.py` and measured on
-a generated family (`RESULTS-candidate-set-intersection.md`). `decluster/intersect.py` stays and is
-not that baseline: it is this repository's wiring of the same mechanism to the backward provenance
-walk, with rarity weighting, cluster-lift, truncation reporting and subordination to
-`cluster_refined` — additions that are ours, not the paper's. That cell of the fidelity matrix stays
-open until the text is available.
+**A published attack name rests on the mechanism, not on an adapted walk.** Goldfeder et al.'s
+primary text is now checked. `goldfeder_cluster_intersection` implements Algorithm 2's join-only
+backward paths bounded by `r`, wallet-cluster lift, intersection and unique-or-refuse verdict over
+injected graph/clustering callbacks. The JoinMarket detector, recursive address clustering and
+2015–2017 experiments remain unreproduced. `decluster/intersect.py` is not that baseline: it wires
+intersection to a probabilistic ancestry walk that is not restricted to join paths, with rarity
+weighting, truncation reporting and subordination to `cluster_refined` — additions that are ours.
 
 **Two AUC estimators.** `graph_deanon.auc` samples at most 20,000 draws; `graph_deanon.exact_auc`
 (now the single exact implementation, called by `fs_temporal._score_metrics`) is exact Mann--Whitney.

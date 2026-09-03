@@ -27,11 +27,12 @@
 > this document recorded. Nothing here has been re-measured.
 
 > **Correction (2026-09-03) — what the attack name rests on.**
-> The Goldfeder et al. text is not in this checkout, so nothing on this page reproduces the paper.
-> The mechanism it describes is now separated as `decluster/baselines/candidate_set_intersection.py`
+> Goldfeder et al.'s Algorithm 2 has now been checked from the primary text and its graph-independent
+> core is separated as `decluster/baselines/candidate_set_intersection.py`
 > (`results/RESULTS-candidate-set-intersection.md`); `decluster/intersect.py`, which produced
 > everything below, is this repository's wiring of that mechanism to the backward provenance walk and
-> to `cluster_refined`, with additions — rarity weighting, cluster-lift, truncation and blindness
+> to `cluster_refined`, with additions — probabilistic non-join ancestry, rarity weighting,
+> truncation and blindness
 > reporting — that are ours and not the paper's.
 
 `decluster/monitor.py` → `decluster/intersect.py` → `cluster_refined`, run end to end on mainnet

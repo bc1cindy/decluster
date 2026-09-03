@@ -5,10 +5,9 @@ coin's plausible origins form a *set*, and coins later shown to be held by the s
 come from a common origin, so what survives is the intersection of their sets.  Repeated over
 successive observations the surviving set shrinks, and it can shrink to one.
 
-**The paper is not in this checkout.**  What follows is that mechanism implemented as described.
-The paper's own cases, datasets and figures are NOT reproduced; no number, rate or parameter here is
-attributed to Goldfeder et al.; and that cell of the fidelity matrix stays open until the text is
-available.  In particular this module states no shrink law.  The reading that each observation cuts
+The paper's Algorithm 2 is implemented below over injected graph and clustering callbacks.  Its
+2015--2017 JoinMarket dataset and empirical rates are NOT reproduced, so no measured rate in this
+repository is attributed to Goldfeder et al.  In particular this module states no shrink law.  The reading that each observation cuts
 the candidate set by a constant factor is Danezis and Serjantov's statistical-disclosure result, not
 Goldfeder's: the intersection paper demonstrates the attack and states no such law.
 ``decluster/intersect.py`` carries the same distinction and this module does not weaken it.
@@ -58,6 +57,68 @@ class IntersectionResult:
     narrowing_bits: float | None
     identified: Hashable | None
     inconsistent_at: int | None
+
+
+@dataclass(frozen=True)
+class GoldfederIntersectionResult:
+    """Algorithm 2's candidate clusters and unique-or-refuse verdict."""
+
+    candidate_sets: tuple[frozenset, ...]
+    surviving: frozenset
+    identified: Hashable | None
+    incorrect_assumptions: bool
+
+
+def join_ancestors(coin, rounds, predecessors_of):
+    """Return coins reachable backwards through at most ``rounds`` joins.
+
+    ``predecessors_of(c)`` must return the inputs of the join transaction that
+    created ``c``, or an empty iterable when that transaction is not a join.
+    The start coin is included by the paper's length-zero-path case.
+    """
+
+    if isinstance(rounds, bool) or not isinstance(rounds, int) or rounds < 0:
+        raise ValueError("rounds must be a non-negative integer")
+    seen = {coin}
+    frontier = {coin}
+    for _ in range(rounds):
+        following = set()
+        for current in frontier:
+            following.update(predecessors_of(current))
+        following -= seen
+        if not following:
+            break
+        seen.update(following)
+        frontier = following
+    return frozenset(seen)
+
+
+def goldfeder_cluster_intersection(coins, rounds, predecessors_of, cluster_of):
+    """Goldfeder et al. Algorithm 2 over an already identified join graph.
+
+    For every mixed coin, collect all coins on join-only backward paths of
+    length at most ``rounds``, lift them to wallet clusters, and intersect the
+    resulting sets.  Exactly one survivor is returned as an identification;
+    zero or multiple survivors produce the paper's ``incorrect assumptions``
+    outcome.  Join detection and recursive address clustering are explicit
+    injected prerequisites rather than silently replaced by this repository's
+    probabilistic ancestry walk.
+    """
+
+    candidate_sets = tuple(
+        frozenset(cluster_of(ancestor) for ancestor in join_ancestors(
+            coin, rounds, predecessors_of
+        ))
+        for coin in coins
+    )
+    result = intersect_candidate_sets(candidate_sets)
+    identified = result.identified
+    return GoldfederIntersectionResult(
+        candidate_sets=candidate_sets,
+        surviving=result.surviving,
+        identified=identified,
+        incorrect_assumptions=identified is None,
+    )
 
 
 def narrowing_bits(before, after):

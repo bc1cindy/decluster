@@ -66,7 +66,11 @@ and until something ran, no approximation in this repo had earned it.
 from itertools import combinations, combinations_with_replacement
 
 from .boltzmann import exact_link_analysis, exact_per_coin_link_evidence
-from .maurer import exact_subtransaction_mappings
+from .maurer import (
+    exact_subtransaction_mappings,
+    mapping_refines,
+    non_derived_mappings,
+)
 
 FAMILY_ALPHABET = (1, 2, 3, 4)
 FAMILY_MAX_COINS = 8
@@ -284,11 +288,7 @@ def exact_deterministic_links(inputs, outputs):
 
 def _refines(finer, coarser):
     """Whether every block of `finer` sits inside a block of `coarser`, on both sides."""
-    return all(
-        any(set(in_block) <= set(other_in) and set(out_block) <= set(other_out)
-            for other_in, other_out in coarser.blocks)
-        for in_block, out_block in finer.blocks
-    )
+    return mapping_refines(finer, coarser)
 
 
 def finest_mappings(mappings):
@@ -305,12 +305,7 @@ def finest_mappings(mappings):
     what that costs, because the difference is not cosmetic: it is where "no certain link is missed"
     stops holding.
     """
-    mappings = tuple(mappings)
-    return tuple(
-        mapping for mapping in mappings
-        if not any(other.blocks != mapping.blocks and _refines(other, mapping)
-                   for other in mappings)
-    )
+    return non_derived_mappings(mappings)
 
 
 def max_block_count_mappings(mappings):

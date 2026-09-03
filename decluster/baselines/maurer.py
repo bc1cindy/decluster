@@ -34,6 +34,53 @@ def _canonical(blocks):
     return ExactMapping(tuple(sorted(blocks, key=lambda pair: (pair[0], pair[1]))))
 
 
+def mapping_refines(finer, coarser):
+    """Return whether ``finer`` can produce ``coarser`` by merging blocks.
+
+    Maurer et al. call the coarser mapping *derived*.  Containment must hold on
+    both the input and output side of the same paired block; comparing only the
+    number of blocks is insufficient because refinement-maximal mappings need
+    not all have the globally largest block count.
+    """
+
+    return all(
+        any(
+            set(input_block) <= set(other_inputs)
+            and set(output_block) <= set(other_outputs)
+            for other_inputs, other_outputs in coarser.blocks
+        )
+        for input_block, output_block in finer.blocks
+    )
+
+
+def non_derived_mappings(mappings):
+    """Keep mappings that no distinct valid mapping strictly refines.
+
+    This is the family used for the linkability evaluation in Maurer et al.;
+    the paper excludes derived mappings because merging participant blocks adds
+    no new information.  ``exact_subtransaction_mappings`` intentionally keeps
+    returning the full family so existing callers do not change semantics.
+    """
+
+    mappings = tuple(mappings)
+    return tuple(
+        mapping
+        for mapping in mappings
+        if not any(
+            other.blocks != mapping.blocks and mapping_refines(other, mapping)
+            for other in mappings
+        )
+    )
+
+
+def exact_non_derived_mappings(inputs, outputs, *, max_coins=12):
+    """Enumerate Maurer et al.'s exact non-derived mapping family."""
+
+    return non_derived_mappings(
+        exact_subtransaction_mappings(inputs, outputs, max_coins=max_coins)
+    )
+
+
 def exact_subtransaction_mappings(inputs, outputs, *, max_coins=12):
     """Enumerate all exact, non-empty input/output block mappings.
 

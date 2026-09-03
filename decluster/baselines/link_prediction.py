@@ -8,12 +8,12 @@ and score candidate pairs on the enlarged neighbourhoods.  The structure-only ar
 whether the de-anonymized auxiliary view is available — which is what makes the comparison a
 statement about de-anonymization rather than about two different predictors.
 
-**This is not a reproduction of the 2011 Narayanan--Shmatikov link-prediction result.** That
-paper is not in this checkout.  What is implemented here is the mechanism its title describes,
-a mapping obtained by de-anonymization used as the feature that predicts links; its feature
-set, its parameters, its dataset and its numbers are unknown to this module and no number or
-parameter here may be attributed to Narayanan and Shmatikov.  The paper-case reproduction
-stays an open cell of the fidelity matrix.
+**This is not a reproduction of the 2011 Narayanan--Shi--Rubinstein link-prediction result.**
+The paper combines simulated-annealing weighted graph matching for seed discovery, deterministic
+and candidate-set de-anonymization, unanimous candidate voting, and a 25-feature random forest
+trained partly on de-anonymized test cases. This module implements none of that composite. It is
+a smaller local experiment in transferring auxiliary adjacency through a supplied mapping; no
+number or parameter here may be attributed to the paper, and its reproduction remains open.
 
 Scope, narrowly: no vertex attributes, no timestamps, no edge values, no supervised model, no
 seed discovery.  The mapping is direction-aware because propagation is; the prediction is

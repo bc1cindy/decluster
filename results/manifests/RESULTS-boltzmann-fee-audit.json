@@ -1,0 +1,25 @@
+{
+  "doc": "RESULTS-boltzmann-fee-audit.md",
+  "invariants": {
+    "cap": 300,
+    "exact_with_mapping": 0,
+    "fee_tolerant_with_mapping": 300,
+    "fee_tolerant_with_nontrivial_split": 37,
+    "mapping_count_relation": {
+      "fee_tolerant_more": 300
+    },
+    "max_coins": 8,
+    "max_fee_tolerant_mappings": 192,
+    "nonnegative_fee": 300,
+    "positive_fee": 300,
+    "round_fee": 65,
+    "round_fee_and_nontrivial_split": 10,
+    "selected": 300
+  },
+  "source": {
+    "bytes": 10181430,
+    "digest": "35bf7effa620a699551268d6915383072af0c21cba6315701b0193fa7dbbe2e5",
+    "files": 1,
+    "pattern": "sample.ndjson"
+  }
+}
