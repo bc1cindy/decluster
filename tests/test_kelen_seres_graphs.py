@@ -3,7 +3,9 @@
 import pytest
 
 from decluster.baselines.kelen_seres_graphs import (
+    AuxiliarySource,
     Transfer,
+    absorbing_transaction_chain,
     stationary_account_graph,
     temporal_account_graph,
 )
@@ -51,3 +53,15 @@ def test_temporal_self_transfer_conserves_instead_of_double_counting_balance():
     )
     assert graph.edges == {(('a', 0), ('a', 1)): 10}
     assert graph.balances == {"a": 10}
+
+
+def test_auxiliary_sources_and_reversed_equation_one_transitions_are_materialized():
+    graph = stationary_account_graph([
+        Transfer("left", "a", "sink", 2, 1),
+        Transfer("right", "c", "sink", 3, 1),
+    ])
+    chain = absorbing_transaction_chain(graph)
+    assert set(chain.absorbers) == {AuxiliarySource("a"), AuxiliarySource("c")}
+    assert dict(chain.transitions["sink"]) == {"a": 0.4, "c": 0.6}
+    assert chain.transitions["a"] == ((AuxiliarySource("a"), 1.0),)
+    assert chain.transitions[AuxiliarySource("a")] == ((AuxiliarySource("a"), 1.0),)

@@ -30,6 +30,60 @@ class WeightedTransactionGraph:
     balances: dict[Account, int]
 
 
+@dataclass(frozen=True)
+class AbsorbingTransactionChain:
+    transient: tuple[Node, ...]
+    absorbers: tuple[Node, ...]
+    transitions: dict[Node, tuple[tuple[Node, float], ...]]
+
+
+@dataclass(frozen=True)
+class AuxiliarySource:
+    node: Node
+
+
+def absorbing_transaction_chain(graph: WeightedTransactionGraph):
+    """Materialize Section 2.4 auxiliary sources and reversed transitions.
+
+    For every node whose observed outgoing value exceeds its incoming value,
+    an auxiliary predecessor supplies exactly that surplus. Reversing the
+    augmented edges and normalizing by total incoming value implements
+    Equation 1. Auxiliary nodes receive absorbing self-loops.
+    """
+
+    incoming = defaultdict(int)
+    outgoing = defaultdict(int)
+    predecessors = defaultdict(list)
+    for (source, destination), amount in graph.edges.items():
+        if isinstance(amount, bool) or not isinstance(amount, int) or amount <= 0:
+            raise ValueError("graph edge weights must be positive integers")
+        outgoing[source] += amount
+        incoming[destination] += amount
+        predecessors[destination].append((source, amount))
+
+    absorbers = []
+    for node in sorted(graph.nodes, key=repr):
+        surplus = max(outgoing[node] - incoming[node], 0)
+        if surplus:
+            auxiliary = AuxiliarySource(node)
+            absorbers.append(auxiliary)
+            predecessors[node].append((auxiliary, surplus))
+            incoming[node] += surplus
+
+    transitions = {}
+    for node in sorted(graph.nodes, key=repr):
+        total = incoming[node]
+        if total:
+            transitions[node] = tuple(
+                (previous, amount / total)
+                for previous, amount in sorted(predecessors[node], key=lambda row: repr(row[0]))
+            )
+    for absorber in absorbers:
+        transitions[absorber] = ((absorber, 1.0),)
+    transient = tuple(sorted(graph.nodes, key=repr))
+    return AbsorbingTransactionChain(transient, tuple(absorbers), transitions)
+
+
 def _validated(transfers: Iterable[Transfer]):
     transfers = tuple(transfers)
     if any(isinstance(tx.amount, bool) or not isinstance(tx.amount, int) or tx.amount <= 0

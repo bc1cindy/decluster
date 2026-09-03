@@ -33,8 +33,11 @@ from .candidate_set_intersection import (
     narrowing_bits,
 )
 from .kelen_seres_graphs import (
+    AbsorbingTransactionChain,
+    AuxiliarySource,
     Transfer,
     WeightedTransactionGraph,
+    absorbing_transaction_chain,
     stationary_account_graph,
     temporal_account_graph,
 )
@@ -66,6 +69,8 @@ from .oracle_audit import (
 )
 
 __all__ = [
+    "AbsorbingTransactionChain",
+    "AuxiliarySource",
     "BoltzmannReferenceAnalysis",
     "CombinedPrediction",
     "SimilarityEvidence",
@@ -84,6 +89,7 @@ __all__ = [
     "Transfer",
     "WeightedTransactionGraph",
     "audit",
+    "absorbing_transaction_chain",
     "algorithm2_node_distance",
     "algorithm2_pair_distance",
     "algorithm2_potential",
