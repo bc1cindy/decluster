@@ -1,0 +1,66 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "urn:decluster:schema:run-manifest:v1",
+  "type": "object",
+  "additionalProperties": false,
+  "required": ["schema_version", "id", "claim_ids", "code", "command", "environment", "datasets", "parameters", "rng", "outputs", "metrics", "limitations"],
+  "properties": {
+    "schema_version": {"const": 1},
+    "id": {"type": "string", "minLength": 1},
+    "claim_ids": {"type": "array", "minItems": 1, "uniqueItems": true, "items": {"type": "string", "minLength": 1}},
+    "code": {
+      "type": "object", "additionalProperties": false,
+      "required": ["revision", "dirty"],
+      "properties": {"revision": {"type": "string", "minLength": 1}, "dirty": {"type": "boolean"}}
+    },
+    "command": {
+      "type": "object", "additionalProperties": false,
+      "required": ["argv"],
+      "properties": {"argv": {"type": "array", "minItems": 1, "items": {"type": "string", "minLength": 1}}}
+    },
+    "environment": {
+      "type": "object", "additionalProperties": false,
+      "required": ["python", "lock_digest", "platform"],
+      "properties": {
+        "python": {"type": "string", "minLength": 1},
+        "lock_digest": {"type": ["string", "null"], "pattern": "^[0-9a-f]{64}$"},
+        "platform": {"type": "string", "minLength": 1}
+      }
+    },
+    "datasets": {
+      "type": "array",
+      "items": {
+        "type": "object", "additionalProperties": false,
+        "required": ["id", "sha256"],
+        "properties": {"id": {"type": "string", "minLength": 1}, "sha256": {"type": "string", "pattern": "^[0-9a-f]{64}$"}}
+      }
+    },
+    "parameters": {"type": "object"},
+    "rng": {
+      "type": "object", "additionalProperties": false,
+      "required": ["algorithm", "seeds"],
+      "properties": {
+        "algorithm": {"type": ["string", "null"], "minLength": 1},
+        "seeds": {"type": "array", "items": {"type": "integer", "minimum": 0}}
+      }
+    },
+    "outputs": {
+      "type": "array", "minItems": 1,
+      "items": {
+        "type": "object", "additionalProperties": false,
+        "required": ["path", "bytes", "sha256"],
+        "properties": {
+          "path": {"type": "string", "minLength": 1},
+          "bytes": {"type": "integer", "minimum": 0},
+          "sha256": {"type": "string", "pattern": "^[0-9a-f]{64}$"}
+        }
+      }
+    },
+    "metrics": {
+      "type": "object", "additionalProperties": false,
+      "required": ["tolerance"],
+      "properties": {"tolerance": {"type": "string", "minLength": 1}}
+    },
+    "limitations": {"type": "array", "items": {"type": "string", "minLength": 1}}
+  }
+}

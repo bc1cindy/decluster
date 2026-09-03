@@ -1,0 +1,70 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "urn:decluster:schema:dataset-manifest:v1",
+  "type": "object",
+  "additionalProperties": false,
+  "required": ["schema_version", "id", "title", "kind", "schema", "format", "content", "locations", "source", "license", "redistribution", "sensitivity", "normalization", "determinism"],
+  "properties": {
+    "schema_version": {"const": 1},
+    "id": {"type": "string", "minLength": 1},
+    "title": {"type": "string", "minLength": 1},
+    "kind": {"enum": ["git_fixture", "immutable_snapshot", "regenerable", "derived"]},
+    "schema": {"type": "string", "minLength": 1},
+    "format": {"type": "string", "minLength": 1},
+    "content": {
+      "type": "object", "additionalProperties": false,
+      "required": ["bytes", "sha256"],
+      "properties": {
+        "bytes": {"type": "integer", "minimum": 0},
+        "sha256": {"type": "string", "pattern": "^[0-9a-f]{64}$"}
+      }
+    },
+    "locations": {
+      "type": "object", "additionalProperties": false,
+      "required": ["local_path", "canonical", "mirrors"],
+      "properties": {
+        "local_path": {"type": "string", "minLength": 1},
+        "canonical": {"type": ["string", "null"], "pattern": "^https://"},
+        "mirrors": {"type": "array", "uniqueItems": true, "items": {"type": "string", "pattern": "^https://"}}
+      }
+    },
+    "source": {
+      "type": "object", "additionalProperties": false,
+      "required": ["provider", "snapshot_time", "recipe", "recipe_sha256"],
+      "properties": {
+        "provider": {"type": "string", "minLength": 1},
+        "snapshot_time": {"type": ["string", "null"], "minLength": 1},
+        "recipe": {"type": ["string", "null"], "minLength": 1},
+        "recipe_sha256": {"type": ["string", "null"], "pattern": "^[0-9a-f]{64}$"}
+      }
+    },
+    "license": {
+      "type": "object", "additionalProperties": false,
+      "required": ["data", "recipe"],
+      "properties": {
+        "data": {"type": "string", "minLength": 1},
+        "recipe": {"type": ["string", "null"], "minLength": 1}
+      }
+    },
+    "redistribution": {"enum": ["allowed", "restricted", "unknown"]},
+    "sensitivity": {"enum": ["synthetic", "public_on_chain", "public_auxiliary", "restricted_auxiliary"]},
+    "normalization": {
+      "type": "object", "additionalProperties": false,
+      "required": ["code_revision", "parameters", "parents"],
+      "properties": {
+        "code_revision": {"type": ["string", "null"], "minLength": 1},
+        "parameters": {"type": "object"},
+        "parents": {"type": "array", "uniqueItems": true, "items": {"type": "string", "minLength": 1}}
+      }
+    },
+    "determinism": {
+      "type": "object", "additionalProperties": false,
+      "required": ["ordering", "rng_algorithm", "rng_seed"],
+      "properties": {
+        "ordering": {"type": "string", "minLength": 1},
+        "rng_algorithm": {"type": ["string", "null"], "minLength": 1},
+        "rng_seed": {"type": ["integer", "null"], "minimum": 0}
+      }
+    }
+  }
+}

@@ -7,6 +7,7 @@ __pycache__/
 !catalog/entities.example.ndjson
 slice*.json
 slice*.err
+!catalog/datasets/slice-a-channels-2016-v1.json
 day-*.json
 day-*.err
 decluster.egg-info/
