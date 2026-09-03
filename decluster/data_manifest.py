@@ -39,6 +39,25 @@ class Sensitivity(str, Enum):
     RESTRICTED_AUXILIARY = "restricted_auxiliary"
 
 
+class ReproducibilityLevel(str, Enum):
+    VERIFIED = "verified"
+    REEXECUTABLE = "reexecutable"
+    BITWISE = "bitwise_reproducible"
+    STATISTICAL = "statistically_reproducible"
+
+
+class RunAvailability(str, Enum):
+    COMPLETE = "complete"
+    RESTRICTED = "restricted"
+    PARTIAL = "partial"
+
+
+class VerificationMode(str, Enum):
+    EXACT = "exact"
+    TOLERANCE = "tolerance"
+    STATISTICAL = "statistical"
+
+
 @dataclass(frozen=True)
 class ContentIdentity:
     bytes: int
@@ -86,6 +105,15 @@ class RunOutput:
 
 
 @dataclass(frozen=True)
+class RunVerification:
+    mode: VerificationMode
+    argv: tuple[str, ...]
+    tests: tuple[str, ...]
+    properties: tuple[str, ...]
+    tolerance: str | None
+
+
+@dataclass(frozen=True)
 class RunManifest:
     id: str
     claim_ids: tuple[str, ...]
@@ -100,7 +128,9 @@ class RunManifest:
     rng_algorithm: str | None
     rng_seeds: tuple[int, ...]
     outputs: tuple[RunOutput, ...]
-    tolerance: str
+    reproducibility_level: ReproducibilityLevel
+    availability: RunAvailability
+    verification: RunVerification
     limitations: tuple[str, ...]
 
 
@@ -111,7 +141,8 @@ DATASET_KEYS = frozenset({
 })
 RUN_KEYS = frozenset({
     "schema_version", "id", "claim_ids", "code", "command", "environment",
-    "datasets", "parameters", "rng", "outputs", "metrics", "limitations",
+    "datasets", "parameters", "rng", "outputs", "reproducibility", "verification",
+    "limitations",
 })
 SHA256 = re.compile(r"^[0-9a-f]{64}$")
 
@@ -163,6 +194,14 @@ def _digest(value, where, *, nullable=False):
     value = _text(value, where, nullable=nullable)
     if value is not None and not SHA256.fullmatch(value):
         raise ManifestError(f"{where}: expected lowercase SHA-256")
+    return value
+
+
+def _relative_path(value, where):
+    value = _text(value, where)
+    path = Path(value)
+    if path.is_absolute() or ".." in path.parts or path == Path("."):
+        raise ManifestError(f"{where}: expected a safe relative path")
     return value
 
 
@@ -276,7 +315,13 @@ def load_run_manifest(path, *, claim_ids, datasets):
         raw["environment"], f"{where}.environment", {"python", "lock_digest", "platform"}
     )
     rng = _object(raw["rng"], f"{where}.rng", {"algorithm", "seeds"})
-    metrics = _object(raw["metrics"], f"{where}.metrics", {"tolerance"})
+    reproducibility = _object(
+        raw["reproducibility"], f"{where}.reproducibility", {"level", "availability"}
+    )
+    verification = _object(
+        raw["verification"], f"{where}.verification",
+        {"mode", "argv", "tests", "properties", "tolerance"},
+    )
     if not isinstance(code["dirty"], bool):
         raise ManifestError(f"{where}.code.dirty: expected boolean")
     run_claims = _strings(raw["claim_ids"], f"{where}.claim_ids", nonempty=True, unique=True)
@@ -302,11 +347,16 @@ def load_run_manifest(path, *, claim_ids, datasets):
         inputs.append(DatasetInput(dataset_id, digest))
 
     outputs = []
+    seen_outputs = set()
     for index, item in enumerate(_array(raw["outputs"], f"{where}.outputs")):
         item_where = f"{where}.outputs[{index}]"
         item = _object(item, item_where, {"path", "bytes", "sha256"})
+        output_path = _relative_path(item["path"], f"{item_where}.path")
+        if output_path in seen_outputs:
+            raise ManifestError(f"{item_where}.path: duplicate {output_path!r}")
+        seen_outputs.add(output_path)
         outputs.append(RunOutput(
-            path=_text(item["path"], f"{item_where}.path"),
+            path=output_path,
             bytes=_integer(item["bytes"], f"{item_where}.bytes", minimum=0),
             sha256=_digest(item["sha256"], f"{item_where}.sha256"),
         ))
@@ -320,6 +370,44 @@ def load_run_manifest(path, *, claim_ids, datasets):
     algorithm = _text(rng["algorithm"], f"{where}.rng.algorithm", nullable=True)
     if seeds and algorithm is None:
         raise ManifestError(f"{where}.rng: seeds require algorithm")
+
+    level = _enum(
+        ReproducibilityLevel, reproducibility["level"],
+        f"{where}.reproducibility.level",
+    )
+    availability = _enum(
+        RunAvailability, reproducibility["availability"],
+        f"{where}.reproducibility.availability",
+    )
+    mode = _enum(VerificationMode, verification["mode"], f"{where}.verification.mode")
+    verification_argv = _strings(
+        verification["argv"], f"{where}.verification.argv", nonempty=True
+    )
+    verification_tests = _strings(
+        verification["tests"], f"{where}.verification.tests", unique=True
+    )
+    verification_properties = _strings(
+        verification["properties"], f"{where}.verification.properties", unique=True
+    )
+    if not verification_tests and not verification_properties:
+        raise ManifestError(
+            f"{where}.verification: expected at least one test or property"
+        )
+    tolerance = _text(
+        verification["tolerance"], f"{where}.verification.tolerance", nullable=True
+    )
+    if mode is VerificationMode.EXACT and tolerance is not None:
+        raise ManifestError(f"{where}.verification: exact mode forbids tolerance")
+    if mode is not VerificationMode.EXACT and tolerance is None:
+        raise ManifestError(f"{where}.verification: {mode.value} mode requires tolerance")
+    if level is ReproducibilityLevel.BITWISE and mode is not VerificationMode.EXACT:
+        raise ManifestError(
+            f"{where}.reproducibility: bitwise reproducibility requires exact verification"
+        )
+    if level is ReproducibilityLevel.STATISTICAL and mode is not VerificationMode.STATISTICAL:
+        raise ManifestError(
+            f"{where}.reproducibility: statistical reproducibility requires statistical verification"
+        )
 
     return RunManifest(
         id=_text(raw["id"], f"{where}.id"),
@@ -335,6 +423,14 @@ def load_run_manifest(path, *, claim_ids, datasets):
         rng_algorithm=algorithm,
         rng_seeds=seeds,
         outputs=tuple(outputs),
-        tolerance=_text(metrics["tolerance"], f"{where}.metrics.tolerance"),
+        reproducibility_level=level,
+        availability=availability,
+        verification=RunVerification(
+            mode=mode,
+            argv=verification_argv,
+            tests=verification_tests,
+            properties=verification_properties,
+            tolerance=tolerance,
+        ),
         limitations=_strings(raw["limitations"], f"{where}.limitations"),
     )

@@ -44,7 +44,14 @@ def run_document(**overrides):
         "parameters": {"cutoff": 2},
         "rng": {"algorithm": "MT19937", "seeds": [7]},
         "outputs": [{"path": "results/demo.json", "bytes": 4, "sha256": "b" * 64}],
-        "metrics": {"tolerance": "exact"},
+        "reproducibility": {"level": "bitwise_reproducible", "availability": "complete"},
+        "verification": {
+            "mode": "exact",
+            "argv": ["python", "-m", "pytest", "tests/test_demo.py"],
+            "tests": ["tests/test_demo.py::test_result"],
+            "properties": ["output matches canonical artifact"],
+            "tolerance": None,
+        },
         "limitations": ["synthetic fixture"],
     }
     document.update(overrides)
@@ -94,6 +101,9 @@ def test_run_manifest_resolves_claim_and_dataset(tmp_path):
     assert run.claim_ids == ("ctp.demo",)
     assert run.datasets[0].id == dataset.id
     assert run.rng_seeds == (7,)
+    assert run.reproducibility_level.value == "bitwise_reproducible"
+    assert run.verification.mode.value == "exact"
+    assert run.verification.tests == ("tests/test_demo.py::test_result",)
 
 
 def test_run_manifest_rejects_unknown_claim(tmp_path):
@@ -125,11 +135,75 @@ def test_run_manifest_requires_output(tmp_path):
         )
 
 
+@pytest.mark.parametrize("path", ["../outside.json", "/tmp/out.json", "."])
+def test_run_manifest_rejects_unsafe_output_paths(tmp_path, path):
+    dataset = load_dataset_manifest(write_json(tmp_path / "dataset.json", dataset_document()))
+    document = run_document()
+    document["outputs"] = [{"path": path, "bytes": 4, "sha256": "b" * 64}]
+    with pytest.raises(ManifestError, match="safe relative path"):
+        load_run_manifest(
+            write_json(tmp_path / "run.json", document),
+            claim_ids={"ctp.demo"}, datasets={dataset.id: dataset},
+        )
+
+
+def test_run_manifest_rejects_duplicate_output_paths(tmp_path):
+    dataset = load_dataset_manifest(write_json(tmp_path / "dataset.json", dataset_document()))
+    document = run_document()
+    document["outputs"] = document["outputs"] * 2
+    with pytest.raises(ManifestError, match="duplicate"):
+        load_run_manifest(
+            write_json(tmp_path / "run.json", document),
+            claim_ids={"ctp.demo"}, datasets={dataset.id: dataset},
+        )
+
+
 def test_run_manifest_reports_non_array_datasets(tmp_path):
     with pytest.raises(ManifestError, match="datasets: expected array"):
         load_run_manifest(
             write_json(tmp_path / "run.json", run_document(datasets={})),
             claim_ids={"ctp.demo"}, datasets={},
+        )
+
+
+def test_run_manifest_requires_an_executable_check(tmp_path):
+    dataset = load_dataset_manifest(write_json(tmp_path / "dataset.json", dataset_document()))
+    document = run_document()
+    document["verification"] = {
+        "mode": "exact", "argv": ["verify"], "tests": [], "properties": [], "tolerance": None,
+    }
+    with pytest.raises(ManifestError, match="at least one test or property"):
+        load_run_manifest(
+            write_json(tmp_path / "run.json", document),
+            claim_ids={"ctp.demo"}, datasets={dataset.id: dataset},
+        )
+
+
+@pytest.mark.parametrize("mode,tolerance", [("exact", "1e-9"), ("tolerance", None)])
+def test_run_manifest_rejects_incoherent_tolerance(tmp_path, mode, tolerance):
+    dataset = load_dataset_manifest(write_json(tmp_path / "dataset.json", dataset_document()))
+    document = run_document()
+    document["verification"] = {
+        **document["verification"], "mode": mode, "tolerance": tolerance,
+    }
+    document["reproducibility"] = {"level": "verified", "availability": "complete"}
+    with pytest.raises(ManifestError, match="tolerance"):
+        load_run_manifest(
+            write_json(tmp_path / "run.json", document),
+            claim_ids={"ctp.demo"}, datasets={dataset.id: dataset},
+        )
+
+
+def test_bitwise_run_requires_exact_verification(tmp_path):
+    dataset = load_dataset_manifest(write_json(tmp_path / "dataset.json", dataset_document()))
+    document = run_document()
+    document["verification"] = {
+        **document["verification"], "mode": "tolerance", "tolerance": "absolute <= 1e-9",
+    }
+    with pytest.raises(ManifestError, match="bitwise reproducibility requires exact"):
+        load_run_manifest(
+            write_json(tmp_path / "run.json", document),
+            claim_ids={"ctp.demo"}, datasets={dataset.id: dataset},
         )
 
 
