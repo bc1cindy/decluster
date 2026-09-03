@@ -154,6 +154,12 @@ def test_max_nodes_none_reproduces_current_behavior():
     assert dist_default == dist_none
 
 
+def test_kelen_seres_figure_two_nominal_value_transition():
+    """Equation 1 / Figure 2: reverse transition mass follows 5:3:2 inputs."""
+    matrix = ancestry.value_flow_link_oracle([5, 3, 2], [6, 3, 1])
+    assert matrix == [[0.5, 0.5, 0.5], [0.3, 0.3, 0.3], [0.2, 0.2, 0.2]]
+
+
 def test_max_nodes_only_truncates_never_invents():
     # max_len=3, cap=6: cap lands mid-tree (levels 0-2 alone total 7 coins), so some non-coinbase
     # interior coins get truncated in the capped run instead of being expanded to their origins.

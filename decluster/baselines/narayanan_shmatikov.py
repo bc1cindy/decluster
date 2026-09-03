@@ -1,4 +1,4 @@
-"""Narayanan--Shmatikov (2009) social-graph propagation baseline.
+"""Narayanan--Shmatikov (2009) social-graph propagation kernel.
 
 This module deliberately contains only the topology-only propagation algorithm.  In
 particular, it does not use vertex attributes, edge attributes, hub filters, rarity
@@ -8,6 +8,12 @@ views and ``seeds`` is a partial one-to-one correspondence between them.
 The graph interface is the small subset exposed by :class:`views.PseudonymGraph`:
 ``vertices``, ``_in`` and ``_out``.  Keeping that interface structural also makes the
 baseline usable by controlled synthetic tests without coupling it to Bitcoin records.
+
+The score, eccentricity gate, direction handling, degree normalization and reverse match follow
+the paper's propagation pseudocode. This is not the complete published attack: seeds are supplied
+instead of found with the paper's clique search, and accepted nodes are not revisited/remapped as
+the prose specifies. Results from this module therefore test the propagation mechanism, not an
+end-to-end reproduction of the 2009 experiment.
 """
 
 from __future__ import annotations
@@ -130,7 +136,7 @@ class PropagationResult:
 
 
 def propagate(left, right, seeds: Mapping[Vertex, Vertex], theta: float = 1.5):
-    """Propagate a seed mapping to convergence using the 2009 algorithm.
+    """Propagate a seed mapping to convergence using the 2009 scoring kernel.
 
     Each proposed match must clear the eccentricity threshold in both directions and
     must map back to the proposing node.  The returned mapping includes the seeds.

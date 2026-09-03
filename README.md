@@ -34,7 +34,10 @@ two people into one).
 
 ## Layout
 
-- `decluster/` — the attacker (the measurement half that runs): extractors, library, combiner, cluster (engine: `cluster_refined`), propagate (entity-level N-S seed-and-propagate via provenance signatures; synthetic evaluation), graph_deanon
+- `decluster/` — the attacker (the measurement half that runs): extractors, library, combiner,
+  cluster (engine: `cluster_refined`); `baselines/narayanan_shmatikov` contains the two-view 2009
+  propagation scoring kernel, while `propagate`, `graph_deanon`, and `baselines/link_prediction`
+  are separately named adaptations rather than N-S reproductions
 - the construction/cost half (deferred — PAPER §9): `cost` (leak / amount-cut / topology leaf terms + the deferred `construction_cost`), `ancestry` (the absorber-model provenance target; feeds propagate), `report` (fuses the terms on a real tx), `subsetsum`/`coinjoin_demix` (the amount de-mix channel); consumes the `dense-subset-sum` engine (build: `maturin develop`); `cluster_refined` optionally refuses links when provenance and fingerprints diverge
 - chain-analysis channels that select what to ask and read the answer, all outside the engine:
   `conservation` (what the other participants could not have funded — arithmetic on one transaction,

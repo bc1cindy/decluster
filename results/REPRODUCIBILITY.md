@@ -182,8 +182,10 @@ the historical module names remain as compatibility facades so existing imports 
 `balance_model="exact"` and `balance_model="fee_tolerant"` separate. The latter requires an
 explicit integer `fee_tolerance`, permits only non-negative per-block deficits, and records the
 observed fee and selected model in its result. Roundness does not affect mapping admission or
-probability. This closes the local fee-allocation mechanism only; tool parity and paper cases stay
-open.
+probability. This closes the local fee-allocation mechanism only. Official no-fee vectors
+A/B/C/P2/P3 now match, but the official P3-with-fees vector reports 28 combinations where the local
+unique-mapping family reports 19: Boltzmann's fee-compatible traversal multiplicity is not
+implemented. Tool parity is therefore measured and still open, rather than merely unavailable.
 
 The compatibility modules still disclose why their old names must not be used as evidence of a
 reference algorithm:
@@ -199,17 +201,13 @@ reference algorithm:
   large-but-finite value from it, and normalises eccentricity over the materialised scores where
   that gate normalises over the whole candidate population.
 
-**A published attack name rests on the mechanism, not on a reproduction.** `PAPER.md:971` states
-that `decluster/intersect.py` implements the Goldfeder et al. cross-transaction intersection attack.
-The Goldfeder text is **not in this checkout**, so nothing in this tree reproduces the paper's cases,
-datasets or rates, and no number anywhere here is attributed to it. What the claim rests on today is
-the *mechanism* — narrowing a coin's origins by intersecting the candidate sets of coins later shown
-to be co-held — now separated as `decluster/baselines/candidate_set_intersection.py` and measured on
-a generated family (`RESULTS-candidate-set-intersection.md`). `decluster/intersect.py` stays and is
-not that baseline: it is this repository's wiring of the same mechanism to the backward provenance
-walk, with rarity weighting, cluster-lift, truncation reporting and subordination to
-`cluster_refined` — additions that are ours, not the paper's. That cell of the fidelity matrix stays
-open until the text is available.
+**A published attack name rests on the mechanism, not on an adapted walk.** Goldfeder et al.'s
+primary text is now checked. `goldfeder_cluster_intersection` implements Algorithm 2's join-only
+backward paths bounded by `r`, wallet-cluster lift, intersection and unique-or-refuse verdict over
+injected graph/clustering callbacks. The JoinMarket detector, recursive address clustering and
+2015–2017 experiments remain unreproduced. `decluster/intersect.py` is not that baseline: it wires
+intersection to a probabilistic ancestry walk that is not restricted to join paths, with rarity
+weighting, truncation reporting and subordination to `cluster_refined` — additions that are ours.
 
 **Two AUC estimators.** `graph_deanon.auc` samples at most 20,000 draws; `graph_deanon.exact_auc`
 (now the single exact implementation, called by `fs_temporal._score_metrics`) is exact Mann--Whitney.

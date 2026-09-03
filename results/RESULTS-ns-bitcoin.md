@@ -15,9 +15,10 @@ no script types — so the clustering below is plain common-input ownership with
 refused, and the amount and fingerprint channels are absent by construction, not by choice.
 
 **Which algorithm.** `decluster/baselines/narayanan_shmatikov.py`: the 2009 topology-only
-propagation — direction-aware degree-normalised neighbour votes, eccentricity over the full
+propagation scoring kernel — direction-aware degree-normalised neighbour votes, eccentricity over the full
 candidate population including implicit zeros, a mandatory reverse match, iterated to convergence.
-No vertex attributes, no edge attributes, no hub filter, no rarity weights. The repo's older
+Seeds are supplied rather than found by the paper's clique search, and accepted nodes are not
+revisited/remapped as the paper's prose specifies. No vertex attributes, no edge attributes, no hub filter, no rarity weights. The repo's older
 cross-view numbers (`RESULTS-view-match-2026.md`, `RESULTS-graph-deanon.md`, including the "one
 match in 15,688" figure) come from `decluster/view_match.py`, a **different, experimental**
 matcher. None of those numbers are this attack's and none are reused here.
