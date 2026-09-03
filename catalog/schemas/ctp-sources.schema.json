@@ -1,0 +1,27 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "urn:decluster:schema:ctp-sources:v1",
+  "type": "object",
+  "additionalProperties": false,
+  "required": ["schema_version", "ctp_revision", "sources"],
+  "properties": {
+    "schema_version": {"const": 1},
+    "ctp_revision": {"type": "string", "minLength": 1},
+    "sources": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": ["id", "title", "url", "kind", "obligation", "note"],
+        "properties": {
+          "id": {"type": "string", "minLength": 1},
+          "title": {"type": "string", "minLength": 1},
+          "url": {"type": ["string", "null"], "pattern": "^https://"},
+          "kind": {"enum": ["paper", "protocol", "implementation", "informal", "internal_note"]},
+          "obligation": {"enum": ["baseline", "fixture", "metric", "context", "qualification", "no_code_required"]},
+          "note": {"type": "string", "minLength": 1}
+        }
+      }
+    }
+  }
+}

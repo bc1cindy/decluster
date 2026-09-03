@@ -1,0 +1,29 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "urn:decluster:schema:claims:v1",
+  "type": "object",
+  "additionalProperties": false,
+  "required": ["schema_version", "claims"],
+  "properties": {
+    "schema_version": {"const": 1},
+    "claims": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": ["id", "title", "scope", "sources", "mechanism", "implementation", "evidence_level", "status", "limitations"],
+        "properties": {
+          "id": {"type": "string", "minLength": 1},
+          "title": {"type": "string", "minLength": 1},
+          "scope": {"enum": ["qualitative_failure_mode", "model_limit", "defensive_criterion"]},
+          "sources": {"type": "array", "minItems": 1, "uniqueItems": true, "items": {"type": "string", "minLength": 1}},
+          "mechanism": {"type": "string", "minLength": 1},
+          "implementation": {"type": ["string", "null"], "minLength": 1},
+          "evidence_level": {"enum": ["unit_fixture", "paper_example", "synthetic_experiment", "published_dataset_reproduction", "bitcoin_snapshot_experiment", "independent_replication"]},
+          "status": {"enum": ["unassessed", "partially_supported", "supported_at_evidence_level", "no_code_required"]},
+          "limitations": {"type": "array", "items": {"type": "string", "minLength": 1}}
+        }
+      }
+    }
+  }
+}
