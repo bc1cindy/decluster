@@ -11,9 +11,9 @@ from math import log2
 
 import pytest
 
-from decluster import reproducibility as rp
 from decluster.baselines import exact_link_analysis, exact_subtransaction_mappings
 from decluster.baselines import oracle_audit as oa
+from decluster.experiments import exact_oracle_audit as experiment
 
 ROOT = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 DOC = "RESULTS-exact-oracle-audit.md"
@@ -315,26 +315,16 @@ def test_an_agreeing_approximation_raises_no_flag(reduced):
 
 
 def test_published_numbers_are_reproducible_and_the_manifest_is_current():
-    """The full family, recomputed, against the manifest that backs the results document. A
-    published number nothing recomputes is the failure `reproducibility` exists to catch."""
+    """Recompute the canonical artifact and its generated Markdown, without parsing prose."""
     pytest.importorskip("dss")
-    recorded = rp.read_manifest(DOC, root=ROOT)
-    assert recorded is not None, f"{DOC} has no manifest"
-    assert recorded["source"]["pattern"] == oa.MANIFEST_SOURCE
-    measured = oa.manifest_invariants(oa.audit(include_cases=False))
-    status, message = rp.check_manifest(DOC, measured, root=ROOT)
-    assert status == "ok", message
+    artifact_path = os.path.join(ROOT, "results", "artifacts", "exact-oracle-audit-v1.json")
+    markdown_path = os.path.join(ROOT, "results", "generated", "exact-oracle-audit-v1.md")
+    artifact = experiment.verify_artifact(experiment.load_artifact(artifact_path))
+    with open(markdown_path) as generated:
+        assert generated.read() == experiment.render_markdown(artifact)
 
     text = open(os.path.join(ROOT, "results", DOC)).read()
     assert "ground truth" not in text.lower()
-    plain = text.replace(",", "")                     # the doc groups thousands; the numbers do not
+    assert "catalog/runs/exact-oracle-audit-v1.json" in text
     policy = open(os.path.join(ROOT, "results", "REPRODUCIBILITY.md")).read()
     assert DOC[:-3] in policy, f"{DOC} is not indexed in REPRODUCIBILITY.md"
-
-    for value in (measured["family_size"],
-                  measured["link_matrix_entries_above_exact"],
-                  measured["spurious_deterministic_links"],
-                  measured["max_block_count_spurious_deterministic_links"],
-                  measured["max_block_count_missed_deterministic_links"],
-                  measured["finest_selection_divergent_cases"]):
-        assert str(value) in plain, f"{value} is not stated in {DOC}"

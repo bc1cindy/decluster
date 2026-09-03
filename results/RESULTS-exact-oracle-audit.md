@@ -1,5 +1,10 @@
 # The approximations against the exact oracle — measured
 
+Canonical run: `catalog/runs/exact-oracle-audit-v1.json`. Machine-readable
+results live in `results/artifacts/exact-oracle-audit-v1.json`; the concise
+generated view is `results/generated/exact-oracle-audit-v1.md`. The narrative
+below interprets that run and is not the source of its numeric results.
+
 `decluster/baselines/maurer.py` + `boltzmann.py` are an exact, exponential oracle: every balanced
 input/output block mapping of a transaction, and the uniform marginal link matrix over them. The
 production paths use the compiled `dss` extension and the wrappers in `decluster/counting.py`,
@@ -262,27 +267,20 @@ deterministic link at all. `dss.pairwise_link_prob` answers that case with an id
 
 ## Reproducibility / provenance
 
-State **1** (band-pinned on committed input) by the taxonomy in `results/REPRODUCIBILITY.md`, where
-it is listed in that state's table: the
-family is generated, not sampled, so there is no unversioned data source and the run is reproducible
-in full from the checkout. `tests/test_oracle_audit.py` recomputes the whole family and asserts the
-manifest's invariants, so a number here cannot drift silently.
-
-The manifest is `results/manifests/RESULTS-exact-oracle-audit.json`. Its source identity is the exact
-enumerator's file identity (`decluster/baselines/maurer.py`); because these numbers come out of the
-Rust crate, the crate identity travels in the *invariants* (`dss` 0.1.0, rev `c80133cb`) alongside the
-family parameters and every headline count, the finest-only cross-check and the two restriction
-re-derivations — which is the half `check_manifest` actually compares, and closes the gap the
-manifests section of the policy names for crate-produced numbers. (`fingerprint_source` digests only
-the sorted (basename, size) list and never reads contents, so the source half is a file-identity
-check and nothing more; the invariants are what make a drifting number fail.)
+The generated family, parameters, dependency identity and complete measurements are stored in the
+canonical artifact. The run manifest records its content hash, source revision, environment,
+limitations and exact verification command. `tests/test_oracle_audit.py` recomputes the artifact and
+checks the generated Markdown, while `tests/test_data_manifest.py` verifies the recorded output
+identities. Numeric claims therefore do not depend on parsing this narrative.
 
 Reproduce with:
 
-    .venv/bin/python examples/exact_oracle_audit.py | python3 -m json.tool
-    .venv/bin/python -m pytest tests/test_oracle_audit.py
+    .venv/bin/python -m decluster.experiments.exact_oracle_audit reproduce \
+        --artifact results/artifacts/exact-oracle-audit-v1.json \
+        --markdown results/generated/exact-oracle-audit-v1.md
+    .venv/bin/python -m decluster.experiments.exact_oracle_audit verify \
+        --artifact results/artifacts/exact-oracle-audit-v1.json \
+        --markdown results/generated/exact-oracle-audit-v1.md
 
-The example script **exits 1 whenever the report carries a flag**, which on the current measurements
-it always does. That is deliberate and is not a crash: an audit that finds a disagreement should fail
-a pipeline rather than print quietly. `--manifest` rewrites the manifest from a full-family run and
-refuses to do so from a reduced one.
+The verifier recomputes the full experiment from the artifact's recorded parameters and requires
+byte-for-byte equality for both machine-readable and generated presentation artifacts.

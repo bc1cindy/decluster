@@ -26,7 +26,7 @@ survives subsampling** can it be pinned as a **band** on a committed fixture.
 | W(E) multiplicity / path-count object | synthetic | `test_counting.py`, `test_path_count.py` |
 | survey metadata + consistency | `tests/fixtures/lumen_explorer_data.json` | `test_lumen_survey_fixture.py` |
 | graph structural de-anon (payment/full AUC) | `tests/fixtures/graph_deanon_2016.ndjson.gz` | `test_graph_deanon_real.py` |
-| approximations vs the exact oracle: the `dss` link matrix bounds it in neither direction (`RESULTS-exact-oracle-audit.md`) | none needed — the 507-transaction family is generated, not sampled | `test_oracle_audit.py` |
+| approximations vs the exact oracle: the `dss` link matrix bounds it in neither direction (`RESULTS-exact-oracle-audit.md`) | canonical run `catalog/runs/exact-oracle-audit-v1.json`; generated family, artifact and Markdown are recomputed exactly | `test_oracle_audit.py`, `test_exact_oracle_experiment.py` |
 | known-entity de-anon (SatoshiDice positive + BitMEX null control) | `entity_satoshidice_2013.ndjson.gz`, `entity_bitmex_2019.ndjson.gz` | `test_entity_deanon_real.py` |
 | entity-attribute space is dense not sparse (Def-1 negative) + graph disassortative | `tests/fixtures/slice_a_channels_2016.ndjson.gz` | `test_slice_a_channels.py` |
 | Fellegi-Sunter beats the fixed-rarity baseline out-of-period (the direction `RESULTS-fs-temporal.md` publishes) | `tests/fixtures/fingerprint_blkcache_sample.json` | `test_fs_temporal.py::test_fellegi_sunter_beats_the_rarity_baseline_out_of_period` |

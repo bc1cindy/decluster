@@ -5,6 +5,8 @@ from pathlib import Path
 import pytest
 
 from decluster.data_manifest import ManifestError, load_dataset_manifest, load_run_manifest
+from decluster.reference_registry import load_claims, load_sources
+from decluster.result_artifacts import OutputStatus, verify_run_outputs
 
 
 DIGEST = "a" * 64
@@ -227,3 +229,26 @@ def test_unknown_fixture_licensing_is_not_presented_as_redistributable():
         manifest = load_dataset_manifest(path)
         if manifest.data_license == "unknown":
             assert manifest.redistribution.value == "unknown"
+
+
+def test_all_committed_run_manifests_resolve_and_their_outputs_match():
+    sources = load_sources(ROOT / "catalog" / "ctp-sources.json")
+    claims = load_claims(
+        ROOT / "catalog" / "ctp-claims.json", {source.id for source in sources}
+    )
+    datasets = {
+        manifest.id: manifest
+        for manifest in (
+            load_dataset_manifest(path)
+            for path in (ROOT / "catalog" / "datasets").glob("*.json")
+        )
+    }
+    paths = sorted((ROOT / "catalog" / "runs").glob("*.json"))
+    assert paths
+    for path in paths:
+        manifest = load_run_manifest(
+            path, claim_ids={claim.id for claim in claims}, datasets=datasets,
+        )
+        checks = verify_run_outputs(manifest, ROOT)
+        assert checks
+        assert all(check.status is OutputStatus.VERIFIED for check in checks)
