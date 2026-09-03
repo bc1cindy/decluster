@@ -13,7 +13,7 @@ input construction, policy choices and expected output.
 | Maurer–Neudecker–Florian (2017) | [paper](https://m.flrn.cc/academic/2017_CoinJoin.pdf) | Exact mappings and the paper's non-derived selection are executable; Figure 2 (`21,12,36,28 → 25,8,50,14`) is a regression fixture. | Reproduce the output-splitting experiments/figures if their empirical claim is needed. Fees are deliberately outside this model. |
 | LaurentMT / Boltzmann | [metrics](https://gist.github.com/LaurentMT/e758767ca4038ac40aaf), [LPM](https://gist.github.com/LaurentMT/d361bca6dc52868573a2), [reference code](https://github.com/Samourai-Wallet/boltzmann) | A separate dependency-free port reproduces the official default `LINKABILITY` aggregate traversal, including P3-with-fees (28 combinations and `14/13/13` link counts) and asymmetric no-fee vectors. The older set-valued fee model remains separately named. | `PRECHECK`, `MERGE_INPUTS`, `MERGE_OUTPUTS`, `MERGE_FEES` and JoinMarket intrafees remain absent. They have distinct semantics, not aliases for the default traversal. |
 | Goldfeder et al. (2018) | [paper](https://arxiv.org/pdf/1708.04748) | Algorithm 2's core is executable: join-only ancestry to `r`, address-cluster lift, intersection, unique-or-refuse. | JoinMarket detection, recursive clustering, 2015–2017 simulation and 21-purchase validation are not reproduced. `decluster/intersect.py` remains an adapted probabilistic pipeline, not Algorithm 2. |
-| Kelen–Seres (2022) | [paper](https://arxiv.org/pdf/2211.04259) | Equation 1 nominal-value reverse transitions, absorbing probabilities, Shannon untraceability and `t=N1` expected steps are implemented. Figure 2's `5:3:2 → .5:.3:.2` transition is pinned. The step metric exactly expands each collapsed UTXO hop and refuses artificial boundaries. | Explicit auxiliary-source nodes, account stationary/temporal transforms and Tables 1–2 are missing. The published Bitcoin Table 1 requires its full chain interval, not a depth-limited walk. |
+| Kelen–Seres (2022) | [paper](https://arxiv.org/pdf/2211.04259) | Equation 1 transitions, absorption probabilities, Shannon untraceability, `t=N1` expected steps, and stationary/temporal account transforms are implemented. Figure 2's `5:3:2 → .5:.3:.2` transition is pinned. The temporal transform splits on receipts, carries prior balance and requires explicit pre-window balances. | Explicit auxiliary-source graph materialization and Tables 1–2 are missing. The published Bitcoin Table 1 requires its full chain interval, not a depth-limited walk. |
 
 ## Consequences for the plan
 
@@ -24,9 +24,9 @@ input construction, policy choices and expected output.
 3. Boltzmann's default aggregate-traversal multiplicity is now reproduced separately. The
    set-valued fee model still intentionally disagrees and must not be described as Boltzmann;
    parity for optional merge/precheck/intrafee modes remains open.
-4. Kelen–Seres' UTXO transition, absorption distribution and expected absorption time are faithful
-   on walks that reach real sources. “Kelen–Seres complete” remains false without the account/time
-   graph transforms and table reproduction.
+4. Kelen–Seres' UTXO transition, absorption distribution, expected absorption time and account/time
+   transforms are executable. “Kelen–Seres complete” remains false without explicit source-node
+   materialization and table reproduction.
 5. The 2011 cell is partial: Algorithms 1 and 3, both threshold policies, and Algorithm 2 on its
    mathematically defined positive-weight domain are pinned. Dummy-node zero semantics, the
    revisiting/pruning policies and learned-score producer remain open. Its actual composite is
