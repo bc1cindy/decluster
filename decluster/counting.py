@@ -281,13 +281,20 @@ DEFAULT_LINK_BUDGET_MS = None
 def link_matrix(inputs, outputs, budget_ms=DEFAULT_LINK_BUDGET_MS, wall_ms=None):
     """The link-probability matrix, `m[i][j]` for input `i` against output `j`, or None.
 
-    Rows say which outputs an input could plausibly have funded. A row with one non-zero entry is a
-    deterministic link — the amounts settle that assignment on their own — and a row of ones is the
-    opposite, every output equally possible.
+    Rows say which outputs an input could plausibly have funded *under dss's mapping family*, and a
+    row of ones is the case where every output is equally possible.
 
-    This is the same primitive the provenance walk already uses as its transition measure. It is
-    reachable from the amount channel too, and unlike the counts it does not go quiet the moment a
-    transaction pays a fee.
+    A row with one non-zero entry is NOT a settled assignment. dss's family is a strict restriction
+    of the exact balanced-mapping family, and this matrix is the uniform marginal over the smaller
+    one, so it can put zero where the exact marginal is positive. Measured against the exact oracle
+    over a 507-transaction family (`results/RESULTS-exact-oracle-audit.md`), reading a one-entry row
+    as certain asserts 1,197 certainties the amounts do not settle, across 395 of those 507, while
+    missing no genuinely certain link. The reading is an upper bound on certainty, not a proof of it.
+
+    This is reachable from the amount channel, and unlike the counts it does not go quiet the moment
+    a transaction pays a fee. It is no longer the provenance walk's transition measure: that walk
+    defaults to `ancestry.value_flow_link_oracle` and reaches this only when a caller passes
+    `ancestry.dss_link_oracle` or `oracle.bounded_dss_link_oracle()` explicitly.
 
     `budget_ms` replaces the crate's size guard rather than joining it, and neither bounds the cost
     in practice: measured, a single call under the guard alone ran past a minute. Bulk work needs

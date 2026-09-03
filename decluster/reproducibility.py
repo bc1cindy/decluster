@@ -81,7 +81,8 @@ def check_manifest(doc, invariants=None, root=None):
       `unrecorded`     no manifest for this document
       `absent`         the source is not present; nothing was checked
       `identity-only`  the source matches, but no invariants were supplied to compare
-      `stale`          the source moved, or a supplied invariant disagrees
+      `partial`        source and supplied invariants match, but some recorded invariants were omitted
+      `stale`          the source moved, an invariant disagrees, or an unrecorded key was supplied
       `ok`             source and every supplied invariant match
 
     `identity-only` is not a success. The failure this exists to catch was a source growing while
@@ -101,10 +102,16 @@ def check_manifest(doc, invariants=None, root=None):
     if not invariants:
         return "identity-only", (f"{doc}: source unchanged; {len(recorded['invariants'])} recorded "
                                  f"invariant(s) NOT checked (none supplied)")
+    extra = sorted(set(invariants) - set(recorded["invariants"]))
+    if extra:
+        return "stale", f"{doc}: invariant(s) not recorded: {', '.join(extra)}"
     for key, want in invariants.items():
         got = recorded["invariants"].get(key)
         if got != want:
             return "stale", f"{doc}: invariant {key} recorded {got}, measured {want}"
+    missing = sorted(set(recorded["invariants"]) - set(invariants))
+    if missing:
+        return "partial", f"{doc}: source and supplied invariants unchanged; not recomputed: {', '.join(missing)}"
     return "ok", f"{doc}: source and {len(invariants)} invariant(s) unchanged"
 
 

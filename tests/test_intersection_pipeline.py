@@ -166,19 +166,22 @@ def test_default_seeds_reads_the_round_it_is_pointed_at():
 
 
 def test_default_signature_of_asks_for_both_halves(monkeypatch):
-    """Production must request the truncation count, not only the signature."""
+    """Production must request the truncation count, not only the signature, and must name the
+    link oracle rather than inherit a default that has moved."""
     import decluster.ancestry as ancestry
     from examples.intersection_pipeline import SIGNATURE_DEPTH, default_signature_of
 
     seen = {}
 
-    def fake(target, depth=6):
+    def fake(target, depth=6, link_oracle=None):
         seen["depth"] = depth
+        seen["link_oracle"] = link_oracle
         return ({"origin": 1.0}, 3)
 
     monkeypatch.setattr(ancestry, "ancestry_signature_and_truncation", fake)
     sig, truncated = default_signature_of()(("a", 0))
     assert seen["depth"] == SIGNATURE_DEPTH
+    assert seen["link_oracle"] is ancestry.dss_link_oracle
     assert sig == {"origin": 1.0} and truncated == 3
 
 

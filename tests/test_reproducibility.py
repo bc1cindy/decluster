@@ -49,6 +49,24 @@ def test_check_is_ok_when_invariants_are_supplied_and_match(tmp_path):
     assert status == "ok", msg
 
 
+def test_check_refuses_a_partial_invariant_recomputation(tmp_path):
+    (tmp_path / "src.txt").write_bytes(b"z" * 5)
+    rp.write_manifest("RESULTS-demo.md", str(tmp_path / "*.txt"),
+                      {"n_owners": 57, "n_pairs": 100}, root=str(tmp_path))
+    status, msg = rp.check_manifest("RESULTS-demo.md", {"n_owners": 57}, root=str(tmp_path))
+    assert status == "partial"
+    assert "not recomputed: n_pairs" in msg
+
+
+def test_check_refuses_an_unrecorded_invariant(tmp_path):
+    _seeded(tmp_path)
+    status, msg = rp.check_manifest(
+        "RESULTS-demo.md", {"n_owners": 57, "new_metric": 1}, root=str(tmp_path)
+    )
+    assert status == "stale"
+    assert "not recorded: new_metric" in msg
+
+
 def test_check_reports_identity_only_when_no_invariants_are_supplied(tmp_path):
     _seeded(tmp_path)
     status, msg = rp.check_manifest("RESULTS-demo.md", root=str(tmp_path))

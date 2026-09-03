@@ -1,5 +1,18 @@
 # Provenance-entropy channel on real data — the absorber-model rung
 
+> **Correction (2026-09-03) — the oracle behind these numbers is no longer the default.**
+> Every figure below was produced by the **subset-sum link oracle** (`ancestry.dss_link_oracle`,
+> `dss.pairwise_link_prob`), which was `ancestry_entropy`/`ancestry_signature`'s default when this
+> was measured. The default is now `ancestry.value_flow_link_oracle` — the nominal-value transition
+> rule (an output walks back to each input in proportion to that input's value), which never refuses
+> and never truncates on transaction width. To reproduce these numbers, pass
+> `link_oracle=decluster.ancestry.dss_link_oracle` explicitly — the command at the foot of this file
+> has been amended to do so. The two
+> walks are not interchangeable and no re-measurement under value flow has been done, so the
+> headline below ("provenance is a near-deterministic quasi-identifier", Shannon median ~0.00 bits)
+> stands only for the subset-sum walk. `results/RESULTS-exact-oracle-audit.md` measures how far that
+> oracle sits from an exact one.
+
 The `ancestry_entropy` engine (`decluster/ancestry.py`) measures the **provenance / deep-feature
 channel** that the framework (`tx-graph-anonymity-sets`, the absorber / random-walk model) centres:
 a backward walk over the transaction graph, edge-weighted by the exact subset-sum link matrix
@@ -106,5 +119,7 @@ first **graph-scale** pass (weak/directional, AUC 0.52 — depth+connectivity bo
 edge weighting is link-probability-only (satoshi-flow value-weighting deferred;
 `ancestry.build_extended_graph`).
 
-Reproduce: `./.venv/bin/python -c "from decluster.ancestry import ancestry_entropy; from decluster
-import fetch_tx; print(ancestry_entropy(('931d6627f7b63491cbc2e6d860dc630537385fd9ee3171f2013b64e6a143a4e4',0), depth=6, fetch=fetch_tx))"`.
+Reproduce (the `link_oracle` argument is required now that the default has moved to value flow —
+see the correction at the head of this file): `./.venv/bin/python -c "from decluster.ancestry import
+ancestry_entropy, dss_link_oracle; from decluster import fetch_tx;
+print(ancestry_entropy(('931d6627f7b63491cbc2e6d860dc630537385fd9ee3171f2013b64e6a143a4e4',0), depth=6, fetch=fetch_tx, link_oracle=dss_link_oracle))"`.

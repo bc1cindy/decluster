@@ -1,7 +1,17 @@
 """Layer 4 — N-S fingerprint channel: a tx's fingerprint as a sparse {(axis,value): bits}
 quasi-identifier, scored by rarity-weighted agreement overlap. Reuses propagate.eccentricity
 for the acceptance gap. Measures whether fingerprints are sparse quasi-identifiers or
-equivalence-class conditioners (see results/RESULTS-fingerprint-regime.md). Offline."""
+equivalence-class conditioners (see results/RESULTS-fingerprint-regime.md). Offline.
+
+WHAT THIS ACTUALLY IMPLEMENTS. A rarity-weighted agreement overlap between two fingerprints. Two
+departures from the cited algorithm, both deliberate and neither hidden: (1) the feature weight is
+the self-information `-log2(p)` of the value (`library_weights`, `measured_weights`), where the
+paper's similarity weights a shared attribute by `1/log|support|` — the form this repo does keep in
+`ancestry.provenance_link`; a rare value is up-weighted under both, but the two are different
+functions and are not interchangeable. (2) `reid_gap` computes the eccentricity gap and RETURNS it;
+nothing in this module gates on it, so no candidate is ever refused for being a diffuse tie — the
+refusal is left to the caller. There is no seed set, no propagation and no second view here either.
+The faithful reference implementation is `decluster/baselines/narayanan_shmatikov.py`."""
 
 import json
 import math
@@ -91,7 +101,7 @@ def equivalence_key(tx, axis_fns, cond_axes=CONDITIONING_AXES):
 
 def reid_gap(query, candidates, axis_fns, weights):
     """Rank candidates by fingerprint_link vs query; return top index, eccentricity gap, top score."""
-    from .propagate import eccentricity
+    from .single_view_propagation import eccentricity
     q = fingerprint_signature(query, axis_fns, weights)
     scores = [fingerprint_link(q, fingerprint_signature(c, axis_fns, weights)) for c in candidates]
     if not scores:

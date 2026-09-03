@@ -1,5 +1,10 @@
 # Bounded walk + §07 path-count — real numbers
 
+> **Correction (2026-09-03) — the default oracle behind the walk has moved.**
+> The runs below pass `bounded_link_oracle(...)` explicitly, so their numbers remain reproducible as
+> written. `path_count_anonymity()` and `analyze()` now default to `ancestry.value_flow_link_oracle`
+> (nominal-value transitions, no dss) instead; the subset-sum walk measured here is opt-in.
+
 `examples/path_count_live.py` exercises the two shipped capabilities on real data: the **bounded walk**
 (`max_nodes`, makes deep coinjoin `analyze()` tractable) and the **§07 path-count** object (weighted by
 link probability alone — see "Multiplicity has left the bound", below). Honest numbers below, with the

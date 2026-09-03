@@ -8,7 +8,7 @@ from dataclasses import dataclass
 
 from .cluster import cluster_topology_weight, counterparty_bits
 from .ancestry import ancestry_entropy
-from .path_count import path_count_anonymity
+from .weighted_path_count import path_count_anonymity
 
 
 @dataclass(frozen=True)
@@ -110,10 +110,13 @@ def construction_cost(leak, topology, target_fn=path_count_anonymity, graph=None
 def boltzmann_oracle(inputs, outputs):
     """Per-coin ambiguity read off the link matrix, in the shape `amount_cuts` consumes.
 
-    `log_w` here is the log-count of outputs an input could plausibly have funded, which puts it on
-    the same footing as the per-coin density oracle it stands beside: a low value means few readings
-    survive, and zero means the amounts settle the assignment by themselves. Unlike that oracle it
-    answers when the transaction pays a fee, which is nearly always.
+    `log_w` here is the log-count of outputs an input could plausibly have funded under dss's
+    mapping family, which puts it on the same footing as the per-coin density oracle it stands
+    beside: a low value means few readings survive *in that family*. Zero does NOT mean the amounts
+    settle the assignment — dss's family is a strict restriction of the exact one, and reading a
+    one-entry row as certain was measured to assert 1,197 unsettled certainties across 395 of 507
+    transactions (`results/RESULTS-exact-oracle-audit.md`). Unlike the density oracle it answers
+    when the transaction pays a fee, which is nearly always.
     """
     import math
 

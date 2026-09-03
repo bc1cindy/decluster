@@ -18,11 +18,27 @@ Three guards, each answering something measured rather than assumed:
                  refusal, not a coin flip.
   reversibility  the match must also win scoring from the other side. Two views need not
                  agree, and a vertex with no counterpart is meant to stay unmatched.
+
+WHERE THIS DEPARTS FROM THE PAPER. This is the closest module in `decluster/` to the cited
+algorithm, but it is not the faithful implementation of it; that is
+`decluster/baselines/narayanan_shmatikov.py`. Two differences change verdicts:
+
+  * A candidate set of size one is accepted with `eccentricity = float("inf")`
+    (`ViewMatcher._best`), skipping the gate entirely rather than computing a large-but-finite
+    eccentricity. The baseline's live gate (`propagate`'s `_sparse_winner`, not `_winner`) never
+    skips it: given one materialised score it still normalises over the whole unclaimed candidate
+    population and computes a finite eccentricity from that, which clears `theta` or not depending
+    on the population size — not a blanket refusal of a lone candidate.
+  * The imported `propagate.eccentricity` normalises by the standard deviation of the scores that
+    were actually materialised, and `candidate_scores` materialises only vertices that received a
+    vote. The baseline's gate (`_sparse_winner`) normalises over the whole unclaimed candidate
+    population, implicit zeros included, which is a larger population and a different sigma. The
+    two formulas agree given the same values; they are not given the same values.
 """
 from collections import Counter
 from math import sqrt
 
-from .propagate import eccentricity
+from .single_view_propagation import eccentricity
 
 
 def agreement(sa, sb):

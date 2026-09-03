@@ -25,6 +25,8 @@ from decluster import views, graph_shape
 from decluster.view_match import ViewMatcher, find_seeds
 from decluster.scale_cluster import cluster_scale_np_stream
 from decluster.monitor import COINJOIN_MIN_PARTICIPANTS
+from decluster.entities import detect_mining_pool
+from decluster.ns_bitcoin import run_bitcoin_views, unique_entity_seeds
 
 
 def stream_window(spec):
@@ -97,7 +99,19 @@ def _active_contract(spec, split):
     return views.contract(stream_window(spec), lookup=split, axes=False, keep=keep), stat
 
 
-def pair(sa, sb, rng, frac=1.0, controls=False, auto_seeds=False):
+def independent_pool_labels(spec, lookup):
+    """Public coinbase self-labels; no withheld cross-view mapping is consulted."""
+    labels = []
+    for tx, _ in stream_window(spec):
+        hit = detect_mining_pool(tx)
+        if hit and hit["payout_addr"]:
+            address = hit["payout_addr"]
+            labels.append((hit["entity"], lookup.get(address, address)))
+    return labels
+
+
+def pair(sa, sb, rng, frac=1.0, controls=False, auto_seeds=False,
+         faithful_ns=False):
     mark = time.monotonic()
     glob = cluster_windows([sa, sb])
     mark = stage("cluster", mark)
@@ -113,9 +127,11 @@ def pair(sa, sb, rng, frac=1.0, controls=False, auto_seeds=False):
     mark = stage("split", mark)
     # Each view contracts under its own tag, so a cluster split across the boundary appears
     # only as #a in view A and only as #b in view B.
-    ga, stat_a = _active_contract(sa, views.view_lookup(look, split_cids, "#a"))
+    lookup_a = views.view_lookup(look, split_cids, "#a")
+    lookup_b = views.view_lookup(look, split_cids, "#b")
+    ga, stat_a = _active_contract(sa, lookup_a)
     mark = stage("contract-a", mark)
-    gb, stat_b = _active_contract(sb, views.view_lookup(look, split_cids, "#b"))
+    gb, stat_b = _active_contract(sb, lookup_b)
     mark = stage("contract-b", mark)
     Bb = {v for v in gb.vertices if isinstance(v, str) and v.endswith("#b")}
     truth = {u: f"{origin[u]}#b" for u in ga.vertices
@@ -162,6 +178,26 @@ def pair(sa, sb, rng, frac=1.0, controls=False, auto_seeds=False):
     if len(truth) < 20:
         print("  too few to evaluate", flush=True)
         return
+    if faithful_ns:
+        # Seed discovery is kept causally upstream of `truth`: the public entity name and
+        # each view's own clustering are the only inputs. Ambiguous entity-to-vertex labels
+        # abstain rather than being paired with the withheld correspondence.
+        seeds = unique_entity_seeds(independent_pool_labels(sa, lookup_a),
+                                    independent_pool_labels(sb, lookup_b))
+        measurable = {u: v for u, v in seeds.items() if truth.get(u) == v}
+        conflicts = len(seeds) - len(measurable)
+        print(f"  faithful N-S independent seeds: {len(seeds)} "
+              f"({len(measurable)} agree with withheld correspondence, {conflicts} conflicts)",
+              flush=True)
+        if conflicts:
+            print("  faithful N-S not run: independently derived seed conflicts with grading map",
+                  flush=True)
+        elif not seeds:
+            print("  faithful N-S not identifiable: no unique public entity spans both views",
+                  flush=True)
+        else:
+            result = run_bitcoin_views(ga, gb, truth, seeds)
+            print(f"  faithful N-S: {result}", flush=True)
     keys = sorted(truth, key=lambda u: -(ga.degree(u) + gb.degree(truth[u])))
     if auto_seeds:
         automatic = find_seeds(ga, gb)
@@ -191,7 +227,7 @@ def pair(sa, sb, rng, frac=1.0, controls=False, auto_seeds=False):
                   f"recall {rec:.3f}", flush=True)
 
 
-def main(weeks, files, cap=None, controls=False, auto_seeds=False):
+def main(weeks, files, cap=None, controls=False, auto_seeds=False, faithful_ns=False):
     specs = []
     for f in files:
         specs.extend(windows_for(f, weeks, cap))
@@ -200,7 +236,8 @@ def main(weeks, files, cap=None, controls=False, auto_seeds=False):
         sa, sb = specs[i], specs[i + 1]
         print(f"\n== pair {i}: {os.path.basename(sa[0])}[{sa[1]}-{sa[2]}] -> "
               f"{os.path.basename(sb[0])}[{sb[1]}-{sb[2]}] ==", flush=True)
-        pair(sa, sb, random.Random(0), controls=controls, auto_seeds=auto_seeds)
+        pair(sa, sb, random.Random(0), controls=controls, auto_seeds=auto_seeds,
+             faithful_ns=faithful_ns)
 
 
 if __name__ == "__main__":
@@ -214,5 +251,8 @@ if __name__ == "__main__":
                         help="also run undirected and shuffled-seed controls")
     parser.add_argument("--auto-seeds", action="store_true",
                         help="run the costly experimental exact-signature seed bootstrap")
+    parser.add_argument("--faithful-ns", action="store_true",
+                        help="run topology-only N-S with unique public-entity seeds")
     args = parser.parse_args()
-    main(args.weeks, args.files, args.max_txs, args.controls, args.auto_seeds)
+    main(args.weeks, args.files, args.max_txs, args.controls, args.auto_seeds,
+         args.faithful_ns)

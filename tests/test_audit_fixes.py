@@ -15,11 +15,11 @@ def test_uih_bigquery_shape_still_works():
           "vout": [{"value": 900}, {"value": 100}]}
     assert x_uih(tx) == "uih2"
 
-def test_fs_score_mismatch_clamped():
-    from decluster.combiner import fs_score
+def test_rarity_score_mismatch_clamped():
+    from decluster.combiner import rarity_score
     # one degenerate axis: collision (0.999) >= consistency (0.95) -> a mismatch must clamp to <= 0
     axes = [("probe", lambda tx: tx["probe"], {"a": 1.0, "b": 1.0}, 0.999, lambda va, vb: False)]
-    total = fs_score(axes, {"probe": "a"}, {"probe": "b"}, c=0.95, floor_n=1000)
+    total = rarity_score(axes, {"probe": "a"}, {"probe": "b"}, c=0.95, floor_n=1000)
     assert total <= 0        # without the clamp this would be +5.6 bits (a false same-owner vote)
 
 def test_extractors_tolerate_prevout_none():

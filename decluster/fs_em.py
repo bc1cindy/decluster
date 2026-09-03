@@ -1,6 +1,7 @@
 """Unsupervised EM for the per-axis Fellegi-Sunter m (u fixed at the measured collision), plus a
-supervised reuse-label oracle. Offline, deterministic. See combiner.fs_score for the scoring kernel and
-results/RESULTS-em-m.md for the reading."""
+supervised reuse-label oracle. Offline, deterministic. See combiner.rarity_score for the scoring
+kernel (`combiner.fs_score` is a deprecated alias of it, and was never fitted Fellegi-Sunter — the
+fitted model is `decluster/fellegi_sunter.py`) and results/RESULTS-em-m.md for the reading."""
 import math
 
 _EPS = 1e-6

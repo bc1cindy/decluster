@@ -1,8 +1,9 @@
 """Bayesian (Gibbs) record linkage over the per-axis agree/disagree likelihood — the classic per-field
 Fellegi-Sunter form with m_j given a Beta prior and u_j fixed at the measured collision. F-S is the
 plug-in (point-m) special case. Offline, deterministic. Consumes the fs_em.agree_matrix (A, mask, u)
-shape; see results/RESULTS-bayes-vs-fs.md. NOTE: this is the axis-level F-S, not combiner.fs_score
-(which is value-specific)."""
+shape; see results/RESULTS-bayes-vs-fs.md. NOTE: this is the axis-level F-S, not the value-specific
+combiner.rarity_score (whose deprecated alias `combiner.fs_score` names a rarity baseline, not a
+fitted Fellegi-Sunter model; the fitted model is `decluster/fellegi_sunter.py`)."""
 import math
 import random
 from .fs_em import _clamp    # shared clamp for the per-axis F-S probabilities
@@ -10,7 +11,8 @@ from .fs_em import _clamp    # shared clamp for the per-axis F-S probabilities
 
 def pair_probs(A, mask, m, u, lam):
     """Per-pair P(match) under the per-field naive-Bayes likelihood: log-LR = Σ over active axes of
-    a·log(m/u) + (1−a)·log((1−m)/(1−u)); P = λ·LR / (λ·LR + (1−λ)). Axis-level F-S, not fs_score."""
+    a·log(m/u) + (1−a)·log((1−m)/(1−u)); P = λ·LR / (λ·LR + (1−λ)). Axis-level F-S, not the
+value-specific combiner.rarity_score."""
     m = [_clamp(v) for v in m]
     u = [_clamp(v) for v in u]
     k = len(u)

@@ -1,23 +1,36 @@
-"""Robust oracle layer on top of `ancestry.dss_link_oracle`: an in-process, panic-safe default
-(`bounded_link_oracle`) plus an opt-in, hang-proof subprocess oracle (`subprocess_link_oracle`)
-for the rare tx where dss's own `budget_ms` fails to preempt an internal blow-up."""
+"""Robust oracle layer on top of `ancestry.dss_link_oracle`: an in-process, panic-safe wrapper
+(`bounded_dss_link_oracle`) plus an opt-in, hang-proof subprocess oracle (`subprocess_link_oracle`)
+for the rare tx where dss's own `budget_ms` fails to preempt an internal blow-up.
+
+Everything here bounds the SUBSET-SUM oracle (`dss.pairwise_link_prob`). None of it is the default
+walk any more: since the value-flow swap, `analyze`, `report`, `path_count_anonymity` and the
+`ancestry` facades all default to `ancestry.value_flow_link_oracle` (nominal-value transitions, no
+dss). The subset-sum walk is reachable only by passing one of these explicitly."""
 import multiprocessing as mp
 
 from decluster import ancestry
 
 # A cooperative dss budget that RESOLVES a ~2.3s payment+partial-mix coinjoin; 1500-2000ms
-# truncates such a tx to a point mass -- confirmed on live data. This is the default budget for
-# the public analyze() facade, distinct from ancestry.DEFAULT_LINK_BUDGET_MS (2000).
+# truncates such a tx to a point mass -- confirmed on live data. The budget a caller opting into
+# the subset-sum walk gets by default, distinct from ancestry.DEFAULT_LINK_BUDGET_MS (2000).
 DEFAULT_ANALYZE_BUDGET_MS = 6000
 
 
-def bounded_link_oracle(budget_ms=DEFAULT_ANALYZE_BUDGET_MS):
-    """Build the default in-process link oracle: `(inputs, outputs) -> matrix|None`, bound to
-    `budget_ms`. Panic-safe (inherits ancestry.dss_link_oracle's BaseException hardening), no
-    subprocess. This is the default oracle the public `analyze()` facade uses."""
+def bounded_dss_link_oracle(budget_ms=DEFAULT_ANALYZE_BUDGET_MS):
+    """Build an in-process SUBSET-SUM link oracle: `(inputs, outputs) -> matrix|None`, wrapping
+    `ancestry.dss_link_oracle` (`dss.pairwise_link_prob`) at `budget_ms`. Panic-safe (inherits that
+    function's BaseException hardening), no subprocess.
+
+    NOT a default. `analyze()`, `report()` and `path_count_anonymity()` default to
+    `ancestry.value_flow_link_oracle`; pass this explicitly to take the subset-sum walk instead."""
     def link(inputs, outputs):
         return ancestry.dss_link_oracle(inputs, outputs, budget_ms)
     return link
+
+
+# Retained name: `bounded_link_oracle` is the public export existing callers and results documents
+# use. It has always bounded the subset-sum oracle; the clearer name above says so.
+bounded_link_oracle = bounded_dss_link_oracle
 
 
 def _link_worker(inputs, outputs, budget_ms, q):

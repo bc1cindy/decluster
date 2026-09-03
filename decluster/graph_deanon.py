@@ -3,7 +3,15 @@ Same-owner labels = transitive common-input clusters — a near-certain *heurist
 (a collaborative tx in the slice would be a false merge). Held-out positives = same-owner pairs
 NOT directly co-spent, scored by common neighbors. `evaluate` runs the 1-hop probe;
 `analyze` sweeps graph depth k (hubs excluded) to show structure is deeper under churn.
-usage: python3 -m decluster.graph_deanon [--depth] <slice.json...>"""
+usage: python3 -m decluster.graph_deanon [--depth] <slice.json...>
+
+WHAT THIS ACTUALLY IMPLEMENTS. Common-neighbour link prediction on one graph, scored pairwise
+(`structural_score` = |N(a) ∩ N(b)|). It has no seed set, no vertex correspondence, no propagation
+and no second view — none of the four things the Narayanan--Shmatikov de-anonymization algorithm is
+made of. The name records which paper motivated the probe, not which algorithm runs here. The
+faithful reference implementation is `decluster/baselines/narayanan_shmatikov.py`, and
+`decluster/baselines/link_prediction.py` is where a mapping from it actually drives link
+prediction; this module's `structural_score` is that comparison's structure-only arm."""
 import sys, random
 from .measure import load_unique
 from .unionfind import UF
@@ -76,7 +84,18 @@ def structural_score(a, b, neigh):
 
 
 def auc(pos_scores, neg_scores, seed=0):
-    """AUC = P(a positive pair scores above a negative pair)."""
+    """AUC = P(a positive pair scores above a negative pair), ESTIMATED by at most 20,000 sampled
+    (positive, negative) draws with half credit for ties.
+
+    This is a Monte-Carlo estimator, not the exact statistic: it is seeded and so reproducible, but
+    two runs at different seeds differ in the third decimal, and every AUC published from this
+    module and its callers (`fingerprint_validate`, `change_validate`, `fingerprint_ns`, `cluster`,
+    `broadcast`) carries that sampling error. `exact_auc` below computes the same quantity exactly.
+    They are not interchangeable at three decimals, so a number from one should not be compared
+    against a number from the other without saying which produced it.
+
+    Kept as the estimator because the repository's published AUCs were measured with it; new call
+    sites should prefer `exact_auc`."""
     rng = random.Random(seed)
     if not pos_scores or not neg_scores: return None
     trials = min(20000, len(pos_scores) * len(neg_scores))
@@ -85,6 +104,32 @@ def auc(pos_scores, neg_scores, seed=0):
         p, n = rng.choice(pos_scores), rng.choice(neg_scores)
         wins += 1.0 if p > n else (0.5 if p == n else 0.0)
     return wins / trials
+
+
+def exact_auc(scores, labels):
+    """Exact Mann--Whitney AUC with half credit for ties: the rank-sum statistic, no sampling.
+
+    Takes one score list with a parallel boolean-ish `labels` rather than two lists, because that
+    is the shape an evaluation harness already holds. `None` when either class is empty, matching
+    `auc`. O(n log n) — cheaper than `auc`'s 20,000 draws on any realistic n, and deterministic
+    without a seed. The single implementation of the exact statistic in this repository;
+    `fs_temporal._score_metrics` calls it."""
+    positive = sum(1 for label in labels if label)
+    negative = len(labels) - positive
+    if not positive or not negative:
+        return None
+    ordered = sorted(zip(scores, labels), key=lambda item: item[0])
+    rank_sum = 0.0
+    index = 0
+    while index < len(ordered):
+        end = index + 1
+        while end < len(ordered) and ordered[end][0] == ordered[index][0]:
+            end += 1
+        average_rank = ((index + 1) + end) / 2.0
+        rank_sum += average_rank * sum(1 for _, label in ordered[index:end] if label)
+        index = end
+    statistic = rank_sum - positive * (positive + 1) / 2.0
+    return statistic / (positive * negative)
 
 
 def shuffle_auc(pos_scores, neg_scores, seed=0):

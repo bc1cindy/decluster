@@ -214,3 +214,130 @@ def test_an_empty_intersection_with_real_boundaries_is_not_blind():
 def test_truncation_is_absent_rather_than_assumed_when_not_supplied():
     out = evaluate({"txid": "t", "outpoints": [("a", 0)]}, lambda op: {"x": 1.0})
     assert out["truncated"] is None and out["blind"] is False
+    assert out["truncated_causes"] is None and out["blind_cause"] is None
+
+
+def test_a_blind_branch_names_which_walk_limit_blinded_it():
+    """`blind` says the branch saw nothing; it does not say why. An oracle that declined to link
+    and a walk cut off at `max_nodes` are different limits with different remedies."""
+    from decluster.ancestry import TruncationSupport
+
+    cand = {"txid": "t", "outpoints": [("a", 0), ("b", 0)]}
+    sigs = {("a", 0): {"x": 0.5, "y": 0.5}, ("b", 0): {"p": 1.0}}
+
+    refused = evaluate(cand, sigs.__getitem__, truncation_of={
+        ("a", 0): TruncationSupport(oracle_refused=2, node_capped=0),
+        ("b", 0): TruncationSupport(oracle_refused=0, node_capped=0),
+    }.__getitem__)
+    assert refused["truncated"] == [2, 0]
+    assert refused["truncated_causes"][0] == {"oracle_refused": 2, "node_capped": 0,
+                                              "zero_link_mass": 0,
+                                              "unattributed": 0}
+    assert refused["blind"] is True and refused["blind_cause"] == "oracle_refused"
+
+    capped = evaluate(cand, sigs.__getitem__, truncation_of={
+        ("a", 0): TruncationSupport(oracle_refused=0, node_capped=2),
+        ("b", 0): TruncationSupport(oracle_refused=0, node_capped=0),
+    }.__getitem__)
+    assert capped["blind"] is True and capped["blind_cause"] == "node_capped"
+
+    both = evaluate(cand, sigs.__getitem__, truncation_of={
+        ("a", 0): TruncationSupport(oracle_refused=1, node_capped=1),
+        ("b", 0): TruncationSupport(oracle_refused=0, node_capped=0),
+    }.__getitem__)
+    assert both["blind"] is True and both["blind_cause"] == "mixed"
+
+
+def test_a_bare_total_is_reported_as_an_unnamed_cause_rather_than_guessed():
+    """A caller that reports only a total measured the blindness without its cause. Assigning it
+    to one of the two would be the invention this field exists to prevent."""
+    cand = {"txid": "t", "outpoints": [("a", 0), ("b", 0)]}
+    sigs = {("a", 0): {"x": 0.5, "y": 0.5}, ("b", 0): {"p": 1.0}}
+    out = evaluate(cand, sigs.__getitem__, truncation_of={("a", 0): 2, ("b", 0): 0}.__getitem__)
+    assert out["truncated"] == [2, 0] and out["truncated_causes"] == [None, None]
+    assert out["blind"] is True and out["blind_cause"] == "unknown"
+
+
+def test_a_branch_that_sees_is_not_credited_with_a_cause():
+    """Only the blind branches carry a cause; a walk that resolved origins was not blinded by
+    anything, however much of its boundary was truncated."""
+    from decluster.ancestry import TruncationSupport
+
+    cand = {"txid": "t", "outpoints": [("a", 0), ("b", 0)]}
+    sigs = {("a", 0): {"x": 0.5, "y": 0.5}, ("b", 0): {"x": 1.0}}
+    out = evaluate(cand, sigs.__getitem__, truncation_of={
+        ("a", 0): TruncationSupport(oracle_refused=1, node_capped=0),
+        ("b", 0): TruncationSupport(oracle_refused=0, node_capped=0),
+    }.__getitem__)
+    assert out["shared"] and out["blind"] is False and out["blind_cause"] is None
+
+
+def test_an_unmeasured_cause_dominates_rather_than_mixing_into_a_named_one():
+    """One blind branch reporting a bare total and another reporting a real cause must not come
+    back as `"mixed"`: `"mixed"` asserts both named walk limits fired, and one of them was never
+    observed. That is the unnamed-becomes-named laundering this field exists to refuse."""
+    from decluster.ancestry import TruncationSupport
+
+    cand = {"txid": "t", "outpoints": [("a", 0), ("b", 0)]}
+    sigs = {("a", 0): {"x": 0.5, "y": 0.5}, ("b", 0): {"p": 1.0, "q": 1.0, "r": 1.0}}
+    out = evaluate(cand, sigs.__getitem__, truncation_of={
+        ("a", 0): 2,                                              # blind, cause not measured
+        ("b", 0): TruncationSupport(oracle_refused=0, node_capped=3),   # blind, cause measured
+    }.__getitem__)
+    assert out["blind"] is True
+    assert out["truncated_causes"] == [None, {"oracle_refused": 0, "node_capped": 3,
+                                              "zero_link_mass": 0,
+                                              "unattributed": 0}]
+    assert out["blind_cause"] == "unknown"
+
+
+def test_a_cause_this_tree_does_not_name_is_reported_unknown_not_capped():
+    """`TruncationSupport.unattributed` keeps an unrecognised cause inside the total without
+    giving it one of the two names; `blind_cause` must carry that through."""
+    from decluster.ancestry import TruncationSupport
+
+    cand = {"txid": "t", "outpoints": [("a", 0)]}
+    sigs = {("a", 0): {"x": 0.5, "y": 0.5}}
+    out = evaluate(cand, sigs.__getitem__, truncation_of={
+        ("a", 0): TruncationSupport(oracle_refused=0, node_capped=0, unattributed=2),
+    }.__getitem__)
+    assert out["truncated"] == [2], "an unnamed cause still counts toward blindness"
+    assert out["blind"] is True and out["blind_cause"] == "unknown"
+
+
+def test_a_zero_link_column_is_reported_as_its_own_blind_cause():
+    from decluster.ancestry import TruncationSupport
+
+    cand = {"txid": "t", "outpoints": [("a", 0)]}
+    out = evaluate(cand, lambda op: {"x": 1.0}, truncation_of=lambda op:
+                   TruncationSupport(oracle_refused=0, node_capped=0, zero_link_mass=1))
+    assert out["blind"] is True
+    assert out["blind_cause"] == "zero_link_mass"
+    assert out["truncated_causes"][0]["zero_link_mass"] == 1
+
+
+def test_a_branch_blind_with_no_truncation_is_blind_without_a_cause():
+    """Blind because it observed nothing at all, not because a walk limit cut it. `blind_cause` is
+    None here and None again when `truncation_of` was never supplied; `blind` is what tells the two
+    states apart."""
+    from decluster.ancestry import TruncationSupport
+
+    cand = {"txid": "t", "outpoints": [("a", 0), ("b", 0)]}
+    sigs = {("a", 0): {}, ("b", 0): {"p": 1.0}}
+    out = evaluate(cand, sigs.__getitem__, truncation_of={
+        ("a", 0): TruncationSupport(oracle_refused=0, node_capped=0),
+        ("b", 0): TruncationSupport(oracle_refused=0, node_capped=0),
+    }.__getitem__)
+    assert out["sizes"] == [0, 1]
+    assert out["blind"] is True and out["blind_cause"] is None
+
+    unasked = evaluate(cand, sigs.__getitem__)
+    assert unasked["blind"] is False and unasked["blind_cause"] is None
+
+
+def test_a_truncation_count_that_is_neither_an_int_nor_a_support_is_refused():
+    """Coercing a float would round a caller's measurement without telling them."""
+    cand = {"txid": "t", "outpoints": [("a", 0)]}
+    sigs = {("a", 0): {"x": 1.0}}
+    with pytest.raises(TypeError):
+        evaluate(cand, sigs.__getitem__, truncation_of=lambda op: 2.7)

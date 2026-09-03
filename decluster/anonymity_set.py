@@ -32,12 +32,12 @@ def provenance_anonymity(target, hypotheses, *, depth=6, fetch=None, link_oracle
     """Reweighted provenance distribution for `target`: the graph-derived absorption distribution
     (ancestry), multiplicatively narrowed by each subjective hypothesis (name, factors)."""
     if base_dist is None:
-        from .ancestry import build_extended_graph, absorber_distribution, dss_link_oracle
+        from .ancestry import build_extended_graph, absorber_distribution, value_flow_link_oracle
         if fetch is None:
             from .fetch import fetch_tx
             fetch = fetch_tx
         g = build_extended_graph(target, depth=depth, fetch=fetch,
-                                  link_oracle=link_oracle or dss_link_oracle)
+                                  link_oracle=link_oracle or value_flow_link_oracle)
         base_dist = absorber_distribution(g, target)
     dist = dict(base_dist)
     for _name, factors in hypotheses:
@@ -77,12 +77,12 @@ def provenance_anonymity_fused(target, subjective_oracle, *, depth=6, fetch=None
     `reweight` cannot do. `value_weighted` (default False, backward-compatible) passes through to
     build_extended_graph's Gap C satoshi-flow weighting. `max_nodes` (default None, backward-
     compatible) passes through to build_extended_graph's node-count cap."""
-    from .ancestry import build_extended_graph, absorber_distribution, dss_link_oracle
+    from .ancestry import build_extended_graph, absorber_distribution, value_flow_link_oracle
     if fetch is None:
         from .fetch import fetch_tx
         fetch = fetch_tx
     g = build_extended_graph(target, depth=depth, fetch=fetch,
-                             link_oracle=link_oracle or dss_link_oracle,
+                             link_oracle=link_oracle or value_flow_link_oracle,
                              value_weighted=value_weighted,
                              subjective_oracle=subjective_oracle,
                              max_nodes=max_nodes)

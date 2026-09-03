@@ -56,6 +56,9 @@ def path_count_anonymity(target, *, depth=6, max_nodes=None, fetch=None, link_or
     re-walk. Returns {"origins_weighted": {origin: weight}, "min_entropy": float, "shannon": float,
     "truncated": int}.
 
+    `link_oracle` default = `ancestry.value_flow_link_oracle`, the same walk `analyze`/`report`
+    take; pass `oracle.bounded_dss_link_oracle()` for the opt-in subset-sum walk.
+
     `count_oracle` is accepted but unused: kept for backward compatibility with callers that still
     pass one. See the module docstring for why subset-sum multiplicity is not folded in here.
 
@@ -66,8 +69,8 @@ def path_count_anonymity(target, *, depth=6, max_nodes=None, fetch=None, link_or
         from .fetch import fetch_tx
         fetch = fetch_tx
     if link_oracle is None:
-        from .oracle import bounded_link_oracle
-        link_oracle = bounded_link_oracle()
+        from .ancestry import value_flow_link_oracle
+        link_oracle = value_flow_link_oracle
 
     g = build_extended_graph(target, depth=depth, fetch=fetch, link_oracle=link_oracle,
                               max_nodes=max_nodes)

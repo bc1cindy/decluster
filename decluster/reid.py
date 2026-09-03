@@ -16,7 +16,7 @@ reusing the same primitives as the rest of the engine."""
 import random
 
 from .ancestry import provenance_link
-from .propagate import build_rarity, eccentricity
+from .single_view_propagation import build_rarity, eccentricity
 from .def1_sparsity import cosine
 
 

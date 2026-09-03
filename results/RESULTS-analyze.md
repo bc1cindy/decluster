@@ -1,5 +1,13 @@
 # `analyze()` — systematic-callability validation (real numbers)
 
+> **Correction (2026-09-03) — `analyze()`'s default oracle has moved.**
+> The runs below pass `bounded_link_oracle(3000)` / `bounded_link_oracle(5000)` explicitly, so their
+> numbers remain reproducible as written. What is no longer true is the prose calling that oracle
+> `analyze()`'s *default*: the default is now `ancestry.value_flow_link_oracle`, the nominal-value
+> transition rule, which takes no dss at all. `oracle.bounded_link_oracle` (also spelled
+> `bounded_dss_link_oracle`) still bounds the subset-sum oracle and is now opt-in. The "In-process
+> bounded oracle" limit below therefore describes the opt-in path, not the default one.
+
 `examples/analyze_live.py` exercises the PUBLIC `analyze()` facade (`decluster/analyze.py`, exported
 from `decluster`) — the entry point an external consumer (e.g. `wasabi-model`) imports to get per-coin
 §04 fused provenance anonymity sets. This file reports what actually happens when you call it on real

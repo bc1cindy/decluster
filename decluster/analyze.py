@@ -1,17 +1,19 @@
 """Public entry point: fused provenance anonymity-set analysis of a transaction's outputs, §04 of
 tx-graph-anonymity-sets. Thin orchestration over the tested walk/fusion stack (ancestry +
 anonymity_set) — NO new science. This is the facade an external consumer (e.g. wasabi-model) imports
-to get per-coin provenance anonymity sets robustly at any depth (default 5): an oracle refusal or dss
-panic on a tx it cannot handle truncates that branch (ancestry's existing None-boundary) rather than
-raising, and never fabricates a link. (Errors outside the oracle — a failing `fetch`, a malformed tx
+to get per-coin provenance anonymity sets robustly at any depth (default 5): an oracle refusal (or,
+on the opt-in subset-sum oracle, a dss panic) on a tx it cannot handle truncates that branch
+(ancestry's existing None-boundary) rather than raising, and never fabricates a link. The default
+walk is `ancestry.value_flow_link_oracle`, which takes no dss and refuses only a transaction with no
+positive input value. (Errors outside the oracle — a failing `fetch`, a malformed tx
 dict, an out-of-range target — still propagate; wrap the call if the caller must survive those.)"""
 from . import cluster as _cluster_mod
 from .ancestry import build_extended_graph, absorber_distribution
 from .anonymity_set import anonymity_bits, cluster_of_from_tx_groups, provenance_anonymity_fused, \
     subjective_oracle_for
-from .combiner import Combiner
+from .rarity_weight_baseline import Combiner
 from .partition_model import build_evidence, contract_cospend
-from .path_count import path_count_anonymity
+from .weighted_path_count import path_count_anonymity
 from .report import _spendable_vouts
 from .split_merge import M3_MAX_SUPERNODES, m3_gap_and_samples
 
@@ -27,8 +29,10 @@ def analyze(tx, targets=None, depth=5, *, fetch=None, link_oracle=None,
     target) still propagate — wrap the call if the caller must survive those.
 
     tx: a txid str (fetched via `fetch`) OR a tx dict (offline). targets: vout indices (default all
-    spendable outputs). link_oracle default = oracle.bounded_link_oracle() (panic-safe, resolves
-    coinjoins). value_weighted = Gap C satoshi-flow weighting. cluster_of = {address: owner} folded
+    spendable outputs). link_oracle default = ancestry.value_flow_link_oracle (nominal-value
+    transitions; no dss). The subset-sum walk is opt-in: pass
+    `oracle.bounded_dss_link_oracle(budget_ms)` explicitly. Both facades of this walk (`analyze`
+    and `report`) take the same default, so they read one walk two ways. value_weighted = Gap C satoshi-flow weighting. cluster_of = {address: owner} folded
     into the §04 subjective source. with_origins includes the absorber distribution per target.
     max_nodes (default None = uncapped, backward-compatible) is the deep-coinjoin tractability knob:
     bounds both walks' cost to O(max_nodes) fetch/oracle calls regardless of depth (a lower bound on
@@ -52,8 +56,8 @@ def analyze(tx, targets=None, depth=5, *, fetch=None, link_oracle=None,
         from .fetch import fetch_tx
         fetch = fetch_tx
     if link_oracle is None:
-        from .oracle import bounded_link_oracle
-        link_oracle = bounded_link_oracle()
+        from .ancestry import value_flow_link_oracle
+        link_oracle = value_flow_link_oracle
     if isinstance(tx, str):
         tx = fetch(tx)
     txid = tx["txid"]
