@@ -1,0 +1,43 @@
+{
+  "doc": "RESULTS-ns-bitcoin.md",
+  "invariants": {
+    "blocks": 120,
+    "boundary": 392112,
+    "correspondence_vertices": 2599,
+    "edge_overlap": 0.467344,
+    "independent_entity_seeds": 0,
+    "left_edges": 163567,
+    "left_internal_edges": 2756,
+    "left_path": "data/epochs_2016_weekly/epoch_2016_01_391104-392111.ndjson.gz",
+    "left_transactions": 133576,
+    "left_vertices": 88066,
+    "min_degree": 2,
+    "recurring_edges": 1288,
+    "right_edges": 189919,
+    "right_path": "data/epochs_2016_weekly/epoch_2016_01_392112-393119.ndjson.gz",
+    "right_transactions": 157724,
+    "right_vertices": 104328,
+    "rng_seed": 7,
+    "seed_counts": [
+      130,
+      260,
+      650
+    ],
+    "seed_fractions": [
+      0.05,
+      0.1,
+      0.25
+    ],
+    "split_frac": 1.0,
+    "thetas": [
+      0.5,
+      1.5
+    ]
+  },
+  "source": {
+    "bytes": 1024227001,
+    "digest": "d723f1927ef9125a6e8eb921aefd051bcfb8c22e56e1c20d57e786323c8721cd",
+    "files": 5,
+    "pattern": "data/epochs_2016_weekly/*.ndjson.gz"
+  }
+}
