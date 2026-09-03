@@ -5,10 +5,12 @@ are computed ONLY when the caller supplies the graph context that makes a pair m
 are None (never fabricated). `forced` joins them on the same footing: conservation needs one
 participant's input to be known, which the transaction alone does not give. Every number is an
 attacker lower bound under no auxiliary information, not a privacy score. By default (`subjective=
-True`) the target's headline is fused_min_entropy — the §04 subjective-fused anonymity set, read as a
-conservative lower bound on the number of graph cuts an adversary needs to de-anonymize the coin (the
-post-06 reading); min_entropy is the graph-only (no-subjective) baseline it can only narrow, never
-widen. The fused reading is the CONSERVATIVE minimum of the graph-only and subjective-fused
+True`) the target's headline is fused_min_entropy — the §04 subjective-fused anonymity set;
+min_entropy is the graph-only (no-subjective) baseline it can only narrow, never widen. It is NOT read
+as a lower bound on the number of graph cuts an adversary needs: the framework offers that reading for
+an output's entropy, and PAPER §11 declines it, because whether it transfers to the absorber-model
+entropy computed here — which is over a boundary distribution rather than over graph edges — is not
+established. The number is reported without it. The fused reading is the CONSERVATIVE minimum of the graph-only and subjective-fused
 min-entropy/shannon: subjective evidence can only narrow the anonymity set, never widen it, so a raw
 fusion that (via a same-owner boost favoring a graph-minority input) ends up spreading mass instead of
 concentrating it is clamped down to the graph-only baseline. This makes fused_min_entropy <= min_entropy
@@ -40,7 +42,7 @@ def _spendable_vouts(tx):
 
 def report(tx, combiner=None, neigh=None, entities=None, pair=None,
            oracle=None, link_oracle=None, fetch=None, depth=6, targets=None,
-           known_input=None, subjective=True, cluster_of=None):
+           known_input=None, subjective=True, cluster_of=None, count_oracle=None):
     """Fused measurement view of a real transaction `tx` (esplora/mempool.space JSON). See module
     docstring for the always-vs-conditional term policy and the lower-bound footing. `subjective=True`
     (default) adds the §04 subjective-fused readout (fused_min_entropy/fused_shannon) to each target,
@@ -57,7 +59,7 @@ def report(tx, combiner=None, neigh=None, entities=None, pair=None,
     txid = tx["txid"]
     in_vals = [v["prevout"]["value"] for v in tx["vin"]]
     out_vals = [o["value"] for o in tx["vout"]]
-    amount = amount_cuts(in_vals, out_vals, oracle)
+    amount = amount_cuts(in_vals, out_vals, oracle, count_oracle=count_oracle)
     vouts = targets if targets is not None else _spendable_vouts(tx)
     targets_out = {}
     for vout in vouts:
@@ -102,8 +104,7 @@ def print_report(rep):
         base = (f"  target vout {vout}: min_entropy={t['min_entropy']:.3f} bits (graph-only) "
                 f"shannon={t['shannon']:.3f} absorbers={t['n_absorbers']} truncated={t['truncated']}")
         if "fused_min_entropy" in t:
-            base += (f"  | FUSED min_entropy={t['fused_min_entropy']:.3f} bits "
-                     "(>= graph cuts to de-anon)")
+            base += f"  | FUSED min_entropy={t['fused_min_entropy']:.3f} bits"
         print(base)
     if rep["forced"] is None:
         print("  forced: n/a (no participant input supplied)")

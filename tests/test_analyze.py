@@ -75,7 +75,7 @@ def test_path_count_true_adds_path_count_block():
     out = analyze(txs["t1"], targets=[0], depth=1, fetch=fetch, link_oracle=_uniform,
                   path_count=True)
     pc = out[0]["path_count"]
-    assert set(pc) == {"log_W_paths", "min_entropy", "shannon", "origins_weighted"}
+    assert set(pc) == {"min_entropy", "shannon", "origins_weighted"}
 
 
 def test_path_count_false_by_default_omits_the_key():

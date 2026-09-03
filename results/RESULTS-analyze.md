@@ -75,10 +75,11 @@ lowering 1.0 → 0.304 bits; `tests/test_analyze.py`'s conservative-clamp + shar
 Depth-5 over coinjoins is intractable because the walk enumerates the ancestral graph explicitly. The
 refs' §07 (*path-like anonymity set*) is the alternative object — counting the counterfactual *paths*
 through the graph. This is now BUILT: `decluster.path_count.path_count_anonymity` (a concrete §07
-instance: the provenance distribution weighted by per-edge path multiplicity `W(E)`), reachable via
-`analyze(path_count=True)`, backed by `dss.w_count` (the crate's feasibility-cascade count dispatcher:
-brute → dp → sparse → sasamoto). Real numbers and its honest limits (it does not extend the tractable
-envelope; it adds the §06/§07 robustness lens) are in `results/RESULTS-path-count.md`. The original
+instance: the provenance distribution over ancestral origins, weighted by link probability alone —
+an earlier revision folded in the per-edge path multiplicity `W(E)` and that term has been withdrawn),
+reachable via `analyze(path_count=True)`, backed by `dss.w_count` (the crate's feasibility-cascade
+count dispatcher: brute → dp → sparse → sasamoto). Real numbers and its honest limits (it does not extend the tractable
+envelope; it adds the §07 path-multiplicity lens) are in `results/RESULTS-path-count.md`. The original
 motivating analysis — "is dss sufficient, and what did decluster expose at the time" — is in
 `results/RESULTS-path-counting-analysis.md` (now superseded by the shipped object).
 

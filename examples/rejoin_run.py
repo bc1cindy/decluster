@@ -25,7 +25,7 @@ sys.path.insert(0, os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
 
 from decluster.view_match import ViewMatcher
 from decluster.views import (cluster_addresses, contract, split_clusters,
-                            split_clusters_by_view)
+                            split_clusters_by_view, view_lookup)
 from decluster.views import _in_addrs, _out_addrs
 from examples.view_match_run import pseudonymise, stream
 
@@ -40,17 +40,19 @@ def main(path, boundary, frac=0.5, n_seeds=400, how="boundary"):
         for tx, _ in stream(path, 0, boundary):
             seen.update(_in_addrs(tx))
             seen.update(a for a, _ in _out_addrs(tx))
-        lookup, origin = split_clusters_by_view(base, seen, frac, rng)
-        tail = "#a"
+        split_cids, origin = split_clusters_by_view(base, seen, frac, rng)
+        la = view_lookup(base, split_cids, "#a")
+        lb = view_lookup(base, split_cids, "#b")
+        n_split = len(split_cids)
     else:
         lookup, origin = split_clusters(base, frac, rng)
-        tail = "#0"
-    n_split = sum(1 for t in set(lookup.values()) if t.endswith(tail))
+        la = lb = lookup
+        n_split = sum(1 for t in set(lookup.values()) if t.endswith("#0"))
     print(f"clustering: {len(set(base.values())):,} clusters, {n_split:,} split "
           f"({how})\n")
 
-    ga = contract(stream(path, 0, boundary), lookup=lookup, axes=False)
-    gbt = contract(stream(path, boundary + 1, 10 ** 9), lookup=lookup, axes=False)
+    ga = contract(stream(path, 0, boundary), lookup=la, axes=False)
+    gbt = contract(stream(path, boundary + 1, 10 ** 9), lookup=lb, axes=False)
     gb, sigma = pseudonymise(gbt, rng)
     unsigma = {v: k for k, v in sigma.items()}
 

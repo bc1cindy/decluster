@@ -17,12 +17,18 @@ def _fake_oracle(coins, kappa=0.5):
     return lambda inputs, outputs: {"kappa": kappa, "coins": coins}
 
 
+def _resolved(kind="lower_bound", count=3, log_w=1.58):
+    """A whole-transaction reading that resolved, which step three is gated on."""
+    return lambda inputs, outputs: {"kind": kind, "count": count, "log_w": log_w}
+
+
 def test_amount_cuts_fires_only_on_low_w():
     coins = [
         {"role": "maker", "index": 0, "value": 100, "log_w": 0.0, "kappa_c": 0.9},   # low W -> cut
         {"role": "maker", "index": 1, "value": 200, "log_w": 8.0, "kappa_c": 0.9},   # high W -> ambiguous, no cut
     ]
-    cuts = cost.amount_cuts([100, 200], [150, 150], _fake_oracle(coins), cut_threshold=1.0)
+    cuts = cost.amount_cuts([100, 200], [150, 150], _fake_oracle(coins), cut_threshold=1.0,
+                            count_oracle=_resolved())
     assert [c.index for c in cuts] == [0]
     assert cuts[0].value == 100
 
@@ -38,13 +44,17 @@ def test_amount_cuts_skips_unreachable_none_log_w():
         {"role": "in", "index": 0, "value": 100, "log_w": None, "kappa_c": 0.9},   # unreachable -> skip
         {"role": "in", "index": 1, "value": 200, "log_w": 0.0, "kappa_c": 0.9},     # low -> cut
     ]
-    cuts = cost.amount_cuts([100, 200], [150, 150], _fake_oracle(coins))
+    cuts = cost.amount_cuts([100, 200], [150, 150], _fake_oracle(coins),
+                            count_oracle=_resolved())
     assert [c.index for c in cuts] == [1]
 
 
-def test_amount_cuts_default_no_count_oracle_is_candidate_only():
+def test_amount_cuts_on_a_lower_bound_reading_stays_a_candidate():
+    """The transaction resolved, so the coins can be read — but a floor is not an exact count and
+    the cut it supports is a candidate, not a rigorous one."""
     coins = [{"role": "in", "index": 0, "value": 100, "log_w": 0.0, "kappa_c": 0.9}]
-    cuts = cost.amount_cuts([100, 200], [150, 150], _fake_oracle(coins))
+    cuts = cost.amount_cuts([100, 200], [150, 150], _fake_oracle(coins),
+                            count_oracle=_resolved(kind="lower_bound"))
     assert cuts[0].exact is False
 
 
@@ -56,12 +66,14 @@ def test_amount_cuts_exact_count_oracle_corroborates_rigorous_cut():
     assert cuts[0].exact is True
 
 
-def test_amount_cuts_approx_count_oracle_stays_candidate():
+def test_no_cuts_where_the_transaction_as_a_whole_did_not_resolve():
+    """Apportioning ambiguity across the coins of a transaction whose ambiguity did not resolve is
+    apportioning nothing. Measured on a real slice, a third of the transactions the per-coin oracle
+    spoke for had no transaction-level reading behind them."""
     coins = [{"role": "in", "index": 0, "value": 100, "log_w": 0.0, "kappa_c": 0.9}]
-    approx_count_oracle = lambda inputs, outputs: {"kind": "unknown", "count": None, "log_w": None}
-    cuts = cost.amount_cuts([100, 200], [150, 150], _fake_oracle(coins),
-                             count_oracle=approx_count_oracle)
-    assert cuts[0].exact is False
+    unresolved = lambda inputs, outputs: {"kind": "unknown", "count": None, "log_w": None}
+    assert cost.amount_cuts([100, 200], [150, 150], _fake_oracle(coins),
+                            count_oracle=unresolved) == []
 
 
 def test_topology_bits_disjoint_penalises():
@@ -119,3 +131,48 @@ def test_density_gate_kappa_vs_kappa_c_orients_dense_and_sparse():
     assert dense["kappa"] < dense["coins"][0]["kappa_c"]      # kappa < kappa_c -> dense regime
     sparse = dss.per_coin_density([3, 7, 19, 41], [10, 60])
     assert sparse["kappa"] > sparse["coins"][0]["kappa_c"]    # kappa > kappa_c -> sparse/decidable
+
+
+def test_an_unreachable_coin_is_skipped_rather_than_cut():
+    """"No balancing subset was found" is the absence of a measurement, not a measurement of zero
+    ambiguity. The per-coin oracle spells it as negative infinity, and reading that as a low value
+    cuts nearly every coin on the chain: 98.2% of input coins over a real 1,428-transaction slice."""
+    from decluster.cost import amount_cuts
+    def oracle(inputs, outputs):
+        return {"coins": [{"role": "in", "index": 0, "value": 10, "log_w": float("-inf")},
+                          {"role": "in", "index": 1, "value": 20, "log_w": None},
+                          {"role": "in", "index": 2, "value": 30, "log_w": float("nan")},
+                          {"role": "in", "index": 3, "value": 40, "log_w": 0.5}]}
+    cuts = amount_cuts([10, 20, 30, 40], [95], oracle, count_oracle=_resolved())
+    assert [c.index for c in cuts] == [3]        # only the coin that was actually measured
+
+
+def test_the_per_coin_step_is_gated_on_the_whole_transaction_step():
+    """The sequence is: classify the amounts, evaluate the transaction as a whole, then apportion
+    across its coins. The third step running independently of the second is what let the per-coin
+    oracle speak for transactions the transaction-level reading had found nothing in."""
+    coins = [{"role": "in", "index": 0, "value": 100, "log_w": 0.0, "kappa_c": 0.9}]
+    oracle = _fake_oracle(coins)
+    calls = []
+
+    def counting(inputs, outputs):
+        calls.append((tuple(inputs), tuple(outputs)))
+        return {"kind": "unknown", "count": None, "log_w": None}
+
+    assert cost.amount_cuts([100, 200], [150, 150], oracle, count_oracle=counting) == []
+    assert calls == [((100, 200), (150, 150))]      # the second step ran, and its verdict held
+
+
+def test_the_link_matrix_oracle_reads_a_fee_paying_transaction():
+    """The per-coin density oracle asks for an exact subset hit and goes quiet the moment a fee is
+    paid. The link matrix reads the transaction's actual balance, so it still answers — and a row
+    with one plausible output is a deterministic link, the amounts settling the assignment."""
+    pytest.importorskip("dss")
+    ins = [500_000, 300_000, 200_000]
+    with_fee = [600_000, 395_000]                       # 5,000 sats of fee
+    coins = cost.boltzmann_oracle(ins, with_fee)["coins"]
+    assert [c["index"] for c in coins] == [0, 1, 2]
+    assert all(c["log_w"] is not None for c in coins)
+    assert cost.dss_oracle(ins, with_fee)["coins"]      # the other oracle runs, but goes quiet:
+    assert all(c["log_w"] == float("-inf")
+               for c in cost.dss_oracle(ins, with_fee)["coins"] if c["role"] == "in")

@@ -33,14 +33,14 @@ def analyze(tx, targets=None, depth=5, *, fetch=None, link_oracle=None,
     max_nodes (default None = uncapped, backward-compatible) is the deep-coinjoin tractability knob:
     bounds both walks' cost to O(max_nodes) fetch/oracle calls regardless of depth (a lower bound on
     the coin's ambiguity, never an overstatement — see build_extended_graph). path_count (default
-    False, backward-compatible) is an opt-in §06/§07 robustness lens: folds in the dss W(E)
-    counterfactual path-multiplicity count on top of the §04 link-probability-only walk, at the cost
-    of an extra per-tx W(E) count.
+    False, backward-compatible) is the opt-in §07 lens: a link-probability-only walk over the same
+    graph as §04, reusing the same walk verbatim -- no W(E)/subset-sum count is folded in, and no
+    extra per-tx cost is paid for one.
 
     Returns {vout: {
         "provenance": {"min_entropy", "shannon", "n_absorbers", ["origins": {ancestor: mass}]},
         ["fused": {"min_entropy", "shannon"}],   # when subjective
-        ["path_count": {"log_W_paths", "min_entropy", "shannon", "origins_weighted"}],  # when path_count
+        ["path_count": {"min_entropy", "shannon", "origins_weighted"}],  # when path_count
         "truncated": int,   # the provenance (graph) walk's truncation count (oracle-None + max_nodes);
                             # the fused/path_count walks cap identically under the same max_nodes.
     }}. `provenance.min_entropy` is a conservative lower bound on the coin's provenance ENTROPY under no
@@ -82,7 +82,7 @@ def analyze(tx, targets=None, depth=5, *, fetch=None, link_oracle=None,
             pc = path_count_anonymity((txid, vout), depth=depth, max_nodes=max_nodes, fetch=fetch,
                                        link_oracle=link_oracle)
             entry["path_count"] = {k: pc[k] for k in
-                                    ("log_W_paths", "min_entropy", "shannon", "origins_weighted")}
+                                    ("min_entropy", "shannon", "origins_weighted")}
         out[vout] = entry
     return out
 

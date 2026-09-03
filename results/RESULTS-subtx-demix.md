@@ -11,7 +11,8 @@ cluster-level topology channels in `cluster_refined`.
 `0cb4870cf2dfa3877851088c673d163ae3c20ebcd6505c0be964d8fbcc856bbf` — 11 participants, mix denomination
 6357366 sats. The de-mix recovers **8 of the makers** uniquely (`examples/coinjoin_demix_demo.py`),
 with maker fees `[191, 413, 458, 559, 623, 636, 687, 973]` sats. The remaining inputs (the taker and a
-multi-input maker) are left unmatched. This reproduces the reference de-mix (`joinmarket_analyzer`).
+multi-input maker) are left unmatched. `joinmarket_analyzer` is the published de-mix this design
+follows; no run of it was compared against, so the agreement claimed here is of method, not of output.
 
 ## Dense coinjoins are amount-private
 

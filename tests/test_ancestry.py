@@ -164,3 +164,19 @@ def test_max_nodes_only_truncates_never_invents():
     uncapped_coins = set(uncapped.transient) | set(uncapped.absorbers)
     assert set(capped.absorbers) <= uncapped_coins
     assert capped.truncated > 0
+
+
+def test_truncation_is_counted_over_the_mass_carrying_boundary():
+    """`blind` compares the truncation count against the signature size, so the two must count
+    the same objects. Counting every refused coin — including atoms the target never reaches —
+    reports a branch as blind while it is still resolving a full-mass origin."""
+    from decluster.ancestry import Graph, truncated_support
+    g = Graph()
+    g.truncated_coins = {("refused", 0), ("never_reached", 0)}
+    g.truncated = 2
+    sig = {("origin", 0): 1.0}                      # one genuine origin holds all the mass
+    assert truncated_support(sig, g) == 0           # not blind: the walk did see an origin
+    assert truncated_support(sig, g) < len(sig)
+
+    blind_sig = {("refused", 0): 1.0}               # the whole boundary is the oracle refusing
+    assert truncated_support(blind_sig, g) == len(blind_sig)

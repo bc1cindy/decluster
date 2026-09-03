@@ -1,9 +1,12 @@
 """Pipeline sanity tests."""
 import sys, os
+import pytest
 sys.path.insert(0, os.path.dirname(os.path.dirname(__file__)))
 from decluster import fetch_tx
 from decluster.extractors import x_nsequence, x_input_order
 from decluster.combiner import Combiner
+
+pytestmark = pytest.mark.live
 
 MERGE = "931d6627f7b63491cbc2e6d860dc630537385fd9ee3171f2013b64e6a143a4e4"
 CAKE   ="0a568e3ae6fa6bf34ce8925266ac2cdb1668c723980398d9c613d67d72b39729"

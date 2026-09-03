@@ -16,6 +16,7 @@ class Graph:
         self.absorbers = []   # boundary coins: coinbase / depth-cutoff / oracle-None
         self.edges = {}       # coin -> [(next_coin, weight), ...], row-stochastic over next_coin
         self.truncated = 0    # count of coins made absorbers by the oracle-None refusal or the max_nodes cap
+        self.truncated_coins = set()   # which ones, so truncation can be counted over the mass-carrying boundary
 
 
 def _solve(a, b):
@@ -119,7 +120,7 @@ def build_extended_graph(target, depth=6, fetch=None, link_oracle=None, value_we
             continue
         seen.add(coin)
         if max_nodes is not None and len(kind) >= max_nodes:
-            kind[coin] = "absorber"; g.truncated += 1; continue   # node cap reached: truncate, no fetch
+            kind[coin] = "absorber"; g.truncated += 1; g.truncated_coins.add(coin); continue   # node cap reached: truncate, no fetch
         txid, vout = coin
         tx = fetch(txid)
         if _is_coinbase(tx):
@@ -130,7 +131,7 @@ def build_extended_graph(target, depth=6, fetch=None, link_oracle=None, value_we
         out_vals = [o["value"] for o in tx["vout"]]
         matrix = link_oracle(in_vals, out_vals)
         if matrix is None:
-            kind[coin] = "absorber"; g.truncated += 1; continue   # refuse to fabricate
+            kind[coin] = "absorber"; g.truncated += 1; g.truncated_coins.add(coin); continue   # refuse to fabricate
         if subjective_oracle is not None:
             sub = subjective_oracle(tx, in_vals, out_vals)
             if sub is not None:
@@ -205,7 +206,19 @@ def ancestry_signature_and_truncation(target, depth=6, fetch=None, link_oracle=d
         from .fetch import fetch_tx
         fetch = fetch_tx
     g = build_extended_graph(target, depth=depth, fetch=fetch, link_oracle=link_oracle)
-    return absorber_distribution(g, target), g.truncated
+    sig = absorber_distribution(g, target)
+    return sig, truncated_support(sig, g)
+
+
+def truncated_support(signature, graph):
+    """How many of a signature's *mass-carrying* absorbers are truncation rather than origin.
+
+    `graph.truncated` counts every coin the oracle refused, including atoms this target never
+    reaches with any mass. `absorber_distribution` reports only positive-mass absorbers, so
+    comparing the two calls a branch blind while it is still resolving a full-mass origin.
+    Consumers compare this against `len(signature)`, so both sides must count the same objects.
+    """
+    return sum(1 for a in signature if a in graph.truncated_coins)
 
 
 def provenance_link(sig_a, sig_b, rarity=None):
