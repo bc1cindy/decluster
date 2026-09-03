@@ -183,9 +183,9 @@ the historical module names remain as compatibility facades so existing imports 
 explicit integer `fee_tolerance`, permits only non-negative per-block deficits, and records the
 observed fee and selected model in its result. Roundness does not affect mapping admission or
 probability. This closes the local fee-allocation mechanism only. Official no-fee vectors
-A/B/C/P2/P3 now match, but the official P3-with-fees vector reports 28 combinations where the local
-unique-mapping family reports 19: Boltzmann's fee-compatible traversal multiplicity is not
-implemented. Tool parity is therefore measured and still open, rather than merely unavailable.
+A/B/C/P2/P3 match. On P3-with-fees, the set-valued model reports 19 unique mappings and per-input
+counts `10/9/9`; a separate default-`LINKABILITY` aggregate-traversal port reproduces the tool's 28
+combinations and `14/13/13`. Optional precheck, merge and JoinMarket-intrafee modes remain open.
 
 The compatibility modules still disclose why their old names must not be used as evidence of a
 reference algorithm:

@@ -19,6 +19,10 @@ from .boltzmann import (
     link_analysis,
     per_coin_link_evidence,
 )
+from .boltzmann_reference import (
+    BoltzmannReferenceAnalysis,
+    boltzmann_reference_analysis,
+)
 from .candidate_set_intersection import (
     GoldfederIntersectionResult,
     IntersectionResult,
@@ -41,6 +45,7 @@ from .oracle_audit import (
 )
 
 __all__ = [
+    "BoltzmannReferenceAnalysis",
     "ExactCoinLinkEvidence",
     "ExactLinkAnalysis",
     "ExactLinkCandidate",
@@ -52,6 +57,7 @@ __all__ = [
     "LinkPredictionResult",
     "Prediction",
     "audit",
+    "boltzmann_reference_analysis",
     "enumerate_family",
     "equal_value_mapping_count",
     "exact_link_analysis",
