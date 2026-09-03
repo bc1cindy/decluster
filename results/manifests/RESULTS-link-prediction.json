@@ -1,0 +1,82 @@
+{
+  "doc": "RESULTS-link-prediction.md",
+  "invariants": {
+    "auc_deanonymization": [
+      0.753722,
+      0.728741,
+      0.72235,
+      0.735343,
+      0.702266
+    ],
+    "auc_structure_only": [
+      0.592923,
+      0.594388,
+      0.545971,
+      0.628809,
+      0.546562
+    ],
+    "beats_structure_only": [
+      "a",
+      "a",
+      "a",
+      "a",
+      "a"
+    ],
+    "control_verdicts": [
+      null
+    ],
+    "cutoff": 2,
+    "fixture_seeds": [
+      0,
+      1,
+      2,
+      3,
+      4
+    ],
+    "fixtures": 5,
+    "groups": 8,
+    "held_out_links": [
+      46,
+      42,
+      43,
+      44,
+      40
+    ],
+    "held_out_links_transferred_directly": [
+      22,
+      13,
+      17,
+      16,
+      18
+    ],
+    "holdout": 0.25,
+    "keep": 0.9,
+    "negatives_per_positive": 4,
+    "p_in": 0.18,
+    "p_out": 0.012,
+    "recall_deanonymization": [
+      0.521739,
+      0.333333,
+      0.418605,
+      0.409091,
+      0.45
+    ],
+    "recall_structure_only": [
+      0.065217,
+      0.0,
+      0.023256,
+      0.113636,
+      0.05
+    ],
+    "scorer": "closed",
+    "seed_fraction": 0.25,
+    "theta": 1.5,
+    "vertices": 80
+  },
+  "source": {
+    "bytes": 14170,
+    "digest": "294b7b2f87cd22ec0761b1db7e6c48d771e988f6250a5599b997fd83e8a49fa4",
+    "files": 1,
+    "pattern": "examples/link_prediction_run.py"
+  }
+}
