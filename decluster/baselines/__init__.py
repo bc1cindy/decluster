@@ -33,6 +33,7 @@ from .candidate_set_intersection import (
     narrowing_bits,
 )
 from .link_prediction import LinkPredictionResult, Prediction
+from .ns_link_prediction_2011 import CombinedPrediction, combine_predictions
 from .oracle_audit import (
     audit,
     enumerate_family,
@@ -46,6 +47,7 @@ from .oracle_audit import (
 
 __all__ = [
     "BoltzmannReferenceAnalysis",
+    "CombinedPrediction",
     "ExactCoinLinkEvidence",
     "ExactLinkAnalysis",
     "ExactLinkCandidate",
@@ -58,6 +60,7 @@ __all__ = [
     "Prediction",
     "audit",
     "boltzmann_reference_analysis",
+    "combine_predictions",
     "enumerate_family",
     "equal_value_mapping_count",
     "exact_link_analysis",
