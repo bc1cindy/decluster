@@ -1,7 +1,11 @@
-"""Layer 3 — Fellegi-Sunter combiner: score(txA,txB) in bits (+ same / - different). This is the
-narrow engine combiner (3 axes: nsequence, locktime, in_order) that `cluster_refined` uses; the full
-23-axis validated model (the AUC≈0.933 headline) is `fingerprint_validate.LibraryScorer`."""
+"""Layer 3 — legacy value-rarity fingerprint combiner.
+
+Agreement is weighted by observed value rarity and disagreement by a supplied
+consistency assumption.  Existing callers retain this behavior.  The fitted,
+supervised Fellegi--Sunter baseline lives in :mod:`decluster.fellegi_sunter`.
+"""
 import math
+import warnings
 from collections import Counter
 from .extractors import x_nsequence, x_input_order, locktime_policy
 from .engine import sample_recent_txs
@@ -13,8 +17,8 @@ def _never(va, vb): return False
 def _in_order_abstain(va, vb): return bool({"single", "small_n"} & {va, vb})
 _ABSTAIN = {"nsequence": _never, "locktime": _never, "in_order": _in_order_abstain}
 
-def fs_score(axes, txA, txB, c, floor_n, explain=False):
-    """Fellegi-Sunter kernel over axes = [(name, fn, p, collision, abstain)]: agreement adds
+def rarity_score(axes, txA, txB, c, floor_n, explain=False):
+    """Legacy rarity kernel over axes = [(name, fn, p, collision, abstain)]: agreement adds
     -log2(p[value]); a mismatch adds a clamped (<=0) weight; abstain(va, vb) skips the axis.
     c is a float, or a dict mapping axis-name -> m per axis (must cover every scored axis)."""
     total, rows = 0.0, []
@@ -31,6 +35,16 @@ def fs_score(axes, txA, txB, c, floor_n, explain=False):
             w = min(0.0, math.log2((1 - cj) / max(1 - collision, 1e-6)))
         total += w; rows.append((name, va, vb, w))
     return (total, rows) if explain else total
+
+
+def fs_score(axes, txA, txB, c, floor_n, explain=False):
+    """Compatibility wrapper for the former, misleading function name."""
+    warnings.warn(
+        "fs_score is a rarity baseline, not fitted Fellegi-Sunter; use rarity_score",
+        DeprecationWarning,
+        stacklevel=2,
+    )
+    return rarity_score(axes, txA, txB, c, floor_n, explain)
 
 class Combiner:
     def __init__(self, sample=None, consistency=0.95):
@@ -62,4 +76,4 @@ class Combiner:
         return self
 
     def score(self, txA, txB, explain=False):
-        return fs_score(self.axes, txA, txB, self.c, self.floor_n, explain)
+        return rarity_score(self.axes, txA, txB, self.c, self.floor_n, explain)

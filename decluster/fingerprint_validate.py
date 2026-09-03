@@ -3,7 +3,7 @@
 and reports AUC. Offline."""
 import random
 from .graph_deanon import auc, shuffle_auc
-from .combiner import fs_score
+from .rarity_weight_baseline import rarity_score
 from .change_gt import input_addrs
 
 
@@ -42,8 +42,7 @@ def evaluate(txs, scorer, cap=4000, seed=0):
 
 
 class LibraryScorer:
-    """Canonical Fellegi-Sunter pair scorer over ALL library axes (library.AXES) — the witness-bearing
-    multi-axis model, using the corrected extractors. Delegates the scoring kernel to combiner.fs_score."""
+    """Legacy rarity pair scorer over all measured fingerprint axes."""
     def __init__(self, consistency=0.95, floor_n=1000):
         from . import extractors, engine, library
         self.c = consistency
@@ -68,7 +67,7 @@ class LibraryScorer:
             self.axes.append((a["axis"], fn, p, collision, abstain))
 
     def score(self, txA, txB, explain=False):
-        return fs_score(self.axes, txA, txB, self.c, self.floor_n, explain)
+        return rarity_score(self.axes, txA, txB, self.c, self.floor_n, explain)
 
 
 def load_blkcache(path=".blkcache"):

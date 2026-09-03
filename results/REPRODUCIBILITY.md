@@ -26,8 +26,11 @@ survives subsampling** can it be pinned as a **band** on a committed fixture.
 | W(E) multiplicity / path-count object | synthetic | `test_counting.py`, `test_path_count.py` |
 | survey metadata + consistency | `tests/fixtures/lumen_explorer_data.json` | `test_lumen_survey_fixture.py` |
 | graph structural de-anon (payment/full AUC) | `tests/fixtures/graph_deanon_2016.ndjson.gz` | `test_graph_deanon_real.py` |
+| approximations vs the exact oracle: the `dss` link matrix bounds it in neither direction (`RESULTS-exact-oracle-audit.md`) | none needed — the 507-transaction family is generated, not sampled | `test_oracle_audit.py` |
 | known-entity de-anon (SatoshiDice positive + BitMEX null control) | `entity_satoshidice_2013.ndjson.gz`, `entity_bitmex_2019.ndjson.gz` | `test_entity_deanon_real.py` |
 | entity-attribute space is dense not sparse (Def-1 negative) + graph disassortative | `tests/fixtures/slice_a_channels_2016.ndjson.gz` | `test_slice_a_channels.py` |
+| Fellegi-Sunter beats the fixed-rarity baseline out-of-period (the direction `RESULTS-fs-temporal.md` publishes) | `tests/fixtures/fingerprint_blkcache_sample.json` | `test_fs_temporal.py::test_fellegi_sunter_beats_the_rarity_baseline_out_of_period` |
+| candidate-set intersection narrows, stalls or refuses (`RESULTS-candidate-set-intersection.md`) | none needed — the 3-scenario family is generated, not sampled | `test_candidate_set_intersection.py` |
 
 ## 2. Mechanism unit-tested, headline number is a data-run (proven algorithm, labelled number)
 
@@ -43,6 +46,8 @@ subsampled fixture would assert a different number.
 | fingerprint-regime / **bayes-vs-fs (direction — owes migration, see state 5)** / em-m / weight-sensitivity | `test_fingerprint_ns.py`, `test_fs_bayes.py`, `test_fs_em.py` | `.blkcache/` |
 | cluster-bits, graph-shape, contraction | `test_cluster_bits.py`, `test_graph_shape.py`, `test_views.py` | `slice_2026.ndjson` |
 | entropy overcount, provenance overlap | `test_metric.py`, `test_provenance*.py` | live / `.cache/` |
+| Fellegi-Sunter fit early / scored late — the reported AUCs, thresholds and calibration (`RESULTS-fs-temporal.md`; manifest + recomputed invariants; the *direction* is pinned in state 1 above) | `test_fs_temporal.py` | `.blkcache/` |
+| N-S propagation on contracted Bitcoin views — the reported precision, coverage and controls (`RESULTS-ns-bitcoin.md`; manifest + recomputed configuration; the direction at 5% / 10% seeding is **state 5**, at 25% it separates) | `test_ns_bitcoin.py`, `test_ns_social_baseline.py` | `epoch_2016_*.ndjson.gz` |
 | broadcast timing, temporal | `test_broadcast.py` | live |
 
 ## 3. Reproducible once a small BigQuery window is committed
@@ -95,15 +100,19 @@ vs baseline" and "bayes-vs-fs" — and are flagged in that table as owing a migr
 recorded rather than quietly relabelled, because the number each reports is real; it is the direction
 read off it that is not yet established.
 
-No document is filed under state 5 yet: `separable` exists and is unit-tested
-(`tests/test_reproducibility.py`), but nothing in `results/` currently calls it, so this state has
-no open gate to close. A later phase is expected to file the first direction claim here, or to close
-it into state 1 on a committed fixture.
+**Filed under state 5 (2026-09-03).** `RESULTS-ns-bitcoin.md` is the first document to use this
+state, and it splits itself across it: `decluster/ns_bitcoin.py` calls `separable` on the paired
+discordant win counts, and the document files its 5% and 10% seeding rows as **state 5** — measured,
+not separable — while its 25% row clears all three gates. That is the intended shape of the state:
+one run, two verdicts, each named. The two state-2 rows flagged above ("cross-view matcher precision
+vs baseline", "bayes-vs-fs") still owe their migration.
 
 ### Manifests
 
-This section is the standing rule, not a description of the current tree: `results/manifests/` is
-empty today. As state-2 and state-5 results are migrated, each should carry
+`results/manifests/` holds one file per migrated document, and that directory listing — not a count
+in this paragraph, which went stale as soon as the 2026-09 wave filed several at once — is the
+current inventory. The rule below is the standing one; as the
+remaining state-2 and state-5 results are migrated, each should carry
 `results/manifests/<doc>.json`, recording the source's identity (files, bytes, digest) and the
 population invariants the claim depends on — the facts a byte digest cannot see.
 `tests/test_results_manifests.py` checks every manifest that exists against its live source and
@@ -114,3 +123,128 @@ produced by the Rust crate, a manifest's identity should be `dss.__version__` / 
 the seed and parameters rather than a data path — no manifest records that today, since
 `fingerprint_source` only fingerprints file globs; a crate-identity manifest is a later phase's
 work.
+
+
+## Known contradictions (2026-09-03)
+
+Filed, not fixed. The 2026-09 attack-faithfulness wave changed the provenance walk's default link
+oracle from the subset-sum link matrix (`ancestry.dss_link_oracle`, `dss.pairwise_link_prob`) to the
+nominal-value transition rule (`ancestry.value_flow_link_oracle`), and measured the subset-sum
+oracle against an exact one (`RESULTS-exact-oracle-audit.md`). Prose alignment across `PAPER.md` and
+`README.md` is a later phase's work
+(`docs/superpowers/plans/2026-09-02-phase-1-contracts-and-instrument.md`). Until then, this is the
+list of what the tree disagrees with, so no reader has to discover it by running something.
+
+**The default oracle moved; these still describe the old one.**
+
+- `PAPER.md:683-684` — "`ancestry_entropy` … a backward walk weighted by the subset-sum link matrix
+  (`dss.pairwise_link_prob`)". `ancestry_entropy`'s default is now `value_flow_link_oracle`; the
+  subset-sum walk is opt-in.
+- `PAPER.md:734-735` — "The default weights transitions by subset-sum link probability, not §04's
+  coin-value measure; the value-weighted flow rung is the opt-in `value_weighted`". Inverted on both
+  halves: the default *is* now the coin-value measure, and `value_weighted` is a hybrid that scales
+  the *link* column by input value — it is not the flow rung. The flow rung is
+  `ancestry.value_flow_link_oracle` / `build_value_flow_graph`.
+- `PAPER.md:962` (the `tx-graph-anonymity-sets` citation footnote) — "`decluster/ancestry.py`
+  weights them by subset-sum link probability, row-normalized … with link-probability the default so
+  existing figures stay reproducible", and the "one stated divergence" framing built on it. The
+  divergence is no longer the default; the figures that rest on it are the ones listed below.
+- `results/RESULTS-ancestry.md`, `RESULTS-intersection.md`, `RESULTS-ns-propagation.md`,
+  `RESULTS-analyze.md`, `RESULTS-path-count.md` — each now carries a dated correction note at its
+  head naming the oracle that produced its numbers. Their bodies are otherwise unrevised, and none
+  has been re-measured under value flow.
+
+**Nothing measures the new default.** No `results/` document reports a measurement made under
+`ancestry.value_flow_link_oracle` on real data. `examples/fused_report.py` now runs a second arm
+under it (added here) so the walk is at least runnable and visibly contrasted with the pinned
+subset-sum arm, but that arm prints a demo, not a recorded result — the default walk every facade
+now takes is still unmeasured in this tree.
+
+**The exact-oracle audit falsified a reading these still carry.**
+
+- `results/RESULTS-amount-channel-survey.md` — "369 rows admit exactly one output — a deterministic
+  link, the amounts settling the assignment on their own". Corrected by a dated note at its head;
+  the body sentence is unrevised. `decluster/counting.py`'s and `decluster/cost.py`'s docstrings
+  have been amended at source.
+
+**Naming compatibility after the algorithm split.** New code has explicit canonical namespaces;
+the historical module names remain as compatibility facades so existing imports do not break:
+
+- `decluster.rarity_weight_baseline` — fixed value-rarity scoring, not fitted FS.
+- `decluster.single_view_propagation` — provenance-signature propagation without a graph.
+- `decluster.baselines.ns_social_attack` — the faithful two-view seeded graph propagation.
+- `decluster.subset_sum_weighted_ancestry` — opt-in subset-sum-link ancestry.
+- `decluster.kelen_seres_value_flow` — nominal-value absorbing flow.
+- `decluster.weighted_path_count` — probability-weighted route accumulation.
+
+**Boltzmann fee contract.** `decluster.baselines.boltzmann.link_analysis` keeps
+`balance_model="exact"` and `balance_model="fee_tolerant"` separate. The latter requires an
+explicit integer `fee_tolerance`, permits only non-negative per-block deficits, and records the
+observed fee and selected model in its result. Roundness does not affect mapping admission or
+probability. This closes the local fee-allocation mechanism only; tool parity and paper cases stay
+open.
+
+The compatibility modules still disclose why their old names must not be used as evidence of a
+reference algorithm:
+
+- `decluster/graph_deanon.py` — common-neighbour link prediction; no seeds, mapping, propagation or
+  second view. `README.md:37` lists it under the attacker modules without that qualification.
+- `decluster/propagate.py` — signature propagation with no graph, no edges and no reverse match.
+  `README.md:37` calls it "entity-level N-S seed-and-propagate".
+- `decluster/fingerprint_ns.py` — `-log2(p)` weights where the paper uses `1/log|support|`, and an
+  eccentricity that is computed and returned but never gated on.
+- `decluster/view_match.py` — accepts a lone candidate at infinite eccentricity, skipping the
+  faithful baseline's live gate (`_sparse_winner`) entirely rather than computing a
+  large-but-finite value from it, and normalises eccentricity over the materialised scores where
+  that gate normalises over the whole candidate population.
+
+**A published attack name rests on the mechanism, not on a reproduction.** `PAPER.md:971` states
+that `decluster/intersect.py` implements the Goldfeder et al. cross-transaction intersection attack.
+The Goldfeder text is **not in this checkout**, so nothing in this tree reproduces the paper's cases,
+datasets or rates, and no number anywhere here is attributed to it. What the claim rests on today is
+the *mechanism* — narrowing a coin's origins by intersecting the candidate sets of coins later shown
+to be co-held — now separated as `decluster/baselines/candidate_set_intersection.py` and measured on
+a generated family (`RESULTS-candidate-set-intersection.md`). `decluster/intersect.py` stays and is
+not that baseline: it is this repository's wiring of the same mechanism to the backward provenance
+walk, with rarity weighting, cluster-lift, truncation reporting and subordination to
+`cluster_refined` — additions that are ours, not the paper's. That cell of the fidelity matrix stays
+open until the text is available.
+
+**Two AUC estimators.** `graph_deanon.auc` samples at most 20,000 draws; `graph_deanon.exact_auc`
+(now the single exact implementation, called by `fs_temporal._score_metrics`) is exact Mann--Whitney.
+Every AUC published outside `RESULTS-fs-temporal.md` — including `README.md:18`'s 0.933 — came from
+the sampled estimator and carries third-decimal sampling error. The two are disclosed side by side
+in `graph_deanon.auc`'s docstring and in `RESULTS-fs-temporal.md`; migrating the older call sites to
+`exact_auc` would move published numbers and is deliberately not done here.
+
+## Deferred findings (2026-09-03)
+
+Recorded so they are not lost. Each was filed unfixed; a struck entry was repaired later in the same
+wave and says what remains open.
+
+- ~~**`check_manifest` does not check that enough was checked.**~~ **Repaired (2026-09-03).**
+  A complete recomputation must supply exactly the manifest's invariant keys. Missing keys now
+  return `partial`, and newly measured keys return `stale`, both with the unmatched names; a partial
+  recomputation can no longer return `ok`.
+- **Redundant re-enumeration in `baselines/oracle_audit.py`.** The exact mapping family is
+  enumerated, and per-coin quantities recomputed, more times than the report needs. Exponential
+  work, so the constant factor is felt — but the numbers are unaffected. Performance only.
+- ~~**`g.truncated` and `intersect`'s `blind` field are structurally degenerate under the value-flow
+  default.**~~ **Repaired (2026-09-03), not re-measured.** The two causes are now counted apart:
+  `ancestry.Graph` carries `oracle_refused` and `node_capped` alongside the `truncated` total,
+  `ancestry.truncated_support` returns a `TruncationSupport` over the mass-carrying boundary, and
+  `intersect.evaluate` adds `truncated_causes` and `blind_cause` — `"oracle_refused"`,
+  `"node_capped"`, `"zero_link_mass"`, `"mixed"` when multiple measured causes fired, and
+  `"unknown"` when any blind branch's cause was not
+  measured (a bare total, or `TruncationSupport.unattributed`), and `None` in two distinct states
+  that `blind` tells apart: nothing was blind, or a branch is blind with zero truncation because it
+  observed nothing at all. `"unknown"` dominates the named values, so an unmeasured cause is never
+  laundered into `"mixed"`. A blind branch now names the walk limit that blinded it instead of
+  leaving the reader to infer it from which oracle was in use. What is *not* fixed: no `results/`
+  document has been re-measured under the value-flow default, so `RESULTS-intersection.md`'s counts
+  remain the subset-sum walk's bare totals — its blind three-branch run re-reads as `"unknown"`, and
+  its non-blind four-branch run as `None`, which is not a cause at all.
+- ~~**`TruncationSupport` is not a complete account of "no view".**~~ **Repaired (2026-09-03).**
+  A zero-sum link column is now recorded as `zero_link_mass`, carried through
+  `TruncationSupport`, and exposed by `intersect.evaluate`; it is no longer indistinguishable from
+  coinbase or the requested depth cutoff.

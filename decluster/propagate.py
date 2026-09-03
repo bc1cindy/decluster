@@ -2,7 +2,20 @@
 two-channel edge-splitting refinement. Provenance signatures (ancestry.ancestry_signature)
 are the sparse quasi-identifier; merge propagation is gated on eccentricity, split
 refinement on provenance-disjointness AND fingerprint-divergence. Needs no same-owner
-labels: it propagates from a seed set."""
+labels: it propagates from a seed set.
+
+WHAT THIS ACTUALLY IMPLEMENTS. Seed-and-propagate over provenance SIGNATURES, not over a graph:
+there is no adjacency structure here at all, so no edges vote, nothing is degree-normalised, and
+there is no reverse-match check (a candidate is never required to win from the other side).
+`eccentricity` below is the paper's acceptance gap and is faithful to it, with one caveat: it
+normalises by the standard deviation of the scores actually materialised here, while the baseline's
+gate (`baselines.narayanan_shmatikov._sparse_winner`) normalises over the whole unclaimed candidate
+population, implicit zeros included — a larger population and a different sigma. The two formulas
+agree given the same values; they are not given the same values. Everything `eccentricity` is
+applied to here is signature overlap between a node and the running aggregate of each label's
+members.
+The faithful reference implementation — two views, degree-normalised edge votes, reverse match — is
+`decluster/baselines/narayanan_shmatikov.py`."""
 from collections import Counter
 import statistics
 import random

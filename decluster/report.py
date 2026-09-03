@@ -20,7 +20,7 @@ concentrating it is clamped down to the graph-only baseline. This makes fused_mi
 `forced` is reported here, not scored: it is an attribution, and the engine's amount channel may only
 refuse (PAPER §1), so it never reaches `cluster_refined`."""
 from .cost import amount_cuts, topology_bits, leak_bits, dss_oracle
-from .ancestry import ancestry_entropy, dss_link_oracle
+from .ancestry import ancestry_entropy, value_flow_link_oracle
 from .conservation import forced_in_round
 
 FOOTING = ("attacker lower bounds under no auxiliary information; not a privacy score. target "
@@ -52,7 +52,7 @@ def report(tx, combiner=None, neigh=None, entities=None, pair=None,
     if oracle is None:
         oracle = dss_oracle
     if link_oracle is None:
-        link_oracle = dss_link_oracle
+        link_oracle = value_flow_link_oracle
     if fetch is None:
         from .fetch import fetch_tx
         fetch = fetch_tx

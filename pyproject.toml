@@ -8,8 +8,12 @@ version = "0.1.0"
 description = "Evidence-weighted de-anonymization of Bitcoin transactions"
 requires-python = ">=3.9"
 
-[tool.setuptools]
-packages = ["decluster"]
+[project.optional-dependencies]
+data = ["zstandard>=0.23"]
+test = ["pytest>=8"]
+
+[tool.setuptools.packages.find]
+include = ["decluster", "decluster.*"]
 
 [tool.pytest.ini_options]
 addopts = "-m 'not live'"

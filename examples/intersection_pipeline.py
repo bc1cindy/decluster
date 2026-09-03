@@ -55,10 +55,16 @@ def default_signature_of(depth=SIGNATURE_DEPTH):
     mix has hundreds of parents per hop. It is a floor either way: the walk
     truncates at any transaction the link oracle refuses, which every large mix
     is, and reports that it did.
-    """
-    from decluster.ancestry import ancestry_signature_and_truncation
 
-    return lambda outpoint: ancestry_signature_and_truncation(outpoint, depth=depth)
+    The oracle is named, not inherited: the walk's default moved to nominal
+    value flow, which never refuses, so inheriting it would drop both the
+    truncation this floor rests on and the walk that RESULTS-intersection.md
+    reports.
+    """
+    from decluster.ancestry import ancestry_signature_and_truncation, dss_link_oracle
+
+    return lambda outpoint: ancestry_signature_and_truncation(
+        outpoint, depth=depth, link_oracle=dss_link_oracle)
 
 
 def default_cluster_fn():
@@ -91,9 +97,11 @@ def run(seeds=None, get_tx=fetch_tx, get_outspends=fetch_outspends,
         signature_of=None, cluster_fn=None, max_depth=3):
     """Walk, intersect, and score. Returns one dict per co-spend candidate.
 
-    `signature_of` returns `(signature, truncated)` for an outpoint — the origin set and how much of
-    its boundary is the link oracle refusing rather than an origin. Both are needed: without the
-    second, an empty intersection cannot be told from a walk that could not see. `cluster_fn` takes
+    `signature_of` returns `(signature, truncated)` for an outpoint — the origin set and, as an
+    `ancestry.TruncationSupport`, how much of its boundary is truncation rather than an origin and
+    which walk limit produced it. Both are needed: without the second, an empty intersection cannot
+    be told from a walk that could not see, and without its split a blind branch does not say
+    whether the oracle refused or the node cap bit. `cluster_fn` takes
     `(nodes, signatures)`. Both are injected so the pipeline can be exercised without a network walk;
     production passes `default_signature_of()` and `default_cluster_fn()`.
     """

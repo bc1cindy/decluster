@@ -1,5 +1,17 @@
 # What the amount channel actually says on a real slice
 
+> **Correction (2026-09-03) — "a deterministic link" is measured false.**
+> Below, "369 rows admit exactly one output — a deterministic link, the amounts settling the
+> assignment on their own" is the reading `counting.link_matrix`'s docstring handed consumers at the
+> time. `results/RESULTS-exact-oracle-audit.md` has since measured that reading against an exact
+> mapping oracle and found it wrong in one direction: `dss.pairwise_link_prob` is the uniform
+> marginal over dss's own, strictly smaller mapping family, and asserting certainty from a
+> single-non-zero row produces **1,197 spurious certainties across 395 of 507 transactions** (while
+> missing no genuinely certain link). A one-entry row means *dss's family* admits one output, not
+> that the amounts settle the assignment. The 369 count itself is unaffected — it is a count of rows
+> — but the sentence attached to it is not a licence to read those 369 as settled. The docstrings in
+> `decluster/counting.py` and `decluster/cost.py` have been amended accordingly.
+
 ## Verdict
 
 Run against real transactions for the first time, the channel had three defects and one arm that

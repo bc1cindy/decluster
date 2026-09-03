@@ -183,6 +183,56 @@ def score_candidate(candidate, cluster_fn, funder_of, signatures=None):
     }
 
 
+def _truncation_causes(reported):
+    """One branch's truncation as `(total, causes)`.
+
+    Accepts an `ancestry.TruncationSupport` — the walk limits kept apart — or a bare integer total.
+    A bare total names no cause and is reported with `causes=None` rather than being assigned to
+    one; guessing here is what made `blind` unreadable in the first place. Anything else raises:
+    coercing, say, a float count would round a caller's measurement without telling them.
+    """
+    oracle = getattr(reported, "oracle_refused", None)
+    capped = getattr(reported, "node_capped", None)
+    if oracle is None or capped is None:
+        if isinstance(reported, bool) or not isinstance(reported, int):
+            raise TypeError("truncation_of must return an int total or an ancestry.TruncationSupport, "
+                            f"not {type(reported).__name__}")
+        return reported, None
+    unattributed = getattr(reported, "unattributed", 0)
+    zero_link_mass = getattr(reported, "zero_link_mass", 0)
+    return oracle + capped + unattributed + zero_link_mass, {
+        "oracle_refused": oracle, "node_capped": capped,
+        "zero_link_mass": zero_link_mass, "unattributed": unattributed,
+    }
+
+
+def _blind_cause(truncated, causes, sizes):
+    """Which walk limit blinded the blind branches: a cause name, `"mixed"`, `"unknown"` or None.
+
+    `unknown` is a real answer, not a missing one: it says at least one blind branch's cause was
+    never measured — the caller reported a bare total, or a cause this tree does not name. It
+    DOMINATES: an unmeasured cause alongside a measured one is still unknown, never `"mixed"`,
+    because `"mixed"` asserts that both named walk limits fired and one of them was never observed.
+
+    `None` means no blind branch had anything to attribute: every one of them is blind with zero
+    truncation, which is a branch that observed nothing at all rather than one a walk limit cut.
+    `evaluate` also returns `None` when nothing is blind; `blind` tells the two apart.
+    """
+    names = set()
+    for total, cause, size in zip(truncated, causes, sizes):
+        if total < size or total == 0:
+            continue
+        if cause is None:
+            names.add("unknown")
+            continue
+        names |= {name for name, count in cause.items() if count}
+    if "unknown" in names or "unattributed" in names:
+        return "unknown"
+    if not names:
+        return None
+    return names.pop() if len(names) == 1 else "mixed"
+
+
 def evaluate(candidate, signature_of, rarity=None, truncation_of=None,
              cluster_of=None, cluster_rarity=None):
     """Intersect the origin sets of the coins one co-spend candidate consumes.
@@ -199,14 +249,35 @@ def evaluate(candidate, signature_of, rarity=None, truncation_of=None,
     says how many origins went and the bits say how much that was worth against
     branches of different sizes.
 
-    `truncation_of`, when supplied, maps an outpoint to how many of its absorbers are the link
-    oracle refusing rather than an origin, and adds `truncated` and `blind`. `blind` is True when
-    some branch's boundary is *entirely* truncation: that branch contributes no observed origin, so
-    an empty `shared` says the walk could not see, not that the branches came from different places.
-    Reading a blind empty as a refusal is the failure mode this field exists to prevent. The count
-    must be over the absorbers that carry mass — `ancestry.ancestry_signature_and_truncation`
-    reports it that way — since comparing every truncated coin against only the positive-mass
-    boundary calls a branch blind while it is still resolving a full-mass origin.
+    `truncation_of`, when supplied, maps an outpoint to how much of its boundary is truncation
+    rather than an origin, and adds `truncated`, `truncated_causes`, `blind` and `blind_cause`.
+    `blind` is True when some branch's boundary is *entirely* truncation: that branch contributes no
+    observed origin, so an empty `shared` says the walk could not see, not that the branches came
+    from different places. Reading a blind empty as a refusal is the failure mode this field exists
+    to prevent. The count must be over the absorbers that carry mass —
+    `ancestry.ancestry_signature_and_truncation` reports it that way — since comparing every
+    truncated coin against only the positive-mass boundary calls a branch blind while it is still
+    resolving a full-mass origin.
+
+    A branch is blinded by one of two different walk limits, and `blind` alone does not say which.
+    Pass `ancestry.TruncationSupport` and `truncated_causes` carries the split per branch, with
+    `blind_cause` naming what blinded the blind ones:
+
+    - `"oracle_refused"` — the link oracle declined to link.
+    - `"node_capped"` — the `max_nodes` bound cut the frontier.
+    - `"zero_link_mass"` — the selected output had no positive incoming link mass.
+    - `"mixed"` — more than one measured cause fired across the blind branches.
+    - `"unknown"` — at least one blind branch's cause was not measured: a bare integer total, or a
+      cause this tree does not name (`TruncationSupport.unattributed`). It dominates the named
+      values, so `"mixed"` never covers for a cause nobody observed.
+    - `None` — with `blind` False, nothing was blind, including when `truncation_of` was not
+      supplied at all. With `blind` **True**, a branch is blind with zero truncation: it observed
+      no origins and no walk limit cut it, so there is no cause to name. `blind` is what separates
+      those two `None`s, and a consumer asking "why is this blind" must read it first.
+
+    Under `ancestry.value_flow_link_oracle` — which refuses only on zero total input value — the
+    oracle-refusal half is practically always zero, so a default-oracle walk that comes back blind
+    was blinded by `max_nodes`, and now says so rather than leaving the reader to infer it.
 
     `cluster_of` lifts each origin to its owning wallet before intersecting, which is what the
     writeup asks for: the candidate origins are clusters, not coins, so two branches can overlap
@@ -231,13 +302,19 @@ def evaluate(candidate, signature_of, rarity=None, truncation_of=None,
         sizes = [len(s) for s in signatures]
     shared = shared_origins(signatures, rarity, cluster_of, cluster_rarity)
     smallest = min(sizes) if sizes else 0
-    truncated = [truncation_of(op) for op in outpoints] if truncation_of else None
+    reported = ([_truncation_causes(truncation_of(op)) for op in outpoints]
+                if truncation_of else None)
+    truncated = [total for total, _ in reported] if reported else None
+    causes = [cause for _, cause in reported] if reported else None
+    blind = bool(truncated) and any(t >= n for t, n in zip(truncated, sizes))
     return {
         "txid": candidate.get("txid"),
         "branches": len(outpoints),
         "sizes": sizes,
         "truncated": truncated,
-        "blind": bool(truncated) and any(t >= n for t, n in zip(truncated, sizes)),
+        "truncated_causes": causes,
+        "blind": blind,
+        "blind_cause": _blind_cause(truncated, causes, sizes) if blind else None,
         "shared": shared,
         "collapsed": max(0, smallest - len(shared)),
         "collapsed_bits": collapse_bits(smallest, len(shared)),

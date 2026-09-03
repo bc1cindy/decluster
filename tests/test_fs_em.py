@@ -1,4 +1,4 @@
-"""EM per-axis m: fs_score dict extension + fs_em engine (agree_matrix / em_fit / oracle_m)."""
+"""EM per-axis m plus the legacy rarity-score parameter extension."""
 import sys, os, math, random
 sys.path.insert(0, os.path.dirname(os.path.dirname(__file__)))
 
@@ -9,24 +9,24 @@ def _one_axis(collision=0.5):
     return [("ax", fn, {"a": 0.5}, collision, lambda va, vb: False)]
 
 
-def test_fs_score_scalar_path_byte_identical():
-    from decluster.combiner import fs_score
+def test_rarity_score_scalar_path_byte_identical():
+    from decluster.combiner import rarity_score
     axes = _one_axis(collision=0.5)
-    agree = fs_score(axes, {"k": "a"}, {"k": "a"}, 0.95, 1000)
-    disagree = fs_score(axes, {"k": "a"}, {"k": "b"}, 0.95, 1000)
+    agree = rarity_score(axes, {"k": "a"}, {"k": "a"}, 0.95, 1000)
+    disagree = rarity_score(axes, {"k": "a"}, {"k": "b"}, 0.95, 1000)
     assert agree == -math.log2(0.5)                        # +1.0 bit
     assert disagree == min(0.0, math.log2((1 - 0.95) / (1 - 0.5)))
 
 
-def test_fs_score_dict_applies_per_axis_c():
-    from decluster.combiner import fs_score
+def test_rarity_score_dict_applies_per_axis_c():
+    from decluster.combiner import rarity_score
     axes = _one_axis(collision=0.5)
     # c as dict: m=0.5 makes the disagreement weight log2((1-0.5)/(1-0.5)) = 0
-    w = fs_score(axes, {"k": "a"}, {"k": "b"}, {"ax": 0.5}, 1000)
+    w = rarity_score(axes, {"k": "a"}, {"k": "b"}, {"ax": 0.5}, 1000)
     assert w == 0.0
     # and c dict with 0.95 matches the scalar path exactly
-    w95 = fs_score(axes, {"k": "a"}, {"k": "b"}, {"ax": 0.95}, 1000)
-    assert w95 == fs_score(axes, {"k": "a"}, {"k": "b"}, 0.95, 1000)
+    w95 = rarity_score(axes, {"k": "a"}, {"k": "b"}, {"ax": 0.95}, 1000)
+    assert w95 == rarity_score(axes, {"k": "a"}, {"k": "b"}, 0.95, 1000)
 
 
 def _synth(n, m_true, u_true, lam, seed):

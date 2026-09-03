@@ -72,6 +72,10 @@ def test_four_branches_resolve_and_their_intersection_is_empty_but_not_blind():
     assert out["sizes"] == SIZES
     assert out["truncated"] == TRUNCATED
     assert out["blind"] is False, "no branch is pure truncation"
+    assert out["blind_cause"] is None
+    assert out["truncated_causes"] == [None] * len(FUNDERS), (
+        "the pinned counts are totals recorded before the cause split existed; naming one would "
+        "attribute a cause that was never measured")
     assert out["shared"] == []
     assert out["collapsed_bits"] is None, "an empty intersection is not unbounded narrowing"
 

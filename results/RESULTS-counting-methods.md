@@ -133,7 +133,15 @@ calibrated for exact arithmetic, three orders of magnitude below what a transact
 Real fees on the slice run to a median of 4,956 sats. So the fee-blindness is not a wiring defect to
 be fixed downstream; it is the criterion the writeup names as insufficient, and it accounts for the
 exact-zero on 86% of transactions and the unreachable per-coin reading on 98.2% of input coins. The
-tolerance that would fix it is Boltzmann's, and nothing here implements it.
+tolerance needed by this old measurement was absent when it was produced.
+
+> **Correction (2026-09-03).** `decluster.baselines.boltzmann` now exposes a separate
+> `fee_tolerant` balance model. It allocates the observed non-negative transaction fee across
+> participant blocks and requires an explicit total `fee_tolerance`; the original `exact` path and
+> every number in this document remain unchanged. Roundness is neither an admissibility rule nor a
+> prior in that baseline. This is a local mechanism, **not parity with the Boltzmann tool**, whose
+> cases and implementation are not available in this checkout. This table has not been re-measured
+> with the new model.
 
 Two further gaps between the object and the writeup's framing, both of which the paper already
 states: what it counts is subset-sum multiplicity, not Maurer's matched-partition count; and the

@@ -37,13 +37,19 @@ def run_on_signatures(node_sigs, seed_labels, node_txs, rarity, combiner=None,
 
 def run(txs, seeds, depth=6):
     """Real wiring: build per-node provenance signatures and rarity, then summarise.
-    `txs` maps node -> representative tx dict; `seeds` maps node -> label."""
-    from decluster.ancestry import ancestry_signature
+    `txs` maps node -> representative tx dict; `seeds` maps node -> label.
+
+    The link oracle is named rather than inherited: the walk's default moved to nominal value flow,
+    and RESULTS-ns-propagation.md reports the subset-sum walk (its cache harness pins the same
+    oracle explicitly).
+    """
+    from decluster.ancestry import ancestry_signature, dss_link_oracle
     from decluster.propagate import build_rarity, entity_signature
     node_sigs = {}
     for node, tx in txs.items():
         coin = (tx["txid"], 0)
-        node_sigs[node] = entity_signature([ancestry_signature(coin, depth=depth)])
+        node_sigs[node] = entity_signature(
+            [ancestry_signature(coin, depth=depth, link_oracle=dss_link_oracle)])
     rarity = build_rarity(node_sigs.values())
     node_txs = {node: tx for node, tx in txs.items()}
     return run_on_signatures(node_sigs, seeds, node_txs, rarity,

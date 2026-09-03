@@ -170,13 +170,15 @@ def test_truncation_is_counted_over_the_mass_carrying_boundary():
     """`blind` compares the truncation count against the signature size, so the two must count
     the same objects. Counting every refused coin — including atoms the target never reaches —
     reports a branch as blind while it is still resolving a full-mass origin."""
-    from decluster.ancestry import Graph, truncated_support
+    from decluster.ancestry import NODE_CAPPED, ORACLE_REFUSED, Graph, truncated_support
     g = Graph()
-    g.truncated_coins = {("refused", 0), ("never_reached", 0)}
+    g.truncated_coins = {("refused", 0): ORACLE_REFUSED, ("never_reached", 0): NODE_CAPPED}
     g.truncated = 2
-    sig = {("origin", 0): 1.0}                      # one genuine origin holds all the mass
-    assert truncated_support(sig, g) == 0           # not blind: the walk did see an origin
-    assert truncated_support(sig, g) < len(sig)
+    sig = {("origin", 0): 1.0}                        # one genuine origin holds all the mass
+    assert truncated_support(sig, g).total == 0       # not blind: the walk did see an origin
+    assert truncated_support(sig, g).total < len(sig)
 
-    blind_sig = {("refused", 0): 1.0}               # the whole boundary is the oracle refusing
-    assert truncated_support(blind_sig, g) == len(blind_sig)
+    blind_sig = {("refused", 0): 1.0}                 # the whole boundary is the oracle refusing
+    support = truncated_support(blind_sig, g)
+    assert support.total == len(blind_sig)
+    assert (support.oracle_refused, support.node_capped) == (1, 0)

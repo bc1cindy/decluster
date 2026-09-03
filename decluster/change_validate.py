@@ -2,7 +2,7 @@
 a shuffle null control (the net that caught the temporal fingerprint), and the universal baseline.
 Pure functions with injected fetchers; the slice pipeline (change_slice) drives them."""
 from .fetch import fetch_tx, fetch_outspends
-from .combiner import Combiner
+from .rarity_weight_baseline import Combiner
 from .change_score import output_score, spending_tx
 from .graph_deanon import auc, shuffle_auc
 from .extractors import x_input_order, x_output_order, x_nsequence, x_version, x_change_index
@@ -79,4 +79,3 @@ def report(gt, combiner=None, get_tx=fetch_tx, get_outspends=fetch_outspends):
               "the combined AUC uses the FS Combiner, which abstains on single/small_n order.",
               "the two input_order views are not directly comparable."]
     return "\n".join(lines)
-

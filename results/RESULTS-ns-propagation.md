@@ -1,5 +1,15 @@
 # N-S seed-and-propagate driver
 
+> **Correction (2026-09-03) — which walk produced the signatures.**
+> Every provenance signature below came from the **subset-sum link oracle**
+> (`ancestry.dss_link_oracle`): `examples/ns_propagation_cache_run.py` has always pinned it, and
+> `examples/ns_propagation.run` inherited it as `ancestry_signature`'s default. That default is now
+> `ancestry.value_flow_link_oracle` — the nominal-value transition rule, which never refuses on
+> transaction width. `examples/ns_propagation.run` had silently inherited the new default; it now
+> names `dss_link_oracle` explicitly, so both entry points run the walk measured here. Nothing below
+> has been re-measured under value flow. `results/RESULTS-exact-oracle-audit.md` measures how far the
+> subset-sum oracle sits from an exact one.
+
 `examples/ns_propagation.py` wires `decluster.propagate` (build_rarity, entity_signature,
 NSPropagator, holdout_reid, partition_from_assignment) into a single `run_on_signatures(...)`
 summary: seed-label re-identification rate, whole-partition bits (entropy) before vs. after

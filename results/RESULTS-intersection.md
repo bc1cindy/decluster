@@ -1,5 +1,39 @@
 # Intersection: exercising the channel on a real co-spend
 
+> **Correction (2026-09-03) — which walk produced the origin sets.**
+> Every signature below came from the **subset-sum link oracle** (`ancestry.dss_link_oracle`), which
+> was `ancestry_signature_and_truncation`'s default when this was measured. That default is now
+> `ancestry.value_flow_link_oracle` — the nominal-value transition rule, which never refuses on
+> transaction width. `examples/intersection_pipeline.py` had silently inherited the new default; it
+> now names `dss_link_oracle` explicitly, so the reproduce block below runs the walk measured here.
+> Read "What the origin sets are, and are not" (below) with that in mind: it contrasts this walk
+> with "a value-weighted walk", and that walk is now a shipped, callable object
+> (`ancestry.value_flow_link_oracle` / `build_value_flow_graph`), not a deferred rung. Whether it
+> intersects where this one does not has still not been measured.
+> `results/RESULTS-exact-oracle-audit.md` measures how far the subset-sum oracle sits from an exact
+> one.
+
+> **Correction (2026-09-03) — the `truncated` counts below name no cause, because none was
+> recorded.**
+> `evaluate` now separates the two limits that can truncate a branch: an oracle that refused to link,
+> and a walk cut off at `max_nodes`. It reports them per branch in `truncated_causes` and names what
+> blinded a blind branch in `blind_cause`. Every count on this page predates that split and is a
+> bare total, so re-running from these numbers yields `truncated_causes` entries of `None`
+> throughout. The three-branch run below is blind, and its `blind_cause` comes back `"unknown"` —
+> measured blindness, unmeasured cause. The four-branch run is **not** blind, so its `blind_cause`
+> is `None` for the ordinary reason; `tests/test_intersection_real.py` pins both. As measured, the
+> cause of the three-branch blindness was the subset-sum oracle refusing on transaction width, which
+> is what the prose below describes; that is a statement about the walk that was run, not a value
+> this document recorded. Nothing here has been re-measured.
+
+> **Correction (2026-09-03) — what the attack name rests on.**
+> The Goldfeder et al. text is not in this checkout, so nothing on this page reproduces the paper.
+> The mechanism it describes is now separated as `decluster/baselines/candidate_set_intersection.py`
+> (`results/RESULTS-candidate-set-intersection.md`); `decluster/intersect.py`, which produced
+> everything below, is this repository's wiring of that mechanism to the backward provenance walk and
+> to `cluster_refined`, with additions — rarity weighting, cluster-lift, truncation and blindness
+> reporting — that are ours and not the paper's.
+
 `decluster/monitor.py` → `decluster/intersect.py` → `cluster_refined`, run end to end on mainnet
 rather than on fixtures. The question is not whether an entity falls out — it does not — but whether
 each stage does on real data what it does in the tests, and what the stages say to each other.
