@@ -37,6 +37,13 @@ class UndefinedAlgorithm2Weight(ValueError):
     """Algorithm 2's published ratio is undefined for a zero weight."""
 
 
+@dataclass(frozen=True)
+class TwoStageMapping:
+    deterministic: dict[Vertex, Vertex]
+    candidates: dict[Vertex, tuple[Vertex, ...]]
+    stage1_rounds: int
+
+
 def algorithm2_pair_distance(left: float, right: float, *, alpha=0.5) -> float:
     """The paper's ``(max(x/y, y/x) - 1)^alpha`` pair distance.
 
@@ -257,6 +264,89 @@ def stage2_candidates(evidence: Iterable[SimilarityEvidence], *, k=3, theta=0.5,
                 if row.common_mapped_neighbours >= k and row.score >= theta]
     eligible.sort(key=lambda row: (-row.score, repr(row.auxiliary)))
     return tuple(row.auxiliary for row in eligible[:limit])
+
+
+def two_stage_mapping(
+    target_graph,
+    auxiliary_graph,
+    seeds: Mapping[Vertex, Vertex],
+    target_vertices: Iterable[Vertex],
+    auxiliary_vertices: Iterable[Vertex],
+    *,
+    crawled_target: Iterable[Vertex],
+    crawled_auxiliary: Iterable[Vertex],
+    stage1_k=4,
+    stage1_theta=0.5,
+    stage1_delta=0.2,
+    stage2_k=3,
+    stage2_theta=0.5,
+    stage2_limit=3,
+) -> TwoStageMapping:
+    """Run the specified self-feeding stage 1 and non-feeding stage 2.
+
+    Vertex iteration is canonicalized by ``repr`` so "pick an arbitrary node"
+    becomes reproducible. This driver does not claim the paper's unspecified
+    confidence-pruning or occasional correction of accepted mappings.
+    """
+
+    target_vertices = tuple(sorted(set(target_vertices), key=repr))
+    auxiliary_vertices = tuple(sorted(set(auxiliary_vertices), key=repr))
+    crawled_target, crawled_auxiliary = set(crawled_target), set(crawled_auxiliary)
+    mapping = dict(seeds)
+    if not set(mapping) <= set(target_vertices):
+        raise ValueError("seed domain must be part of target_vertices")
+    if not set(mapping.values()) <= set(auxiliary_vertices):
+        raise ValueError("seed images must be part of auxiliary_vertices")
+    if len(set(mapping.values())) != len(mapping):
+        raise ValueError("seed mapping must be one-to-one")
+
+    rounds = 0
+    while True:
+        changed = False
+        used_images = set(mapping.values())
+        for target in target_vertices:
+            if target in mapping:
+                continue
+            unused = [vertex for vertex in auxiliary_vertices
+                      if vertex not in used_images]
+            evidence = [
+                similarity_evidence(
+                    target_graph, auxiliary_graph, target, auxiliary, mapping,
+                    crawled_target=crawled_target,
+                    crawled_auxiliary=crawled_auxiliary,
+                )
+                for auxiliary in unused
+            ]
+            match = stage1_match(
+                evidence, k=stage1_k, theta=stage1_theta, delta=stage1_delta
+            )
+            if match is not None:
+                mapping[target] = match
+                used_images.add(match)
+                changed = True
+        if not changed:
+            break
+        rounds += 1
+
+    candidate_sets = {}
+    used = set(mapping.values())
+    for target in target_vertices:
+        if target in mapping:
+            continue
+        evidence = [
+            similarity_evidence(
+                target_graph, auxiliary_graph, target, auxiliary, mapping,
+                crawled_target=crawled_target,
+                crawled_auxiliary=crawled_auxiliary,
+            )
+            for auxiliary in auxiliary_vertices if auxiliary not in used
+        ]
+        candidates = stage2_candidates(
+            evidence, k=stage2_k, theta=stage2_theta, limit=stage2_limit
+        )
+        if candidates:
+            candidate_sets[target] = candidates
+    return TwoStageMapping(mapping, candidate_sets, rounds)
 
 
 def combine_predictions(

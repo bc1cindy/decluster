@@ -36,6 +36,7 @@ from .link_prediction import LinkPredictionResult, Prediction
 from .ns_link_prediction_2011 import (
     CombinedPrediction,
     SimilarityEvidence,
+    TwoStageMapping,
     UndefinedAlgorithm2Weight,
     algorithm2_node_distance,
     algorithm2_pair_distance,
@@ -45,6 +46,7 @@ from .ns_link_prediction_2011 import (
     similarity_evidence,
     stage1_match,
     stage2_candidates,
+    two_stage_mapping,
 )
 from .oracle_audit import (
     audit,
@@ -61,6 +63,7 @@ __all__ = [
     "BoltzmannReferenceAnalysis",
     "CombinedPrediction",
     "SimilarityEvidence",
+    "TwoStageMapping",
     "UndefinedAlgorithm2Weight",
     "ExactCoinLinkEvidence",
     "ExactLinkAnalysis",
@@ -82,6 +85,7 @@ __all__ = [
     "similarity_evidence",
     "stage1_match",
     "stage2_candidates",
+    "two_stage_mapping",
     "enumerate_family",
     "equal_value_mapping_count",
     "exact_link_analysis",

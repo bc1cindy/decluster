@@ -10,6 +10,7 @@ from decluster.baselines.ns_link_prediction_2011 import (
     similarity_evidence,
     stage1_match,
     stage2_candidates,
+    two_stage_mapping,
 )
 import random
 import pytest
@@ -96,6 +97,42 @@ def test_annealing_refuses_to_invent_the_papers_missing_dummy_zero_policy():
             lambda left, right: 1.0, lambda left, right: 1.0,
             iterations=1, rng=random.Random(0),
         )
+
+
+def test_two_stage_driver_feeds_stage1_back_but_not_stage2_candidates():
+    # Seeds s/t expose x; accepting x immediately supplies the second mapped
+    # neighbour needed to accept y later in the same deterministic pass.
+    target = directed_graph(
+        ["s", "t", "x", "y"],
+        [("s", "x"), ("t", "x"), ("s", "y"), ("x", "y")],
+    )
+    auxiliary = directed_graph(
+        ["S", "T", "X", "Y", "noise"],
+        [("S", "X"), ("T", "X"), ("S", "Y"), ("X", "Y"), ("S", "noise")],
+    )
+    result = two_stage_mapping(
+        target, auxiliary, {"s": "S", "t": "T"}, ["s", "t", "x", "y"],
+        ["S", "T", "X", "Y", "noise"],
+        crawled_target=target.vertices, crawled_auxiliary=auxiliary.vertices,
+        stage1_k=2, stage1_theta=0.5, stage1_delta=0.2,
+        stage2_k=1, stage2_theta=0.5,
+    )
+    assert result.deterministic == {"s": "S", "t": "T", "x": "X", "y": "Y"}
+    assert result.candidates == {}
+    assert result.stage1_rounds == 1
+
+
+def test_two_stage_driver_keeps_relaxed_candidates_out_of_deterministic_mapping():
+    target = directed_graph(["s", "a"], [("s", "a")])
+    auxiliary = directed_graph(["S", "A", "B"], [("S", "A"), ("S", "B")])
+    result = two_stage_mapping(
+        target, auxiliary, {"s": "S"}, ["s", "a"], ["S", "A", "B"],
+        crawled_target=target.vertices, crawled_auxiliary=auxiliary.vertices,
+        stage1_k=1, stage1_theta=0.5, stage1_delta=0.2,
+        stage2_k=1, stage2_theta=0.5,
+    )
+    assert result.deterministic == {"s": "S"}
+    assert result.candidates == {"a": ("A", "B")}
 
 
 def test_deterministic_mapping_has_first_precedence():
