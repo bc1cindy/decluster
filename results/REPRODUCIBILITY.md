@@ -185,7 +185,14 @@ observed fee and selected model in its result. Roundness does not affect mapping
 probability. This closes the local fee-allocation mechanism only. Official no-fee vectors
 A/B/C/P2/P3 match. On P3-with-fees, the set-valued model reports 19 unique mappings and per-input
 counts `10/9/9`; a separate default-`LINKABILITY` aggregate-traversal port reproduces the tool's 28
-combinations and `14/13/13`. Optional precheck, merge and JoinMarket-intrafee modes remain open.
+combinations and `14/13/13`.
+`MERGE_FEES` is separately pinned: it appends the observed fee as a typed synthetic output, runs
+exact conservation, and preserves the fee output's position after the reference's descending-value
+sort.
+Known-owner input groups are also a separate mode: overlapping index groups are merged transitively,
+replaced by summed inputs for traversal, and expanded back in the tool's order. This reproduces the
+reference's row replication without treating equal-valued inputs as the same object. Output-owner
+merges, `PRECHECK`, and JoinMarket intrafees remain open.
 
 The compatibility modules still disclose why their old names must not be used as evidence of a
 reference algorithm:
