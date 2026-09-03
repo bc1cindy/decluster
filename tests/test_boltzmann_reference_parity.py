@@ -59,3 +59,20 @@ def test_reference_backend_also_preserves_no_fee_parity():
     for inputs, outputs, count, matrix in vectors:
         result = boltzmann_reference_analysis(inputs, outputs)
         assert (result.combination_count, result.link_counts) == (count, matrix)
+
+
+def test_merge_fees_reproduces_the_official_synthetic_output_semantics():
+    result = boltzmann_reference_analysis((5, 5, 5), (5, 3, 2), merge_fees=True)
+    assert result.observed_fee == 5
+    assert result.outputs == (5, 5, 3, 2)
+    assert result.fee_output_index == 1
+    assert result.combination_count == 16
+    assert result.link_counts == ((8, 8, 8, 8),) * 3
+
+
+def test_merge_fees_can_make_every_link_deterministic_like_the_reference():
+    result = boltzmann_reference_analysis((10, 7), (8, 6), merge_fees=True)
+    assert result.outputs == (8, 6, 3)
+    assert result.fee_output_index == 2
+    assert result.combination_count == 1
+    assert result.link_counts == ((1, 1, 1), (1, 1, 1))

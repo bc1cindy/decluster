@@ -22,6 +22,8 @@ class BoltzmannReferenceAnalysis:
     observed_fee: int
     inputs: tuple[int, ...]
     outputs: tuple[int, ...]
+    merge_fees: bool = False
+    fee_output_index: int | None = None
 
 
 def _aggregate_values(values):
@@ -45,7 +47,7 @@ def _add_counts(target, source, multiplier=1):
             target[i][o] += value * multiplier
 
 
-def boltzmann_reference_analysis(inputs, outputs, *, max_coins=12):
+def boltzmann_reference_analysis(inputs, outputs, *, max_coins=12, merge_fees=False):
     """Reproduce Boltzmann's default aggregate traversal and link matrix.
 
     Values must be non-negative integers and the observed transaction fee must
@@ -56,21 +58,31 @@ def boltzmann_reference_analysis(inputs, outputs, *, max_coins=12):
     inputs, outputs = tuple(inputs), tuple(outputs)
     values = inputs + outputs
     if not inputs or not outputs:
-        return BoltzmannReferenceAnalysis(0, (), (), 0, inputs, outputs)
+        return BoltzmannReferenceAnalysis(0, (), (), 0, inputs, outputs, merge_fees, None)
     if any(isinstance(value, bool) or not isinstance(value, int) or value < 0
            for value in values):
         raise ValueError("coin values must be non-negative integers")
-    if len(inputs) > max_coins or len(outputs) > max_coins:
-        raise ValueError("Boltzmann reference baseline exceeds max_coins")
     fee = sum(inputs) - sum(outputs)
     if fee < 0:
-        return BoltzmannReferenceAnalysis(0, (), (), fee, inputs, outputs)
+        return BoltzmannReferenceAnalysis(0, (), (), fee, inputs, outputs, merge_fees, None)
+
+    output_entries = [(value, False, index) for index, value in enumerate(outputs)]
+    traversal_fee = fee
+    if merge_fees and fee > 0:
+        output_entries.append((fee, True, len(output_entries)))
+        traversal_fee = 0
+    if len(inputs) > max_coins or len(output_entries) > max_coins:
+        raise ValueError("Boltzmann reference baseline exceeds max_coins")
 
     # TxosLinker sorts both sides by descending value before building its
     # matrix.  Expose that order in the result so asymmetric vectors can be
     # compared cell-for-cell without an implicit permutation.
     inputs = tuple(sorted(inputs, reverse=True))
-    outputs = tuple(sorted(outputs, reverse=True))
+    output_entries.sort(key=lambda entry: entry[0], reverse=True)
+    outputs = tuple(entry[0] for entry in output_entries)
+    fee_output_index = next(
+        (index for index, entry in enumerate(output_entries) if entry[1]), None
+    )
 
     in_values = _aggregate_values(inputs)
     out_values = _aggregate_values(outputs)
@@ -85,7 +97,7 @@ def boltzmann_reference_analysis(inputs, outputs, *, max_coins=12):
             difference = left - right
             if difference < 0:
                 break
-            if difference <= fee:
+            if difference <= traversal_fee:
                 for mask, value in enumerate(in_values):
                     if value == left and mask not in input_value:
                         matching_inputs.append(mask)
@@ -95,7 +107,9 @@ def boltzmann_reference_analysis(inputs, outputs, *, max_coins=12):
                 )
     matching_inputs.sort()
     if len(matching_inputs) < 2:
-        return BoltzmannReferenceAnalysis(0, (), (), fee, inputs, outputs)
+        return BoltzmannReferenceAnalysis(
+            0, (), (), fee, inputs, outputs, merge_fees, fee_output_index
+        )
 
     target = matching_inputs[-1]
     interior = set(matching_inputs[1:-1])
@@ -182,5 +196,6 @@ def boltzmann_reference_analysis(inputs, outputs, *, max_coins=12):
         tuple(value / combination_count for value in row) for row in frozen_counts
     )
     return BoltzmannReferenceAnalysis(
-        combination_count, frozen_counts, probabilities, fee, inputs, outputs
+        combination_count, frozen_counts, probabilities, fee, inputs, outputs,
+        merge_fees, fee_output_index,
     )
