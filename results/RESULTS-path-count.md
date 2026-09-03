@@ -1,8 +1,9 @@
 # Bounded walk + §07 path-count — real numbers
 
 `examples/path_count_live.py` exercises the two shipped capabilities on real data: the **bounded walk**
-(`max_nodes`, makes deep coinjoin `analyze()` tractable) and the **§07 path-count** object (the
-multiplicity/robustness lens). Honest numbers below, with the nuances the runs surfaced.
+(`max_nodes`, makes deep coinjoin `analyze()` tractable) and the **§07 path-count** object (weighted by
+link probability alone — see "Multiplicity has left the bound", below). Honest numbers below, with the
+nuances the runs surfaced.
 
 ## (a) Bounded walk — deep coinjoin now returns, instead of hanging
 
@@ -25,26 +26,36 @@ coinjoin hop (~2.3 s of exact subset-sum) truncates → a point mass; `budget_ms
 at the cost of wall time. Bounded, honest, never exact — exact deep-coinjoin resolution is impossible
 (the explosion is the privacy).
 
-## (b) §07 vs §04 — when they differ, and why usually they don't
+## Multiplicity has left the bound
 
-On the narrow depth-sweep tx and on the `9-in/17-out` seed coinjoin, the §07 path-count distribution is
-**identical** to the §04 distribution (min-entropy equal; `log_W_paths ≈ 0`). This is not a defect —
-two honest reasons:
+Earlier revisions reported that the path count up-weights origins reached through
+high-multiplicity transactions, and a test pinned that behaviour. Both are retired.
 
-1. **Structural (depth 1):** a single transaction's `W(E)` is a global constant across all its edges,
-   so it **cancels in the normalization** of the origin distribution. §07's *distribution* therefore
-   equals §04's at depth 1 for any tx; only the *magnitude* `log_W_paths` (= `log W(E)`) can differ.
-2. **`W(E)=1` on real "coinjoin-shaped" txs:** `12da3dd7…` (9-in/17-out) has `w_total → count=1` — a
-   UNIQUE subset-sum mapping. Its specific values pin the assignment, so there is genuinely no
-   path-multiplicity to weight. Many real coinjoin-shaped payments are like this.
+`cost.py` declares the amount channel refuse-only: it may cut a coin from the graph, never weight
+one. Measured on a synthetic two-origin DAG, the multiplicity term moved min-entropy from 1.0 bit
+to 0.137 — note the direction, which is downward; the objection is not that it inflated a number
+but that an ambiguity signal entered the bound as a weight at all. The factor is gone, the origin
+distribution is weighted by link probability alone, and the mass key went with it: after the change
+it is identically zero, because the edge weights are row-stochastic and the absorbed mass is always
+one.
 
-§07 **diverges from §04 only** when *different ancestral origins are reached through
-different-`W(E)` transactions* (depth ≥ 2) **and** those txs carry genuine subset-sum multiplicity
-(`W(E) > 1`) — i.e. true equal-denomination dense coinjoins (Wasabi-style equal outputs). The mechanism
-is proven in `tests/test_path_count.py::test_multiplicity_upweights_higher_w_e_origin` (a controlled
-2-origin fixture where the higher-`W(E)` origin gets strictly more weight: 0.833 vs 0.5). On real data
-the divergence is rare because it requires that specific structure — which is itself the §06/§07 point:
-robustness lives in genuine path multiplicity, and most single payments don't have it.
+The combinatorial sub-transaction literature does read a low mapping count as low privacy, which is
+why the weighting looked principled. But in that literature the count enters as the *denominator* of
+a link probability, never as a multiplier on one, and the column this code weights is already
+renormalized (`ancestry.py:149`). The factor reintroduced as a weight exactly what the matrix had
+just divided out. The refuse-only contract and the literature agree here: there was one defensible
+reading, not two.
+
+**What this costs.** `path_count_anonymity` is the default target of the construction-side cost
+function, and multiplicity was the only thing distinguishing its output from the plain ancestry
+entropy. After this change that instrument measures **no structural property** of the graph.
+Measuring one would need disjoint paths — a minimum *vertex* cut, and a plausibility-weighted one,
+since a traceable path is not the same as a plausible flow. Vertex rather than edge: what fractures
+the graph is a coin ceasing to carry flow, and coins are the vertices here, so the edge reading
+counts a larger cut and over-reports robustness. This repository does not compute that. Note
+also that the construction-side cost function never combined its terms in the first place: it
+returns them uncombined and raises on the attempt, so what changes here is what one of the three
+terms means, not a working number.
 
 ## (c) The W(E) count gate — a real bug found and fixed (Sasamoto is NOT the bug)
 
@@ -63,8 +74,9 @@ in Sasamoto:
   is architectural: method selection is not decluster's job — it moved into the dss crate as the
   `dss.w_count` feasibility-cascade dispatcher (brute → dp → sparse → sasamoto, selecting by REGIME,
   beside the density logic, with cross-validated Rust tests). `decluster.counting.w_total` now simply
-  delegates to `dss.w_count`. So dense coinjoins — exactly where §07's multiplicity lives — get their
-  exact counts (asserted by `tests/test_counting.py::test_w_total_dense_coinjoin_is_exact_not_unknown`).
+  delegates to `dss.w_count`. So dense coinjoins — the case this dispatcher exists for — get their
+  exact counts (asserted by `tests/test_counting.py::test_w_total_dense_coinjoin_is_exact_not_unknown`),
+  independent of whether §07 currently spends that count on anything.
 
 Radix (dense repeated-denomination recognition) is a **separate, independent** dss path and is not part
 of this cascade.
@@ -72,7 +84,7 @@ of this cascade.
 ## Honest limits
 
 - Bounded walk = truncated **lower bound**, never exact; deep-coinjoin exactness is impossible.
-- §07 path-count = weight-of-evidence robustness lens, not a privacy score; it does not extend the
-  tractable envelope (same graph fan-out as §04), and it diverges from §04 only on genuine
-  path-multiplicity (dense coinjoins at depth ≥ 2).
+- §07 path-count = weighted by link probability alone; identical in distribution to §04's set-size
+  entropy, and adds no structural-property term (see "Multiplicity has left the bound", above). It
+  does not extend the tractable envelope either (same graph fan-out as §04).
 - Live non-determinism (real chain + timing-bounded oracle); a small real slice, not a population.

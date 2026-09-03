@@ -1,12 +1,18 @@
-"""§07 path-count anonymity object: provenance over ancestral origins weighted by counterfactual
-subset-sum PATH MULTIPLICITY, distinct from §04's set-size entropy
-(`ancestry.absorber_distribution`, which weighs origins by link-probability mass alone). Reuses
-`ancestry.build_extended_graph`'s walk verbatim (same graph, same `max_nodes` bound) and folds in
-the dss W(E) mapping-count (`counting.w_total`) per edge: how many counterfactual subset-sum
-routes reach each origin, not just how likely the single most-probable one is.
+"""Counterfactual path counting over the ancestry DAG.
 
-This is a LOWER BOUND / weight-of-evidence, never a privacy score -- exactly like every other
-number in this module family."""
+The origin distribution is weighted by link probability alone. Subset-sum multiplicity is NOT a
+factor: `cost.py` declares the amount channel refuse-only — it may cut a coin from the graph, never
+weight one — and multiplicity entering as a weight is what that forbids. Measured on a synthetic
+two-origin DAG, the term moved min-entropy from 1.0 bit to 0.137; the direction is beside the point,
+the objection is that an ambiguity signal was a weight at all. The combinatorial sub-transaction
+literature reads a low mapping count as low privacy, so under that reading the weighting was the
+correct ambiguity signal; the refuse-only contract overrides it, and this module does not pretend
+the two agree.
+
+Multiplicity, not redundancy: many routes may share the same coins, so this says nothing about how
+few of them a cut would sever. Measuring that needs disjoint paths, which this repository does not
+compute.
+"""
 import math
 
 from .ancestry import build_extended_graph, _shannon, _min_entropy
@@ -45,49 +51,26 @@ def _topological_order(target, edges):
 
 def path_count_anonymity(target, *, depth=6, max_nodes=None, fetch=None, link_oracle=None,
                           count_oracle=None):
-    """§07 path-count anonymity set: provenance over ancestral origins weighted by counterfactual
-    subset-sum PATH MULTIPLICITY, from the dss W(E) counts. This is the §07 path-like object (how
-    many amount-consistent counterfactual routes reach each origin); it is NOT the §06 robustness
-    metric, which is edge-disjoint path count / min-cut (k-routes max-flow) and is a separate,
-    not-yet-implemented component — W(E) multiplicity and edge-disjoint connectivity are different
-    quantities. Reuses
+    """Provenance over ancestral origins, weighted by link probability alone. Reuses
     `build_extended_graph`'s walk (honoring `max_nodes` for deep-coinjoin tractability) -- does not
-    re-walk. Returns {"origins_weighted": {origin: weight}, "log_W_paths": float,
-    "min_entropy": float, "shannon": float, "truncated": int}.
+    re-walk. Returns {"origins_weighted": {origin: weight}, "min_entropy": float, "shannon": float,
+    "truncated": int}.
 
-    Per-edge path multiplicity = link_prob * W(E) of the edge's tx (`g.edges` already stores
-    link_prob as the row-stochastic `weight`; `coin.txid` names the tx that produced `coin`, whose
-    W(E) scales every edge out of `coin`). Total multiplicity to an origin sums, over every route
-    from `target`, the product of edge multiplicities along it -- computed as a forward log-domain
-    accumulation over the ancestry DAG (topological order; acyclic -> finite -> converges).
+    `count_oracle` is accepted but unused: kept for backward compatibility with callers that still
+    pass one. See the module docstring for why subset-sum multiplicity is not folded in here.
 
-    A LOWER BOUND / weight-of-evidence, not a privacy score. When a tx's W(E) is off-regime
-    (`log_w` is None) that hop falls back to link-probability weight alone (multiplicity factor 1)
-    -- never fabricate a count."""
+    Total mass to an origin sums, over every route from `target`, the product of edge link
+    probabilities along it -- computed as a forward log-domain accumulation over the ancestry DAG
+    (topological order; acyclic -> finite -> converges)."""
     if fetch is None:
         from .fetch import fetch_tx
         fetch = fetch_tx
     if link_oracle is None:
         from .oracle import bounded_link_oracle
         link_oracle = bounded_link_oracle()
-    if count_oracle is None:
-        from .counting import w_total
-        count_oracle = w_total
 
     g = build_extended_graph(target, depth=depth, fetch=fetch, link_oracle=link_oracle,
                               max_nodes=max_nodes)
-
-    log_w_by_txid = {}
-
-    def log_w_of(txid):
-        if txid not in log_w_by_txid:
-            tx = fetch(txid)
-            in_vals = [v["prevout"]["value"] for v in tx["vin"]]
-            out_vals = [o["value"] for o in tx["vout"]]
-            res = count_oracle(in_vals, out_vals)
-            lw = res.get("log_w")
-            log_w_by_txid[txid] = 0.0 if lw is None else lw  # None -> link-prob-only fallback
-        return log_w_by_txid[txid]
 
     log_reach = {target: 0.0}
     for coin in _topological_order(target, g.edges):
@@ -97,24 +80,22 @@ def path_count_anonymity(target, *, depth=6, max_nodes=None, fetch=None, link_or
         base = log_reach.get(coin)
         if base is None:
             continue  # unreachable from target in this DAG (shouldn't occur; defensive)
-        lw = log_w_of(coin[0])
         for source, w in edges_out:
             if w <= 0:
                 continue
-            log_edge = math.log(w) + lw
-            log_reach[source] = _logsumexp(log_reach.get(source, NEG_INF), base + log_edge)
+            log_reach[source] = _logsumexp(log_reach.get(source, NEG_INF),
+                                           base + math.log(w))
 
     contrib = {o: log_reach[o] for o in g.absorbers if o in log_reach}
     if not contrib:
-        return {"origins_weighted": {}, "log_W_paths": NEG_INF,
-                "min_entropy": 0.0, "shannon": 0.0, "truncated": g.truncated}
+        return {"origins_weighted": {}, "min_entropy": 0.0, "shannon": 0.0,
+                "truncated": g.truncated}
 
-    log_w_paths = contrib[next(iter(contrib))]
+    total = contrib[next(iter(contrib))]
     for lr in list(contrib.values())[1:]:
-        log_w_paths = _logsumexp(log_w_paths, lr)
-    origins_weighted = {o: math.exp(lr - log_w_paths) for o, lr in contrib.items()}
+        total = _logsumexp(total, lr)
+    origins_weighted = {o: math.exp(lr - total) for o, lr in contrib.items()}
 
     probs = list(origins_weighted.values())
-    return {"origins_weighted": origins_weighted, "log_W_paths": log_w_paths,
-            "min_entropy": _min_entropy(probs), "shannon": _shannon(probs),
-            "truncated": g.truncated}
+    return {"origins_weighted": origins_weighted, "min_entropy": _min_entropy(probs),
+            "shannon": _shannon(probs), "truncated": g.truncated}

@@ -1,9 +1,9 @@
 """Live end-to-end proof of the two things task 5/6 shipped: (a) `max_nodes` tames the deep-coinjoin
 `analyze(depth=5, path_count=True)` call that `RESULTS-analyze.md` (b) found hung past a 25-minute
 wall cap uncapped — bounded, it returns fast with a truncated LOWER BOUND, never a crash; (b) the §07
-path-count object (`decluster.path_count.path_count_anonymity`) is a genuinely different
-(multiplicity-weighted / robustness) lens from §04's set-size entropy on the SAME tractable envelope
-(§07 does not extend it — see `RESULTS-path-counting-analysis.md`).
+path-count object (`decluster.path_count.path_count_anonymity`) walks the SAME tractable envelope as
+§04's set-size entropy, weighted by link probability alone (§07 does not extend the envelope either —
+see `RESULTS-path-counting-analysis.md`).
 
 This is a live, non-deterministic `examples/` harness (network + subprocess-capable oracle
 internals) — NOT part of the asserted test suite. Live-only imports (`decluster.fetch`,
@@ -27,8 +27,7 @@ def bounded_coinjoin(round_txid=None, depth=5, max_nodes=400, budget_ms=3000):
     `try/except BaseException` — crashes must stay 0 (the panic-safe oracle + max_nodes cap should
     make an escaped exception unreachable).
 
-    Returns {"txid", "secs", "crashed": bool, "n_origins", "min_entropy", "truncated",
-             "path_log_W": float}."""
+    Returns {"txid", "secs", "crashed": bool, "n_origins", "min_entropy", "truncated"}."""
     from decluster import analyze, bounded_link_oracle
     from decluster.fetch import fetch_tx
     from examples.anonymity_set_scale import seed_targets
@@ -49,13 +48,11 @@ def bounded_coinjoin(round_txid=None, depth=5, max_nodes=400, budget_ms=3000):
         secs = time.monotonic() - t0
         r0 = result[0]
         prov = r0["provenance"]
-        pc = r0.get("path_count") or {}
         entry.update({
             "secs": secs,
             "n_origins": prov["n_absorbers"],
             "min_entropy": prov["min_entropy"],
             "truncated": r0["truncated"],
-            "path_log_W": pc.get("log_W_paths"),
         })
     except BaseException as e:
         # the panic-safe oracle + max_nodes cap should make this unreachable -- crashes must stay 0.
@@ -67,13 +64,15 @@ def bounded_coinjoin(round_txid=None, depth=5, max_nodes=400, budget_ms=3000):
 
 def sweep_vs_s04(txid="00264b9175b14c6a783610ed39da33a2717a4494bfefee08d8e5cdd7e7ebc23f",
                  depths=(1, 2, 3, 4, 5), budget_ms=3000):
-    """§04 vs §07 contrast on a NARROW (tractable) tx across depths: for each depth, run
+    """§04 vs §07 agreement on a NARROW (tractable) tx across depths: for each depth, run
     `analyze(txid, depth=depth, path_count=True)` once and report the §04 provenance
-    (min_entropy/n_origins, link-probability/set-size) beside the §07 path_count
-    (min_entropy/log_W_paths, multiplicity-weighted/robustness) -- the SAME envelope, two different
-    lenses, showing they need not agree.
+    (min_entropy/n_origins, link-probability/set-size) beside the §07 path_count min_entropy.
+    With subset-sum multiplicity out of the §07 walk and the graph's edges row-stochastic, the two
+    are the same quantity: `s04_min_entropy` and `s07_min_entropy` should match at every depth (a
+    real run measured `{OP: 0.5, OQ: 0.25, OR: 0.25}` against `{0.4999999999999999, ...}` --
+    float-noise apart, identical), not diverge -- see `results/RESULTS-path-count.md`.
 
-    Returns [{"depth", "n_origins", "s04_min_entropy", "s07_min_entropy", "log_W_paths",
+    Returns [{"depth", "n_origins", "s04_min_entropy", "s07_min_entropy",
               "truncated", "crashed"}]."""
     from decluster import analyze, bounded_link_oracle
     from decluster.fetch import fetch_tx
@@ -91,7 +90,6 @@ def sweep_vs_s04(txid="00264b9175b14c6a783610ed39da33a2717a4494bfefee08d8e5cdd7e
                 "n_origins": prov["n_absorbers"],
                 "s04_min_entropy": prov["min_entropy"],
                 "s07_min_entropy": pc.get("min_entropy"),
-                "log_W_paths": pc.get("log_W_paths"),
                 "truncated": e["truncated"],
             })
         except BaseException as ex:

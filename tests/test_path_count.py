@@ -2,7 +2,7 @@ import math
 
 import pytest
 
-from decluster import ancestry, path_count
+from decluster import path_count
 
 
 def make_fetch(txs):
@@ -75,81 +75,29 @@ def test_known_two_hop_dag_matches_hand_computation():
     assert res["origins_weighted"].keys() == {("Q", 0), ("R", 0)}
     assert res["origins_weighted"][("Q", 0)] == pytest.approx(0.62)
     assert res["origins_weighted"][("R", 0)] == pytest.approx(0.38)
-    assert res["log_W_paths"] == pytest.approx(math.log(15.0))
     assert res["min_entropy"] == pytest.approx(-math.log2(0.62))
     assert res["shannon"] == pytest.approx(
         -(0.62 * math.log2(0.62) + 0.38 * math.log2(0.38)))
     assert res["truncated"] == 0
 
 
-def test_multiplicity_upweights_higher_w_e_origin():
-    # T:0 splits 0.5/0.5 (equal under plain link-prob absorption) into P:0 and
-    # Q:0, each a single-input pass-through to a coinbase origin. Under §04
-    # (link-probability only) the two origins are exactly tied at 0.5/0.5.
-    # W(E): tx P = 10 (highly ambiguous), tx Q = 2 (much less ambiguous) ->
-    # path-count must break the tie in O_P's favor.
-    txs = {
-        "T": {"vin": [vin("P", 0, 1), vin("Q", 0, 1)], "vout": [{"value": 2}]},
-        "P": {"vin": [vin("OP", 0, 1)], "vout": [{"value": 1}]},
-        "Q": {"vin": [vin("OQ", 0, 1)], "vout": [{"value": 1}]},
-        "OP": {"vin": cb_vin(), "vout": [{"value": 1}]},
-        "OQ": {"vin": cb_vin(), "vout": [{"value": 1}]},
-    }
+def test_count_oracle_is_accepted_but_has_no_effect_on_the_result():
+    # `count_oracle` is kept only for backward compatibility with callers that still pass one
+    # (see the module docstring): whether it returns a real count or refuses, the weighting is
+    # link probability alone, so the result on this fixture is identical either way.
+    txs, link_oracle, real_count_oracle = _two_hop_dag_fixture()
 
-    def link_oracle(in_vals, out_vals):
-        if len(in_vals) == 2:
-            return [[0.5], [0.5]]
-        return [[1.0]]
+    def refusing_count_oracle(in_vals, out_vals):
+        return count_report(None)
 
-    # values alone can't tell tx P and tx Q apart (both single-input
-    # pass-throughs of value 1), so dispatch W(E) by the txid the walk is
-    # currently fetching: a stateful fetch records it for count_oracle to read.
-    log_w_by_txid = {"T": math.log(5), "P": math.log(10), "Q": math.log(2)}
-    last_txid = {}
-
-    def fetch(txid):
-        last_txid["v"] = txid
-        return txs[txid]
-
-    def count_oracle(in_vals, out_vals):
-        return count_report(log_w_by_txid.get(last_txid["v"]))
-
-    g = ancestry.build_extended_graph(
-        ("T", 0), depth=6, fetch=fetch, link_oracle=link_oracle)
-    dist04 = ancestry.absorber_distribution(g, ("T", 0))
-    assert dist04[("OP", 0)] == pytest.approx(0.5)
-    assert dist04[("OQ", 0)] == pytest.approx(0.5)
-
-    res = path_count.path_count_anonymity(
-        ("T", 0), depth=6, fetch=fetch,
-        link_oracle=link_oracle, count_oracle=count_oracle)
-
-    assert res["origins_weighted"][("OP", 0)] > dist04[("OP", 0)]
-    assert res["origins_weighted"][("OQ", 0)] < dist04[("OQ", 0)]
-    assert res["origins_weighted"][("OP", 0)] == pytest.approx(25 / 30)
-    assert res["origins_weighted"][("OQ", 0)] == pytest.approx(5 / 30)
-
-
-def test_w_e_none_falls_back_to_link_prob_only():
-    # tx P's count_oracle refuses (log_w=None) -> that hop's multiplicity
-    # factor is 1 (link-prob weight alone), never a fabricated count.
-    txs, link_oracle, _ = _two_hop_dag_fixture()
-
-    def count_oracle(in_vals, out_vals):
-        if in_vals == [3, 4]:
-            return count_report(math.log(5), count=5)
-        return count_report(None)  # tx P: off-regime, no count
-
-    res = path_count.path_count_anonymity(
+    with_counts = path_count.path_count_anonymity(
         ("C", 0), depth=6, fetch=make_fetch(txs),
-        link_oracle=link_oracle, count_oracle=count_oracle)
+        link_oracle=link_oracle, count_oracle=real_count_oracle)
+    without_counts = path_count.path_count_anonymity(
+        ("C", 0), depth=6, fetch=make_fetch(txs),
+        link_oracle=link_oracle, count_oracle=refusing_count_oracle)
 
-    # mult(P:0)=3.0, mult(P:1)=2.0 as before (tx C's W(E) still applies);
-    # tx P falls back to factor 1: mult(Q:0)=3.0*0.7 + 2.0*0.5=3.1,
-    # mult(R:0)=3.0*0.3 + 2.0*0.5=1.9, W_paths=5.0
-    assert res["origins_weighted"][("Q", 0)] == pytest.approx(3.1 / 5.0)
-    assert res["origins_weighted"][("R", 0)] == pytest.approx(1.9 / 5.0)
-    assert res["truncated"] == 0
+    assert with_counts["origins_weighted"] == without_counts["origins_weighted"]
 
 
 def _binary_tree_fetch(max_len):
@@ -185,3 +133,103 @@ def test_max_nodes_bounds_walk_without_error():
     assert len(res_capped["origins_weighted"]) < len(res_full["origins_weighted"])
     total = sum(res_capped["origins_weighted"].values())
     assert total == pytest.approx(1.0)
+
+
+def test_the_saddle_point_estimate_is_refused_rather_than_multiplied_in():
+    """The path count is a lower bound only if every W(E) in it is one. The Sasamoto tier is an
+    approximation in both directions, so an over-estimate would credit a coin with counterfactual
+    paths the transaction may not admit — privacy the holder does not have."""
+    from decluster.counting import guaranteed_log_w
+    assert guaranteed_log_w({"kind": "exact", "log_w": 2.0}) == 2.0
+    assert guaranteed_log_w({"kind": "LowerBound", "log_w": 2.0}) == 2.0
+    assert guaranteed_log_w({"kind": "lower_bound", "log_w": 2.0}) == 2.0
+    assert guaranteed_log_w({"kind": "LogApprox", "log_w": 2.0}) is None
+    assert guaranteed_log_w({"kind": "unknown", "log_w": None}) is None
+    assert guaranteed_log_w({"log_w": 2.0}) is None          # no tier declared: refuse
+
+
+# P and Q differ in VALUE, so the count oracle can tell them apart. Without that the factor is
+# symmetric and cancels in the normalisation, and the test passes against the unfixed module.
+_AB_TXS = {
+    "T":  {"vin": [vin("P", 0, 1), vin("Q", 0, 3)], "vout": [{"value": 4}]},
+    "P":  {"vin": [vin("OP", 0, 1)], "vout": [{"value": 1}]},
+    "Q":  {"vin": [vin("OQ", 0, 3)], "vout": [{"value": 3}]},
+    "OP": {"vin": cb_vin(), "vout": [{"value": 1}]},
+    "OQ": {"vin": cb_vin(), "vout": [{"value": 3}]},
+}
+
+
+def _ab_link(in_vals, out_vals):
+    return [[0.5], [0.5]] if len(in_vals) == 2 else [[1.0]]
+
+
+def test_multiplicity_does_not_move_the_bound():
+    """The amount channel is refuse-only: it may cut a coin, never weight one.
+
+    Same DAG twice; the only difference is W(E) on one branch. Under the contract the reported
+    anonymity must be identical.
+    """
+    flat = path_count.path_count_anonymity(
+        ("T", 0), depth=6, fetch=make_fetch(_AB_TXS), link_oracle=_ab_link,
+        count_oracle=lambda i, o: count_report(0.0))
+    skew = path_count.path_count_anonymity(
+        ("T", 0), depth=6, fetch=make_fetch(_AB_TXS), link_oracle=_ab_link,
+        count_oracle=lambda i, o: count_report(math.log(10.0) if i == [1] else 0.0))
+
+    assert flat["min_entropy"] == pytest.approx(skew["min_entropy"])
+    assert flat["shannon"] == pytest.approx(skew["shannon"])
+    assert flat["origins_weighted"] == pytest.approx(skew["origins_weighted"])
+
+
+def test_the_dead_mass_key_is_gone():
+    res = path_count.path_count_anonymity(
+        ("T", 0), depth=6, fetch=make_fetch(_AB_TXS), link_oracle=_ab_link,
+        count_oracle=lambda i, o: count_report(0.0))
+    assert "log_W_paths" not in res
+    assert set(res) == {"origins_weighted", "min_entropy", "shannon", "truncated"}
+
+
+def test_the_results_doc_states_the_contract_and_its_cost():
+    import os
+    root = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
+    doc = open(os.path.join(root, "results", "RESULTS-path-count.md")).read()
+    assert "refuse-only" in doc
+    assert "no structural property" in doc
+
+
+def test_no_document_says_the_walk_weights_by_multiplicity():
+    """The claim, not three phrasings of it.
+
+    An earlier guard pinned three literal strings in two files and declared rewording a review
+    question rather than a test question. Four sites then restated the retracted claim in other
+    words and stayed green, one of them the paper's own abstract. This sweeps every tracked
+    document and module for a weighting applied to the subset-sum count under any of its names.
+
+    Adjacency, not sentence scope: the abstract's restatement shared its sentence with "never a
+    privacy score", so any sentence-level negation test cleared it. And the object is the subset-sum
+    COUNT -- the subset-sum link matrix is the walk's correct and current weighting, so naming
+    "subset-sum" alone would flag every honest site.
+    """
+    import os, re, glob
+    root = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
+    obj = r"(?:multiplicity|W\(E\)|subset-sum (?:path )?count)"
+    claim = re.compile(r"weight(?:s|ed|ing)?\b[^.\n]{0,50}?\b" + obj, re.I)
+    withdrawing = re.compile(r"\b(?:not|never|no longer|without|withdrawn|retired|removed|out of"
+                             r"|earlier revisions?|once|gone|has left|nothing)\b", re.I)
+    # superpowers/ records what was planned; counting.py's results doc is about the object that
+    # legitimately counts multiplicity; this file must state the claim in order to ban it.
+    exempt = re.compile(r"docs/superpowers/|\.venv/|results/RESULTS-counting-methods\.md"
+                        r"|tests/test_path_count\.py")
+
+    offenders = []
+    for pattern in ("**/*.md", "**/*.py"):
+        for path in glob.glob(os.path.join(root, pattern), recursive=True):
+            rel = os.path.relpath(path, root)
+            if exempt.search(rel):
+                continue
+            text = open(path, encoding="utf-8", errors="replace").read()
+            for m in claim.finditer(text):
+                if withdrawing.search(text[max(0, m.start() - 90):m.start()]):
+                    continue
+                offenders.append(f"{rel}: " + " ".join(text[m.start():m.end() + 20].split()))
+    assert not offenders, "the retracted claim is restated in:\n" + "\n".join(offenders)
