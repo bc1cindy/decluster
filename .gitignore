@@ -10,3 +10,11 @@ slice*.err
 day-*.json
 day-*.err
 decluster.egg-info/
+
+# logs de coleta/análise (efêmeros)
+*.log
+*.done
+
+# épocas comprimidas da coleta multi-epoch (dados locais grandes)
+epoch_*.ndjson.gz
+data/epochs_*/

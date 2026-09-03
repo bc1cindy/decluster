@@ -11,6 +11,7 @@ import sys
 import os
 import json
 import random
+import multiprocessing as mp
 
 sys.path.insert(0, os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
 from decluster.fetch import _get_text, fetch_block_txs, fetch_tx, API
@@ -48,7 +49,20 @@ def signature(coin, depth, max_nodes):
     return absorber_distribution(g, coin)
 
 
-def main(lo, hi, n, out, seed=0, depth=6, max_nodes=600):
+
+
+def _worker(args):
+    txid, vout, depth, max_nodes = args
+    try:
+        sig = signature((txid, vout), depth, max_nodes)
+        if not sig:
+            return None
+        return (f"{txid}:{vout}", {(a if isinstance(a, str) else ":".join(map(str, a))): round(m, 8) for a, m in sig.items()})
+    except Exception:
+        return None
+
+
+def main(lo, hi, n, out, seed=0, depth=6, max_nodes=600, workers=6):
     done = set()
     if os.path.exists(out):
         for line in open(out):
@@ -58,28 +72,29 @@ def main(lo, hi, n, out, seed=0, depth=6, max_nodes=600):
                 pass
     print(f"resume: {len(done)} already collected", flush=True)
     coins = sample_coins(lo, hi, n, seed)
+    print(f"sampling done: {len(coins)} candidate coins", flush=True)
+    todo = [(t, v, depth, max_nodes) for (t, v) in coins if f"{t}:{v}" not in done]
+    print(f"collecting up to {n} signatures from {len(todo)} candidates, {workers} workers, depth {depth}...", flush=True)
     kept = len(done)
     with open(out, "a") as f:
-        for j, (txid, vout) in enumerate(coins):
-            if kept >= n:
-                break
-            key = f"{txid}:{vout}"
-            if key in done:
-                continue
-            try:
-                sig = signature((txid, vout), depth, max_nodes)
-            except Exception:
-                continue
-            if not sig:
-                continue
-            f.write(json.dumps({"coin": key, "sig": { (a if isinstance(a,str) else ":".join(map(str,a))): round(m, 8) for a, m in sig.items() }}) + "\n")
-            f.flush()
-            kept += 1
-            if kept % 25 == 0:
-                print(f"{kept}/{n} collected (scanned {j})", flush=True)
+        with mp.Pool(workers) as pool:
+            for res in pool.imap_unordered(_worker, todo):
+                if kept >= n:
+                    pool.terminate()
+                    break
+                if res is None:
+                    continue
+                key, sig = res
+                f.write(json.dumps({"coin": key, "sig": sig}) + "\n")
+                f.flush()
+                kept += 1
+                if kept % 5 == 0:
+                    print(f"{kept}/{n} collected", flush=True)
     print(f"done: {kept} signatures in {out}", flush=True)
 
 
 if __name__ == "__main__":
     main(int(sys.argv[1]), int(sys.argv[2]), int(sys.argv[3]), sys.argv[4],
-         int(sys.argv[5]) if len(sys.argv) > 5 else 0)
+         int(sys.argv[5]) if len(sys.argv) > 5 else 0,
+         workers=int(sys.argv[6]) if len(sys.argv) > 6 else 1,
+         max_nodes=int(sys.argv[7]) if len(sys.argv) > 7 else 600)
