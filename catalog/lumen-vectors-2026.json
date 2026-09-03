@@ -1,0 +1,41 @@
+{
+  "artifact": "939969-962721.csv.zst",
+  "sha256": "9ac60be6175dc7f804e508c33edce3f84fbe58de8cd3296729f841ed779ebaa1",
+  "row_count": 98185633,
+  "start_height": 939969,
+  "end_height": 962721,
+  "columns": [
+    "txid",
+    "version",
+    "nsequence",
+    "nlocktime",
+    "locktime_offset",
+    "input_order",
+    "output_order",
+    "output_structure",
+    "input_types",
+    "output_types",
+    "low_r",
+    "sighash",
+    "uncompressed_pubkey",
+    "op_return",
+    "input_subtype",
+    "low_s",
+    "ecdsa_sigs",
+    "input_age",
+    "feerate_bucket",
+    "round_feerate",
+    "change_position",
+    "change_type"
+  ],
+  "comparison_aggregate": {
+    "source": "https://github.com/fungi-protocol/lumen-fingerprints/blob/main/docs/src/explorer-data.json",
+    "fixture": "tests/fixtures/lumen_explorer_data.json",
+    "fixture_sha256": "5337d4bdc574726a2cb4e28f329f16709b497479a7493882bd38d77875660ac9",
+    "transaction_count": 98179414,
+    "start_height": 939969,
+    "end_height": 962720,
+    "delta": 6219,
+    "status": "unreconciled; adjacent end heights are not proof of cause"
+  }
+}
