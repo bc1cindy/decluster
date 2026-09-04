@@ -114,7 +114,7 @@ def boltzmann_oracle(inputs, outputs):
     mapping family, which puts it on the same footing as the per-coin density oracle it stands
     beside: a low value means few readings survive *in that family*. Zero does NOT mean the amounts
     settle the assignment — dss's family is a strict restriction of the exact one, and reading a
-    one-entry row as certain was measured to assert 1,197 unsettled certainties across 395 of 507
+    one-entry row as certain was measured to assert 945 unsettled certainties across 328 of 507
     transactions (`results/RESULTS-exact-oracle-audit.md`). Unlike the density oracle it answers
     when the transaction pays a fee, which is nearly always.
     """

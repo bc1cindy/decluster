@@ -15,15 +15,15 @@ JSON and exits non-zero when it carries a flag.
 **Headline.** `dss.pairwise_link_prob` is the uniform marginal over **dss's own mapping family**,
 which is a strict restriction of the oracle's, and a marginal over a sub-family is a bound on the
 marginal over the full family in **neither direction**. Measured: over 6,228 entries it sits
-**above** the exact marginal on 1,993 and **below** it on 3,869, agreeing on 366. And because
+**above** the exact marginal on 1,714 and **below** it on 4,104, agreeing on 410. And because
 `decluster/counting.py`'s own `link_matrix` docstring tells consumers that "a row with one non-zero
 entry is a deterministic link — the amounts settle that assignment on their own", the production path
-asserts **1,197 certainties in 395 of 507 transactions that the amounts do not settle**, while
+asserts **945 certainties in 328 of 507 transactions that the amounts do not settle**, while
 missing no *certain* link. That count is measured against the **full** oracle family, which is the
 most conservative reading available: any smaller family has more certain links and so fewer spurious
 ones. Dropping the oracle's coarser readings (refinement-maximal selection) leaves it unchanged at
-1,197 / 0; selecting the finest mappings by block count instead — a strictly more generous reading
-for the approximation — gives 1,168 / 82. Both are measured every run.
+945 / 0; selecting the finest mappings by block count instead — a strictly more generous reading
+for the approximation — gives 942 / 108. Both are measured every run.
 
 ## The family
 
@@ -53,7 +53,7 @@ below is *re-derived in Python* rather than read off a docstring.
 | entry point | object | relation to the oracle |
 |---|---|---|
 | `exact_subtransaction_mappings` | index-level balanced set partitions, coarser readings included | the oracle |
-| `dss.mapping_analysis` `n_non_derived` | mappings over a strictly smaller family (see below for what that family is *not*) | **restriction** |
+| `dss.mapping_analysis` `n_non_derived` | refinement-maximal mappings on this bounded audit, a strict sub-family of the full oracle | **restriction** |
 | `dss.pairwise_link_prob` | the uniform marginal over *that same restricted family* | **restriction** |
 | `dss.mapping_analysis` `deterministic_links` | the certain links of *that same restricted family* | **restriction** |
 | `dss.w_count` / `w_brute` / `w_sparse` | non-empty **proper input subsets whose sum is a proper output-subset sum**: the subset-sum solution count `W(E)` | **different object** |
@@ -76,20 +76,16 @@ than the oracle's on 491 of 507** cases. They therefore carry one verdict — re
 consequence is not a caveat but the finding: a marginal over a sub-family bounds the marginal over
 the full family in neither direction, which is exactly what the entrywise tallies below measure.
 
-### What `n_non_derived` is not
+### What `n_non_derived` measures
 
-The same earlier draft stated a mechanism — "non-derived mappings, equal-value permutations
-collapsed" — and both halves are false:
+The current DSS revision exposes refinement-maximal mappings. Its count agrees with the independent
+oracle's refinement-maximal count on all 507 cases in this bounded family. This is a measured
+agreement, not a proof for every transaction.
 
-- it is **not** the count of maximally-fine oracle mappings: equal on only 213 of 507 cases here
-  (150 of 270 at `max_coins=7`). `[2,2] → [1,1,2]` has two finest mappings and `dss` answers 1.
-- equal-value permutations do **not** collapse in general: `[1,3,4,4] → [3,3,3,3]` answers 4, and
-  those four readings differ only in which equal-valued output stands alone.
-
-The enumerator's rule is therefore not specified here — this audit cannot see the mappings, only the
-count, the marginal and the certain-link set. What *is* measured: the family is strictly smaller than
-the oracle's on 491 of 507 cases, it is not the finest sub-family, and every all-equal-value
-transaction in the family (12 of them) answers 1.
+Equal-value permutations do **not** collapse in general: `[1,3,4,4] → [3,3,3,3]` answers 4, and
+those four readings differ only in which equal-valued output stands alone. The refinement-maximal
+family is strictly smaller than the full oracle family on 491 of 507 cases. The matrix and its
+certain links therefore remain marginals over a restriction of the full family.
 
 `W(E)` was identified, not assumed: `dss.w_count` reproduces an independent Python re-derivation of
 that subset-sum count on **507/507** exact answers (0 mismatches). A set partition is a
@@ -109,18 +105,17 @@ oracle family; the two `_finest_only` rows are the robustness reading described 
 
 | probe | relation | cases | agree | approx < exact | approx > exact | max abs error | measured bound direction |
 |---|---|---|---|---|---|---|---|
-| `mapping_count` | restriction | 507 | 16 | **491** | 0 | 130 mappings | **lower** |
-| `mapping_entropy_bits` | restriction | 507 | 16 | **491** | 0 | **7.03 bits** | **lower** |
-| `link_matrix` (entrywise) | restriction | 507 tx / 6,228 entries | 366 entries | 3,869 entries | **1,993 entries** (in **461** transactions) | **0.833** | **neither** |
-| `deterministic_links` | restriction | 507 | 112 | 0 | **395** | 1,197 spurious links | **upper** |
-| `link_matrix_finest_only` | restriction | 507 tx / 6,228 entries | 1,457 entries | 2,518 entries | **2,253 entries** (in **460** transactions) | **0.833** | **neither** |
-| `deterministic_links_finest_only` | restriction | 507 | 112 | 0 | **395** | 1,197 spurious links | **upper** |
+| `mapping_count` | restriction | 507 | 16 | **491** | 0 | 107 mappings | **lower** |
+| `mapping_entropy_bits` | restriction | 507 | 16 | **491** | 0 | **3.64 bits** | **lower** |
+| `link_matrix` (entrywise) | restriction | 507 tx / 6,228 entries | 410 entries | 4,104 entries | **1,714 entries** (in **440** transactions) | **0.833** | **neither** |
+| `deterministic_links` | restriction | 507 | 179 | 0 | **328** | 945 spurious links | **upper** |
+| `link_matrix_finest_only` | restriction | 507 tx / 6,228 entries | 2,314 entries | 2,103 entries | **1,811 entries** (in **439** transactions) | **0.800** | **neither** |
+| `deterministic_links_finest_only` | restriction | 507 | 179 | 0 | **328** | 945 spurious links | **upper** |
 
-Reading the two link rows: the **461** (and 460) are transactions carrying at least one entry above
+Reading the two link rows: the **440** (and 439) are transactions carrying at least one entry above
 the oracle's — the number the audit's `flags` reports, since a transaction is where a consumer reads
-the matrix. The **112** agreements on `deterministic_links` are the transactions where the two
-certain-link sets match exactly: 62 of them are agreements about an *absence* (neither side names a
-certain link) and 50 name the same non-empty set.
+the matrix. The **179** agreements on `deterministic_links` are the transactions where the two
+certain-link sets match exactly.
 
 "Measured bound direction" is measured on *this* family only. `lower` here means no case in these 507
 exceeded the oracle; it is not a proof for all transactions, and it says nothing at all about a
@@ -140,13 +135,13 @@ Only **16 of 507** transactions agree on every entry.
 Both directions of error are present in a single case, which is why no monotone description survives.
 Of the two, the one that matters is the **overclaim**: an entry the approximation calls 1.0 where the
 oracle says 0.4 asserts a link the amounts do not settle, and `counting.link_matrix`'s docstring
-hands exactly that reading to consumers. 1,197 such assertions of certainty stand across 395
+hands exactly that reading to consumers. 945 such assertions of certainty stand across 328
 transactions, and there is no case in the family where the approximation *misses* a link the oracle
 calls certain — on certainty the error is one-directional, in exactly the direction that costs a
-holder privacy they were told they had. (The 3,869 entries *below* the oracle are the same matrix
+holder privacy they were told they had. (The 4,104 entries *below* the oracle are the same matrix
 being under-confident about merely probable links; both are true, of different quantities.)
 
-**First, note what the 1,197 is measured against.** The `deterministic_links` probe runs against the
+**First, note what the 945 is measured against.** The `deterministic_links` probe runs against the
 **full** oracle family — every balanced set partition, coarser readings included. That is the largest
 family available and therefore the most conservative reading of the overclaim: any sub-family has
 *more* certain links, so restricting the oracle can only reduce the spurious count. The primary
@@ -154,16 +149,16 @@ finding never calls `finest_mappings` and nothing below changes it.
 
 **The cross-check, and the definition it depends on.** As a robustness reading, the audit also scores
 against the oracle's *finest-only* family — here **refinement-maximal**: the mappings no other
-mapping strictly refines. Under it the entry tallies move (2,253 above, 2,518 below, 1,457 agreeing)
-and the verdict does not: still **neither** bound, still **1,197** spurious certain links, still none
-missed. On a 270-case run (`max_coins=7`) it reads 829 above / 902 below / 600 spurious / 0 missed.
+mapping strictly refines. Under it the entry tallies move (1,811 above, 2,103 below, 2,314 agreeing)
+and the verdict does not: still **neither** bound, still **945** spurious certain links, still none
+missed.
 
 **"None missed" is a statement about that definition, and only that one.** Selecting the finest
 mappings by *maximum block count* instead keeps a strict subset of the refinement-maximal ones — a
 strict refinement always has more blocks, so an argmax-by-block-count mapping is always
 refinement-maximal but not conversely. That is a smaller oracle family, hence more oracle
 certainties, hence a reading strictly *more generous* to the approximation, and under it the tally
-becomes **1,168 spurious and 82 missed** (at `max_coins=7`: 579 and 35). The two selections differ on
+becomes **942 spurious and 108 missed**. The two selections differ on
 **106 of 507** cases. Refinement-maximal is kept because it is what "finest" means on a poset of
 partitions — not because it is the strongest reading; it is the weaker of the two for the
 approximation. Both tallies are measured on every run
@@ -171,8 +166,8 @@ approximation. Both tallies are measured on every run
 sensitivity cannot quietly stop being true.
 
 The mechanism is visible in the equal-value cases. Three coins of equal value in and three out admit
-16 balanced mappings and 4.000 bits of mapping entropy; the approximation returns one mapping, 0.000
-bits, and an identity matrix pinning each input to the output that happens to share its index. Coin
+16 balanced mappings and 4.000 bits of mapping entropy; the refinement-maximal family has six
+mappings and the resulting matrix still breaks the value symmetry by index. Coin
 order carries no information, so an index-diagonal answer to a value-symmetric transaction is the
 symmetry being broken by the enumeration order rather than by the amounts.
 
@@ -180,11 +175,9 @@ symmetry being broken by the enumeration order rather than by the amounts.
 
 `n_non_derived` agrees with `|M|` on 16 of 507 cases, and every one of those 16 is a transaction with
 exactly one mapping. Where the transaction is ambiguous at all, the two numbers part company: the
-worst case is `[1,1,1,1] → [1,1,1,1]`, where the oracle enumerates 131 mappings (7.033 bits) and the
-approximation reports 1 (0.000 bits) — a 7.03-bit understatement of the ambiguity. That is the
+largest understatement in this family is 3.64 bits. That is the
 undercounting direction, which is the safe one for a refuse-only channel, and `counting.py` already
-argues for preferring it. The finding is its *size*: on this family the approximation reports zero
-ambiguity for transactions carrying up to seven bits of it.
+argues for preferring it. The finding is its size under the declared bounded family.
 
 ## Identifications, not comparisons
 

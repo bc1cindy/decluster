@@ -11,8 +11,12 @@ from dataclasses import dataclass
 from enum import Enum
 import json
 import os
+import platform
 from pathlib import Path
 import shutil
+import subprocess
+import sys
+import tarfile
 import tempfile
 from urllib.request import urlopen
 
@@ -121,6 +125,10 @@ class ReproductionReadiness:
 
 
 class BundleBootstrapError(RuntimeError):
+    pass
+
+
+class BundleReproductionError(RuntimeError):
     pass
 
 
@@ -407,3 +415,131 @@ def bootstrap_bundle(bundle: EvidenceBundle, store, root, *, opener=urlopen, rep
         materialization, target = _materialize_blob(blob, source, root, replace=replace)
         results.append(BootstrapResult(blob, acquisition, materialization, target, source_url))
     return tuple(results)
+
+
+def _load_environment(path):
+    where = str(path)
+    try:
+        raw = json.loads(Path(path).read_text(encoding="utf-8"))
+    except (OSError, json.JSONDecodeError) as exc:
+        raise BundleReproductionError(f"{where}: cannot read environment: {exc}") from exc
+    required = {
+        "schema_version", "python", "source_archive", "project_root", "requirements",
+        "dependency_directory",
+    }
+    if not isinstance(raw, dict) or set(raw) != required or raw["schema_version"] != 1:
+        raise BundleReproductionError(f"{where}: invalid reproduction environment")
+    python = raw["python"]
+    if not isinstance(python, dict) or set(python) != {
+        "implementation", "version", "system", "machine",
+    }:
+        raise BundleReproductionError(f"{where}.python: invalid interpreter contract")
+    for field in ("implementation", "version", "system", "machine"):
+        if not isinstance(python[field], str) or not python[field]:
+            raise BundleReproductionError(f"{where}.python.{field}: expected non-empty string")
+    for field in ("source_archive", "project_root", "requirements", "dependency_directory"):
+        if not isinstance(raw[field], str) or not raw[field]:
+            raise BundleReproductionError(f"{where}.{field}: expected non-empty string")
+    return raw
+
+
+def _require_compatible_interpreter(contract):
+    actual = {
+        "implementation": platform.python_implementation().lower(),
+        "version": f"{sys.version_info.major}.{sys.version_info.minor}",
+        "system": platform.system(),
+        "machine": platform.machine(),
+    }
+    if actual != contract:
+        raise BundleReproductionError(
+            f"incompatible interpreter: expected {contract!r}, found {actual!r}"
+        )
+
+
+def _extract_source(archive, destination):
+    destination = Path(destination).resolve()
+    destination.mkdir(parents=True, exist_ok=False)
+    with tarfile.open(archive, mode="r:") as source:
+        for member in source.getmembers():
+            if not (member.isfile() or member.isdir()):
+                raise BundleReproductionError(
+                    f"source archive contains unsupported entry: {member.name!r}"
+                )
+            _safe_target(destination, member.name)
+        extraction_options = {"filter": "fully_trusted"} if sys.version_info >= (3, 12) else {}
+        source.extractall(destination, **extraction_options)
+
+
+def _run_checked(argv, *, cwd, env=None):
+    try:
+        subprocess.run(argv, cwd=cwd, env=env, check=True)
+    except (OSError, subprocess.CalledProcessError) as exc:
+        raise BundleReproductionError(f"command failed: {argv!r}") from exc
+
+
+def reproduce_bundle(bundle: EvidenceBundle, root, work, *, interpreter=sys.executable):
+    """Reexecute every declared run using only materialized bundle contents.
+
+    Network access is disabled at the package-manager layer. Callers performing a cold-start audit
+    should additionally isolate the process from the network at the operating-system level.
+    """
+    if BundleCapability.REPRODUCE_RUNS not in bundle.capabilities:
+        raise BundleReproductionError(f"{bundle.id}: reproduce_runs capability is not declared")
+    root = Path(root).resolve()
+    environments = [blob for blob in bundle.blobs if blob.role is BlobRole.ENVIRONMENT]
+    if len(environments) != 1:
+        raise BundleReproductionError(f"{bundle.id}: expected exactly one environment blob")
+    specification = _load_environment(_safe_target(root, environments[0].name))
+    _require_compatible_interpreter(specification["python"])
+
+    work = Path(work).resolve()
+    if work.exists():
+        raise BundleReproductionError(f"work directory already exists: {work}")
+    work.mkdir(parents=True)
+    source_root = work / "source"
+    _extract_source(_safe_target(root, specification["source_archive"]), source_root)
+    checkout = _safe_target(source_root, specification["project_root"])
+    if not checkout.is_dir():
+        raise BundleReproductionError(f"project root is missing from source archive: {checkout}")
+
+    virtualenv = work / "venv"
+    _run_checked([interpreter, "-m", "venv", str(virtualenv)], cwd=work)
+    python = virtualenv / "bin" / "python"
+    if not python.is_file():
+        raise BundleReproductionError("the declared environment requires a POSIX Python layout")
+    requirements = _safe_target(root, specification["requirements"])
+    dependencies = _safe_target(root, specification["dependency_directory"])
+    _run_checked([
+        str(python), "-m", "pip", "install", "--no-index", "--no-cache-dir",
+        "--disable-pip-version-check", "--require-hashes",
+        "--find-links", str(dependencies), "--requirement", str(requirements),
+    ], cwd=work)
+
+    environment = os.environ.copy()
+    environment["PYTHONPATH"] = str(checkout)
+    sources = load_sources(checkout / "catalog" / "ctp-sources.json")
+    claims = load_claims(
+        checkout / "catalog" / "ctp-claims.json", {source.id for source in sources}
+    )
+    from .data_catalog import load_dataset_catalog
+    datasets = {dataset.id: dataset for dataset in load_dataset_catalog(checkout)}
+    outputs = []
+    for run_id in bundle.runs:
+        manifest = load_run_manifest(
+            _safe_target(root, f"catalog/runs/{run_id}.json"),
+            claim_ids={claim.id for claim in claims},
+            datasets=datasets,
+        )
+        argv = [str(python), *manifest.argv[1:]]
+        _run_checked(argv, cwd=checkout, env=environment)
+        _run_checked([str(python), *manifest.verification.argv[1:]], cwd=checkout, env=environment)
+        for output in manifest.outputs:
+            path = _safe_target(checkout, output.path)
+            actual = content_identity(path)
+            expected = ContentIdentity(output.bytes, output.sha256)
+            if actual != expected:
+                raise BundleReproductionError(
+                    f"{run_id}: reproduced output identity mismatch: {output.path}"
+                )
+            outputs.append(path)
+    return tuple(outputs)

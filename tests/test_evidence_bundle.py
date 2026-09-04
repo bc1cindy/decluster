@@ -131,17 +131,13 @@ def test_bootstrap_preserves_divergent_destination(tmp_path):
     assert target.read_bytes() == b"local work"
 
 
-def test_committed_bundle_reports_cold_start_reproduction_blockers():
+def test_committed_bundle_reports_only_public_distribution_blockers():
     root = Path(__file__).resolve().parents[1]
     bundle = load_bundle(root / "releases" / "exact-oracle-evidence-v1.bundle.json")
     readiness = assess_reproduction_readiness(bundle, root / "artifacts", root)
     assert readiness.status is ReproductionStatus.BLOCKED
     kinds = {issue.kind for issue in readiness.issues}
-    assert {
-        ReadinessIssueKind.CAPABILITY_MISSING,
-        ReadinessIssueKind.REQUIRED_ROLE_MISSING,
+    assert kinds == {
         ReadinessIssueKind.CANONICAL_LOCATION_MISSING,
         ReadinessIssueKind.MIRROR_MISSING,
-        ReadinessIssueKind.DEPENDENCY_EDITABLE,
-        ReadinessIssueKind.ENVIRONMENT_LOCK_MISSING,
-    } <= kinds
+    }

@@ -27,11 +27,11 @@
         "name": "dss",
         "version": "0.1.0",
         "source": "https://github.com/bc1cindy/dense-subset-sum",
-        "revision": "6f06e50f7470f7133c40c553c92b9a1464ad3b8a",
-        "lock_sha256": "39f67fa3aea4459e835c2643e505456815ea3b039b0ada1cf0c988edf76971dd",
+        "revision": "30fc21ee521016061532008f8dfea31f953d7e6d",
+        "lock_sha256": "f17a02f09da28dcc603901580d695466c44e1d1a0063e110d3faa375ae6066ca",
         "license": "MIT",
         "redistribution": "allowed",
-        "editable": true
+        "editable": false
       }
     ]
   },
@@ -49,13 +49,13 @@
   "outputs": [
     {
       "path": "results/artifacts/exact-oracle-audit-v1.json",
-      "bytes": 17692,
-      "sha256": "2ea95e4b1e9667e1e72afef7e4204665a7f912b2497d2b7234f3ecec065dc3dc"
+      "bytes": 16598,
+      "sha256": "360746bddf437cbc5dc9318c5a756fec9ef27722fa8005f3ef895e28cd9cecce"
     },
     {
       "path": "results/generated/exact-oracle-audit-v1.md",
-      "bytes": 466,
-      "sha256": "1a73d2ab536f699475a94120f6042150c6d69bd417623a0ce7305c5ccaae70ef"
+      "bytes": 497,
+      "sha256": "c85c556e686f88f77538425de48eef4826e4f5a83320e22dc0be1091f01e0de7"
     }
   ],
   "reproducibility": {
@@ -88,7 +88,7 @@
   "limitations": [
     "zero-fee transactions only",
     "bounded exhaustive family over values 1 through 4",
-    "dss is MIT licensed and identified by source revision and Cargo.lock digest, but is installed editable in the recorded environment",
-    "verification is exact only in the recorded environment until an offline bundle pins the dependency"
+    "the recorded dss revision is MIT licensed, published and identified by commit and Cargo.lock digest",
+    "verification is exact only in the recorded environment until the identified wheel and environment are bundled"
   ]
 }

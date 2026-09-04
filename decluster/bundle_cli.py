@@ -11,10 +11,12 @@ from .data_manifest import ManifestError
 from .evidence_bundle import (
     BlobStatus,
     BundleBootstrapError,
+    BundleReproductionError,
     ReproductionStatus,
     assess_reproduction_readiness,
     bootstrap_bundle,
     load_bundle,
+    reproduce_bundle,
     verify_bundle,
 )
 
@@ -26,7 +28,8 @@ def _parser():
     parser.add_argument("--root", type=Path, default=Path.cwd())
     parser.add_argument("--replace", action="store_true")
     parser.add_argument("--json", action="store_true", dest="as_json")
-    parser.add_argument("command", choices=("verify", "bootstrap", "readiness"))
+    parser.add_argument("--work", type=Path)
+    parser.add_argument("command", choices=("verify", "bootstrap", "readiness", "reproduce"))
     return parser
 
 
@@ -88,13 +91,22 @@ def main(argv=None):
             records = _bootstrap_records(
                 bundle, args.store, args.root, replace=args.replace,
             )
-        else:
+        elif args.command == "readiness":
             readiness, record = _readiness_record(bundle, args.store, args.root)
             records = [record]
+        else:
+            if args.work is None:
+                parser = _parser()
+                parser.error("--work is required for reproduce")
+            records = [{"name": str(path), "status": "reproduced"}
+                       for path in reproduce_bundle(bundle, args.root, args.work)]
     except ManifestError as exc:
         print(str(exc), file=sys.stderr)
         return 2
     except BundleBootstrapError as exc:
+        print(str(exc), file=sys.stderr)
+        return 1
+    except BundleReproductionError as exc:
         print(str(exc), file=sys.stderr)
         return 1
     _print(records, args.as_json)

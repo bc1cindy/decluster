@@ -6,7 +6,7 @@
 > time. `results/RESULTS-exact-oracle-audit.md` has since measured that reading against an exact
 > mapping oracle and found it wrong in one direction: `dss.pairwise_link_prob` is the uniform
 > marginal over dss's own, strictly smaller mapping family, and asserting certainty from a
-> single-non-zero row produces **1,197 spurious certainties across 395 of 507 transactions** (while
+> single-non-zero row produces **945 spurious certainties across 328 of 507 transactions** (while
 > missing no genuinely certain link). A one-entry row means *dss's family* admits one output, not
 > that the amounts settle the assignment. The 369 count itself is unaffected — it is a count of rows
 > — but the sentence attached to it is not a licence to read those 369 as settled. The docstrings in

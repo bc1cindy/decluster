@@ -1,14 +1,14 @@
 {
   "schema_version": 1,
   "id": "exact-oracle-evidence-v1",
-  "capabilities": ["verify_outputs"],
+  "capabilities": ["verify_outputs", "reproduce_runs"],
   "runs": ["exact-oracle-audit-v1"],
   "blobs": [
     {
       "name": "catalog/runs/exact-oracle-audit-v1.json",
       "role": "run_manifest",
-      "bytes": 2682,
-      "sha256": "785af1a06ec1da65d946f91ad894c347c2081df1604673ccb7c2510e2bbae4f2",
+      "bytes": 2697,
+      "sha256": "7bbdc8d2111707961889ff6795bb67f51b96614f1d1bed877c146f1e876455e4",
       "locations": {
         "canonical": null,
         "mirrors": []
@@ -17,8 +17,8 @@
     {
       "name": "results/artifacts/exact-oracle-audit-v1.json",
       "role": "result",
-      "bytes": 17692,
-      "sha256": "2ea95e4b1e9667e1e72afef7e4204665a7f912b2497d2b7234f3ecec065dc3dc",
+      "bytes": 16598,
+      "sha256": "360746bddf437cbc5dc9318c5a756fec9ef27722fa8005f3ef895e28cd9cecce",
       "locations": {
         "canonical": null,
         "mirrors": []
@@ -27,8 +27,48 @@
     {
       "name": "results/generated/exact-oracle-audit-v1.md",
       "role": "result",
-      "bytes": 466,
-      "sha256": "1a73d2ab536f699475a94120f6042150c6d69bd417623a0ce7305c5ccaae70ef",
+      "bytes": 497,
+      "sha256": "c85c556e686f88f77538425de48eef4826e4f5a83320e22dc0be1091f01e0de7",
+      "locations": {
+        "canonical": null,
+        "mirrors": []
+      }
+    },
+    {
+      "name": "sources/decluster-94b4ece-runtime.tar",
+      "role": "source",
+      "bytes": 788480,
+      "sha256": "fcacd71666c520cd99f7783f5288efd1445cc32bb4a692e804670595ca567edf",
+      "locations": {
+        "canonical": null,
+        "mirrors": []
+      }
+    },
+    {
+      "name": "dependencies/dss-0.1.0-cp313-cp313-macosx_11_0_arm64.whl",
+      "role": "dependency",
+      "bytes": 336582,
+      "sha256": "91b81d7c6d211fbe59f2c14da9c5dd6fb6514d4c39cf3b57154b4e30f6a6604f",
+      "locations": {
+        "canonical": null,
+        "mirrors": []
+      }
+    },
+    {
+      "name": "reproduction/exact-oracle/requirements.lock",
+      "role": "lockfile",
+      "bytes": 90,
+      "sha256": "c87b26aedbefac1731d03ced97dc197a86c0687c7376b3186f8752676f977fab",
+      "locations": {
+        "canonical": null,
+        "mirrors": []
+      }
+    },
+    {
+      "name": "reproduction/exact-oracle/environment.json",
+      "role": "environment",
+      "bytes": 347,
+      "sha256": "c461397c919f4f393f84bdace9ad76302b4ae6107679df35b4d3fb6924082bf8",
       "locations": {
         "canonical": null,
         "mirrors": []
@@ -36,7 +76,7 @@
     }
   ],
   "limitations": [
-    "This bundle verifies recorded outputs but cannot reexecute the run.",
-    "The MIT-licensed dss dependency is not yet bundled with a portable locked build environment."
+    "The bundled environment currently targets CPython 3.13 on macOS arm64.",
+    "Public bootstrap remains unavailable until every blob has a canonical HTTPS location and an independent mirror."
   ]
 }

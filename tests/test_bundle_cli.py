@@ -14,7 +14,7 @@ def test_verify_committed_bundle(capsys):
         "--json", "verify",
     ]) == 0
     records = json.loads(capsys.readouterr().out)
-    assert len(records) == 3
+    assert len(records) == 7
     assert {record["status"] for record in records} == {"verified"}
 
 
@@ -53,4 +53,25 @@ def test_readiness_cli_is_machine_readable_and_blocked(capsys):
     ]) == 1
     record = json.loads(capsys.readouterr().out)[0]
     assert record["status"] == "blocked"
-    assert "capability_missing" in {issue["kind"] for issue in record["issues"]}
+    assert {issue["kind"] for issue in record["issues"]} == {
+        "canonical_location_missing", "mirror_missing",
+    }
+
+
+def test_reproduce_cli_delegates_to_api(monkeypatch, tmp_path, capsys):
+    output = tmp_path / "artifact.json"
+
+    def fake_reproduce(bundle, root, work):
+        assert bundle.id == "exact-oracle-evidence-v1"
+        assert root == tmp_path / "root"
+        assert work == tmp_path / "work"
+        return (output,)
+
+    monkeypatch.setattr(bundle_cli, "reproduce_bundle", fake_reproduce)
+    assert bundle_cli.main([
+        "--index", str(INDEX), "--root", str(tmp_path / "root"),
+        "--work", str(tmp_path / "work"), "--json", "reproduce",
+    ]) == 0
+    assert json.loads(capsys.readouterr().out) == [{
+        "name": str(output), "status": "reproduced",
+    }]

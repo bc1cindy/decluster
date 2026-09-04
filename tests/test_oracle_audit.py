@@ -156,20 +156,42 @@ def test_dss_marginal_is_verified_to_be_over_dss_own_family(reduced):
     assert evidence["verdict"].startswith("pairwise_link_prob is the uniform marginal")
 
 
-def test_the_mapping_count_mechanism_is_measured_not_asserted(reduced):
-    """An earlier draft stated a mechanism ("non-derived, equal-value permutations collapsed") that
-    is false in both halves. What replaces it is measurement."""
+def test_mapping_analysis_pairwise_matrix_and_exact_oracle_are_cross_checked(reduced):
+    """Exercise the public DSS diagnostics and the independent oracle in one differential test."""
+    pytest.importorskip("dss")
+    import dss
+
+    saw_above = saw_below = False
+    for inputs, outputs in reduced:
+        diagnostics = dss.mapping_analysis(list(inputs), list(outputs), None)
+        assert diagnostics["status"] == "complete"
+        matrix = dss.pairwise_link_prob(list(inputs), list(outputs), None)
+        claimed = {(i, o) for i, row in enumerate(matrix)
+                   for o, probability in enumerate(row) if probability == 1.0}
+        assert claimed == {tuple(link) for link in diagnostics["deterministic_links"]}
+
+        exact = exact_link_analysis(inputs, outputs).matrix
+        for approximate_row, exact_row in zip(matrix, exact):
+            for approximate, reference in zip(approximate_row, exact_row):
+                saw_above |= approximate > reference + oa.TOLERANCE
+                saw_below |= approximate < reference - oa.TOLERANCE
+
+    assert saw_above and saw_below
+
+
+def test_mapping_count_matches_refinement_maximal_family_without_collapsing_indices(reduced):
     pytest.importorskip("dss")
     import dss
 
     mechanism = oa.mapping_count_mechanism(reduced)
-    assert mechanism["different_from_the_finest_oracle_mapping_count"] > 0
+    assert mechanism["equal_to_the_finest_oracle_mapping_count"] == len(reduced)
+    assert mechanism["different_from_the_finest_oracle_mapping_count"] == 0
     assert mechanism["all_equal_value_cases"] > 0
-    assert mechanism["all_equal_value_cases_answering_one"] == mechanism["all_equal_value_cases"]
-    # (a) not the finest count: two finest mappings, dss answers one.
-    assert dss.mapping_analysis([2, 2], [1, 1, 2], None)["n_non_derived"] == 1
+    assert mechanism["all_equal_value_cases_answering_one"] == 0
+    # Two refinement-maximal mappings survive.
+    assert dss.mapping_analysis([2, 2], [1, 1, 2], None)["n_non_derived"] == 2
     assert len(oa.finest_mappings(exact_subtransaction_mappings((2, 2), (1, 1, 2)))) == 2
-    # (b) equal-value permutations do not collapse in general.
+    # Equal-value permutations do not collapse in general.
     assert dss.mapping_analysis([1, 3, 4, 4], [3, 3, 3, 3], None)["n_non_derived"] == 4
 
 

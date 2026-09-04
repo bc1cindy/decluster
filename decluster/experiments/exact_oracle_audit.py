@@ -20,6 +20,12 @@ class VerificationError(ValueError):
 def build_artifact(*, max_coins=oracle_audit.FAMILY_MAX_COINS):
     import dss
 
+    try:
+        dss_revision = dss.require_build_revision()
+    except (AttributeError, RuntimeError) as exc:
+        raise VerificationError(
+            "the exact-oracle artifact requires a DSS build with an embedded Git revision"
+        ) from exc
     family = oracle_audit.enumerate_family(max_coins=max_coins)
     report = oracle_audit.audit(family, include_cases=False)
     return {
@@ -31,7 +37,7 @@ def build_artifact(*, max_coins=oracle_audit.FAMILY_MAX_COINS):
             "min_side": oracle_audit.FAMILY_MIN_SIDE,
             "tolerance": oracle_audit.TOLERANCE,
         },
-        "dependencies": {"dss_version": dss.__version__, "dss_revision": dss.__rev__},
+        "dependencies": {"dss_version": dss.__version__, "dss_revision": dss_revision},
         "summary": oracle_audit.manifest_invariants(report),
         "report": report,
     }

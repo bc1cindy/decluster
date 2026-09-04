@@ -21,6 +21,18 @@ def test_artifact_is_deterministic_and_self_describing(artifact):
     assert artifact["experiment"] == experiment.EXPERIMENT_ID
     assert artifact["summary"]["family_size"] == artifact["report"]["family"]["size"]
     assert artifact["parameters"]["max_coins"] == 6
+    assert len(artifact["dependencies"]["dss_revision"]) == 40
+
+
+def test_publishable_artifact_requires_an_identified_dss_build(monkeypatch):
+    import dss
+
+    def unidentified():
+        raise RuntimeError("missing revision")
+
+    monkeypatch.setattr(dss, "require_build_revision", unidentified)
+    with pytest.raises(experiment.VerificationError, match="embedded Git revision"):
+        experiment.build_artifact(max_coins=6)
 
 
 def test_verifier_recomputes_the_experiment(artifact):
