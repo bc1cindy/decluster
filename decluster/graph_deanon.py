@@ -251,17 +251,20 @@ def evaluate_entity(sample, labeler, seed=0):
     when the sample carries no multi-address entity (the usual case unless the slice covers an entity)."""
     _uf, _full, neigh_pay, cospent = build(sample)
     euf, labeled_all = entity_label_uf(sample, labeler)
-    labeled = {a for a in neigh_pay if a in labeled_all}
+    labeled = sorted(a for a in neigh_pay if a in labeled_all)
     clusters = {}
     for a in labeled:
         clusters.setdefault(euf.find(a), []).append(a)
     clusters = {r: m for r, m in clusters.items() if len(m) >= 2}
+    for members in clusters.values():
+        members.sort()
     rng = random.Random(seed)
     pos = [structural_score(m[i], m[j], neigh_pay)
            for m in clusters.values()
            for i in range(len(m)) for j in range(i + 1, len(m))
            if frozenset((m[i], m[j])) not in cospent]
-    others = [a for a in neigh_pay if a not in labeled]
+    labeled_set = set(labeled)
+    others = sorted(a for a in neigh_pay if a not in labeled_set)
     ent_addrs = list(labeled)
     neg = ([structural_score(rng.choice(ent_addrs), rng.choice(others), neigh_pay)
             for _ in range(min(5000, max(len(pos), 1)))] if ent_addrs and others else [])
