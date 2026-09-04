@@ -17,6 +17,8 @@ MIGRATED_RUN_DOCS = {
     "RESULTS-amount-channel-survey.md": "catalog/runs/amount-channel-survey-v1.json",
     "RESULTS-counting-methods.md": "catalog/runs/counting-methods-v1.json",
     "RESULTS-exact-oracle-audit.md": "catalog/runs/exact-oracle-audit-v1.json",
+    "RESULTS-path-count.md": "catalog/runs/path-count-contract-v1.json",
+    "RESULTS-path-counting-analysis.md": "catalog/runs/path-count-contract-v1.json",
 }
 
 
@@ -89,8 +91,6 @@ NOT_YET_MIGRATED = {
     "RESULTS-partition-cuts.md",
     "RESULTS-partition-posterior.md",
     "RESULTS-partition-schemes.md",
-    "RESULTS-path-count.md",
-    "RESULTS-path-counting-analysis.md",
     "RESULTS-persistence-curve.md",
     "RESULTS-provenance.md",
     "RESULTS-refusing-clusterer.md",

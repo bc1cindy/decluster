@@ -1,5 +1,10 @@
 # Bounded walk + §07 path-count — real numbers
 
+> Historical record. The current executable contract is
+> `catalog/runs/path-count-contract-v1.json`, rendered as
+> `results/generated/path-count-contract-v1.md`. The live timings below are not part of that
+> deterministic result.
+
 > **Correction (2026-09-03) — the default oracle behind the walk has moved.**
 > The runs below pass `bounded_link_oracle(...)` explicitly, so their numbers remain reproducible as
 > written. `path_count_anonymity()` and `analyze()` now default to `ancestry.value_flow_link_oracle`
