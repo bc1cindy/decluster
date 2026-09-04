@@ -36,6 +36,6 @@ def test_migrated_temporal_result_is_bound_to_its_canonical_run():
 def test_unregistered_markdown_is_not_presented_as_reproducible():
     entries = {entry.document: entry for entry in inventory_results(ROOT)}
 
-    assert entries["results/RESULTS-conservation.md"].status == (
-        "historical_result_without_run_manifest"
-    )
+    conservation = entries["results/RESULTS-conservation.md"]
+    assert conservation.status == "superseded_by_canonical_run"
+    assert conservation.canonical_run == "conservation-round-three-v1"

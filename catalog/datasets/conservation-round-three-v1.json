@@ -1,0 +1,42 @@
+{
+  "schema_version": 1,
+  "id": "conservation-round-three-v1",
+  "title": "Reduced conservation fixture for mainnet round three",
+  "kind": "git_fixture",
+  "schema": "conservation-output-histogram-v1",
+  "format": "json",
+  "content": {
+    "bytes": 758,
+    "sha256": "e4a9048fa27e28732af5449d9b9a2098f401b203c793d79763d0be685fb86660"
+  },
+  "locations": {
+    "local_path": "tests/fixtures/conservation_round_three.json",
+    "canonical": null,
+    "mirrors": []
+  },
+  "source": {
+    "provider": "project-provided Bitcoin mainnet transaction reduction",
+    "snapshot_time": "2026-09-04",
+    "recipe": null,
+    "recipe_sha256": null
+  },
+  "license": {
+    "data": "redistribution authorized by fixture provider",
+    "recipe": null
+  },
+  "redistribution": "allowed",
+  "sensitivity": "public_on_chain",
+  "normalization": {
+    "code_revision": "700c0aeeac7503c34827245d3473de52ba74be36",
+    "parameters": {
+      "txid": "80f11c778a2f486ffc55b4e8665a94971ae9c350ac53969e9efcbf90478cbf90",
+      "representation": "total input plus output-value histogram"
+    },
+    "parents": []
+  },
+  "determinism": {
+    "ordering": "output values in descending order",
+    "rng_algorithm": null,
+    "rng_seed": null
+  }
+}
