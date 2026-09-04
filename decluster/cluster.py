@@ -85,8 +85,8 @@ def topology_weight(a, b, neigh, cbits=None, disjoint_bits=-1.65, share_cap=12.0
     calibrated *weak*: on a real slice P(disjoint|same)=0.32 vs P(disjoint|diff)=1.00 ->
     log2 ratio ~= -1.65, so a SINGLE disjoint pair barely moves the score and cannot by itself
     overcome a fingerprint match. The refusal the collaborator describes ('enough
-    distinguishing relationships') is the ACCUMULATION of these across a whole cluster — an
-    N-S cluster-level computation, not this per-pair term (paper §10). NOT called by the engine
+    distinguishing relationships') is the ACCUMULATION of these across a whole cluster. That
+    local aggregation is not the seeded cross-view N-S matcher and not this per-pair term. NOT called by the engine
     (`cluster_refined` uses `cluster_topology_weight`); kept as the per-pair illustration. 0 when
     either side has too little graph to judge."""
     na, nb = neigh.get(a, set()), neigh.get(b, set())
