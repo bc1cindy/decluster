@@ -118,6 +118,31 @@ class MappingEvidence:
 
 
 @dataclass(frozen=True)
+class UnanimousMappingLinksEvidence:
+    """Input-output links present in every member of one declared mapping family."""
+
+    inputs: tuple[Subject, ...]
+    outputs: tuple[Subject, ...]
+    mapping_count: int
+    links: tuple[tuple[Subject, Subject], ...]
+    context: EvidenceContext
+
+    def __post_init__(self) -> None:
+        if not self.inputs or not self.outputs or self.mapping_count < 1:
+            raise ValueError("unanimous links require inputs, outputs, and mappings")
+        if len(set(self.inputs)) != len(self.inputs) or len(set(self.outputs)) != len(
+            self.outputs
+        ):
+            raise ValueError("mapping subjects must be unique on each side")
+        allowed_inputs = set(self.inputs)
+        allowed_outputs = set(self.outputs)
+        if len(set(self.links)) != len(self.links):
+            raise ValueError("unanimous mapping links must be unique")
+        if any(left not in allowed_inputs or right not in allowed_outputs for left, right in self.links):
+            raise ValueError("unanimous link endpoints must belong to the mapping")
+
+
+@dataclass(frozen=True)
 class CandidateSetEvidence:
     subject: Subject
     candidates: frozenset[Subject]
@@ -387,6 +412,7 @@ Evidence: TypeAlias = Union[
     OwnershipLikelihoodEvidence,
     CannotLinkEvidence,
     MappingEvidence,
+    UnanimousMappingLinksEvidence,
     CandidateSetEvidence,
     PartitionPosteriorEvidence,
     ProvenanceDistributionEvidence,

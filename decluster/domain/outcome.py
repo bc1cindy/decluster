@@ -13,6 +13,7 @@ from .evidence import (
     PerfectMatchingEvidence,
     TransactionFingerprintEvidence,
     PseudonymGraphEvidence,
+    UnanimousMappingLinksEvidence,
     IntersectionEvidence,
     ProvenanceDistributionEvidence,
     Subject,
@@ -220,6 +221,13 @@ class PseudonymGraphConstructed:
 
 
 @dataclass(frozen=True)
+class ConditionalLinksMeasured:
+    """Unanimous links measured within, and only within, a declared mapping model."""
+
+    evidence: UnanimousMappingLinksEvidence
+
+
+@dataclass(frozen=True)
 class ReferenceOwnershipConflict:
     """A predicted merge conflicts with distinct ownership labels supplied by a fixture."""
 
@@ -260,5 +268,6 @@ Outcome: TypeAlias = Union[
     MessageAssignmentRecovered,
     TransactionFingerprintObserved,
     PseudonymGraphConstructed,
+    ConditionalLinksMeasured,
     ReferenceOwnershipConflict,
 ]
