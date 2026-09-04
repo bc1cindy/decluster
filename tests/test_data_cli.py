@@ -16,7 +16,7 @@ ROOT = Path(__file__).resolve().parents[1]
 def test_list_is_machine_readable_and_deterministic(capsys):
     assert data_cli.main(["--root", str(ROOT), "--json", "list"]) == 0
     records = json.loads(capsys.readouterr().out)
-    assert len(records) == 11
+    assert len(records) == 12
     assert [item["id"] for item in records] == sorted(item["id"] for item in records)
     assert set(records[0]) == {"id", "kind", "bytes", "sha256"}
 

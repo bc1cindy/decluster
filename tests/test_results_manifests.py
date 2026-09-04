@@ -14,6 +14,7 @@ from decluster import reproducibility as rp
 ROOT = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 MANIFESTS = sorted(glob.glob(os.path.join(ROOT, "results", "manifests", "*.json")))
 MIGRATED_RUN_DOCS = {
+    "RESULTS-amount-channel-survey.md": "catalog/runs/amount-channel-survey-v1.json",
     "RESULTS-exact-oracle-audit.md": "catalog/runs/exact-oracle-audit-v1.json",
 }
 
@@ -49,7 +50,6 @@ def test_every_manifest_names_a_document_that_exists():
 # invisibly.
 NOT_YET_MIGRATED = {
     "RESULTS-3v23-engine.md",
-    "RESULTS-amount-channel-survey.md",
     "RESULTS-analyze.md",
     "RESULTS-ancestry-crossview-feasibility.md",
     "RESULTS-ancestry-sparsity.md",

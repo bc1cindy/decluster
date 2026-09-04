@@ -325,22 +325,24 @@ def link_ambiguity(inputs, outputs, budget_ms=DEFAULT_LINK_BUDGET_MS, wall_ms=No
 
 
 def mapping_entropy(inputs, outputs, budget_ms=DEFAULT_LINK_BUDGET_MS):
-    """Entropy over sub-transaction mappings, and the links every mapping agrees on.
+    """Entropy over DSS's restricted mapping family and the links that family agrees on.
 
     `{"entropy": bits, "n_non_derived": int, "deterministic_links": [(input, output)]}`, or None
-    where the enumeration is refused. This is the quantity the writeup names as what actually bounds
-    anonymity — "if the probabilities over the partitions are far from uniform this amounts to
-    relatively little privacy, typically quantified in terms of entropy" — as against the counts
-    elsewhere in this module, which say how many readings exist and not how concentrated they are.
+    where the enumeration is refused. The returned distribution is uniform over DSS's non-derived
+    mappings. It is not the full balanced-mapping space and not an ownership posterior. The exact
+    oracle audit shows that certainty in this family can be false in the larger family.
 
     Fee handling is the same as the link matrix: the fee is balanced in as an extra output before
     enumerating, so it answers on transactions where an exact-cancellation count cannot. Zero bits
-    means one reading survives and every coin in it is pinned; a deterministic link is a coin with
-    no ambiguity at all, which is the refusal this channel exists to emit.
+    means one reading survives in this family; a deterministic link is shared by every mapping in
+    this family. Neither statement is a global ownership proof.
     """
     import dss
 
     try:
-        return dss.mapping_analysis(list(inputs), list(outputs), budget_ms)
+        report = dss.mapping_analysis(list(inputs), list(outputs), budget_ms)
     except BaseException:
         return None
+    if not isinstance(report, dict) or report.get("status") != "complete":
+        return None
+    return report

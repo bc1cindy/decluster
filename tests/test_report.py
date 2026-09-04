@@ -22,6 +22,7 @@ def test_report_computes_amount_and_targets_without_pair():
     rep = report.report(txs["C"], fetch=lambda t: txs[t], oracle=fake_oracle,
                         link_oracle=lambda i, o: [[1.0]], count_oracle=resolved)
     assert [c.index for c in rep["amount"]] == [0]          # refuse-only cut fired (log_w 0 <= 1.0)
+    assert [c.role for c in rep["amount"]] == ["o"]         # input/output indices are distinct
     assert set(rep["targets"]) == {0}                       # one spendable output
     assert rep["targets"][0]["min_entropy"] == pytest.approx(0.0)
     assert rep["leak"] is None and rep["topology"] is None  # no pair/graph context -> not fabricated

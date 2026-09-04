@@ -1,5 +1,9 @@
 # What the amount channel actually says on a real slice
 
+> Historical record. The canonical replacement is generated from five independently verified
+> artifacts and registered at `catalog/runs/amount-channel-survey-v1.json`. Use
+> `results/generated/amount-channel-survey-v1.md` for the current result.
+
 > **Correction (2026-09-03) — "a deterministic link" is measured false.**
 > Below, "369 rows admit exactly one output — a deterministic link, the amounts settling the
 > assignment on their own" is the reading `counting.link_matrix`'s docstring handed consumers at the
