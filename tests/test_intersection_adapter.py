@@ -1,9 +1,13 @@
+import pytest
+
 from decluster.adaptations.intersection import (
     BlindCause,
     BlindIntersection,
     CompleteIntersection,
+    evaluate_ancestry_reports,
     evaluate_report,
 )
+from decluster.adaptations.ancestry import ancestry_signature_report
 from decluster.ancestry import TruncationSupport
 
 
@@ -67,3 +71,26 @@ def test_legacy_copy_cannot_mutate_the_typed_report():
 
     assert report.sizes == (1, 1)
     assert report.as_legacy()["sizes"] == [1, 1]
+
+
+def test_atomic_ancestry_observations_drive_intersection():
+    reports = {
+        ("a", 0): ancestry_signature_report(("a", 0), fetch=coinbase),
+        ("b", 1): ancestry_signature_report(("b", 1), fetch=coinbase),
+    }
+
+    report = evaluate_ancestry_reports(candidate(), reports.__getitem__)
+
+    assert isinstance(report.state, CompleteIntersection)
+    assert report.state.evidence.candidates_after == frozenset()
+
+
+def coinbase(txid):
+    return {"vin": [{"is_coinbase": True}], "vout": [{"value": 1}, {"value": 1}]}
+
+
+def test_atomic_intersection_rejects_a_mismatched_report():
+    wrong = ancestry_signature_report(("wrong", 0), fetch=coinbase)
+
+    with pytest.raises(ValueError, match="does not match"):
+        evaluate_ancestry_reports(candidate(), lambda outpoint: wrong)

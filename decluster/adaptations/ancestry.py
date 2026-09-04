@@ -4,7 +4,18 @@ from dataclasses import dataclass
 from typing import Any, Callable, Mapping, Optional, TypeAlias, Union
 
 from ..ancestry import TruncationSupport, ancestry_signature_and_truncation
-from ..domain import EvidenceContext, ProvenanceDistributionEvidence, Subject, SubjectKind
+from ..domain import (
+    AttackReport,
+    CompleteProvenanceMeasured,
+    EvidenceChannel,
+    EvidenceContext,
+    Inconclusive,
+    NotObserved,
+    ProvenanceDistributionEvidence,
+    Subject,
+    SubjectKind,
+    TruncatedProvenanceMeasured,
+)
 
 
 @dataclass(frozen=True)
@@ -76,6 +87,34 @@ class AncestryReport:
             zero_link_mass=self.truncation.zero_link_mass,
         )
         return distribution, support
+
+    def as_attack_report(self, identifier: str) -> AttackReport:
+        """Expose provenance measurement without interpreting it as privacy."""
+        evidence = getattr(self.state, "evidence", None)
+        channels = (
+            (EvidenceChannel("absorbing_ancestry_walk", (evidence,)),)
+            if evidence is not None
+            else ()
+        )
+        if isinstance(self.state, CompleteAncestry):
+            outcomes = (CompleteProvenanceMeasured(self.state.evidence),)
+        elif isinstance(self.state, TruncatedAncestry):
+            if self.state.evidence is None:
+                outcomes = (
+                    Inconclusive((self.target,), "ancestry boundary is entirely truncated"),
+                )
+            else:
+                outcomes = (TruncatedProvenanceMeasured(self.state.evidence),)
+        else:
+            outcomes = (NotObserved("positive-mass ancestry boundary"),)
+        return AttackReport(
+            identifier=identifier,
+            attack="provenance measurement",
+            subjects=(self.target,),
+            channels=channels,
+            outcomes=outcomes,
+            limitations=("this report measures model-relative provenance, not privacy",),
+        )
 
 
 def ancestry_signature_report(

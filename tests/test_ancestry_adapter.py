@@ -28,6 +28,9 @@ def test_complete_signature_has_typed_distribution_and_round_trip():
     distribution, support = report.as_legacy()
     assert distribution == {("left", 0): 0.5, ("right", 0): 0.5}
     assert support.total == 0
+    attack_report = report.as_attack_report("complete-ancestry")
+    assert attack_report.channels[0].identifier == "absorbing_ancestry_walk"
+    assert type(attack_report.outcomes[0]).__name__ == "CompleteProvenanceMeasured"
 
 
 def test_node_cap_is_not_conflated_with_oracle_refusal():
@@ -39,6 +42,8 @@ def test_node_cap_is_not_conflated_with_oracle_refusal():
     assert report.truncation.node_capped == 2
     assert report.truncation.oracle_refused == 0
     assert report.truncation.total == 2
+    attack_report = report.as_attack_report("truncated-ancestry")
+    assert type(attack_report.outcomes[0]).__name__ == "TruncatedProvenanceMeasured"
 
 
 def test_oracle_refusal_is_preserved_as_its_own_cause():

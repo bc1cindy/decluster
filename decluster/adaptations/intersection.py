@@ -18,6 +18,7 @@ from ..domain import (
     SubjectKind,
 )
 from ..intersect import evaluate
+from .ancestry import AncestryReport
 
 
 class BlindCause(str, Enum):
@@ -156,4 +157,34 @@ def evaluate_report(
         truncation=_truncations(branches, legacy["truncated"], legacy["truncated_causes"]),
         state=state,
         _legacy=MappingProxyType(deepcopy(legacy)),
+    )
+
+
+def evaluate_ancestry_reports(
+    candidate: Mapping[str, Any],
+    ancestry_of: Callable[[Any], AncestryReport],
+    **options: Any,
+) -> IntersectionReport:
+    """Intersect atomic ancestry observations, keeping signature and limits together."""
+    outpoints = tuple(candidate.get("outpoints", ()))
+    observations = {}
+    for outpoint in outpoints:
+        report = ancestry_of(outpoint)
+        if report.target.identifier != outpoint:
+            raise ValueError("ancestry report target does not match requested outpoint")
+        observations[outpoint] = report.as_legacy()
+
+    def signature_of(outpoint):
+        return observations[outpoint][0]
+
+    def truncation_of(outpoint):
+        return observations[outpoint][1]
+
+    if "truncation_of" in options:
+        raise TypeError("truncation_of is derived from ancestry reports")
+    return evaluate_report(
+        candidate,
+        signature_of,
+        truncation_of=truncation_of,
+        **options,
     )

@@ -3,7 +3,13 @@
 from dataclasses import dataclass
 from typing import TypeAlias, Union
 
-from .evidence import Evidence, IntersectionEvidence, Subject, SubjectKind
+from .evidence import (
+    Evidence,
+    IntersectionEvidence,
+    ProvenanceDistributionEvidence,
+    Subject,
+    SubjectKind,
+)
 
 
 def _require_pair(subject: Subject, target: Subject) -> None:
@@ -96,6 +102,16 @@ class NoSharedCandidates:
 
 
 @dataclass(frozen=True)
+class CompleteProvenanceMeasured:
+    evidence: ProvenanceDistributionEvidence
+
+
+@dataclass(frozen=True)
+class TruncatedProvenanceMeasured:
+    evidence: ProvenanceDistributionEvidence
+
+
+@dataclass(frozen=True)
 class Inconclusive:
     subjects: tuple[Subject, ...]
     reason: str
@@ -153,6 +169,8 @@ Outcome: TypeAlias = Union[
     TransitiveMembership,
     CandidateNarrowing,
     NoSharedCandidates,
+    CompleteProvenanceMeasured,
+    TruncatedProvenanceMeasured,
     Inconclusive,
     NodeCapped,
     OracleRefused,

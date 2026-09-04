@@ -14,6 +14,7 @@ from .intersection import (
     BlindIntersection,
     CompleteIntersection,
     IntersectionReport,
+    evaluate_ancestry_reports,
     evaluate_report,
 )
 
@@ -31,4 +32,5 @@ __all__ = [
     "ancestry_signature_report",
     "cluster_refined_report",
     "evaluate_report",
+    "evaluate_ancestry_reports",
 ]
