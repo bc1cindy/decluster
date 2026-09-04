@@ -1,0 +1,16 @@
+{
+  "schema_version": 1,
+  "id": "amount-channel-812695-812831-v1",
+  "title": "Amount-channel Bitcoin transaction snapshot",
+  "kind": "immutable_snapshot",
+  "schema": "bitcoin-transaction-array-v1",
+  "format": "json",
+  "content": {"bytes": 8028513, "sha256": "83b4391f78d07a2fa85a67218d5ae4420d8965da3c95af577592e9ec1850104d"},
+  "locations": {"local_path": "data/amount-channel-812695-812831-v1.json", "canonical": null, "mirrors": []},
+  "source": {"provider": "project-provided public Bitcoin on-chain export", "snapshot_time": "2026-09-04", "recipe": "decluster/amount_channel_snapshot.py", "recipe_sha256": "409a90613dc6ce7fc49ab3fa12a78f94b70e145a2a9a6b5d097c1db5f1fb14fd"},
+  "license": {"data": "redistribution authorized by snapshot provider", "recipe": "MIT"},
+  "redistribution": "allowed",
+  "sensitivity": "public_on_chain",
+  "normalization": {"code_revision": null, "parameters": {"minimum_height": 812695, "maximum_height": 812831, "records": 5491}, "parents": []},
+  "determinism": {"ordering": "source transaction order", "rng_algorithm": null, "rng_seed": null}
+}
