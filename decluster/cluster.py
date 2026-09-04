@@ -1,5 +1,8 @@
 """Layer 4 — graph-level clustering: single-heuristic union-find (common-input-ownership)
 collapse vs. fingerprint-aware clustering."""
+from dataclasses import dataclass
+from enum import Enum
+
 from .fetch import fetch_tx
 from .subtransaction import subtransactions, norm
 from .unionfind import UF
@@ -179,10 +182,41 @@ def build_cospend_lookup(corpus_txs):
 
 COSPEND_PRIOR = 2.0   # common-input-ownership prior in bits; a merge survives iff prior + fp + amt + topo > 0
 
+
+class PairDecisionStatus(str, Enum):
+    DIRECT_MERGE = "direct_merge"
+    TRANSITIVE_MEMBERSHIP = "transitive_membership"
+    REFUSED = "refused"
+
+
+@dataclass(frozen=True)
+class ClusterPairDecision:
+    left: str
+    right: str
+    spending_txid: str
+    status: PairDecisionStatus
+    cospend_prior_bits: float
+    fingerprint_bits: float
+    amount_bits: float
+    topology_bits: float
+    provenance_bits: float
+    subset_sum_bits: float
+
+    @property
+    def total_bits(self) -> float:
+        return (
+            self.cospend_prior_bits
+            + self.fingerprint_bits
+            + self.amount_bits
+            + self.topology_bits
+            + self.provenance_bits
+            + self.subset_sum_bits
+        )
+
 def cluster_refined(nodes, combiner, cospend_prior=COSPEND_PRIOR, link_above=4.0, neigh=None,
                     amount=True, topo_tau=1.0, subsetsum=False, _ss_fn=None, hubs=None,
                     provenance=False, signatures=None, rarity=None, prov_refuse_bits=-3.0,
-                    link_eps=1e-9):
+                    link_eps=1e-9, _decision_log=None):
     """The engine (the only fingerprint-aware clusterer; `cluster_naive` is the merge-only BlockSci
     baseline). Order-independent partition refinement that fuses multiple refuse channels:
     co-spend prior, fingerprint, amount (roundness + denomination de-mix), cluster-level topology,
@@ -213,6 +247,8 @@ def cluster_refined(nodes, combiner, cospend_prior=COSPEND_PRIOR, link_above=4.0
         if k not in ev or amt < ev[k][2]:
             ev[k] = (t, fp, amt)
     base = {k: cospend_prior + fp + amt for k, (t, fp, amt) in ev.items()}
+    provenance_bits = {k: 0.0 for k in ev}
+    subset_sum_bits = {k: 0.0 for k in ev}
     if provenance and signatures is not None:
         # Refuse-only provenance channel: disjoint provenance is evidence AGAINST common
         # ownership. Gated on fp < 0 like the amount channel, so provenance-disjointness
@@ -224,6 +260,7 @@ def cluster_refined(nodes, combiner, cospend_prior=COSPEND_PRIOR, link_above=4.0
                 sa, sb = signatures.get(k[0]), signatures.get(k[1])
                 if sa is not None and sb is not None and provenance_link(sa, sb, rarity) <= link_eps:
                     base[k] += prov_refuse_bits
+                    provenance_bits[k] = prov_refuse_bits
     if subsetsum:
         resolve = _ss_fn
         if resolve is None:
@@ -232,7 +269,8 @@ def cluster_refined(nodes, combiner, cospend_prior=COSPEND_PRIOR, link_above=4.0
             def resolve(tx, a, b):
                 return amount_refuse_demix(tx, a, b)           # per-pair de-mix verdict (diff participants -> refuse)
         for k, (t, fp, amt) in ev.items():
-            base[k] += resolve(fetch_tx(t), k[0], k[1])            # per-pair: amount refuse / forced-link
+            subset_sum_bits[k] = resolve(fetch_tx(t), k[0], k[1])
+            base[k] += subset_sum_bits[k]                          # per-pair: amount refuse / forced-link
     uf = UF(nodes); linked = []
     node_list = list(nodes)                     # links the co-spend MISSED: only NON-co-spent pairs —
     for i in range(len(node_list)):             # a co-spent pair is decided by the fused fixed-point
@@ -243,6 +281,7 @@ def cluster_refined(nodes, combiner, cospend_prior=COSPEND_PRIOR, link_above=4.0
             sc = combiner.score(fetch_tx(a), fetch_tx(b))
             if sc >= link_above:
                 uf.union(a, b); linked.append((a, b, sc))
+    direct_topology = {}
     for _ in range(len(node_list)):             # synchronous fixed-point; monotone -> <= |nodes| rounds
         to_merge = []
         for (a, b), be in base.items():
@@ -251,6 +290,7 @@ def cluster_refined(nodes, combiner, cospend_prior=COSPEND_PRIOR, link_above=4.0
             top = cluster_topology_weight(uf.group(a), uf.group(b), neigh, cbits, tau=topo_tau) if neigh else 0.0
             if be + top > 0:
                 to_merge.append((a, b))
+                direct_topology[(a, b)] = top
         if not to_merge:
             break
         for a, b in to_merge:
@@ -260,4 +300,45 @@ def cluster_refined(nodes, combiner, cospend_prior=COSPEND_PRIOR, link_above=4.0
         if uf.find(a) != uf.find(b):
             top = cluster_topology_weight(uf.group(a), uf.group(b), neigh, cbits, tau=topo_tau) if neigh else 0.0
             refused.append((a, b, t, fp, amt, fp + amt + top))
+    if _decision_log is not None:
+        for (a, b), (t, fp, amt) in ev.items():
+            if (a, b) in direct_topology:
+                status = PairDecisionStatus.DIRECT_MERGE
+                top = direct_topology[(a, b)]
+            elif uf.find(a) == uf.find(b):
+                status = PairDecisionStatus.TRANSITIVE_MEMBERSHIP
+                top = 0.0
+            else:
+                status = PairDecisionStatus.REFUSED
+                top = (
+                    cluster_topology_weight(
+                        uf.group(a), uf.group(b), neigh, cbits, tau=topo_tau
+                    )
+                    if neigh
+                    else 0.0
+                )
+            _decision_log.append(
+                ClusterPairDecision(
+                    a,
+                    b,
+                    t,
+                    status,
+                    cospend_prior,
+                    fp,
+                    amt,
+                    top,
+                    provenance_bits[(a, b)],
+                    subset_sum_bits[(a, b)],
+                )
+            )
     return uf.groups(), refused, linked
+
+
+def cluster_refined_decisions(nodes, combiner, **options):
+    """Return the legacy result plus the evidence breakdown for each co-spend pair."""
+    node_list = list(nodes)
+    decisions = []
+    groups, refused, linked = cluster_refined(
+        node_list, combiner, _decision_log=decisions, **options
+    )
+    return groups, refused, linked, decisions
