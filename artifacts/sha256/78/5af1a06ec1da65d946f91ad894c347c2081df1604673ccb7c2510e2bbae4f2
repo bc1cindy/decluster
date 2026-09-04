@@ -21,7 +21,19 @@
   "environment": {
     "python": "3.13.7",
     "lock_digest": null,
-    "platform": "macOS-26.6.2-arm64-arm-64bit-Mach-O"
+    "platform": "macOS-26.6.2-arm64-arm-64bit-Mach-O",
+    "dependencies": [
+      {
+        "name": "dss",
+        "version": "0.1.0",
+        "source": "https://github.com/bc1cindy/dense-subset-sum",
+        "revision": "6f06e50f7470f7133c40c553c92b9a1464ad3b8a",
+        "lock_sha256": "39f67fa3aea4459e835c2643e505456815ea3b039b0ada1cf0c988edf76971dd",
+        "license": "MIT",
+        "redistribution": "allowed",
+        "editable": true
+      }
+    ]
   },
   "datasets": [],
   "parameters": {
@@ -76,7 +88,7 @@
   "limitations": [
     "zero-fee transactions only",
     "bounded exhaustive family over values 1 through 4",
-    "compiled dss dependency is identified by version and source revision but no lockfile is available",
+    "dss is MIT licensed and identified by source revision and Cargo.lock digest, but is installed editable in the recorded environment",
     "verification is exact only in the recorded environment until an offline bundle pins the dependency"
   ]
 }

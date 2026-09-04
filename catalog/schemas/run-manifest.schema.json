@@ -20,11 +20,28 @@
     },
     "environment": {
       "type": "object", "additionalProperties": false,
-      "required": ["python", "lock_digest", "platform"],
+      "required": ["python", "lock_digest", "platform", "dependencies"],
       "properties": {
         "python": {"type": "string", "minLength": 1},
         "lock_digest": {"type": ["string", "null"], "pattern": "^[0-9a-f]{64}$"},
-        "platform": {"type": "string", "minLength": 1}
+        "platform": {"type": "string", "minLength": 1},
+        "dependencies": {
+          "type": "array", "uniqueItems": true,
+          "items": {
+            "type": "object", "additionalProperties": false,
+            "required": ["name", "version", "source", "revision", "lock_sha256", "license", "redistribution", "editable"],
+            "properties": {
+              "name": {"type": "string", "minLength": 1},
+              "version": {"type": "string", "minLength": 1},
+              "source": {"type": "string", "pattern": "^https://"},
+              "revision": {"type": "string", "minLength": 1},
+              "lock_sha256": {"type": ["string", "null"], "pattern": "^[0-9a-f]{64}$"},
+              "license": {"type": "string", "minLength": 1},
+              "redistribution": {"enum": ["allowed", "restricted", "unknown"]},
+              "editable": {"type": "boolean"}
+            }
+          }
+        }
       }
     },
     "datasets": {

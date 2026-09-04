@@ -41,7 +41,7 @@ def run_document(**overrides):
         "claim_ids": ["ctp.demo"],
         "code": {"revision": "abc123", "dirty": False},
         "command": {"argv": ["python", "-m", "decluster.demo"]},
-        "environment": {"python": "3.13", "lock_digest": None, "platform": "any"},
+        "environment": {"python": "3.13", "lock_digest": None, "platform": "any", "dependencies": []},
         "datasets": [{"id": "fixture-v1", "sha256": DIGEST}],
         "parameters": {"cutoff": 2},
         "rng": {"algorithm": "MT19937", "seeds": [7]},
@@ -106,6 +106,23 @@ def test_run_manifest_resolves_claim_and_dataset(tmp_path):
     assert run.reproducibility_level.value == "bitwise_reproducible"
     assert run.verification.mode.value == "exact"
     assert run.verification.tests == ("tests/test_demo.py::test_result",)
+
+
+def test_run_manifest_preserves_dependency_provenance(tmp_path):
+    dataset = load_dataset_manifest(write_json(tmp_path / "dataset.json", dataset_document()))
+    document = run_document()
+    document["environment"]["dependencies"] = [{
+        "name": "dss", "version": "0.1.0", "source": "https://example.invalid/dss",
+        "revision": "abc123", "lock_sha256": DIGEST, "license": "unknown",
+        "redistribution": "unknown", "editable": True,
+    }]
+    run = load_run_manifest(
+        write_json(tmp_path / "run.json", document),
+        claim_ids={"ctp.demo"}, datasets={dataset.id: dataset},
+    )
+    assert run.dependencies[0].name == "dss"
+    assert run.dependencies[0].editable is True
+    assert run.dependencies[0].redistribution.value == "unknown"
 
 
 def test_run_manifest_rejects_unknown_claim(tmp_path):

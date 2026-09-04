@@ -10,6 +10,7 @@ requires-python = ">=3.9"
 
 [project.scripts]
 decluster-data = "decluster.data_cli:main"
+decluster-bundle = "decluster.bundle_cli:main"
 
 [project.optional-dependencies]
 data = ["zstandard>=0.23"]

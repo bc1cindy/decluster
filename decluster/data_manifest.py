@@ -98,6 +98,18 @@ class DatasetInput:
 
 
 @dataclass(frozen=True)
+class DependencyInput:
+    name: str
+    version: str
+    source: str
+    revision: str
+    lock_sha256: str | None
+    license: str
+    redistribution: Redistribution
+    editable: bool
+
+
+@dataclass(frozen=True)
 class RunOutput:
     path: str
     bytes: int
@@ -123,6 +135,7 @@ class RunManifest:
     python: str
     lock_digest: str | None
     platform: str
+    dependencies: tuple[DependencyInput, ...]
     datasets: tuple[DatasetInput, ...]
     parameters: Mapping
     rng_algorithm: str | None
@@ -312,7 +325,8 @@ def load_run_manifest(path, *, claim_ids, datasets):
     code = _object(raw["code"], f"{where}.code", {"revision", "dirty"})
     command = _object(raw["command"], f"{where}.command", {"argv"})
     environment = _object(
-        raw["environment"], f"{where}.environment", {"python", "lock_digest", "platform"}
+        raw["environment"], f"{where}.environment",
+        {"python", "lock_digest", "platform", "dependencies"},
     )
     rng = _object(raw["rng"], f"{where}.rng", {"algorithm", "seeds"})
     reproducibility = _object(
@@ -324,6 +338,30 @@ def load_run_manifest(path, *, claim_ids, datasets):
     )
     if not isinstance(code["dirty"], bool):
         raise ManifestError(f"{where}.code.dirty: expected boolean")
+    dependencies = []
+    dependency_names = set()
+    for index, item in enumerate(_array(environment["dependencies"], f"{where}.environment.dependencies")):
+        item_where = f"{where}.environment.dependencies[{index}]"
+        item = _object(item, item_where, {
+            "name", "version", "source", "revision", "lock_sha256", "license",
+            "redistribution", "editable",
+        })
+        name = _text(item["name"], f"{item_where}.name")
+        if name in dependency_names:
+            raise ManifestError(f"{item_where}.name: duplicate {name!r}")
+        dependency_names.add(name)
+        if not isinstance(item["editable"], bool):
+            raise ManifestError(f"{item_where}.editable: expected boolean")
+        dependencies.append(DependencyInput(
+            name=name,
+            version=_text(item["version"], f"{item_where}.version"),
+            source=_https(item["source"], f"{item_where}.source"),
+            revision=_text(item["revision"], f"{item_where}.revision"),
+            lock_sha256=_digest(item["lock_sha256"], f"{item_where}.lock_sha256", nullable=True),
+            license=_text(item["license"], f"{item_where}.license"),
+            redistribution=_enum(Redistribution, item["redistribution"], f"{item_where}.redistribution"),
+            editable=item["editable"],
+        ))
     run_claims = _strings(raw["claim_ids"], f"{where}.claim_ids", nonempty=True, unique=True)
     dangling_claims = sorted(set(run_claims) - set(claim_ids))
     if dangling_claims:
@@ -418,6 +456,7 @@ def load_run_manifest(path, *, claim_ids, datasets):
         python=_text(environment["python"], f"{where}.environment.python"),
         lock_digest=_digest(environment["lock_digest"], f"{where}.environment.lock_digest", nullable=True),
         platform=_text(environment["platform"], f"{where}.environment.platform"),
+        dependencies=tuple(dependencies),
         datasets=tuple(inputs),
         parameters=_freeze_json(_object(raw["parameters"], f"{where}.parameters")),
         rng_algorithm=algorithm,

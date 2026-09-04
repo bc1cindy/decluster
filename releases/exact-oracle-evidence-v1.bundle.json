@@ -7,24 +7,36 @@
     {
       "name": "catalog/runs/exact-oracle-audit-v1.json",
       "role": "run_manifest",
-      "bytes": 2244,
-      "sha256": "1dfdaed79b67578c72d7241c001a09b3adbe97c7a8ca52a57067886b3a2adc01"
+      "bytes": 2682,
+      "sha256": "785af1a06ec1da65d946f91ad894c347c2081df1604673ccb7c2510e2bbae4f2",
+      "locations": {
+        "canonical": null,
+        "mirrors": []
+      }
     },
     {
       "name": "results/artifacts/exact-oracle-audit-v1.json",
       "role": "result",
       "bytes": 17692,
-      "sha256": "2ea95e4b1e9667e1e72afef7e4204665a7f912b2497d2b7234f3ecec065dc3dc"
+      "sha256": "2ea95e4b1e9667e1e72afef7e4204665a7f912b2497d2b7234f3ecec065dc3dc",
+      "locations": {
+        "canonical": null,
+        "mirrors": []
+      }
     },
     {
       "name": "results/generated/exact-oracle-audit-v1.md",
       "role": "result",
       "bytes": 466,
-      "sha256": "1a73d2ab536f699475a94120f6042150c6d69bd417623a0ce7305c5ccaae70ef"
+      "sha256": "1a73d2ab536f699475a94120f6042150c6d69bd417623a0ce7305c5ccaae70ef",
+      "locations": {
+        "canonical": null,
+        "mirrors": []
+      }
     }
   ],
   "limitations": [
     "This bundle verifies recorded outputs but cannot reexecute the run.",
-    "The dss dependency has no declared redistribution license or portable locked build environment."
+    "The MIT-licensed dss dependency is not yet bundled with a portable locked build environment."
   ]
 }
