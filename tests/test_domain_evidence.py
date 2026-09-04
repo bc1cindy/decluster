@@ -76,6 +76,7 @@ def test_outcomes_do_not_encode_refusal_as_a_boolean():
     ("factory", "message"),
     [
         (lambda: Subject(SubjectKind.COIN, ""), "identifier"),
+        (lambda: Subject(SubjectKind.COIN, []), "hashable"),
         (lambda: NodeCapped(observed=10, limit=10), "observed"),
         (lambda: NotObserved(""), "observable"),
     ],

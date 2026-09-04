@@ -3,7 +3,7 @@
 from dataclasses import dataclass
 from typing import TypeAlias, Union
 
-from .evidence import Evidence, Subject, SubjectKind
+from .evidence import Evidence, IntersectionEvidence, Subject, SubjectKind
 
 
 def _require_pair(subject: Subject, target: Subject) -> None:
@@ -82,6 +82,32 @@ class TransitiveMembership:
 
 
 @dataclass(frozen=True)
+class CandidateNarrowing:
+    evidence: IntersectionEvidence
+
+
+@dataclass(frozen=True)
+class NoSharedCandidates:
+    evidence: IntersectionEvidence
+
+    def __post_init__(self) -> None:
+        if self.evidence.candidates_after:
+            raise ValueError("no-shared-candidates outcome requires an empty intersection")
+
+
+@dataclass(frozen=True)
+class Inconclusive:
+    subjects: tuple[Subject, ...]
+    reason: str
+
+    def __post_init__(self) -> None:
+        if not self.subjects:
+            raise ValueError("inconclusive outcome requires subjects")
+        if not self.reason:
+            raise ValueError("inconclusive reason must not be empty")
+
+
+@dataclass(frozen=True)
 class NodeCapped:
     observed: int
     limit: int
@@ -125,6 +151,9 @@ Outcome: TypeAlias = Union[
     DeclusterSplit,
     Attribution,
     TransitiveMembership,
+    CandidateNarrowing,
+    NoSharedCandidates,
+    Inconclusive,
     NodeCapped,
     OracleRefused,
     Unsupported,

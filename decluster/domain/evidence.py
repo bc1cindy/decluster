@@ -8,25 +8,32 @@ types in :mod:`decluster.domain.outcome`.
 from dataclasses import dataclass
 from enum import Enum
 from math import isfinite
-from typing import Optional, TypeAlias, Union
+from typing import Hashable, Optional, TypeAlias, Union
 
 
 class SubjectKind(str, Enum):
     COIN = "coin"
+    OUTPOINT = "outpoint"
     TRANSACTION = "transaction"
     CLUSTER = "cluster"
     MAPPING = "mapping"
     PARTITION = "partition"
 
 
-@dataclass(frozen=True, order=True)
+@dataclass(frozen=True)
 class Subject:
     kind: SubjectKind
-    identifier: str
+    identifier: Hashable
 
     def __post_init__(self) -> None:
-        if not self.identifier:
+        if self.identifier is None or (
+            isinstance(self.identifier, str) and not self.identifier
+        ):
             raise ValueError("subject identifier must not be empty")
+        try:
+            hash(self.identifier)
+        except TypeError as exc:
+            raise ValueError("subject identifier must be hashable") from exc
 
 
 class Direction(str, Enum):
