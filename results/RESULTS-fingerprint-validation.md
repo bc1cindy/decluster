@@ -1,5 +1,13 @@
 # Canonical fingerprint model: validation on real witness-bearing transactions
 
+> The reproducible 600-transaction observation is recalculated by
+> `catalog/runs/fingerprint-validation-v1.json`. Its structured artifact is
+> `results/artifacts/fingerprint-validation-v1.json`, with canonical rendering in
+> `results/generated/fingerprint-validation-v1.md`. The 165.832-transaction figures below are
+> historical because that growing cache snapshot was not preserved. Address reuse remains a weak,
+> partly feature-dependent label, so the canonical result is pair-ranking evidence rather than
+> wallet attribution or a privacy score.
+
 **Claim tested.** Does the 23-axis fingerprint library (`decluster/library.py`) tell same-wallet
 transactions apart from random ones — on real witness-bearing data? Scored on the **canonical** path
 (`LibraryScorer` over all library axes, using the same extractors the rest of the pipeline uses), not
