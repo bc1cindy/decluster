@@ -23,11 +23,12 @@
 
 The `ancestry_entropy` engine (`decluster/ancestry.py`) measures the **provenance / deep-feature
 channel** that the framework (`tx-graph-anonymity-sets`, the absorber / random-walk model) centres:
-a backward walk over the transaction graph, edge-weighted by the exact subset-sum link matrix
+a backward walk over the transaction graph, edge-weighted by the DSS model's subset-sum link matrix
 (`dss.pairwise_link_prob`), solved as an absorbing Markov chain — the coin's absorption distribution
 over its ancestral boundary is the harmonic measure of the walk. Its Shannon / min-entropy is a
-**lower bound** on the intrinsic graph entropy of the payment's provenance under no auxiliary
-information (never a privacy score; the conservative, defender-side read is min-entropy).
+model-relative provenance entropy. The exact-oracle audit later showed that this DSS pairwise matrix
+has no general lower- or upper-bound direction, so these historical values are not conservative
+certificates and are never privacy scores.
 
 Run in `./.venv` (the native `dss` module is built there), `fetch_tx` resolving ancestry over
 mempool.space.
@@ -55,12 +56,11 @@ mass onto fewer boundary coins.)
 
 ## Reading
 
-This is exactly the framework's thesis measured on-chain: "**every coin is sparsely represented**" in
-the exponential quasi-identifier space of ancestry — for typical coins the provenance lower bound is
-~0 bits, i.e. the origin is (near-)determined, so ancestry is a **strong** identifier. Only coins
-routed through genuine fan-out/mixing accumulate provenance entropy. Because every figure is a
-conservative lower bound (truncation on an oracle-`None`, and the depth cutoff, can only *understate*
-ambiguity), the true identifiability is at least this strong.
+The original reading treated this as an on-chain measurement of sparse provenance. That conclusion
+is not retained as a canonical claim. Frontier truncation can only coarsen a distribution conditional
+on a fixed transition model, but the DSS pairwise transition itself has no general bound direction.
+The sample can illustrate the selected model; it cannot establish that typical coins have
+near-determined provenance or that real identifiability is at least this strong.
 
 ## Deep-feature matching — provenance as a linking quasi-identifier
 
@@ -121,7 +121,7 @@ on new method.
 
 ## Boundary — what this rung is and is not
 
-Built and measured: the absorber-model provenance **entropy** (per-coin ambiguity lower bound), the
+Historically measured: absorber-model provenance **entropy** conditional on the DSS transition, the
 pairwise **matching** (`provenance_link`, mechanism-tested; WP4 lineage separation at 0.000), and a
 first **graph-scale** pass (weak/directional, AUC 0.52 — depth+connectivity bound). The provisional
 edge weighting is link-probability-only (satoshi-flow value-weighting deferred;

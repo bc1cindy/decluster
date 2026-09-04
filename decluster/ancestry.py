@@ -10,9 +10,9 @@ Two transition models are intentionally kept separate:
 * ``build_extended_graph`` is the experimental subset-sum-link model. It requires a link oracle and
   may additionally combine subjective evidence. It is not the nominal-value model.
 
-Every number is a lower bound on the
-intrinsic graph entropy of the payment's provenance under no auxiliary information — NOT a privacy
-score; subjectively discounted by the reader's threat model."""
+With the nominal-value model, frontier truncation yields a lower bound on that model's provenance
+entropy. This is not a privacy score. The opt-in DSS transition model has no general bound direction;
+its outputs must be read only as estimates conditional on that mapping family."""
 import math
 from dataclasses import dataclass
 
@@ -343,8 +343,9 @@ DEFAULT_LINK_BUDGET_MS = 2000
 
 def dss_link_oracle(inputs, outputs, budget_ms=DEFAULT_LINK_BUDGET_MS):
     """Opt-in subset-sum link oracle; not any facade's default (see
-    `ancestry.value_flow_link_oracle`). The exact subset-sum pairwise link matrix, bounded by a
-    wall-clock budget so a dense mix truncates on time rather than on coin count. Lazy import so
+    `ancestry.value_flow_link_oracle`). Returns the DSS model's pairwise link matrix, bounded by a
+    wall-clock budget so a dense mix truncates on time rather than on coin count. It is not an exact
+    oracle for all plausible transaction interpretations and has no general bound direction. Lazy import so
     decluster.ancestry loads without the compiled `dss` module (build: maturin develop)."""
     import dss
     try:
@@ -440,11 +441,13 @@ def provenance_link(sig_a, sig_b, rarity=None):
 
 
 def ancestry_entropy(target, depth=6, fetch=None, link_oracle=value_flow_link_oracle):
-    """Lower bound on the intrinsic graph entropy of the target coin's provenance under no auxiliary
-    information — NOT a privacy score; subjectively discounted by the reader's threat model. Returns
-    Shannon and min-entropy (the conservative, defender-side read) of the provenance distribution
-    over the ancestral boundary, the boundary size, and how many coins were truncated. `truncated` is
-    the total of both causes; `Graph.oracle_refused` and `Graph.node_capped` keep them apart."""
+    """Entropy of the target's model-relative provenance distribution.
+
+    With the default nominal-value model, truncating the frontier gives a lower bound on that model's
+    entropy. No bound direction is promised for an arbitrary supplied oracle; in particular the
+    opt-in DSS pairwise model is diagnostic. This is not a privacy score. Returns Shannon and
+    min-entropy, boundary size and truncation count. `Graph.oracle_refused` and
+    `Graph.node_capped` keep the two principal truncation causes apart."""
     if fetch is None:
         from .fetch import fetch_tx
         fetch = fetch_tx
