@@ -306,6 +306,24 @@ class PerfectMatchingEvidence:
         _require_finite(self.log_likelihood, "log_likelihood")
 
 
+@dataclass(frozen=True)
+class TransactionFingerprintEvidence:
+    """Named observable features of one transaction under a declared rule."""
+
+    subject: Subject
+    features: tuple[tuple[str, int], ...]
+    context: EvidenceContext
+
+    def __post_init__(self) -> None:
+        if self.subject.kind is not SubjectKind.TRANSACTION:
+            raise ValueError("transaction fingerprint requires a transaction subject")
+        if not self.features:
+            raise ValueError("transaction fingerprint features must not be empty")
+        names = tuple(name for name, _ in self.features)
+        if any(not name for name in names) or len(set(names)) != len(names):
+            raise ValueError("transaction fingerprint feature names must be unique")
+
+
 Evidence: TypeAlias = Union[
     OwnershipLikelihoodEvidence,
     CannotLinkEvidence,
@@ -320,4 +338,5 @@ Evidence: TypeAlias = Union[
     GraphFractureEvidence,
     CorrespondentDistributionEvidence,
     PerfectMatchingEvidence,
+    TransactionFingerprintEvidence,
 ]

@@ -10,6 +10,7 @@ from .evidence import (
     GraphFractureEvidence,
     CorrespondentDistributionEvidence,
     PerfectMatchingEvidence,
+    TransactionFingerprintEvidence,
     IntersectionEvidence,
     ProvenanceDistributionEvidence,
     Subject,
@@ -201,6 +202,16 @@ class MessageAssignmentRecovered:
             raise ValueError("assignment must equal the unique optimum")
 
 
+@dataclass(frozen=True)
+class TransactionFingerprintObserved:
+    evidence: TransactionFingerprintEvidence
+    rule: str
+
+    def __post_init__(self) -> None:
+        if not self.rule:
+            raise ValueError("fingerprint rule must not be empty")
+
+
 Outcome: TypeAlias = Union[
     ClusterMerge,
     MergeRefused,
@@ -220,4 +231,5 @@ Outcome: TypeAlias = Union[
     GraphFractureMeasured,
     PersistentCorrespondentRanked,
     MessageAssignmentRecovered,
+    TransactionFingerprintObserved,
 ]

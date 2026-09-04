@@ -7,6 +7,7 @@ from . import (
     eve_alice_eve,
     provenance_decay,
     perfect_matching_disclosure,
+    denomination_preparation,
     statistical_disclosure,
 )
 
@@ -17,5 +18,6 @@ __all__ = [
     "eve_alice_eve",
     "provenance_decay",
     "perfect_matching_disclosure",
+    "denomination_preparation",
     "statistical_disclosure",
 ]
