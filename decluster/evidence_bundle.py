@@ -250,7 +250,7 @@ def load_bundle(path) -> EvidenceBundle:
     if BlobRole.RUN_MANIFEST not in roles:
         raise ManifestError(f"{where}.blobs: bundle must contain a run manifest")
     if BundleCapability.REPRODUCE_RUNS in capabilities:
-        required_roles = {BlobRole.SOURCE, BlobRole.DEPENDENCY, BlobRole.LOCKFILE, BlobRole.ENVIRONMENT}
+        required_roles = {BlobRole.SOURCE, BlobRole.LOCKFILE, BlobRole.ENVIRONMENT}
         missing = sorted(role.value for role in required_roles - roles)
         if missing:
             raise ManifestError(f"{where}.blobs: reproduction capability missing roles {missing}")
@@ -298,7 +298,7 @@ def assess_reproduction_readiness(bundle: EvidenceBundle, store, root) -> Reprod
 
     roles = {blob.role for blob in bundle.blobs}
     for role in sorted(
-        {BlobRole.SOURCE, BlobRole.DEPENDENCY, BlobRole.LOCKFILE, BlobRole.ENVIRONMENT} - roles,
+        {BlobRole.SOURCE, BlobRole.LOCKFILE, BlobRole.ENVIRONMENT} - roles,
         key=lambda item: item.value,
     ):
         add(ReadinessIssueKind.REQUIRED_ROLE_MISSING, role.value, "bundle blob role")

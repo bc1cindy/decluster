@@ -1,0 +1,54 @@
+{
+  "schema_version": 1,
+  "id": "intersection-cluster-fixture-v1",
+  "capabilities": ["verify_outputs", "reproduce_runs"],
+  "runs": ["intersection-cluster-fixture-v1"],
+  "blobs": [
+    {
+      "name": "catalog/runs/intersection-cluster-fixture-v1.json",
+      "role": "run_manifest",
+      "bytes": 2489,
+      "sha256": "623ddad44c59bb191cf6e777c0a33ca86ca9c753f6a1777032fa41b8671645ce",
+      "locations": {"canonical": null, "mirrors": []}
+    },
+    {
+      "name": "results/artifacts/intersection-cluster-fixture-v1.json",
+      "role": "result",
+      "bytes": 1869,
+      "sha256": "2114e568b91808536c94ddb307a4688e3be32720bcb768ef9bb790ef673d0fe5",
+      "locations": {"canonical": null, "mirrors": []}
+    },
+    {
+      "name": "results/generated/intersection-cluster-fixture-v1.md",
+      "role": "result",
+      "bytes": 385,
+      "sha256": "3fd9f9bf57e30f4b92851852efa24e4af2201c705c39391d9451b68689005434",
+      "locations": {"canonical": null, "mirrors": []}
+    },
+    {
+      "name": "sources/decluster-6853a94-runtime.tar",
+      "role": "source",
+      "bytes": 1136640,
+      "sha256": "83f6a0028aa088f03272e41d594c9943cfa54005d3c75a8f9e68f1b5d6abc7f7",
+      "locations": {"canonical": null, "mirrors": []}
+    },
+    {
+      "name": "reproduction/intersection-cluster-fixture/requirements.lock",
+      "role": "lockfile",
+      "bytes": 31,
+      "sha256": "c7d402576511073ed4fcf076c77ffa6b3be124e0a2ef996d2da1cd3b02fbe541",
+      "locations": {"canonical": null, "mirrors": []}
+    },
+    {
+      "name": "reproduction/intersection-cluster-fixture/environment.json",
+      "role": "environment",
+      "bytes": 392,
+      "sha256": "b044769dcac8d3f19aaa0e6ab183d7efed10d6f363119e07f7713e72e3fc3833",
+      "locations": {"canonical": null, "mirrors": []}
+    }
+  ],
+  "limitations": [
+    "The bundled environment currently targets CPython 3.13 on macOS arm64.",
+    "Public bootstrap remains unavailable until every blob has a canonical HTTPS location and an independent mirror."
+  ]
+}

@@ -82,6 +82,30 @@ def test_reproduction_capability_requires_complete_environment_roles(tmp_path):
         load_bundle(write_index(tmp_path, raw))
 
 
+def test_reproduction_capability_allows_a_dependency_free_environment(tmp_path):
+    raw = index_for(b"manifest")
+    raw["capabilities"].append("reproduce_runs")
+    for role, name, payload in (
+        ("source", "sources/source.tar", b"source"),
+        ("lockfile", "reproduction/run/requirements.lock", b"# No third-party dependencies.\n"),
+        ("environment", "reproduction/run/environment.json", b"environment"),
+    ):
+        raw["blobs"].append({
+            "name": name,
+            "role": role,
+            "bytes": len(payload),
+            "sha256": hashlib.sha256(payload).hexdigest(),
+            "locations": {
+                "canonical": "https://primary.invalid/blob",
+                "mirrors": ["https://mirror.invalid/blob"],
+            },
+        })
+
+    bundle = load_bundle(write_index(tmp_path, raw))
+
+    assert all(blob.role.value != "dependency" for blob in bundle.blobs)
+
+
 @pytest.mark.parametrize("mutation", [
     lambda raw: raw["blobs"].append(dict(raw["blobs"][0])),
     lambda raw: raw["capabilities"].append("verify_outputs"),
@@ -131,9 +155,12 @@ def test_bootstrap_preserves_divergent_destination(tmp_path):
     assert target.read_bytes() == b"local work"
 
 
-def test_committed_bundle_reports_only_public_distribution_blockers():
+@pytest.mark.parametrize(
+    "index", sorted((Path(__file__).resolve().parents[1] / "releases").glob("*.bundle.json"))
+)
+def test_committed_bundle_reports_only_public_distribution_blockers(index):
     root = Path(__file__).resolve().parents[1]
-    bundle = load_bundle(root / "releases" / "exact-oracle-evidence-v1.bundle.json")
+    bundle = load_bundle(index)
     readiness = assess_reproduction_readiness(bundle, root / "artifacts", root)
     assert readiness.status is ReproductionStatus.BLOCKED
     kinds = {issue.kind for issue in readiness.issues}

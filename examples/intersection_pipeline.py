@@ -105,7 +105,8 @@ def default_cluster_fn():
 
 
 def run(seeds=None, get_tx=fetch_tx, get_outspends=fetch_outspends,
-        signature_of=None, ancestry_report_of=None, cluster_fn=None, max_depth=3):
+        signature_of=None, ancestry_report_of=None, cluster_fn=None, max_depth=3,
+        intersection_options=None):
     """Walk, intersect, and score. Returns one dict per co-spend candidate.
 
     `ancestry_report_of` is the preferred interface: one typed result binds a
@@ -134,7 +135,9 @@ def run(seeds=None, get_tx=fetch_tx, get_outspends=fetch_outspends,
                 op: report.as_legacy()[0] for op, report in ancestry_reports.items()
             }
             entry["narrowing"] = evaluate_ancestry_reports(
-                candidate, ancestry_reports.__getitem__
+                candidate,
+                ancestry_reports.__getitem__,
+                **(intersection_options or {}),
             ).as_legacy()
         elif signature_of is not None:
             # Computed once: the narrowing reads them, and the engine's
