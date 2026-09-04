@@ -43,7 +43,8 @@ subsampled fixture would assert a different number.
 | refusal shares (declining CIOH) | `test_cluster_refined.py`, `test_cluster.py` | `slice_2026.ndjson` |
 | cross-view matcher precision vs baseline **(direction — owes migration, see state 5)** | `test_view_match.py` | `slice_2026.ndjson` |
 | (ε,δ) feature sparsity survival | `test_def1_sparsity.py` | `slice_2026.ndjson` |
-| fingerprint-regime / em-m / weight-sensitivity | `test_fingerprint_ns.py`, `test_fs_em.py` | `.blkcache/` |
+| fingerprint-regime / weight-sensitivity | `test_fingerprint_ns.py` | `.blkcache/` |
+| per-axis EM diagnostic (`RESULTS-em-m.md`; exact snapshot rerun; historical 165,832-transaction table not reproduced) | `test_fs_em.py`, `test_em_m_experiment.py` | `data/fs-blkcache-2026-09-04.tar.gz` |
 | pair-level Bayesian vs Fellegi-Sunter (`RESULTS-bayes-vs-fs.md`; exact snapshot rerun; historical handwritten table not reproduced) | `test_fs_bayes.py`, `test_bayes_vs_fs_experiment.py` | `data/fs-blkcache-2026-09-04.tar.gz` |
 | cluster-bits, graph-shape, contraction | `test_cluster_bits.py`, `test_graph_shape.py`, `test_views.py` | `slice_2026.ndjson` |
 | entropy overcount, provenance overlap | `test_metric.py`, `test_provenance*.py` | live / `.cache/` |
