@@ -1,0 +1,44 @@
+{
+  "schema_version": 1,
+  "id": "fs-blkcache-2026-09-04-v1",
+  "title": "Fellegi-Sunter block transaction snapshot",
+  "kind": "immutable_snapshot",
+  "schema": "mempool-space-block-transaction-pages-v1",
+  "format": "tar.gz",
+  "content": {
+    "bytes": 33352455,
+    "sha256": "5a69f6f446dbdfcce09dddc91c653e5d841124d14020b720fdea276315c775a6"
+  },
+  "locations": {
+    "local_path": "data/fs-blkcache-2026-09-04.tar.gz",
+    "canonical": null,
+    "mirrors": []
+  },
+  "source": {
+    "provider": "project-provided public Bitcoin on-chain snapshot",
+    "snapshot_time": "2026-09-04",
+    "recipe": null,
+    "recipe_sha256": null
+  },
+  "license": {
+    "data": "redistribution authorized by snapshot provider",
+    "recipe": null
+  },
+  "redistribution": "allowed",
+  "sensitivity": "public_on_chain",
+  "normalization": {
+    "code_revision": null,
+    "parameters": {
+      "files": 904,
+      "archive_path": ".blkcache",
+      "compression": "gzip -n -9",
+      "historical_directory_digest": "91c444bd4e9715d7739ccc9d68c7d9751762e25b647e3eef647c6ec0b48ba90c"
+    },
+    "parents": []
+  },
+  "determinism": {
+    "ordering": "lexicographic archive path order",
+    "rng_algorithm": null,
+    "rng_seed": null
+  }
+}

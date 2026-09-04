@@ -1,0 +1,16 @@
+{
+  "schema_version": 1,
+  "id": "ns-bitcoin-left-2016-v1",
+  "title": "N-S Bitcoin left observation window",
+  "kind": "immutable_snapshot",
+  "schema": "bitcoin-address-flow-ndjson-v1",
+  "format": "ndjson.gz",
+  "content": {"bytes": 23234649, "sha256": "069d207b44dcbbeaec0fae98262a3fcb76b3fe834834609e67fe883e229f26d3"},
+  "locations": {"local_path": "data/ns-bitcoin-2016-v1/left-391992-392111.ndjson.gz", "canonical": null, "mirrors": []},
+  "source": {"provider": "project-provided public Bitcoin on-chain snapshot", "snapshot_time": "2026-09-04", "recipe": "decluster/ns_bitcoin_snapshot.py", "recipe_sha256": "0b05957e99c38e9f56bc390437b3ca220018c3d873f6c3b60c649983b06d5605"},
+  "license": {"data": "redistribution authorized by snapshot provider", "recipe": "MIT"},
+  "redistribution": "allowed",
+  "sensitivity": "public_on_chain",
+  "normalization": {"code_revision": null, "parameters": {"minimum_height": 391992, "maximum_height": 392111, "records": 133576, "gzip_mtime": 0}, "parents": []},
+  "determinism": {"ordering": "source record order", "rng_algorithm": null, "rng_seed": null}
+}

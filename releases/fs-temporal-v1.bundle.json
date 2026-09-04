@@ -1,0 +1,19 @@
+{
+  "schema_version": 1,
+  "id": "fs-temporal-v1",
+  "capabilities": ["verify_outputs", "reproduce_runs"],
+  "runs": ["fs-temporal-v1"],
+  "blobs": [
+    {"name": "catalog/runs/fs-temporal-v1.json", "role": "run_manifest", "bytes": 2584, "sha256": "b223662d6aa614fb9229256e25921992b435f1804c481df5b74d543d8e9bb3ff", "locations": {"canonical": null, "mirrors": []}},
+    {"name": "data/fs-blkcache-2026-09-04.tar.gz", "role": "dataset", "bytes": 33352455, "sha256": "5a69f6f446dbdfcce09dddc91c653e5d841124d14020b720fdea276315c775a6", "locations": {"canonical": null, "mirrors": []}},
+    {"name": "results/artifacts/fs-temporal-v1.json", "role": "result", "bytes": 4694, "sha256": "490a0f4e7b3452093915bd7dc44ef393048912ff21ead36fdf9be74736f832a9", "locations": {"canonical": null, "mirrors": []}},
+    {"name": "results/generated/fs-temporal-v1.md", "role": "result", "bytes": 408, "sha256": "17fa4bb1843852a63936de74e550eb5f293822b0a3b16b33e3b527e5f57e8ff5", "locations": {"canonical": null, "mirrors": []}},
+    {"name": "sources/decluster-f8c2b39-runtime.tar", "role": "source", "bytes": 931840, "sha256": "59d37ac112bf298b9f6b9ab91e735dd0dee46903d70ace03b701479a2ddbf3c2", "locations": {"canonical": null, "mirrors": []}},
+    {"name": "reproduction/fs-temporal/requirements.lock", "role": "lockfile", "bytes": 30, "sha256": "e0d6a8cada5d383c0aca2bd2a37f28c15721392469c94084128d369c29c5544d", "locations": {"canonical": null, "mirrors": []}},
+    {"name": "reproduction/fs-temporal/environment.json", "role": "environment", "bytes": 358, "sha256": "481fde6d0c8000be3abda0a4ac81a5a4052224cfb8840b15f3413703713551d9", "locations": {"canonical": null, "mirrors": []}}
+  ],
+  "limitations": [
+    "The bundled environment currently targets CPython 3.13 on macOS arm64.",
+    "Public bootstrap remains unavailable until every blob has a canonical HTTPS location and an independent mirror."
+  ]
+}

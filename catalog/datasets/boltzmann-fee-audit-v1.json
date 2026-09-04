@@ -1,0 +1,16 @@
+{
+  "schema_version": 1,
+  "id": "boltzmann-fee-audit-v1",
+  "title": "Fee-allocation audit transaction population",
+  "kind": "immutable_snapshot",
+  "schema": "bitcoin-transaction-array-v1",
+  "format": "json",
+  "content": {"bytes": 309025, "sha256": "17ee62e307d34660be2c4f50382a63ba044d0ad67f0674873e304d0b8203dc1c"},
+  "locations": {"local_path": "data/boltzmann-fee-audit-v1.json", "canonical": null, "mirrors": []},
+  "source": {"provider": "project-provided public Bitcoin on-chain export", "snapshot_time": "2026-09-04", "recipe": "decluster/boltzmann_fee_snapshot.py", "recipe_sha256": "e881ede4c7e0ea530f2853fd9aec87ba7650149a2d98986ed3fa0f98b191ccec"},
+  "license": {"data": "redistribution authorized by snapshot provider", "recipe": "MIT"},
+  "redistribution": "allowed",
+  "sensitivity": "public_on_chain",
+  "normalization": {"code_revision": null, "parameters": {"cap": 300, "max_coins": 8, "records": 300}, "parents": []},
+  "determinism": {"ordering": "first eligible transactions in source order", "rng_algorithm": null, "rng_seed": null}
+}

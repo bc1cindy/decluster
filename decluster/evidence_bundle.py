@@ -477,6 +477,15 @@ def _run_checked(argv, *, cwd, env=None):
         raise BundleReproductionError(f"command failed: {argv!r}") from exc
 
 
+def _resolve_dataset_arguments(argv, manifest, datasets, root):
+    """Resolve declared dataset paths against the materialized bundle root."""
+    replacements = {}
+    for dataset_input in manifest.datasets:
+        dataset = datasets[dataset_input.id]
+        replacements[dataset.local_path] = str(_safe_target(root, dataset.local_path))
+    return [replacements.get(argument, argument) for argument in argv]
+
+
 def reproduce_bundle(bundle: EvidenceBundle, root, work, *, interpreter=sys.executable):
     """Reexecute every declared run using only materialized bundle contents.
 
@@ -530,9 +539,17 @@ def reproduce_bundle(bundle: EvidenceBundle, root, work, *, interpreter=sys.exec
             claim_ids={claim.id for claim in claims},
             datasets=datasets,
         )
-        argv = [str(python), *manifest.argv[1:]]
+        argv = _resolve_dataset_arguments(
+            [str(python), *manifest.argv[1:]], manifest, datasets, root
+        )
         _run_checked(argv, cwd=checkout, env=environment)
-        _run_checked([str(python), *manifest.verification.argv[1:]], cwd=checkout, env=environment)
+        verification_argv = _resolve_dataset_arguments(
+            [str(python), *manifest.verification.argv[1:]],
+            manifest,
+            datasets,
+            root,
+        )
+        _run_checked(verification_argv, cwd=checkout, env=environment)
         for output in manifest.outputs:
             path = _safe_target(checkout, output.path)
             actual = content_identity(path)

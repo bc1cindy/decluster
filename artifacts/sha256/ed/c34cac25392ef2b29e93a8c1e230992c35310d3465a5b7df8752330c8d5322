@@ -1,0 +1,13 @@
+{
+  "schema_version": 1,
+  "python": {
+    "implementation": "cpython",
+    "version": "3.13",
+    "system": "Darwin",
+    "machine": "arm64"
+  },
+  "source_archive": "sources/decluster-a18b775-runtime.tar",
+  "project_root": "decluster",
+  "requirements": "reproduction/fs-ablation/requirements.lock",
+  "dependency_directory": "reproduction/fs-ablation"
+}
