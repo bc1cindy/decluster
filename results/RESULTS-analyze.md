@@ -86,18 +86,15 @@ worst-case min-entropy. Reported as theory alignment, not a fusion failure — t
 independently demonstrated (the 38% own-tx figure above; the controlled fixture in `RESULTS-e2e.md`
 lowering 1.0 → 0.304 bits; `tests/test_analyze.py`'s conservative-clamp + sharpening tests).
 
-## §07 path counting — now shipped, opt-in via `analyze(path_count=True)`
+## Provenance route accumulation, opt-in via `analyze(path_count=True)`
 
-Depth-5 over coinjoins is intractable because the walk enumerates the ancestral graph explicitly. The
-refs' §07 (*path-like anonymity set*) is the alternative object — counting the counterfactual *paths*
-through the graph. This is now BUILT: `decluster.path_count.path_count_anonymity` (a concrete §07
-instance: the provenance distribution over ancestral origins, weighted by link probability alone —
-an earlier revision folded in the per-edge path multiplicity `W(E)` and that term has been withdrawn),
-reachable via `analyze(path_count=True)`, backed by `dss.w_count` (the crate's feasibility-cascade
-count dispatcher: brute → dp → sparse → sasamoto). Real numbers and its honest limits (it does not extend the tractable
-envelope; it adds the §07 path-multiplicity lens) are in `results/RESULTS-path-count.md`. The original
-motivating analysis — "is dss sufficient, and what did decluster expose at the time" — is in
-`results/RESULTS-path-counting-analysis.md` (now superseded by the shipped object).
+`analyze(path_count=True)` retains its public response key for compatibility, but the implementation
+is canonically named `provenance_route_accumulation`. It accumulates link-probability mass over the
+same ancestry routes and does not use `dss.w_count`. It neither extends the tractable envelope nor
+implements the CTP robust-connectivity contract. In particular, it does not enumerate edge-disjoint
+paths, impose plausible-flow capacity or implement k-routes. The executable distinction is in
+`catalog/runs/path-count-contract-v1.json`; the original motivating analysis remains historical in
+`results/RESULTS-path-counting-analysis.md`.
 
 ## Honest limits
 
