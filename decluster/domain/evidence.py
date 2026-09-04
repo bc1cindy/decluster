@@ -205,6 +205,42 @@ class AbstentionEvidence:
             raise ValueError("abstention reason must not be empty")
 
 
+@dataclass(frozen=True)
+class CandidateEliminationEvidence:
+    subject: Subject
+    candidates_before: frozenset[Subject]
+    eliminated: frozenset[Subject]
+    context: EvidenceContext
+
+    def __post_init__(self) -> None:
+        if not self.candidates_before:
+            raise ValueError("candidate elimination requires an initial set")
+        if not self.eliminated:
+            raise ValueError("candidate elimination requires removed candidates")
+        if not self.eliminated <= self.candidates_before:
+            raise ValueError("eliminated candidates must belong to the initial set")
+
+    @property
+    def candidates_after(self) -> frozenset[Subject]:
+        return self.candidates_before - self.eliminated
+
+
+@dataclass(frozen=True)
+class GraphFractureEvidence:
+    removed: frozenset[Subject]
+    components_before: int
+    components_after: int
+    context: EvidenceContext
+
+    def __post_init__(self) -> None:
+        if not self.removed:
+            raise ValueError("graph fracture requires removed subjects")
+        if self.components_before < 1:
+            raise ValueError("components_before must be positive")
+        if self.components_after <= self.components_before:
+            raise ValueError("graph fracture must increase the component count")
+
+
 Evidence: TypeAlias = Union[
     OwnershipLikelihoodEvidence,
     CannotLinkEvidence,
@@ -215,4 +251,6 @@ Evidence: TypeAlias = Union[
     IntersectionEvidence,
     FlowConstraintEvidence,
     AbstentionEvidence,
+    CandidateEliminationEvidence,
+    GraphFractureEvidence,
 ]

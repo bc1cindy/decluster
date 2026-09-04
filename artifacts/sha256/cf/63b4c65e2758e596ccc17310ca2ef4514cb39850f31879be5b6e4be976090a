@@ -1,0 +1,81 @@
+{
+  "schema_version": 1,
+  "id": "provenance-decay-v1",
+  "claim_ids": ["ctp.provenance.traceability"],
+  "code": {
+    "revision": "57f6599f278e8ac3cb473852534805742208c600",
+    "dirty": false
+  },
+  "command": {
+    "argv": [
+      "python",
+      "-m",
+      "decluster.experiments.provenance_decay",
+      "reproduce",
+      "--artifact",
+      "results/artifacts/provenance-decay-v1.json",
+      "--markdown",
+      "results/generated/provenance-decay-v1.md"
+    ]
+  },
+  "environment": {
+    "python": "3.13.7",
+    "lock_digest": "c7d402576511073ed4fcf076c77ffa6b3be124e0a2ef996d2da1cd3b02fbe541",
+    "platform": "macOS-26.6.2-arm64-arm-64bit-Mach-O",
+    "dependencies": []
+  },
+  "datasets": [],
+  "parameters": {
+    "candidate_origins": 3,
+    "removed_auxiliaries": 1,
+    "controls": ["bridge", "peripheral"]
+  },
+  "rng": {"algorithm": null, "seeds": []},
+  "outputs": [
+    {
+      "path": "results/artifacts/provenance-decay-v1.json",
+      "bytes": 502,
+      "sha256": "879dc6c49619b18d267fd30510472da99e341b6a3eebef6d6ab65faf319c2e9c"
+    },
+    {
+      "path": "results/generated/provenance-decay-v1.md",
+      "bytes": 357,
+      "sha256": "e09b7649b43e9238da355048e2205281c00f63c1e08b230c2a3588b7efb94ab8"
+    }
+  ],
+  "reproducibility": {
+    "level": "bitwise_reproducible",
+    "availability": "complete"
+  },
+  "verification": {
+    "mode": "exact",
+    "argv": [
+      "python",
+      "-m",
+      "decluster.experiments.provenance_decay",
+      "verify",
+      "--artifact",
+      "results/artifacts/provenance-decay-v1.json",
+      "--markdown",
+      "results/generated/provenance-decay-v1.md"
+    ],
+    "tests": [
+      "tests/test_provenance_decay.py",
+      "tests/test_provenance_decay_experiment.py"
+    ],
+    "properties": [
+      "bridge and peripheral controls eliminate the same number of candidates",
+      "only bridge removal increases the connected-component count",
+      "additive elimination and structural fracture remain separate evidence",
+      "component growth is not represented as an exponential-rate measurement",
+      "the generated Markdown equals the canonical rendering"
+    ],
+    "tolerance": null
+  },
+  "limitations": [
+    "synthetic fixture",
+    "candidate origins, graph edges, and auxiliary labels are supplied",
+    "flow plausibility and private adversary information are not modeled",
+    "the run does not establish an exponential deanonymization rate"
+  ]
+}
