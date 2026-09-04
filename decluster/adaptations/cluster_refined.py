@@ -11,11 +11,14 @@ from typing import Any, Iterable
 
 from ..cluster import cluster_refined
 from ..domain import (
+    AttackReport,
     CannotLinkEvidence,
     ClusterMerge,
     Direction,
     EvidenceContext,
+    EvidenceChannel,
     MergeRefused,
+    NotObserved,
     OwnershipLikelihoodEvidence,
     Subject,
     SubjectKind,
@@ -57,6 +60,34 @@ class ClusterRefinementReport:
             [list(group) for group in self.groups],
             list(self.legacy_refusals),
             list(self.legacy_links),
+        )
+
+    def as_attack_report(self, identifier: str) -> AttackReport:
+        """Describe the legacy engine's observable decisions without composition."""
+        reported = self.merge_refusals + self.added_links
+        outcomes = reported or (NotObserved("merge refusal or additional fingerprint link"),)
+        by_algorithm = {}
+        for outcome in reported:
+            for item in outcome.evidence:
+                by_algorithm.setdefault(item.context.algorithm, []).append(item)
+        subjects = tuple(
+            _transaction(node)
+            for node in dict.fromkeys(node for group in self.groups for node in group)
+        )
+        channels = tuple(
+            EvidenceChannel(channel_id, tuple(items))
+            for channel_id, items in sorted(by_algorithm.items())
+        )
+        return AttackReport(
+            identifier=identifier,
+            attack="fingerprint-aware cluster refinement",
+            subjects=subjects,
+            channels=channels,
+            outcomes=outcomes,
+            limitations=(
+                "the legacy engine reports refusals and added fingerprint links, "
+                "not every accepted co-spend merge",
+            ),
         )
 
 
@@ -103,7 +134,8 @@ def _refusal(record: LegacyRefusal) -> MergeRefused:
         subject,
         target,
         tuple(evidence),
-        f"merge refused in spending transaction {spending_txid}; reported fused evidence {fused_bits:g} bits",
+        f"merge refused in spending transaction {spending_txid}; "
+        f"reported fused evidence {fused_bits:g} bits",
     )
 
 

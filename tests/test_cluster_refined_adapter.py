@@ -21,6 +21,15 @@ def test_adapter_preserves_legacy_result_and_types_refusal(monkeypatch):
     assert type(report.merge_refusals[0]) is MergeRefused
     assert report.added_links == ()
 
+    attack_report = report.as_attack_report("refusal-fixture")
+    assert attack_report.composition is None
+    assert [channel.identifier for channel in attack_report.channels] == [
+        "cluster_refined",
+        "cluster_refined.amount",
+        "cluster_refined.fingerprint",
+    ]
+    assert attack_report.outcomes == report.merge_refusals
+
 
 def test_adapter_preserves_legacy_result_and_types_added_link(monkeypatch):
     legacy = ([['a', 'b']], [], [('a', 'b', 6.0)])
@@ -48,3 +57,6 @@ def test_adapter_materializes_a_single_pass_node_iterable(monkeypatch):
 
     assert observed == [['a', 'b']]
     assert report.groups == (('a', 'b'),)
+    attack_report = report.as_attack_report("no-reported-decisions")
+    assert attack_report.channels == ()
+    assert attack_report.outcomes[0].observable == "merge refusal or additional fingerprint link"

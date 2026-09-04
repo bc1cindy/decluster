@@ -27,10 +27,12 @@ from .outcome import (
     Outcome,
     Unsupported,
 )
+from .report import AttackReport, EvidenceChannel, ExperimentalComposition
 
 __all__ = [
     "AbstentionEvidence",
     "Attribution",
+    "AttackReport",
     "CandidateSetEvidence",
     "CannotLinkEvidence",
     "ClusterMerge",
@@ -38,6 +40,8 @@ __all__ = [
     "Direction",
     "Evidence",
     "EvidenceContext",
+    "EvidenceChannel",
+    "ExperimentalComposition",
     "FlowConstraintEvidence",
     "IntersectionEvidence",
     "MappingEvidence",
