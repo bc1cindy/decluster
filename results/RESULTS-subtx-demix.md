@@ -1,32 +1,23 @@
-# Coinjoin de-mix — amount channel
+# Subtransaction de-mix diagnostic
 
-The amount channel de-mixes a coinjoin by matching each participant's input to the mix denomination
-plus their change output, minus a bounded maker fee: `input = mix + change − fee`
-(`decluster/coinjoin_demix.py`). Two co-spent inputs assigned to different participants are
-conclusively different owners (`amount_refuse_demix` → refuse), fused with the fingerprint and
-cluster-level topology channels in `cluster_refined`.
+Canonical run: `catalog/runs/subtx-demix-v1.json`.
 
-## Worked de-anonymisation (real JoinMarket coinjoin)
+The executable summary is `results/generated/subtx-demix-v1.md`; the complete
+measurement is `results/artifacts/subtx-demix-v1.json`. The internal dataset
+preserves 39 cache JSON files containing 36 transactions and three outspend
+responses.
 
-`0cb4870cf2dfa3877851088c673d163ae3c20ebcd6505c0be964d8fbcc856bbf` — 11 participants, mix denomination
-6357366 sats. The de-mix recovers **8 of the makers** uniquely (`examples/coinjoin_demix_demo.py`),
-with maker fees `[191, 413, 458, 559, 623, 636, 687, 973]` sats. The remaining inputs (the taker and a
-multi-input maker) are left unmatched. `joinmarket_analyzer` is the published de-mix this design
-follows; no run of it was compared against, so the agreement claimed here is of method, not of output.
+For JoinMarket transaction `0cb4870c…856bbf`, the amount identity recovers eight
+of twelve inputs, with implied fees of 191, 413, 458, 559, 623, 636, 687 and 973
+satoshis. This reproduces the mechanism, not participant identities: there are
+no independent maker labels.
 
-## Dense coinjoins are amount-private
+The historical specificity claim is not supported. Of 25 width-eligible
+transactions in this CoinJoin-adjacent cache, 22 trigger the heuristic. The
+cache has no labels establishing that those transactions are ordinary payments,
+so this is neither a false-positive rate nor evidence of specificity. The six
+historical Wasabi rounds are not preserved and their zero-recovery claim is not
+reproduced.
 
-On the labelled Wasabi 2 coinjoins the de-mix recovers **0** participants — Wasabi 2's dense
-denomination tiers defeat the match, so the coinjoins are amount-private and the fingerprint +
-cluster-level topology channels carry the decision. This is the correct, decidability-dependent outcome.
-
-## Specificity
-
-Ordinary and batch payments have no mix+change+maker-fee structure, so the de-mix recovers no
-participants (`examples/subtx_demix_specificity.py`) — it does not false-fire on single-owner txs.
-
-## Fused with fingerprints (one engine)
-
-The de-mix refuse is summed with the fingerprint and topology bits in `cluster_refined`
-(`base[k] = cospend_prior + fp + refuse + topology`) and decided by one fixed-point
-(`tests/test_amount_fingerprint_fusion.py`).
+The fee cap and most-common-output detector are local modeling choices. This is
+attacker-side de-mix evidence, not CoinScore or a privacy certificate.

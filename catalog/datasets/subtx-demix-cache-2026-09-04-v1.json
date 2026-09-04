@@ -1,0 +1,16 @@
+{
+  "schema_version": 1,
+  "id": "subtx-demix-cache-2026-09-04-v1",
+  "title": "CoinJoin-adjacent transaction cache for de-mix diagnostics",
+  "kind": "immutable_snapshot",
+  "schema": "mempool-space-transaction-json-v1",
+  "format": "tar.gz",
+  "content": {"bytes": 114994, "sha256": "191c8c2f082ac84af71b28a70169207d785243a276cf5b6e472ae6f5588a65a6"},
+  "locations": {"local_path": "data/subtx-demix-cache-2026-09-04.tar.gz", "canonical": null, "mirrors": []},
+  "source": {"provider": "project-provided public Bitcoin on-chain cache", "snapshot_time": "2026-09-04", "recipe": null, "recipe_sha256": null},
+  "license": {"data": "redistribution authorized by snapshot provider", "recipe": null},
+  "redistribution": "allowed",
+  "sensitivity": "public_on_chain",
+  "normalization": {"code_revision": null, "parameters": {"archive_path": ".cache", "json_files": 39, "compression": "gzip -n -9"}, "parents": []},
+  "determinism": {"ordering": "archive order as preserved", "rng_algorithm": null, "rng_seed": null}
+}
