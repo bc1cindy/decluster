@@ -16,6 +16,7 @@ MANIFESTS = sorted(glob.glob(os.path.join(ROOT, "results", "manifests", "*.json"
 MIGRATED_RUN_DOCS = {
     "RESULTS-analyze.md": "catalog/runs/analyze-contract-v1.json",
     "RESULTS-ancestry.md": "catalog/runs/ancestry-contract-v1.json",
+    "RESULTS-ancestry-sparsity.md": "catalog/runs/ancestry-sparsity-v1.json",
     "RESULTS-amount-channel-survey.md": "catalog/runs/amount-channel-survey-v1.json",
     "RESULTS-counting-methods.md": "catalog/runs/counting-methods-v1.json",
     "RESULTS-exact-oracle-audit.md": "catalog/runs/exact-oracle-audit-v1.json",
@@ -56,7 +57,6 @@ def test_every_manifest_names_a_document_that_exists():
 NOT_YET_MIGRATED = {
     "RESULTS-3v23-engine.md",
     "RESULTS-ancestry-crossview-feasibility.md",
-    "RESULTS-ancestry-sparsity.md",
     "RESULTS-anonymity-set-scale.md",
     "RESULTS-anonymity-set.md",
     "RESULTS-attribute-conditioning.md",
