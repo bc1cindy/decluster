@@ -324,6 +324,48 @@ class TransactionFingerprintEvidence:
             raise ValueError("transaction fingerprint feature names must be unique")
 
 
+@dataclass(frozen=True)
+class ContractedTransfer:
+    source: Subject
+    target: Subject
+    transfers: int
+    value: int
+    first_height: int
+    last_height: int
+
+    def __post_init__(self) -> None:
+        _require_pair(self.source, self.target)
+        if self.transfers < 1:
+            raise ValueError("contracted transfer count must be positive")
+        if self.value < 0:
+            raise ValueError("contracted transfer value must be non-negative")
+        if self.first_height < 0 or self.last_height < self.first_height:
+            raise ValueError("contracted transfer height span is invalid")
+
+
+@dataclass(frozen=True)
+class PseudonymGraphEvidence:
+    vertices: tuple[Subject, ...]
+    edges: tuple[ContractedTransfer, ...]
+    self_transfers: tuple[tuple[Subject, int], ...]
+    context: EvidenceContext
+
+    def __post_init__(self) -> None:
+        if not self.vertices or len(set(self.vertices)) != len(self.vertices):
+            raise ValueError("pseudonym graph requires unique vertices")
+        vertices = set(self.vertices)
+        if any(edge.source not in vertices or edge.target not in vertices for edge in self.edges):
+            raise ValueError("contracted transfer endpoint must be a graph vertex")
+        pairs = tuple((edge.source, edge.target) for edge in self.edges)
+        if len(set(pairs)) != len(pairs):
+            raise ValueError("parallel transfers must be folded into one attributed edge")
+        seen = set()
+        for vertex, count in self.self_transfers:
+            if vertex not in vertices or vertex in seen or count < 1:
+                raise ValueError("self-transfer counts require unique graph vertices")
+            seen.add(vertex)
+
+
 Evidence: TypeAlias = Union[
     OwnershipLikelihoodEvidence,
     CannotLinkEvidence,
@@ -339,4 +381,5 @@ Evidence: TypeAlias = Union[
     CorrespondentDistributionEvidence,
     PerfectMatchingEvidence,
     TransactionFingerprintEvidence,
+    PseudonymGraphEvidence,
 ]

@@ -11,6 +11,7 @@ from .evidence import (
     CorrespondentDistributionEvidence,
     PerfectMatchingEvidence,
     TransactionFingerprintEvidence,
+    PseudonymGraphEvidence,
     IntersectionEvidence,
     ProvenanceDistributionEvidence,
     Subject,
@@ -212,6 +213,11 @@ class TransactionFingerprintObserved:
             raise ValueError("fingerprint rule must not be empty")
 
 
+@dataclass(frozen=True)
+class PseudonymGraphConstructed:
+    evidence: PseudonymGraphEvidence
+
+
 Outcome: TypeAlias = Union[
     ClusterMerge,
     MergeRefused,
@@ -232,4 +238,5 @@ Outcome: TypeAlias = Union[
     PersistentCorrespondentRanked,
     MessageAssignmentRecovered,
     TransactionFingerprintObserved,
+    PseudonymGraphConstructed,
 ]
