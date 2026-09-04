@@ -195,6 +195,8 @@ def test_the_results_doc_states_the_contract_and_its_cost():
     doc = open(os.path.join(root, "results", "RESULTS-path-count.md")).read()
     assert "refuse-only" in doc
     assert "no structural property" in doc
+    assert "edge-disjoint" in doc
+    assert "minimum *vertex* cut" not in doc
 
 
 def test_no_document_says_the_walk_weights_by_multiplicity():
