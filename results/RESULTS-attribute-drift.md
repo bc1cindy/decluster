@@ -1,5 +1,15 @@
 # Attribute stability across epochs
 
+> A reproducible projected-drift analysis is defined by
+> `catalog/runs/attribute-drift-v1.json`. Its structured artifact is
+> `results/artifacts/attribute-drift-v1.json`, with canonical rendering in
+> `results/generated/attribute-drift-v1.md`. The preserved aggregate contains 20 value series
+> across 11 axes. Each reproduced distribution therefore consists of those values plus one
+> combined residual category. This reproduces every rounded cell below for `nlocktime` and
+> `low_r`; `version` yields 0.070 rather than 0.071 at gap 120. The other full-distribution rows
+> and the 70/85 volume-coupling summary remain historical. The projected result diagnoses
+> population drift and is neither a clustering score nor a per-cluster distinctiveness result.
+
 **Claim tested.** Cross-view matching contracts two epochs of the coin graph into two
 views of the pseudonym graph, then compares vertices between them. Statistical
 fingerprint distributions are proposed as vertex attributes. Does an attribute mean the

@@ -1,6 +1,6 @@
-import sys, os
-sys.path.insert(0, os.path.dirname(os.path.dirname(__file__)))
-from examples.fingerprint_sparsity import bucket, distribution, LABELS
+import pytest
+
+from decluster.fingerprint_sparsity import LABELS, bucket, distribution, reconstruct_histogram
 
 
 def test_bucket_boundaries():
@@ -30,3 +30,20 @@ def test_distribution_is_complete_and_normalised():
     assert total == sum(counts.values())
     assert set(dist) == set(LABELS)
     assert abs(sum(dist.values()) - 1.0) < 1e-12
+
+
+@pytest.mark.parametrize("value", [0, -1, True, 1.5])
+def test_distribution_rejects_invalid_counts(value):
+    with pytest.raises(ValueError):
+        distribution({"invalid": value})
+
+
+def test_reconstruct_histogram_sums_a_conditional_partition():
+    histogram, total = reconstruct_histogram({
+        "a": {"buckets": {"exactly 1": 2, "2-9": 3}},
+        "b": {"buckets": {"2-9": 4, ">=100,000": 5}},
+    })
+    assert total == 14
+    assert histogram["exactly 1"] == 2
+    assert histogram["2-9"] == 7
+    assert histogram[">=100,000"] == 5

@@ -20,25 +20,15 @@ usage: python3 examples/attribute_drift.py <epochs.jsonl>
 import json
 import sys
 
-GAPS = (1, 2, 3, 7, 14, 21, 30, 60, 90, 120)
-CYCLE = 7
-
-
-def normalise(counts):
-    total = sum(counts.values())
-    return {k: v / total for k, v in counts.items()} if total else {}
-
-
-def total_variation(p, q):
-    return 0.5 * sum(abs(p.get(k, 0.0) - q.get(k, 0.0)) for k in set(p) | set(q))
-
-
-def pearson(xs, ys):
-    n = len(xs)
-    mx, my = sum(xs) / n, sum(ys) / n
-    num = sum((x - mx) * (y - my) for x, y in zip(xs, ys))
-    den = (sum((x - mx) ** 2 for x in xs) * sum((y - my) ** 2 for y in ys)) ** 0.5
-    return num / den if den else 0.0
+from decluster.attribute_drift import (
+    CYCLE,
+    GAPS,
+    cycle_gain,
+    drift,
+    normalise,
+    pearson,
+    total_variation,
+)
 
 
 def load(path):
@@ -49,24 +39,6 @@ def load(path):
         for axis, counts in d["axis_counts"].items():
             axes.setdefault(axis, []).append(normalise(counts))
     return volume, axes
-
-
-def drift(series, gaps):
-    return {g: sum(total_variation(series[i], series[i + g])
-                   for i in range(len(series) - g)) / (len(series) - g)
-            for g in gaps if g < len(series)}
-
-
-def cycle_gain(series, span=3):
-    """Mean drift at multiples of the weekly cycle vs at every other gap in the same
-    range. Below 1.0 means same-weekday epochs really are more comparable."""
-    curve = drift(series, range(1, CYCLE * span + 1))
-    on = [v for g, v in curve.items() if g % CYCLE == 0]
-    off = [v for g, v in curve.items() if g % CYCLE]
-    baseline = sum(off) / len(off) if off else 0.0
-    if not baseline:
-        return 1.0
-    return (sum(on) / len(on)) / baseline
 
 
 def main(path):

@@ -1,5 +1,14 @@
 # Fingerprint N-S regime test: conditioner or sparse quasi-identifier?
 
+> The reproducible 600-transaction comparison is recalculated by
+> `catalog/runs/fingerprint-regime-v1.json`. Its structured artifact is
+> `results/artifacts/fingerprint-regime-v1.json`, with canonical rendering in
+> `results/generated/fingerprint-regime-v1.md`. It falsifies the historical assertion below that
+> the conditioner verdict is stable across weight sources: snapshot-measured weights produce
+> higher N-S-form top-1 than F-S and a within-class mean gap above 0.5. Those weights are fitted and
+> evaluated on the same selected snapshot, so this demonstrates sensitivity rather than universal
+> fingerprint sparsity. The cache-scale and Lumen rows below remain historical.
+
 **Claim tested.** Does the per-tx fingerprint (`decluster/fingerprint_ns.py`: sparse
 `{(axis,value): bits}` signature, agreement-overlap link, `propagate.eccentricity` acceptance
 gap) behave as a **sparse quasi-identifier** — like ancestry — that can pick one individual out

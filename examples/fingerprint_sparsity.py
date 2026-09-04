@@ -16,27 +16,7 @@ import json
 import sys
 from collections import Counter
 
-LABELS = ["exactly 1", "2-9", "10-99", "100-999", "1,000-9,999",
-          "10,000-99,999", ">=100,000"]
-
-
-def bucket(size):
-    if size == 1:
-        return LABELS[0]
-    for i, hi in enumerate((10, 100, 1_000, 10_000, 100_000), start=1):
-        if size < hi:
-            return LABELS[i]
-    return LABELS[-1]
-
-
-def distribution(counts):
-    """counts: vector -> occurrences. Returns bucket -> share of TRANSACTIONS (not vectors)
-    landing in a class of that size, so the reading is "a transaction's own crowd"."""
-    out = Counter()
-    for size in counts.values():
-        out[bucket(size)] += size
-    total = sum(out.values())
-    return {label: out.get(label, 0) / total for label in LABELS}, total
+from decluster.fingerprint_sparsity import LABELS, bucket, distribution
 
 
 def render(name, dist, total):

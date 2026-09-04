@@ -1,7 +1,13 @@
-import sys, os
-sys.path.insert(0, os.path.dirname(os.path.dirname(__file__)))
-from examples.attribute_drift import (normalise, total_variation, pearson, drift,
-                                      cycle_gain, CYCLE)
+import pytest
+
+from decluster.attribute_drift import (
+    CYCLE,
+    cycle_gain,
+    drift,
+    normalise,
+    pearson,
+    total_variation,
+)
 
 
 def test_total_variation_bounds():
@@ -23,6 +29,13 @@ def test_normalise_and_pearson():
     assert abs(pearson([1, 2, 3], [2, 4, 6]) - 1.0) < 1e-12
     assert abs(pearson([1, 2, 3], [6, 4, 2]) + 1.0) < 1e-12
     assert pearson([1, 1, 1], [1, 2, 3]) == 0.0
+
+
+def test_pearson_rejects_empty_or_misaligned_inputs():
+    with pytest.raises(ValueError):
+        pearson([], [])
+    with pytest.raises(ValueError):
+        pearson([1], [1, 2])
 
 
 def test_drift_is_zero_on_a_constant_series():

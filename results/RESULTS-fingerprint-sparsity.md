@@ -1,5 +1,14 @@
 # Fingerprint anonymity sets at survey scale
 
+> The 12-axis whole-window column is recalculated from the preserved aggregate by
+> `catalog/runs/fingerprint-sparsity-v1.json`. Its structured artifact is
+> `results/artifacts/fingerprint-sparsity-v1.json`, with canonical rendering in
+> `results/generated/fingerprint-sparsity-v1.md`. All conditional partitions preserved in the
+> aggregate reconstruct the same histogram. The 19-axis and single-epoch columns below remain
+> historical because their source vectors or histograms were not preserved. The reproduced result
+> measures exact-vector equivalence classes, not general nearest-neighbour sparsity, cluster
+> distributions or successful attribution.
+
 **Claim tested.** The Narayanan–Shmatikov results require a *sparse* feature space: most
 records have no close neighbours. Wallet-construction fingerprints are the obvious
 candidate feature space on Bitcoin. Are they sparse?

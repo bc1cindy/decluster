@@ -1,0 +1,20 @@
+{
+  "schema_version": 1,
+  "id": "fingerprint-validation-v1",
+  "capabilities": ["verify_outputs", "reproduce_runs"],
+  "runs": ["fingerprint-validation-v1"],
+  "blobs": [
+    {"name": "catalog/runs/fingerprint-validation-v1.json", "role": "run_manifest", "bytes": 2708, "sha256": "15fee3f11712afabaa9588d34c2dffd865693bb8b5d1054b7ad247dca7abaa8b", "locations": {"canonical": null, "mirrors": []}},
+    {"name": "tests/fixtures/fingerprint_blkcache_sample.json", "role": "dataset", "bytes": 1701974, "sha256": "406ce2d7d0a04f7c73281bce6b6a781012a8765e079693f010a0154e926c6a6c", "locations": {"canonical": "https://github.com/bc1cindy/decluster/raw/2f1bbae5ac4923ff7b799b25be0dd66b4ec3f692/tests/fixtures/fingerprint_blkcache_sample.json", "mirrors": []}},
+    {"name": "results/artifacts/fingerprint-validation-v1.json", "role": "result", "bytes": 1042, "sha256": "092d3d764b821ac112554e9aad54349ab92e9b87af003fee690bdc4eb9dcf572", "locations": {"canonical": null, "mirrors": []}},
+    {"name": "results/generated/fingerprint-validation-v1.md", "role": "result", "bytes": 590, "sha256": "2fe5d3f085bb7b93ba2d275b442bb31f6ba8c1e95ca670c726474f2c874b0eea", "locations": {"canonical": null, "mirrors": []}},
+    {"name": "sources/decluster-a2c4f67-runtime.tar", "role": "source", "bytes": 1187840, "sha256": "301d46a38160279c146571afeed0d532836f369c5b48733e9565efc370040ddd", "locations": {"canonical": null, "mirrors": []}},
+    {"name": "reproduction/fingerprint-validation/requirements.lock", "role": "lockfile", "bytes": 0, "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855", "locations": {"canonical": null, "mirrors": []}},
+    {"name": "reproduction/fingerprint-validation/environment.json", "role": "environment", "bytes": 380, "sha256": "7a588bb17d9afa7321141c29d536b1977f7a3ea769f29727643c307f3734a869", "locations": {"canonical": null, "mirrors": []}}
+  ],
+  "limitations": [
+    "The bundled environment currently targets CPython 3.13 on macOS arm64.",
+    "The dataset origin is public, but its cataloged redistribution status remains unknown.",
+    "Public bootstrap remains incomplete until every blob has a canonical HTTPS location and an independent mirror."
+  ]
+}
