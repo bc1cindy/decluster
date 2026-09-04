@@ -2,7 +2,9 @@
 multi-output tx, to pin down that a coin's vout indexes the matrix COLUMN it occupies (not the
 row, not some other coin's vout). Single-output fakes (vout=0 everywhere) can't catch a
 matrix[vout][i]-vs-matrix[i][vout] transpose or an off-by-one fee-column drop; this can."""
-import dss
+import pytest
+
+dss = pytest.importorskip("dss", reason="requires the optional dense-subset-sum extension")
 import pytest
 from decluster import ancestry
 
