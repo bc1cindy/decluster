@@ -3,6 +3,11 @@ import pytest
 from decluster import ancestry
 
 
+def test_truncation_support_rejects_negative_counts():
+    with pytest.raises(ValueError, match="non-negative"):
+        ancestry.TruncationSupport(oracle_refused=-1, node_capped=0)
+
+
 def _g(transient, absorbers, edges, truncated=0):
     g = ancestry.Graph()
     g.transient, g.absorbers, g.edges, g.truncated = transient, absorbers, edges, truncated

@@ -63,11 +63,16 @@ class TruncationSupport:
     unattributed: int = 0
     zero_link_mass: int = 0
 
+    def __post_init__(self):
+        if min(self.oracle_refused, self.node_capped, self.unattributed,
+               self.zero_link_mass) < 0:
+            raise ValueError("truncation counts must be non-negative")
+
     @property
-    def total(self):
+    def total(self) -> int:
         return self.oracle_refused + self.node_capped + self.unattributed + self.zero_link_mass
 
-    def __bool__(self):
+    def __bool__(self) -> bool:
         # Without this an all-zero support is truthy, so a caller's `if truncated:` — written
         # against the old bare int — would flip silently instead of failing where `>=` does.
         return self.total > 0
@@ -371,7 +376,7 @@ def ancestry_signature(target, depth=6, fetch=None, link_oracle=value_flow_link_
 
 
 def ancestry_signature_and_truncation(
-    target, depth=6, fetch=None, link_oracle=value_flow_link_oracle
+    target, depth=6, fetch=None, link_oracle=value_flow_link_oracle, max_nodes=None
 ):
     """The signature, plus a `TruncationSupport` over the absorbers that carry its mass.
 
@@ -382,7 +387,13 @@ def ancestry_signature_and_truncation(
     if fetch is None:
         from .fetch import fetch_tx
         fetch = fetch_tx
-    g = build_extended_graph(target, depth=depth, fetch=fetch, link_oracle=link_oracle)
+    g = build_extended_graph(
+        target,
+        depth=depth,
+        fetch=fetch,
+        link_oracle=link_oracle,
+        max_nodes=max_nodes,
+    )
     sig = absorber_distribution(g, target)
     return sig, truncated_support(sig, g)
 
