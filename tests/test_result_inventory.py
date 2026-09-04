@@ -40,3 +40,11 @@ def test_unregistered_markdown_is_not_presented_as_reproducible():
     conservation = entries["results/RESULTS-conservation.md"]
     assert conservation.status == "superseded_by_canonical_run"
     assert conservation.canonical_run == "conservation-round-three-v1"
+
+
+def test_slice_channel_document_uses_its_explicit_run_alias():
+    entries = {entry.document: entry for entry in inventory_results(ROOT)}
+    channels = entries["results/RESULTS-slice-a-channels.md"]
+
+    assert channels.status == "superseded_by_canonical_run"
+    assert channels.canonical_run == "slice-channels-v1"

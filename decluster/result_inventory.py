@@ -13,6 +13,7 @@ DOCUMENT_RUN_ALIASES = {
     "RESULTS-conservation.md": "conservation-round-three-v1",
     "RESULTS-path-count.md": "path-count-contract-v1",
     "RESULTS-path-counting-analysis.md": "path-count-contract-v1",
+    "RESULTS-slice-a-channels.md": "slice-channels-v1",
 }
 
 
