@@ -1,0 +1,21 @@
+{
+  "schema_version": 1,
+  "id": "attribute-drift-v1",
+  "capabilities": ["verify_outputs", "reproduce_runs"],
+  "runs": ["attribute-drift-v1"],
+  "blobs": [
+    {"name": "catalog/runs/attribute-drift-v1.json", "role": "run_manifest", "bytes": 2783, "sha256": "95671cb65d12c1d37ddd8f89e1519874c3edaa58151996002fb9f9809f9b8cfb", "locations": {"canonical": null, "mirrors": []}},
+    {"name": "tests/fixtures/lumen_explorer_data.json", "role": "dataset", "bytes": 432353, "sha256": "5337d4bdc574726a2cb4e28f329f16709b497479a7493882bd38d77875660ac9", "locations": {"canonical": "https://github.com/bc1cindy/decluster/raw/103b13efc9e32569642983d7038f365dcb0c09c6/tests/fixtures/lumen_explorer_data.json", "mirrors": []}},
+    {"name": "results/artifacts/attribute-drift-v1.json", "role": "result", "bytes": 7173, "sha256": "e2723b5ca5a90324b2a8ea004d6ae59e5b16a11df15259460a1211f848cd07b2", "locations": {"canonical": null, "mirrors": []}},
+    {"name": "results/generated/attribute-drift-v1.md", "role": "result", "bytes": 1241, "sha256": "9e36c5f5337bfda4db92e2f52d2db42d82ddf368cbb8aa3c8bdf2e18d821de8f", "locations": {"canonical": null, "mirrors": []}},
+    {"name": "sources/decluster-11f3033-runtime.tar", "role": "source", "bytes": 1228800, "sha256": "d0de57d2f7bb504f1b5bd0cc9d1659fd66a32e96057ffbfdc2dd455dea335390", "locations": {"canonical": null, "mirrors": []}},
+    {"name": "reproduction/attribute-drift/requirements.lock", "role": "lockfile", "bytes": 0, "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855", "locations": {"canonical": null, "mirrors": []}},
+    {"name": "reproduction/attribute-drift/environment.json", "role": "environment", "bytes": 366, "sha256": "baec6fcb827dbf5cbdfe577fe244ab99dcce0c98c60326e803c6a9ee338db8fc", "locations": {"canonical": null, "mirrors": []}}
+  ],
+  "limitations": [
+    "The bundled environment currently targets CPython 3.13 on macOS arm64.",
+    "The dataset origin is public, but its cataloged redistribution status remains unknown.",
+    "Only projected drift over the 20 preserved value series is reproduced.",
+    "Public bootstrap remains incomplete until every blob has a canonical HTTPS location and an independent mirror."
+  ]
+}
