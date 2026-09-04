@@ -1,0 +1,20 @@
+{
+  "schema_version": 1,
+  "id": "counting-router-v1",
+  "capabilities": ["verify_outputs", "reproduce_runs"],
+  "runs": ["counting-router-v1"],
+  "blobs": [
+    {"name": "catalog/runs/counting-router-v1.json", "role": "run_manifest", "bytes": 2907, "sha256": "c6703d8fd8f27a8154d3c365fe50b095a43f8205c8b838f6d950280bb180481f", "locations": {"canonical": null, "mirrors": []}},
+    {"name": "data/amount-channel-812695-812831-v1.json", "role": "dataset", "bytes": 8028513, "sha256": "83b4391f78d07a2fa85a67218d5ae4420d8965da3c95af577592e9ec1850104d", "locations": {"canonical": null, "mirrors": []}},
+    {"name": "results/artifacts/counting-router-v1.json", "role": "result", "bytes": 894, "sha256": "731164f77a75776fc91a9c5bc8bce16700e6084e44c75d7e83510ac8afec1ce5", "locations": {"canonical": null, "mirrors": []}},
+    {"name": "results/generated/counting-router-v1.md", "role": "result", "bytes": 508, "sha256": "f95ad5c12ea0ed2119771ee6c300361d8c6fbbe48950510a071a4c8772f35a37", "locations": {"canonical": null, "mirrors": []}},
+    {"name": "sources/decluster-3f0d21b-runtime.tar", "role": "source", "bytes": 1361920, "sha256": "b77947b289bfdba9e51b6586e04124a349bc0d449637246481ce2ca758db82f7", "locations": {"canonical": null, "mirrors": []}},
+    {"name": "dependencies/dss-0.1.0-cp313-cp313-macosx_11_0_arm64.whl", "role": "dependency", "bytes": 336582, "sha256": "91b81d7c6d211fbe59f2c14da9c5dd6fb6514d4c39cf3b57154b4e30f6a6604f", "locations": {"canonical": null, "mirrors": []}},
+    {"name": "reproduction/counting-router/requirements.lock", "role": "lockfile", "bytes": 90, "sha256": "c87b26aedbefac1731d03ced97dc197a86c0687c7376b3186f8752676f977fab", "locations": {"canonical": null, "mirrors": []}},
+    {"name": "reproduction/counting-router/environment.json", "role": "environment", "bytes": 330, "sha256": "f1140c38a7e38e706c595612a578636aba4835f44e4eab40493dacf039f25b27", "locations": {"canonical": null, "mirrors": []}}
+  ],
+  "limitations": [
+    "The bundled environment currently targets CPython 3.13 on macOS arm64.",
+    "Public bootstrap remains unavailable until every blob has a canonical HTTPS location and an independent mirror."
+  ]
+}
