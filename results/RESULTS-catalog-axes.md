@@ -1,5 +1,14 @@
 # Two Möser–Narayanan tells, tested against the 23-axis model
 
+> A reproducible ablation on the frozen 600-transaction snapshot is defined by
+> `catalog/runs/fingerprint-catalog-axes-v1.json`. Its structured artifact is
+> `results/artifacts/fingerprint-catalog-axes-v1.json`, with canonical rendering in
+> `results/generated/fingerprint-catalog-axes-v1.md`. It uses one pair population for all four
+> configurations. On this snapshot, output count decreases AUC by 0.000725, SegWit serialization
+> increases it by 0.002600, and both together increase it by 0.002125, less than SegWit alone. This
+> is consistent with the historical redundancy concern but does not prove conditional dependence.
+> The two historical cache snapshots below were not preserved and are not reproduced.
+
 The record-linkage corpus (`fingerprints.md`, Table 4) lists two construction fingerprints
 the paper's axis catalog (§8) marks ◐ — **output count** ("more than two outputs is less
 likely an ordinary wallet") and **SegWit-conform** ("a segwit-capable wallet is forced to
