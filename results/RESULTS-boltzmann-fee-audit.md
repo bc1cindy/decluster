@@ -5,9 +5,9 @@ pay a positive fee, so the exact-conservation baseline admits no mapping. The lo
 model admits the whole-transaction interpretation in all 300, but only **37** admit more than that
 trivial single-block interpretation. The largest family has **192** mappings.
 
-This is a measurement of `decluster.baselines.boltzmann`, **not a reproduction of or parity with
-the Boltzmann tool**. Its fee policy, cases and output conventions have not been checked against the
-tool. No number below is attributed to Boltzmann.
+This is a measurement of `decluster.baselines.boltzmann`, not a claim of general parity with the
+external Boltzmann tool. Separate reference tests now cover selected official vectors and modes.
+The population measurements below remain specific to the local fee-allocation model.
 
 ## Protocol
 

@@ -228,7 +228,7 @@ def test_bitwise_run_requires_exact_verification(tmp_path):
 
 def test_all_committed_dataset_manifests_match_their_files():
     manifests = sorted((ROOT / "catalog" / "datasets").glob("*.json"))
-    assert len(manifests) == 10
+    assert len(manifests) == 11
     seen = set()
     for path in manifests:
         manifest = load_dataset_manifest(path)
