@@ -120,10 +120,21 @@ population invariants the claim depends on — the facts a byte digest cannot se
 **skips with a message** when the source is absent, or when the manifest's invariants were not
 recomputed; it also requires every `RESULTS-*.md` to either carry a manifest or be named in that
 test's `NOT_YET_MIGRATED` allowlist, so a document cannot silently fall outside both. For a number
-produced by the Rust crate, a manifest's identity should be `dss.__version__` / `dss.__rev__` plus
-the seed and parameters rather than a data path — no manifest records that today, since
-`fingerprint_source` only fingerprints file globs; a crate-identity manifest is a later phase's
-work.
+produced by the Rust crate, a manifest's identity is `dss.__version__` / `dss.__rev__`, its lock
+digest, parameters and seeds rather than a data path. `catalog/runs/exact-oracle-audit-v1.json` is
+the first manifest using that contract.
+
+### Evidence bundles
+
+`releases/exact-oracle-evidence-v1.bundle.json` is the first bundle with both `verify_outputs` and
+`reproduce_runs`. It contains a minimal source archive, an identified DSS wheel, a hash-locked
+requirement and an environment contract. The cold-start test materializes those blobs into an empty
+root, creates a new virtual environment without consulting a package index, reexecutes the audit and
+compares both outputs byte for byte.
+
+This does not yet establish public or platform-independent reproduction. The environment targets
+CPython 3.13 on macOS arm64, and the bundle has no public HTTPS origin or independent mirror. The
+readiness command reports those distribution blockers explicitly.
 
 
 ## Known contradictions (2026-09-03)
