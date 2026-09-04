@@ -36,8 +36,8 @@ def assortativity(g):
     positive: well-connected people know well-connected people. Technological and
     transactional graphs come out negative, hubs attaching to leaves."""
     xs, ys = [], []
-    for u in g.vertices:
-        for v in g.neighbours(u):
+    for u in sorted(g.vertices):
+        for v in sorted(g.neighbours(u)):
             xs.append(g.degree(u))
             ys.append(g.degree(v))          # each undirected edge is seen from both ends
     n = len(xs)
@@ -52,7 +52,7 @@ def assortativity(g):
 def transitivity(g, sample=None, rng=None):
     """Global clustering: closed triples over all triples. Sampling vertices bounds the cost
     on a large graph; the estimate is over the sampled vertices' triples."""
-    verts = list(g.vertices)
+    verts = sorted(g.vertices)
     if sample and sample < len(verts):
         verts = (rng or random.Random(0)).sample(verts, sample)
     triples = closed = 0
@@ -62,7 +62,7 @@ def transitivity(g, sample=None, rng=None):
         if d < 2:
             continue
         triples += d * (d - 1) // 2
-        nb_list = list(nb)
+        nb_list = sorted(nb)
         for i in range(len(nb_list)):
             ni = g.neighbours(nb_list[i])
             for j in range(i + 1, len(nb_list)):

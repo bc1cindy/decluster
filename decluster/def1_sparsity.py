@@ -68,7 +68,8 @@ def nearest_similarities(g, query_n=2000, background_n=20000, min_degree=1, seed
     """For each of `query_n` sampled clusters, its highest cosine similarity to any of
     `background_n` other sampled clusters. Returns the list of top similarities."""
     rng = random.Random(seed)
-    verts = [v for v in g.vertices if g.degree(v) >= min_degree]
+    # A seeded sample is reproducible only when its population order is stable too.
+    verts = sorted(v for v in g.vertices if g.degree(v) >= min_degree)
     if len(verts) <= 1:
         return []
     background = rng.sample(verts, min(background_n, len(verts)))

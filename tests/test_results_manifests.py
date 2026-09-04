@@ -25,6 +25,7 @@ MIGRATED_RUN_DOCS = {
     "RESULTS-path-count.md": "catalog/runs/path-count-contract-v1.json",
     "RESULTS-path-counting-analysis.md": "catalog/runs/path-count-contract-v1.json",
     "RESULTS-reid.md": "catalog/runs/reid-v1.json",
+    "RESULTS-slice-a-channels.md": "catalog/runs/slice-channels-v1.json",
 }
 
 
@@ -96,7 +97,6 @@ NOT_YET_MIGRATED = {
     "RESULTS-provenance.md",
     "RESULTS-refusing-clusterer.md",
     "RESULTS-rejoin.md",
-    "RESULTS-slice-a-channels.md",
     "RESULTS-slice-gate-2026.md",
     "RESULTS-special-change.md",
     "RESULTS-subtx-demix.md",
