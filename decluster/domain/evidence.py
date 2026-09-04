@@ -275,6 +275,37 @@ class CorrespondentDistributionEvidence:
             raise ValueError("batch_size must be at least two")
 
 
+@dataclass(frozen=True)
+class PerfectMatchingEvidence:
+    """Jointly optimal bijective message assignments for one observed round."""
+
+    senders: tuple[Subject, ...]
+    receivers: tuple[Subject, ...]
+    optimal_assignments: tuple[tuple[tuple[Subject, Subject], ...], ...]
+    log_likelihood: float
+    context: EvidenceContext
+
+    def __post_init__(self) -> None:
+        if len(self.senders) < 2 or len(self.senders) != len(self.receivers):
+            raise ValueError("perfect matching requires equal sides of size at least two")
+        if len(set(self.senders)) != len(self.senders) or len(set(self.receivers)) != len(
+            self.receivers
+        ):
+            raise ValueError("message nodes on each side must be unique")
+        if not self.optimal_assignments:
+            raise ValueError("perfect matching evidence requires an optimum")
+        expected_senders = set(self.senders)
+        expected_receivers = set(self.receivers)
+        for assignment in self.optimal_assignments:
+            if len(assignment) != len(self.senders):
+                raise ValueError("every assignment must cover the round")
+            if {sender for sender, _ in assignment} != expected_senders or {
+                receiver for _, receiver in assignment
+            } != expected_receivers:
+                raise ValueError("every assignment must be a perfect matching")
+        _require_finite(self.log_likelihood, "log_likelihood")
+
+
 Evidence: TypeAlias = Union[
     OwnershipLikelihoodEvidence,
     CannotLinkEvidence,
@@ -288,4 +319,5 @@ Evidence: TypeAlias = Union[
     CandidateEliminationEvidence,
     GraphFractureEvidence,
     CorrespondentDistributionEvidence,
+    PerfectMatchingEvidence,
 ]

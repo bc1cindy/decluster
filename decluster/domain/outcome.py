@@ -9,6 +9,7 @@ from .evidence import (
     Evidence,
     GraphFractureEvidence,
     CorrespondentDistributionEvidence,
+    PerfectMatchingEvidence,
     IntersectionEvidence,
     ProvenanceDistributionEvidence,
     Subject,
@@ -188,6 +189,18 @@ class PersistentCorrespondentRanked:
             raise ValueError("ranking margin must be finite and non-negative")
 
 
+@dataclass(frozen=True)
+class MessageAssignmentRecovered:
+    evidence: PerfectMatchingEvidence
+    assignment: tuple[tuple[Subject, Subject], ...]
+
+    def __post_init__(self) -> None:
+        if len(self.evidence.optimal_assignments) != 1:
+            raise ValueError("recovered assignment requires a unique optimum")
+        if self.assignment != self.evidence.optimal_assignments[0]:
+            raise ValueError("assignment must equal the unique optimum")
+
+
 Outcome: TypeAlias = Union[
     ClusterMerge,
     MergeRefused,
@@ -206,4 +219,5 @@ Outcome: TypeAlias = Union[
     AdditiveDecayMeasured,
     GraphFractureMeasured,
     PersistentCorrespondentRanked,
+    MessageAssignmentRecovered,
 ]

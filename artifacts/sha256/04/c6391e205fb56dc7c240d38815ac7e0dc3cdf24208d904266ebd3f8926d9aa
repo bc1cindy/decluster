@@ -1,0 +1,83 @@
+{
+  "schema_version": 1,
+  "id": "perfect-matching-disclosure-v1",
+  "claim_ids": ["ctp.disclosure.perfect_matching"],
+  "code": {
+    "revision": "8df6b46f0a48f1f15c3fe6553284bfbd55fb5eea",
+    "dirty": false
+  },
+  "command": {
+    "argv": [
+      "python",
+      "-m",
+      "decluster.experiments.perfect_matching_disclosure",
+      "reproduce",
+      "--artifact",
+      "results/artifacts/perfect-matching-disclosure-v1.json",
+      "--markdown",
+      "results/generated/perfect-matching-disclosure-v1.md"
+    ]
+  },
+  "environment": {
+    "python": "3.13.7",
+    "lock_digest": "e0d6a8cada5d383c0aca2bd2a37f28c15721392469c94084128d369c29c5544d",
+    "platform": "macOS-26.6.2-arm64-arm-64bit-Mach-O",
+    "dependencies": []
+  },
+  "datasets": [],
+  "parameters": {
+    "messages_per_round": 3,
+    "objective": "maximum joint sender-profile likelihood",
+    "scenarios": ["joint-assignment", "uniform-profile-control"]
+  },
+  "rng": {"algorithm": null, "seeds": []},
+  "outputs": [
+    {
+      "path": "results/artifacts/perfect-matching-disclosure-v1.json",
+      "bytes": 1024,
+      "sha256": "4071e62e0ef642c4f762d585ed5849f67fd10d4dbe10a9433cec8de1d90866b6"
+    },
+    {
+      "path": "results/generated/perfect-matching-disclosure-v1.md",
+      "bytes": 709,
+      "sha256": "94705cad4143dff0eabbdffa177873f17ed59aa9c6de8826b92980f5154101e2"
+    }
+  ],
+  "reproducibility": {
+    "level": "bitwise_reproducible",
+    "availability": "complete"
+  },
+  "verification": {
+    "mode": "exact",
+    "argv": [
+      "python",
+      "-m",
+      "decluster.experiments.perfect_matching_disclosure",
+      "verify",
+      "--artifact",
+      "results/artifacts/perfect-matching-disclosure-v1.json",
+      "--markdown",
+      "results/generated/perfect-matching-disclosure-v1.md"
+    ],
+    "tests": [
+      "tests/test_perfect_matching_disclosure.py",
+      "tests/test_perfect_matching_disclosure_experiment.py"
+    ],
+    "properties": [
+      "the objective maximizes the product of sender-profile edge probabilities through their logarithms",
+      "every candidate assignment is a perfect matching over the observed message nodes",
+      "joint optimization resolves a round whose independent maxima reuse one receiver",
+      "uniform profiles retain all six matchings and produce an inconclusive outcome",
+      "zero-probability edges are excluded",
+      "the result is not represented as value-flow ancestry or Bitcoin ownership attribution",
+      "the generated Markdown equals the canonical rendering"
+    ],
+    "tolerance": null
+  },
+  "limitations": [
+    "deterministic synthetic threshold-mix fixture",
+    "sender profiles are supplied rather than estimated from a longitudinal trace",
+    "the diagnostic enumerator is limited to eight messages",
+    "the paper's simulations and success rates are not reproduced"
+  ]
+}
