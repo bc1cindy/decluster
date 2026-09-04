@@ -139,10 +139,9 @@ def test_a_repeated_value_is_not_automatically_a_denomination():
 
 
 def test_mapping_entropy_answers_on_a_fee_paying_transaction():
-    """The quantity the writeup names as what bounds anonymity: the entropy of the distribution
-    over sub-transaction mappings, not a count of them. It balances the fee in as an extra output
-    before enumerating, so unlike the counts it answers when a fee is paid — and on an ordinary
-    spend it answers zero, one reading surviving with every coin in it pinned."""
+    """Entropy over DSS's mapping family is distinct from a mapping count. It balances the fee in
+    as an extra output, so unlike the counts it answers when a fee is paid. Zero means one reading
+    survives in this restricted family, not that ownership is globally proven."""
     pytest.importorskip("dss")
     from decluster import counting
     ins = [500_000, 300_000, 200_000]
@@ -150,5 +149,18 @@ def test_mapping_entropy_answers_on_a_fee_paying_transaction():
         r = counting.mapping_entropy(ins, [600_000, 400_000 - fee])
         assert r is not None
         assert r["entropy"] == 0.0 and r["n_non_derived"] == 1
-        assert r["deterministic_links"]              # anonymity zero: every coin pinned
+        assert r["deterministic_links"]              # every mapping in this family shares links
         assert all(o < 2 for _, o in r["deterministic_links"])   # the fee column is dropped
+
+
+def test_mapping_entropy_turns_structured_refusal_into_no_measurement(monkeypatch):
+    import sys
+    from decluster import counting
+
+    class RefusingDss:
+        @staticmethod
+        def mapping_analysis(inputs, outputs, budget_ms):
+            return {"status": "refused", "reason": "size_guard"}
+
+    monkeypatch.setitem(sys.modules, "dss", RefusingDss)
+    assert counting.mapping_entropy([1], [1]) is None
