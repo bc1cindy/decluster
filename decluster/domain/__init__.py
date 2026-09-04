@@ -2,12 +2,14 @@
 
 from .evidence import (
     AbstentionEvidence,
+    CandidateEliminationEvidence,
     CandidateSetEvidence,
     CannotLinkEvidence,
     Direction,
     Evidence,
     EvidenceContext,
     FlowConstraintEvidence,
+    GraphFractureEvidence,
     IntersectionEvidence,
     MappingEvidence,
     OwnershipLikelihoodEvidence,
@@ -18,9 +20,11 @@ from .evidence import (
 )
 from .outcome import (
     Attribution,
+    AdditiveDecayMeasured,
     CandidateNarrowing,
     ClusterMerge,
     DeclusterSplit,
+    GraphFractureMeasured,
     MergeRefused,
     Inconclusive,
     NoSharedCandidates,
@@ -37,9 +41,11 @@ from .report import AttackReport, EvidenceChannel, ExperimentalComposition
 
 __all__ = [
     "AbstentionEvidence",
+    "AdditiveDecayMeasured",
     "Attribution",
     "AttackReport",
     "CandidateSetEvidence",
+    "CandidateEliminationEvidence",
     "CandidateNarrowing",
     "CannotLinkEvidence",
     "ClusterMerge",
@@ -50,6 +56,8 @@ __all__ = [
     "EvidenceChannel",
     "ExperimentalComposition",
     "FlowConstraintEvidence",
+    "GraphFractureEvidence",
+    "GraphFractureMeasured",
     "IntersectionEvidence",
     "Inconclusive",
     "MappingEvidence",

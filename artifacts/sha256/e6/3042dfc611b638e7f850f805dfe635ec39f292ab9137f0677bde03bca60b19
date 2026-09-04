@@ -1,0 +1,81 @@
+{
+  "schema_version": 1,
+  "id": "change-consolidation-v1",
+  "claim_ids": ["ctp.intersection.longitudinal"],
+  "code": {
+    "revision": "131c41b58c327a4f41712d7fb56ff71d82c89d29",
+    "dirty": false
+  },
+  "command": {
+    "argv": [
+      "python",
+      "-m",
+      "decluster.experiments.change_consolidation",
+      "reproduce",
+      "--artifact",
+      "results/artifacts/change-consolidation-v1.json",
+      "--markdown",
+      "results/generated/change-consolidation-v1.md"
+    ]
+  },
+  "environment": {
+    "python": "3.13.7",
+    "lock_digest": "c7d402576511073ed4fcf076c77ffa6b3be124e0a2ef996d2da1cd3b02fbe541",
+    "platform": "macOS-26.6.2-arm64-arm-64bit-Mach-O",
+    "dependencies": []
+  },
+  "datasets": [],
+  "parameters": {
+    "candidate_owners_per_change": 2,
+    "payments": 2,
+    "later_observation": "change-output co-spend"
+  },
+  "rng": {"algorithm": null, "seeds": []},
+  "outputs": [
+    {
+      "path": "results/artifacts/change-consolidation-v1.json",
+      "bytes": 507,
+      "sha256": "1fadeece80a936b04473a7e235eafc37e835d21445a2b462cac7d067896c10e9"
+    },
+    {
+      "path": "results/generated/change-consolidation-v1.md",
+      "bytes": 394,
+      "sha256": "f86ec49a75e9ec73d7c5a662e76252056ccf1a9f4de9a13dc77d935d490ad47f"
+    }
+  ],
+  "reproducibility": {
+    "level": "bitwise_reproducible",
+    "availability": "complete"
+  },
+  "verification": {
+    "mode": "exact",
+    "argv": [
+      "python",
+      "-m",
+      "decluster.experiments.change_consolidation",
+      "verify",
+      "--artifact",
+      "results/artifacts/change-consolidation-v1.json",
+      "--markdown",
+      "results/generated/change-consolidation-v1.md"
+    ],
+    "tests": [
+      "tests/test_change_consolidation.py",
+      "tests/test_change_consolidation_experiment.py"
+    ],
+    "properties": [
+      "both payment change candidates remain ambiguous before consolidation",
+      "the later co-spend narrows the candidate owner shared by both payments",
+      "disjoint candidate-owner sets produce no shared candidate",
+      "change identification and co-ownership remain explicit assumptions",
+      "the generated Markdown equals the canonical rendering"
+    ],
+    "tolerance": null
+  },
+  "limitations": [
+    "synthetic fixture",
+    "change outputs and candidate owners are supplied rather than inferred",
+    "the linkage requires correct change identification and common ownership",
+    "the run does not measure a Bitcoin deanonymization rate"
+  ]
+}

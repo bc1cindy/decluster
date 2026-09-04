@@ -4,7 +4,9 @@ from dataclasses import dataclass
 from typing import TypeAlias, Union
 
 from .evidence import (
+    CandidateEliminationEvidence,
     Evidence,
+    GraphFractureEvidence,
     IntersectionEvidence,
     ProvenanceDistributionEvidence,
     Subject,
@@ -161,6 +163,16 @@ class NotObserved:
             raise ValueError("observable must not be empty")
 
 
+@dataclass(frozen=True)
+class AdditiveDecayMeasured:
+    evidence: CandidateEliminationEvidence
+
+
+@dataclass(frozen=True)
+class GraphFractureMeasured:
+    evidence: GraphFractureEvidence
+
+
 Outcome: TypeAlias = Union[
     ClusterMerge,
     MergeRefused,
@@ -176,4 +188,6 @@ Outcome: TypeAlias = Union[
     OracleRefused,
     Unsupported,
     NotObserved,
+    AdditiveDecayMeasured,
+    GraphFractureMeasured,
 ]

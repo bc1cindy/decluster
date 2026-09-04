@@ -1,0 +1,54 @@
+{
+  "schema_version": 1,
+  "id": "eve-alice-eve-v1",
+  "capabilities": ["verify_outputs", "reproduce_runs"],
+  "runs": ["eve-alice-eve-v1"],
+  "blobs": [
+    {
+      "name": "catalog/runs/eve-alice-eve-v1.json",
+      "role": "run_manifest",
+      "bytes": 2384,
+      "sha256": "7270fcb57696fe333a0b448669c0a760c2ed346239f784c8dd803879ddd70389",
+      "locations": {"canonical": null, "mirrors": []}
+    },
+    {
+      "name": "results/artifacts/eve-alice-eve-v1.json",
+      "role": "result",
+      "bytes": 548,
+      "sha256": "306d898c560316cac38ca3e74df461e17ae37d2b4aa7006d628710ef94e59f42",
+      "locations": {"canonical": null, "mirrors": []}
+    },
+    {
+      "name": "results/generated/eve-alice-eve-v1.md",
+      "role": "result",
+      "bytes": 417,
+      "sha256": "89e9239416d8f40ed38c5d36b2eb2430d726fd0e7fdcf56fbecc37bdf5bd2808",
+      "locations": {"canonical": null, "mirrors": []}
+    },
+    {
+      "name": "sources/decluster-aa91148-runtime.tar",
+      "role": "source",
+      "bytes": 890880,
+      "sha256": "bb3add2f6c63fb8043e9b340d636208ce28ea43190079b77415007e1a47a1136",
+      "locations": {"canonical": null, "mirrors": []}
+    },
+    {
+      "name": "reproduction/eve-alice-eve/requirements.lock",
+      "role": "lockfile",
+      "bytes": 30,
+      "sha256": "e0d6a8cada5d383c0aca2bd2a37f28c15721392469c94084128d369c29c5544d",
+      "locations": {"canonical": null, "mirrors": []}
+    },
+    {
+      "name": "reproduction/eve-alice-eve/environment.json",
+      "role": "environment",
+      "bytes": 362,
+      "sha256": "d1c024dbc958d1ec78febcefbb81ceac3746987897c09cc1923256537688a7f3",
+      "locations": {"canonical": null, "mirrors": []}
+    }
+  ],
+  "limitations": [
+    "The bundled environment currently targets CPython 3.13 on macOS arm64.",
+    "Public bootstrap remains unavailable until every blob has a canonical HTTPS location and an independent mirror."
+  ]
+}
