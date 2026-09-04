@@ -25,6 +25,7 @@ from .outcome import (
     NotObserved,
     OracleRefused,
     Outcome,
+    TransitiveMembership,
     Unsupported,
 )
 from .report import AttackReport, EvidenceChannel, ExperimentalComposition
@@ -55,5 +56,6 @@ __all__ = [
     "ProvenanceDistributionEvidence",
     "Subject",
     "SubjectKind",
+    "TransitiveMembership",
     "Unsupported",
 ]

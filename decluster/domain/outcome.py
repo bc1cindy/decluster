@@ -70,6 +70,18 @@ class Attribution:
 
 
 @dataclass(frozen=True)
+class TransitiveMembership:
+    subject: Subject
+    target: Subject
+    reason: str
+
+    def __post_init__(self) -> None:
+        _require_pair(self.subject, self.target)
+        if not self.reason:
+            raise ValueError("transitive membership reason must not be empty")
+
+
+@dataclass(frozen=True)
 class NodeCapped:
     observed: int
     limit: int
@@ -112,6 +124,7 @@ Outcome: TypeAlias = Union[
     MergeRefused,
     DeclusterSplit,
     Attribution,
+    TransitiveMembership,
     NodeCapped,
     OracleRefused,
     Unsupported,
