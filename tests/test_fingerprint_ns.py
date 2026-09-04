@@ -69,20 +69,20 @@ def test_equivalence_key_groups_matching_conditioners():
     assert k1 == k2 and k1 != k3
 
 def test_build_labeled_nodes_assigns_one_owner_per_reuse_group():
-    import examples.fingerprint_ns as ex
+    from decluster import fingerprint_regime as regime
     txs = [
         {"txid": "t1", "vin": [{"prevout": {"scriptpubkey_address": "A"}}]},
         {"txid": "t2", "vin": [{"prevout": {"scriptpubkey_address": "A"}}]},
         {"txid": "t3", "vin": [{"prevout": {"scriptpubkey_address": "B"}}]},
         {"txid": "t4", "vin": [{"prevout": {"scriptpubkey_address": "B"}}]},
     ]
-    nodes = ex.build_labeled_nodes(txs, cap=10)
+    nodes = regime.build_labeled_nodes(txs, cap=10)
     owners = {tx["txid"]: owner for tx, owner in nodes}
     assert owners["t1"] == owners["t2"] and owners["t3"] == owners["t4"]
     assert owners["t1"] != owners["t3"]
 
 def test_build_labeled_nodes_dedups_tx_that_reuses_two_addresses():
-    import examples.fingerprint_ns as ex
+    from decluster import fingerprint_regime as regime
     txs = [
         # t1 reuses both address A (with t2) and address C (with t3) -> must land in one owner only
         {"txid": "t1", "vin": [{"prevout": {"scriptpubkey_address": "A"}},
@@ -92,7 +92,7 @@ def test_build_labeled_nodes_dedups_tx_that_reuses_two_addresses():
         {"txid": "t4", "vin": [{"prevout": {"scriptpubkey_address": "B"}}]},
         {"txid": "t5", "vin": [{"prevout": {"scriptpubkey_address": "B"}}]},
     ]
-    nodes = ex.build_labeled_nodes(txs, cap=10)
+    nodes = regime.build_labeled_nodes(txs, cap=10)
     txids = [tx["txid"] for tx, _ in nodes]
     assert len(txids) == len(set(txids))  # no txid appears twice, under any owner
     owners = {tx["txid"]: owner for tx, owner in nodes}
