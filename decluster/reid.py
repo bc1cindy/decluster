@@ -1,17 +1,11 @@
-"""Record-linkage de-anonymization stratified by sparsity (Narayanan-Shmatikov 2008,
-Algorithm 1B). Records are coins; each coin's provenance signature is its rarity-weighted
-distribution over ancestral origins.
+"""Record linkage stratified by ancestry-signature sparsity.
 
-The measurement ties the sparse-dataset attack's *precondition* to its *success*: coins are
-stratified by their own nearest-neighbour cosine (sparse = no near twin, dense = has one),
-and the same Algorithm 1B attack is run on each stratum. Reveal `m` of a target's ancestors
-as auxiliary information, score every candidate by the rarity-weighted provenance overlap
-(`ancestry.provenance_link`, the paper's `wt = 1/log2(support)` scoring), and accept a match
-only when the top score clears the runner-up by the eccentricity gate
-(`propagate.eccentricity`, phi = 1.5 as in Netflix). Sparsity is the stratifier, so no
-same-owner labels are needed and the two measurements are internally consistent. Theorem 2
-predicts sparse records de-anonymize and dense ones do not; this measures that gap directly,
-reusing the same primitives as the rest of the engine."""
+This is an adaptation of the Narayanan-Shmatikov sparse-record model, not a reproduction of
+Algorithm 1B or of the Netflix experiment. Coins are stratified by nearest-neighbour cosine.
+For each target, the attack samples origins from its stored signature, scores candidates by
+rarity-weighted provenance overlap, and accepts only when the score distribution clears an
+eccentricity gate. Exact matches identify records in the frozen fixture, not wallet owners.
+"""
 
 import random
 
@@ -74,7 +68,8 @@ def reid_attack(subset, coins, sigs, rarity, m, phi=1.5, seed=0):
     rng = random.Random(seed)
     declared = exact = total = 0
     for target in subset:
-        supp = list(sigs[target])
+        # Keep seeded sampling independent of JSON insertion order and hash randomisation.
+        supp = sorted(sigs[target])
         if len(supp) < m:
             continue
         aux = {a: sigs[target][a] for a in rng.sample(supp, m)}
@@ -102,7 +97,9 @@ def stratified_reid(coins, sigs, ms=(4, 8), phi=1.5, seed=0,
     for name, subset in (("sparse", sparse), ("dense", dense)):
         for m in ms:
             dec, exa, tot = reid_attack(subset, coins, sigs, rarity, m, phi, seed)
-            rows.append({"stratum": name, "m": m, "declared": dec, "exact": exa,
+            rows.append({"stratum": name, "m": m, "attackable": tot,
+                         "declared": dec, "exact": exa,
                          "precision": exa / dec if dec else 0.0,
-                         "declare_rate": dec / tot if tot else 0.0})
+                         "declare_rate": dec / tot if tot else 0.0,
+                         "exact_rate": exa / tot if tot else 0.0})
     return {"rows": rows, "n": len(coins), "n_sparse": len(sparse), "n_dense": len(dense)}

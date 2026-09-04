@@ -24,6 +24,7 @@ MIGRATED_RUN_DOCS = {
     "RESULTS-exact-oracle-audit.md": "catalog/runs/exact-oracle-audit-v1.json",
     "RESULTS-path-count.md": "catalog/runs/path-count-contract-v1.json",
     "RESULTS-path-counting-analysis.md": "catalog/runs/path-count-contract-v1.json",
+    "RESULTS-reid.md": "catalog/runs/reid-v1.json",
 }
 
 
@@ -94,7 +95,6 @@ NOT_YET_MIGRATED = {
     "RESULTS-persistence-curve.md",
     "RESULTS-provenance.md",
     "RESULTS-refusing-clusterer.md",
-    "RESULTS-reid.md",
     "RESULTS-rejoin.md",
     "RESULTS-slice-a-channels.md",
     "RESULTS-slice-gate-2026.md",
