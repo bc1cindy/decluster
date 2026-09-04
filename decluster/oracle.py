@@ -3,7 +3,7 @@
 for the rare tx where dss's own `budget_ms` fails to preempt an internal blow-up.
 
 Everything here bounds the SUBSET-SUM oracle (`dss.pairwise_link_prob`). None of it is the default
-walk any more: since the value-flow swap, `analyze`, `report`, `path_count_anonymity` and the
+walk any more: since the value-flow swap, `analyze`, `report`, `provenance_route_accumulation` and the
 `ancestry` facades all default to `ancestry.value_flow_link_oracle` (nominal-value transitions, no
 dss). The subset-sum walk is reachable only by passing one of these explicitly."""
 import multiprocessing as mp
@@ -21,7 +21,7 @@ def bounded_dss_link_oracle(budget_ms=DEFAULT_ANALYZE_BUDGET_MS):
     `ancestry.dss_link_oracle` (`dss.pairwise_link_prob`) at `budget_ms`. Panic-safe (inherits that
     function's BaseException hardening), no subprocess.
 
-    NOT a default. `analyze()`, `report()` and `path_count_anonymity()` default to
+    NOT a default. `analyze()`, `report()` and `provenance_route_accumulation()` default to
     `ancestry.value_flow_link_oracle`; pass this explicitly to take the subset-sum walk instead."""
     def link(inputs, outputs):
         return ancestry.dss_link_oracle(inputs, outputs, budget_ms)

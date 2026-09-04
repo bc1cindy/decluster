@@ -1,0 +1,11 @@
+# Nominal-value ancestry contract
+
+Generated from the canonical experiment artifact. Do not edit manually.
+
+The complete walk reaches `{'left:0': 0.5, 'right:0': 0.5}` with Shannon entropy 1.000000 bits and 4.0 steps in the uncollapsed paper graph.
+
+A one-node bound returns `TruncatedAncestry` with causes `{'oracle_refused': 0, 'node_capped': 2, 'zero_link_mass': 0, 'unattributed': 0}`. Oracle refusal returns `TruncatedAncestry` with causes `{'oracle_refused': 1, 'node_capped': 0, 'zero_link_mass': 0, 'unattributed': 0}`.
+
+Provenance overlap is 1.0 for the same signature and 0.0 for a disjoint signature.
+
+This measures model-relative provenance. It does not infer ownership, certify privacy, measure robust connectivity or reproduce the historical live Bitcoin observations.

@@ -14,8 +14,13 @@ from decluster import reproducibility as rp
 ROOT = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 MANIFESTS = sorted(glob.glob(os.path.join(ROOT, "results", "manifests", "*.json")))
 MIGRATED_RUN_DOCS = {
+    "RESULTS-analyze.md": "catalog/runs/analyze-contract-v1.json",
+    "RESULTS-ancestry.md": "catalog/runs/ancestry-contract-v1.json",
     "RESULTS-amount-channel-survey.md": "catalog/runs/amount-channel-survey-v1.json",
+    "RESULTS-counting-methods.md": "catalog/runs/counting-methods-v1.json",
     "RESULTS-exact-oracle-audit.md": "catalog/runs/exact-oracle-audit-v1.json",
+    "RESULTS-path-count.md": "catalog/runs/path-count-contract-v1.json",
+    "RESULTS-path-counting-analysis.md": "catalog/runs/path-count-contract-v1.json",
 }
 
 
@@ -50,10 +55,8 @@ def test_every_manifest_names_a_document_that_exists():
 # invisibly.
 NOT_YET_MIGRATED = {
     "RESULTS-3v23-engine.md",
-    "RESULTS-analyze.md",
     "RESULTS-ancestry-crossview-feasibility.md",
     "RESULTS-ancestry-sparsity.md",
-    "RESULTS-ancestry.md",
     "RESULTS-anonymity-set-scale.md",
     "RESULTS-anonymity-set.md",
     "RESULTS-attribute-conditioning.md",
@@ -68,7 +71,6 @@ NOT_YET_MIGRATED = {
     "RESULTS-conservation.md",
     "RESULTS-conspicuous-order.md",
     "RESULTS-contraction-2026.md",
-    "RESULTS-counting-methods.md",
     "RESULTS-def1-sparsity.md",
     "RESULTS-e2e.md",
     "RESULTS-em-m.md",
@@ -89,8 +91,6 @@ NOT_YET_MIGRATED = {
     "RESULTS-partition-cuts.md",
     "RESULTS-partition-posterior.md",
     "RESULTS-partition-schemes.md",
-    "RESULTS-path-count.md",
-    "RESULTS-path-counting-analysis.md",
     "RESULTS-persistence-curve.md",
     "RESULTS-provenance.md",
     "RESULTS-refusing-clusterer.md",

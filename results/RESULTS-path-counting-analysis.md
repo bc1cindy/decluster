@@ -5,6 +5,10 @@
 > the counts into decluster. So statements below like "called nowhere in decluster" and "not a wiring
 > task" describe the *starting* state, not the shipped one — see `results/RESULTS-path-count.md` for
 > the delivered object and its real numbers.
+>
+> The current executable contract is `catalog/runs/path-count-contract-v1.json`, rendered as
+> `results/generated/path-count-contract-v1.md`. It identifies the delivered object as provenance
+> route accumulation, not edge-disjoint plausible-flow path counting.
 
 # Is dss what's needed for §07 path counting, and is it exposed/integrated in decluster?
 

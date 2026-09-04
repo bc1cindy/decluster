@@ -13,7 +13,7 @@ from .anonymity_set import anonymity_bits, cluster_of_from_tx_groups, provenance
     subjective_oracle_for
 from .rarity_weight_baseline import Combiner
 from .partition_model import build_evidence, contract_cospend
-from .weighted_path_count import path_count_anonymity
+from .provenance_route_accumulation import provenance_route_accumulation
 from .report import _spendable_vouts
 from .split_merge import M3_MAX_SUPERNODES, m3_gap_and_samples
 
@@ -37,14 +37,15 @@ def analyze(tx, targets=None, depth=5, *, fetch=None, link_oracle=None,
     max_nodes (default None = uncapped, backward-compatible) is the deep-coinjoin tractability knob:
     bounds both walks' cost to O(max_nodes) fetch/oracle calls regardless of depth (a lower bound on
     the coin's ambiguity, never an overstatement — see build_extended_graph). path_count (default
-    False, backward-compatible) is the opt-in §07 lens: a link-probability-only walk over the same
-    graph as §04, reusing the same walk verbatim -- no W(E)/subset-sum count is folded in, and no
-    extra per-tx cost is paid for one.
+    False, backward-compatible) exposes the provenance-route diagnostic under its legacy response
+    name. It reuses the same link-probability-only walk as §04; no W(E)/subset-sum count is folded in.
+    It is not the §07 robust-connectivity object: it does not enumerate edge-disjoint paths, impose
+    plausible-flow capacity or implement k-routes.
 
     Returns {vout: {
         "provenance": {"min_entropy", "shannon", "n_absorbers", ["origins": {ancestor: mass}]},
         ["fused": {"min_entropy", "shannon"}],   # when subjective
-        ["path_count": {"min_entropy", "shannon", "origins_weighted"}],  # when path_count
+        ["path_count": {"min_entropy", "shannon", "origins_weighted"}],  # compatibility key
         "truncated": int,   # the provenance (graph) walk's truncation count (oracle-None + max_nodes);
                             # the fused/path_count walks cap identically under the same max_nodes.
     }}. `provenance.min_entropy` is a conservative lower bound on the coin's provenance ENTROPY under no
@@ -83,8 +84,13 @@ def analyze(tx, targets=None, depth=5, *, fetch=None, link_oracle=None,
             entry["fused"] = {"min_entropy": min(fb["min_entropy"], provenance["min_entropy"]),
                               "shannon": min(fb["shannon"], provenance["shannon"])}
         if path_count:
-            pc = path_count_anonymity((txid, vout), depth=depth, max_nodes=max_nodes, fetch=fetch,
-                                       link_oracle=link_oracle)
+            pc = provenance_route_accumulation(
+                (txid, vout),
+                depth=depth,
+                max_nodes=max_nodes,
+                fetch=fetch,
+                link_oracle=link_oracle,
+            )
             entry["path_count"] = {k: pc[k] for k in
                                     ("min_entropy", "shannon", "origins_weighted")}
         out[vout] = entry

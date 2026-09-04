@@ -749,7 +749,8 @@ calls, returning a truncated lower bound in bounded time — ≈5 min on a real 
 (`results/RESULTS-path-count.md`) — where the unbounded walk does not terminate. The bound is honest: it
 can only omit origins, never invent them; exact deep resolution is not possible.
 
-**Path counting (§07).** The path-like anonymity set (`path_count.path_count_anonymity`) weights each
+**Provenance route accumulation (§07 diagnostic).**
+`provenance_route_accumulation.provenance_route_accumulation` weights each
 ancestral origin by link probability alone, summed over every counterfactual input→output route
 reaching it; subset-sum multiplicity does not enter the bound, because `cost.py` declares the amount
 channel refuse-only (§1): it may cut a coin from the graph, never weight one, and folding a mapping
@@ -878,12 +879,14 @@ users or a robust negative.
   tested as a candidate quasi-identifier and reported as a **negative result**: a naive split-half
   gives AUC 0.92, but a persistence split with matched negatives collapses it to **0.49 (chance)**, so
   the schedule does not identify owners in this data (`results/RESULTS-temporal.md`).
-- **No structural-property term in the construction-side path count.** `path_count_anonymity` (§8)
+- **No structural-property term in provenance route accumulation.**
+  `provenance_route_accumulation` (§8)
   weights ancestral origins by link probability alone; subset-sum multiplicity does not enter, because
   the amount channel is refuse-only (§1). It therefore measures no structural property of the graph.
-  Measuring one would need disjoint paths — a plausibility-weighted minimum *vertex* cut, since a
-  traceable path is not the same as a plausible flow, and since what fractures the graph is a coin
-  ceasing to carry flow, coins being the vertices — which this repository does not compute.
+  Measuring one would need edge-disjoint plausible-flow paths in the transaction graph: transactions
+  are vertices and amount-labelled coins are directed edges. A traceable path is not necessarily a
+  plausible flow, and this repository computes neither that k-routes object nor its corresponding
+  edge cut.
   This names the most expensive structural notion, not the only one, and the gap should not be read
   as wider than it is. The more conservative reading — how many coins belonging to *other* users
   already share a user's deep features — needs no cut at all, and its primitives are built here
@@ -975,4 +978,3 @@ design withholds for validation, so the unsupervised EM/Splink and Bayesian path
 - <sub>**Ron & Shamir**, *Quantitative Analysis of the Full Bitcoin Transaction Graph* (FC 2013): the first quantitative graph analysis of Bitcoin and the tracking of specific large entities by their on-chain patterns — the lineage of the **special-case** de-anonymization this paper's known-entity catalog and optimal-change labels extend (`catalog/known-entities.md`, §7). The special cases are the next lever (§10).</sub>
 - <sub>**Dingledine & Mathewson**, *Anonymity Loves Company*: uniformity is a network-effect property — a wallet that de-biases one axis but stands out on another gains nothing. This grounds our recommendation to randomize *between legitimate behaviors* (same distribution), not merely to fix single fingerprints.</sub>
 - <sub>**Syverson**, *Why I'm Not an Entropist*: caution on the entropy framing; we report bits as weight-of-evidence for pairwise linkage, not as a single anonymity scalar.</sub>
-

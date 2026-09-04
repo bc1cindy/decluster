@@ -24,6 +24,9 @@ def test_the_two_ancestry_namespaces_select_different_models():
         subset_sum_weighted_ancestry.dss_link_oracle
 
 
-def test_weighted_path_count_is_the_existing_implementation():
+def test_provenance_route_accumulation_is_the_canonical_name():
     from decluster import path_count, weighted_path_count
+    from decluster.provenance_route_accumulation import provenance_route_accumulation
+    assert provenance_route_accumulation is path_count.provenance_route_accumulation
     assert weighted_path_count.path_count_anonymity is path_count.path_count_anonymity
+    assert path_count.path_count_anonymity is path_count.provenance_route_accumulation

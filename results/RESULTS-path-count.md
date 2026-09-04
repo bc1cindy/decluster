@@ -1,5 +1,10 @@
 # Bounded walk + §07 path-count — real numbers
 
+> Historical record. The current executable contract is
+> `catalog/runs/path-count-contract-v1.json`, rendered as
+> `results/generated/path-count-contract-v1.md`. The live timings below are not part of that
+> deterministic result.
+
 > **Correction (2026-09-03) — the default oracle behind the walk has moved.**
 > The runs below pass `bounded_link_oracle(...)` explicitly, so their numbers remain reproducible as
 > written. `path_count_anonymity()` and `analyze()` now default to `ancestry.value_flow_link_oracle`
@@ -54,10 +59,10 @@ reading, not two.
 **What this costs.** `path_count_anonymity` is the default target of the construction-side cost
 function, and multiplicity was the only thing distinguishing its output from the plain ancestry
 entropy. After this change that instrument measures **no structural property** of the graph.
-Measuring one would need disjoint paths — a minimum *vertex* cut, and a plausibility-weighted one,
-since a traceable path is not the same as a plausible flow. Vertex rather than edge: what fractures
-the graph is a coin ceasing to carry flow, and coins are the vertices here, so the edge reading
-counts a larger cut and over-reports robustness. This repository does not compute that. Note
+Measuring one would need edge-disjoint paths in a graph whose vertices are transactions and whose
+directed, amount-labelled edges are coins. It must also enforce plausible flow, since a traceable
+path is not necessarily capable of carrying the target value. This repository does not compute that
+k-routes object or its corresponding edge cut. Note
 also that the construction-side cost function never combined its terms in the first place: it
 returns them uncombined and raises on the attempt, so what changes here is what one of the three
 terms means, not a working number.

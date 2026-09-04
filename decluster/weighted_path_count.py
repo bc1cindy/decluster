@@ -3,6 +3,6 @@
 ``decluster.path_count`` remains as a compatibility facade for existing callers.
 """
 
-from .path_count import path_count_anonymity
+from .path_count import path_count_anonymity, provenance_route_accumulation
 
-__all__ = ["path_count_anonymity"]
+__all__ = ["path_count_anonymity", "provenance_route_accumulation"]

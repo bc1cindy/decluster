@@ -1,4 +1,7 @@
-"""Counterfactual path counting over the ancestry DAG.
+"""Probability-weighted provenance route accumulation over the ancestry DAG.
+
+The module name is retained for compatibility. This is not a counterfactual k-routes algorithm:
+it does not enumerate edge-disjoint paths or enforce plausible-flow capacity.
 
 The origin distribution is weighted by link probability alone. Subset-sum multiplicity is NOT a
 factor: `cost.py` declares the amount channel refuse-only — it may cut a coin from the graph, never
@@ -49,8 +52,9 @@ def _topological_order(target, edges):
     return order
 
 
-def path_count_anonymity(target, *, depth=6, max_nodes=None, fetch=None, link_oracle=None,
-                          count_oracle=None):
+def provenance_route_accumulation(
+    target, *, depth=6, max_nodes=None, fetch=None, link_oracle=None, count_oracle=None
+):
     """Provenance over ancestral origins, weighted by link probability alone. Reuses
     `build_extended_graph`'s walk (honoring `max_nodes` for deep-coinjoin tractability) -- does not
     re-walk. Returns {"origins_weighted": {origin: weight}, "min_entropy": float, "shannon": float,
@@ -102,3 +106,9 @@ def path_count_anonymity(target, *, depth=6, max_nodes=None, fetch=None, link_or
     probs = list(origins_weighted.values())
     return {"origins_weighted": origins_weighted, "min_entropy": _min_entropy(probs),
             "shannon": _shannon(probs), "truncated": g.truncated}
+
+
+# Compatibility name. It predates the distinction between probability-weighted ancestry routes and
+# the unimplemented CTP k-routes/edge-disjoint plausible-flow metric. New code should import
+# `provenance_route_accumulation` from its canonical namespace.
+path_count_anonymity = provenance_route_accumulation

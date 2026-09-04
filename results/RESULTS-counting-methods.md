@@ -1,5 +1,10 @@
 # Which counting method, and which L
 
+> Historical record. The current canonical result is
+> `catalog/runs/counting-methods-v1.json`, rendered as
+> `results/generated/counting-methods-v1.md`. The historical timings, L comparison and router
+> shares below are not current canonical measurements.
+
 ## Verdict
 
 The whole-transaction cascade was picking the one method that adds nothing and handing the next one
