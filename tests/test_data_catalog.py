@@ -99,9 +99,9 @@ def test_require_verified_refuses_partial_catalog(tmp_path):
 
 def test_committed_catalog_is_fully_verified():
     checks = catalog_status(ROOT)
-    assert len(checks) == 12
+    assert len(checks) == 13
     assert all(check.status is DatasetStatus.VERIFIED for check in checks)
-    assert len(require_verified_datasets(ROOT)) == 12
+    assert len(require_verified_datasets(ROOT)) == 13
 
 
 def test_fetch_uses_mirror_after_identity_mismatch_and_is_then_cached(tmp_path):

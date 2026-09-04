@@ -1,0 +1,75 @@
+{
+  "schema_version": 1,
+  "id": "entity-deanon-v1",
+  "capabilities": ["verify_outputs", "reproduce_runs"],
+  "runs": ["entity-deanon-v1"],
+  "blobs": [
+    {
+      "name": "catalog/runs/entity-deanon-v1.json",
+      "role": "run_manifest",
+      "bytes": 3313,
+      "sha256": "b114fcc22e5f6a6faed579f145543c374c6dc2f4109f3260e652cc9a803f21fe",
+      "locations": {"canonical": null, "mirrors": []}
+    },
+    {
+      "name": "tests/fixtures/entity_satoshidice_2013.ndjson.gz",
+      "role": "dataset",
+      "bytes": 1315051,
+      "sha256": "6cac465a5eca59633fbb3e6f99b83146b9b0e590adf95801a303ccd815699846",
+      "locations": {
+        "canonical": "https://github.com/bc1cindy/decluster/raw/554e72131df9b28aa2a90b09184a159a841d3077/tests/fixtures/entity_satoshidice_2013.ndjson.gz",
+        "mirrors": []
+      }
+    },
+    {
+      "name": "tests/fixtures/entity_bitmex_2019.ndjson.gz",
+      "role": "dataset",
+      "bytes": 2523417,
+      "sha256": "699c87235bce17a43a8befe2c412dd7bea61ffe3dd772abe7addcbae5a4b8ea8",
+      "locations": {
+        "canonical": "https://github.com/bc1cindy/decluster/raw/678ecb5fa4681679c378d8adef7bd1c4f2800f37/tests/fixtures/entity_bitmex_2019.ndjson.gz",
+        "mirrors": []
+      }
+    },
+    {
+      "name": "results/artifacts/entity-deanon-v1.json",
+      "role": "result",
+      "bytes": 1064,
+      "sha256": "0d43e7f39539d79b3d4f884554f0fd5cf923f5f2cdd61a687d07c554e90ef4f8",
+      "locations": {"canonical": null, "mirrors": []}
+    },
+    {
+      "name": "results/generated/entity-deanon-v1.md",
+      "role": "result",
+      "bytes": 557,
+      "sha256": "9a3fdc6c79bc5c94cc687b5a41ebff8c663ecf3358cb080883e93cd30d94d850",
+      "locations": {"canonical": null, "mirrors": []}
+    },
+    {
+      "name": "sources/decluster-dd1446c-runtime.tar",
+      "role": "source",
+      "bytes": 1157120,
+      "sha256": "203961313ec1ddc12f5dd5e853ab6d384ebf5661a0568e9dd7443dd026bbbd71",
+      "locations": {"canonical": null, "mirrors": []}
+    },
+    {
+      "name": "reproduction/entity-deanon/requirements.lock",
+      "role": "lockfile",
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "locations": {"canonical": null, "mirrors": []}
+    },
+    {
+      "name": "reproduction/entity-deanon/environment.json",
+      "role": "environment",
+      "bytes": 362,
+      "sha256": "f80b1cf84ae4e334e7083993a6d7fd0b242e9deb138cf3d1ec8fd0cb2495eb98",
+      "locations": {"canonical": null, "mirrors": []}
+    }
+  ],
+  "limitations": [
+    "The bundled environment currently targets CPython 3.13 on macOS arm64.",
+    "The dataset origins are public, but their cataloged redistribution status remains unknown.",
+    "Public bootstrap remains incomplete until every blob has a canonical HTTPS location and an independent mirror."
+  ]
+}

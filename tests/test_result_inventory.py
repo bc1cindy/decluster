@@ -10,6 +10,7 @@ def test_every_legacy_result_receives_an_explicit_status():
     entries = inventory_results(ROOT)
 
     assert entries
+    assert all(entry.document.endswith(".md") for entry in entries)
     assert len({entry.document for entry in entries}) == len(entries)
     assert sum(summarize(entries).values()) == len(entries)
 
@@ -36,6 +37,14 @@ def test_migrated_temporal_result_is_bound_to_its_canonical_run():
 def test_unregistered_markdown_is_not_presented_as_reproducible():
     entries = {entry.document: entry for entry in inventory_results(ROOT)}
 
-    assert entries["results/RESULTS-conservation.md"].status == (
-        "historical_result_without_run_manifest"
-    )
+    conservation = entries["results/RESULTS-conservation.md"]
+    assert conservation.status == "superseded_by_canonical_run"
+    assert conservation.canonical_run == "conservation-round-three-v1"
+
+
+def test_slice_channel_document_uses_its_explicit_run_alias():
+    entries = {entry.document: entry for entry in inventory_results(ROOT)}
+    channels = entries["results/RESULTS-slice-a-channels.md"]
+
+    assert channels.status == "superseded_by_canonical_run"
+    assert channels.canonical_run == "slice-channels-v1"

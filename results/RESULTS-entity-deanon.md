@@ -1,5 +1,11 @@
 # Entity-labelled strong-N-S probe on real data — a positive result and its boundary
 
+> **Executable scope, 2026-09-04.** The paired committed subgraphs are now
+> recalculated by `catalog/runs/entity-deanon-v1.json`. The canonical run
+> supports a snapshot-specific common-neighbour positive control and null
+> control. It does not implement seeded N-S propagation, reproduce the full
+> BigQuery slices or justify the older phrase “strong N-S claim”.
+
 The independent entity-label path (`decluster/entities.py` → `graph_deanon.entity_label_uf` /
 `evaluate_entity`) tests the *strong* Narayanan–Shmatikov claim on **real BigQuery slices**: *does
 payment-graph structure re-link same-entity addresses that co-spend leaves separate?*, using an

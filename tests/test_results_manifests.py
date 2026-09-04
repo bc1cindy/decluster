@@ -16,11 +16,16 @@ MANIFESTS = sorted(glob.glob(os.path.join(ROOT, "results", "manifests", "*.json"
 MIGRATED_RUN_DOCS = {
     "RESULTS-analyze.md": "catalog/runs/analyze-contract-v1.json",
     "RESULTS-ancestry.md": "catalog/runs/ancestry-contract-v1.json",
+    "RESULTS-ancestry-sparsity.md": "catalog/runs/ancestry-sparsity-v1.json",
     "RESULTS-amount-channel-survey.md": "catalog/runs/amount-channel-survey-v1.json",
     "RESULTS-counting-methods.md": "catalog/runs/counting-methods-v1.json",
+    "RESULTS-conservation.md": "catalog/runs/conservation-round-three-v1.json",
+    "RESULTS-entity-deanon.md": "catalog/runs/entity-deanon-v1.json",
     "RESULTS-exact-oracle-audit.md": "catalog/runs/exact-oracle-audit-v1.json",
     "RESULTS-path-count.md": "catalog/runs/path-count-contract-v1.json",
     "RESULTS-path-counting-analysis.md": "catalog/runs/path-count-contract-v1.json",
+    "RESULTS-reid.md": "catalog/runs/reid-v1.json",
+    "RESULTS-slice-a-channels.md": "catalog/runs/slice-channels-v1.json",
 }
 
 
@@ -56,7 +61,6 @@ def test_every_manifest_names_a_document_that_exists():
 NOT_YET_MIGRATED = {
     "RESULTS-3v23-engine.md",
     "RESULTS-ancestry-crossview-feasibility.md",
-    "RESULTS-ancestry-sparsity.md",
     "RESULTS-anonymity-set-scale.md",
     "RESULTS-anonymity-set.md",
     "RESULTS-attribute-conditioning.md",
@@ -68,13 +72,11 @@ NOT_YET_MIGRATED = {
     "RESULTS-cluster-bits.md",
     "RESULTS-cluster-robustness.md",
     "RESULTS-cluster-scale.md",
-    "RESULTS-conservation.md",
     "RESULTS-conspicuous-order.md",
     "RESULTS-contraction-2026.md",
     "RESULTS-def1-sparsity.md",
     "RESULTS-e2e.md",
     "RESULTS-em-m.md",
-    "RESULTS-entity-deanon.md",
     "RESULTS-entropy.md",
     "RESULTS-era-sweep.md",
     "RESULTS-fingerprint-regime.md",
@@ -94,9 +96,7 @@ NOT_YET_MIGRATED = {
     "RESULTS-persistence-curve.md",
     "RESULTS-provenance.md",
     "RESULTS-refusing-clusterer.md",
-    "RESULTS-reid.md",
     "RESULTS-rejoin.md",
-    "RESULTS-slice-a-channels.md",
     "RESULTS-slice-gate-2026.md",
     "RESULTS-special-change.md",
     "RESULTS-subtx-demix.md",

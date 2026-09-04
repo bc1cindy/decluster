@@ -1,5 +1,13 @@
 # The entity-attribute and social-graph channels on a real slice
 
+> The reproducible six-block observations are recalculated by
+> `catalog/runs/slice-channels-v1.json`. Its structured artifact is
+> `results/artifacts/slice-channels-v1.json`, with canonical rendering in
+> `results/generated/slice-channels-v1.md`. Measurements below for the 150.000-transaction and
+> 947.000-transaction slices are historical because their exact inputs were not preserved. The
+> canonical run measures attribute density and graph shape; it does not measure graph-matching
+> success or a privacy score.
+
 **What this measures.** The reid capstone (`RESULTS-reid.md`) established that the *ancestry* feature
 space is (epsilon, delta)-sparse and de-anonymizes (~0.94 on sparse coins). This measures the other
 two channels an adversary can read off the graph: each entity's *attribute* distributions, and the

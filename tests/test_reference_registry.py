@@ -33,7 +33,9 @@ def test_ctp_registry_pins_every_footnote_in_the_reviewed_revision():
 def test_every_claim_resolves_to_registered_sources():
     sources = load_sources(SOURCES)
     claims = load_claims(CLAIMS, {source.id for source in sources})
-    assert len(claims) == 10
+    assert len(claims) == 12
+    assert any(claim.id == "ctp.social_graph.structural_linkage" for claim in claims)
+    assert any(claim.id == "ctp.sparse_dataset.feature_uniqueness" for claim in claims)
 
 
 def test_context_only_sources_are_not_silently_dropped():

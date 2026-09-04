@@ -6,6 +6,9 @@ __pycache__/
 *.ndjson
 !catalog/entities.example.ndjson
 slice*.json
+!catalog/runs/slice-*.json
+!results/artifacts/slice-*.json
+!releases/slice-*.bundle.json
 slice*.err
 !catalog/datasets/slice-a-channels-2016-v1.json
 day-*.json

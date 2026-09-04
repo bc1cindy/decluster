@@ -1,4 +1,12 @@
-# Sparsity predicts de-anonymization: the record-linkage attack, stratified
+# Ancestry-signature record linkage
+
+> This historical narrative is superseded by the result recalculated from
+> `catalog/runs/reid-v1.json`. The structured artifact is
+> `results/artifacts/reid-v1.json`; `results/generated/reid-v1.md` is its canonical rendering.
+> The run demonstrates record linkage under auxiliary origins sampled from each target's stored
+> signature. It does not establish wallet ownership, independently observed auxiliary information,
+> a chain-wide rate, or reproduction of the Netflix experiment. The discussion below is retained
+> as provenance and contains stronger historical interpretations.
 
 **Why this closes the argument.** `RESULTS-ancestry-sparsity.md` measured that the ancestry
 feature space is (epsilon, delta)-sparse: the precondition the sparse-dataset attack

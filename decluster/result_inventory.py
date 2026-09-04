@@ -5,6 +5,18 @@ import json
 from pathlib import Path
 
 
+# Some historical documents summarize a narrower canonical run or share one
+# with another document, so their names cannot be inferred from output stems.
+DOCUMENT_RUN_ALIASES = {
+    "RESULTS-analyze.md": "analyze-contract-v1",
+    "RESULTS-ancestry.md": "ancestry-contract-v1",
+    "RESULTS-conservation.md": "conservation-round-three-v1",
+    "RESULTS-path-count.md": "path-count-contract-v1",
+    "RESULTS-path-counting-analysis.md": "path-count-contract-v1",
+    "RESULTS-slice-a-channels.md": "slice-channels-v1",
+}
+
+
 @dataclass(frozen=True)
 class ResultInventoryEntry:
     document: str
@@ -31,10 +43,10 @@ def inventory_results(root: Path) -> tuple[ResultInventoryEntry, ...]:
         if name.endswith(".md")
     }
     entries = []
-    for document in sorted((root / "results").glob("RESULTS-*")):
+    for document in sorted((root / "results").glob("RESULTS-*.md")):
         stem = document.stem.removeprefix("RESULTS-")
         old_manifest = root / "results" / "manifests" / f"{document.stem}.json"
-        canonical_run = generated_by_stem.get(stem)
+        canonical_run = DOCUMENT_RUN_ALIASES.get(document.name, generated_by_stem.get(stem))
         if canonical_run is not None:
             status = "superseded_by_canonical_run"
         elif old_manifest.is_file():

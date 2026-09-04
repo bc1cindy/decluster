@@ -1,0 +1,13 @@
+{
+  "schema_version": 1,
+  "python": {
+    "implementation": "cpython",
+    "version": "3.13",
+    "system": "Darwin",
+    "machine": "arm64"
+  },
+  "source_archive": "sources/decluster-a29e1f9-runtime.tar",
+  "project_root": "decluster",
+  "requirements": "reproduction/slice-channels/requirements.lock",
+  "dependency_directory": "reproduction/slice-channels"
+}

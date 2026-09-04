@@ -32,6 +32,17 @@ def test_structure_relinks_what_cospend_leaves_separate():
     assert r["pos_mean"] >= 1.0                                 # the held-out same-entity pair shares >=1 neighbor
     assert r["auc_payment"] is not None and r["auc_payment"] > 0.5
 
+def test_entity_evaluation_is_independent_of_sample_order():
+    sample = [(_sweep("3BMEXaaa", "hotwallet"), None),
+              (_sweep("3BMEXbbb", "hotwallet"), None),
+              ({"txid": "ctl", "vin": [{"txid": "fc", "vout": 0,
+                 "prevout": {"scriptpubkey_address": "1control"}}],
+                "vout": [{"value": 100, "scriptpubkey_type": "p2pkh",
+                 "scriptpubkey_address": "1elsewhere"}]}, None)]
+    assert evaluate_entity(sample, detect_bitmex, seed=7) == evaluate_entity(
+        list(reversed(sample)), detect_bitmex, seed=7
+    )
+
 if __name__ == "__main__":
     fns = [v for k, v in sorted(globals().items()) if k.startswith("test_") and callable(v)]
     for fn in fns: fn(); print(f"ok  {fn.__name__}")
