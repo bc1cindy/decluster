@@ -24,12 +24,13 @@ def test_canonical_counterparts_are_not_treated_as_unregistered_history():
     assert candidate.status == oracle.status == "superseded_by_canonical_run"
 
 
-def test_old_invariant_files_are_classified_as_legacy_manifests():
+def test_migrated_temporal_result_is_bound_to_its_canonical_run():
     entries = {entry.document: entry for entry in inventory_results(ROOT)}
     temporal = entries["results/RESULTS-fs-temporal.md"]
 
-    assert temporal.status == "legacy_manifest_requires_migration"
+    assert temporal.status == "superseded_by_canonical_run"
     assert temporal.legacy_manifest == "results/manifests/RESULTS-fs-temporal.json"
+    assert temporal.canonical_run == "fs-temporal-v1"
 
 
 def test_unregistered_markdown_is_not_presented_as_reproducible():
