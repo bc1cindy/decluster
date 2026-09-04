@@ -241,6 +241,40 @@ class GraphFractureEvidence:
             raise ValueError("graph fracture must increase the component count")
 
 
+@dataclass(frozen=True)
+class CorrespondentDistributionEvidence:
+    """Finite-sample estimate of a target's persistent correspondent distribution.
+
+    Scores are not constrained to ``[0, 1]`` because subtraction of an estimated
+    background distribution can produce negative finite-sample values.
+    """
+
+    target: Subject
+    scores: tuple[tuple[Subject, float], ...]
+    observations: int
+    batch_size: int
+    context: EvidenceContext
+
+    def __post_init__(self) -> None:
+        if not self.scores:
+            raise ValueError("correspondent scores must not be empty")
+        correspondents: set[Subject] = set()
+        total = 0.0
+        for correspondent, score in self.scores:
+            _require_pair(self.target, correspondent)
+            _require_finite(score, "correspondent score")
+            if correspondent in correspondents:
+                raise ValueError("correspondents must be unique")
+            correspondents.add(correspondent)
+            total += score
+        if abs(total - 1.0) > 1e-9:
+            raise ValueError("correspondent scores must sum to one")
+        if self.observations < 1:
+            raise ValueError("observations must be positive")
+        if self.batch_size < 2:
+            raise ValueError("batch_size must be at least two")
+
+
 Evidence: TypeAlias = Union[
     OwnershipLikelihoodEvidence,
     CannotLinkEvidence,
@@ -253,4 +287,5 @@ Evidence: TypeAlias = Union[
     AbstentionEvidence,
     CandidateEliminationEvidence,
     GraphFractureEvidence,
+    CorrespondentDistributionEvidence,
 ]

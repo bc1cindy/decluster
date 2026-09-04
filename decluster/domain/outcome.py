@@ -1,12 +1,14 @@
 """Closed outcomes for adversarial analysis and partition operations."""
 
 from dataclasses import dataclass
+from math import isfinite
 from typing import TypeAlias, Union
 
 from .evidence import (
     CandidateEliminationEvidence,
     Evidence,
     GraphFractureEvidence,
+    CorrespondentDistributionEvidence,
     IntersectionEvidence,
     ProvenanceDistributionEvidence,
     Subject,
@@ -173,6 +175,19 @@ class GraphFractureMeasured:
     evidence: GraphFractureEvidence
 
 
+@dataclass(frozen=True)
+class PersistentCorrespondentRanked:
+    evidence: CorrespondentDistributionEvidence
+    correspondent: Subject
+    margin: float
+
+    def __post_init__(self) -> None:
+        if self.correspondent not in dict(self.evidence.scores):
+            raise ValueError("ranked correspondent must occur in evidence")
+        if not isfinite(self.margin) or self.margin < 0:
+            raise ValueError("ranking margin must be finite and non-negative")
+
+
 Outcome: TypeAlias = Union[
     ClusterMerge,
     MergeRefused,
@@ -190,4 +205,5 @@ Outcome: TypeAlias = Union[
     NotObserved,
     AdditiveDecayMeasured,
     GraphFractureMeasured,
+    PersistentCorrespondentRanked,
 ]
