@@ -26,6 +26,23 @@ def cluster_naive(nodes):
     for a, b, _ in _cospent_pairs(nodes): uf.union(a, b)
     return uf.groups()
 
+
+def cluster_cospends(nodes, cospends):
+    """Apply CIOH to explicitly supplied co-spend groups.
+
+    This is the data-independent form of :func:`cluster_naive`. Each item in
+    ``cospends`` contains the input coins observed in one transaction. Unknown
+    nodes are ignored, matching the induced-subgraph behavior of
+    :func:`_cospent_pairs`.
+    """
+    known = set(nodes)
+    uf = UF(nodes)
+    for inputs in cospends:
+        members = [node for node in inputs if node in known]
+        for member in members[1:]:
+            uf.union(members[0], member)
+    return uf.groups()
+
 def cluster_from_index(nodes, lookup):
     """Group nodes by a precomputed {node -> cluster_id} lookup (whole-corpus cluster membership).
     A node absent from lookup becomes its own singleton group. Returns a list of lists — the same

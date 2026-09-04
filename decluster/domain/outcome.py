@@ -6,6 +6,7 @@ from typing import TypeAlias, Union
 
 from .evidence import (
     CandidateEliminationEvidence,
+    CoSpendEvidence,
     Evidence,
     GraphFractureEvidence,
     CorrespondentDistributionEvidence,
@@ -218,6 +219,26 @@ class PseudonymGraphConstructed:
     evidence: PseudonymGraphEvidence
 
 
+@dataclass(frozen=True)
+class ReferenceOwnershipConflict:
+    """A predicted merge conflicts with distinct ownership labels supplied by a fixture."""
+
+    subject: Subject
+    target: Subject
+    evidence: CoSpendEvidence
+    subject_owner: str
+    target_owner: str
+
+    def __post_init__(self) -> None:
+        _require_pair(self.subject, self.target)
+        if self.subject not in self.evidence.inputs or self.target not in self.evidence.inputs:
+            raise ValueError("conflicting subjects must occur in the co-spend")
+        if not self.subject_owner or not self.target_owner:
+            raise ValueError("reference owner labels must not be empty")
+        if self.subject_owner == self.target_owner:
+            raise ValueError("ownership conflict requires distinct reference labels")
+
+
 Outcome: TypeAlias = Union[
     ClusterMerge,
     MergeRefused,
@@ -239,4 +260,5 @@ Outcome: TypeAlias = Union[
     MessageAssignmentRecovered,
     TransactionFingerprintObserved,
     PseudonymGraphConstructed,
+    ReferenceOwnershipConflict,
 ]

@@ -325,6 +325,23 @@ class TransactionFingerprintEvidence:
 
 
 @dataclass(frozen=True)
+class CoSpendEvidence:
+    """Inputs observed together in one transaction, before an ownership inference."""
+
+    transaction: Subject
+    inputs: tuple[Subject, ...]
+    context: EvidenceContext
+
+    def __post_init__(self) -> None:
+        if self.transaction.kind is not SubjectKind.TRANSACTION:
+            raise ValueError("co-spend evidence requires a transaction subject")
+        if len(self.inputs) < 2 or len(set(self.inputs)) != len(self.inputs):
+            raise ValueError("co-spend evidence requires at least two unique inputs")
+        if any(subject.kind is not SubjectKind.COIN for subject in self.inputs):
+            raise ValueError("co-spend inputs must be coin subjects")
+
+
+@dataclass(frozen=True)
 class ContractedTransfer:
     source: Subject
     target: Subject
@@ -381,5 +398,6 @@ Evidence: TypeAlias = Union[
     CorrespondentDistributionEvidence,
     PerfectMatchingEvidence,
     TransactionFingerprintEvidence,
+    CoSpendEvidence,
     PseudonymGraphEvidence,
 ]
