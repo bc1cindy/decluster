@@ -1,0 +1,64 @@
+name: CI
+
+on:
+  pull_request:
+  push:
+    branches: [master]
+
+permissions:
+  contents: read
+
+concurrency:
+  group: ci-${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  python:
+    name: Python ${{ matrix.python-version }}
+    runs-on: ubuntu-latest
+    strategy:
+      fail-fast: false
+      matrix:
+        python-version: ["3.9", "3.13"]
+    steps:
+      - name: Check out source
+        uses: actions/checkout@08c6903cd8c0fde910a37f88322edcfb5dd907a8 # v5.0.0
+      - name: Set up Python
+        uses: actions/setup-python@a309ff8b426b58ec0e2a45f0f869d46889d02405 # v6.2.0
+        with:
+          python-version: ${{ matrix.python-version }}
+          cache: pip
+      - name: Install test dependencies
+        run: python -m pip install --disable-pip-version-check ".[test,data]"
+      - name: Run offline gate
+        run: python -m pytest -m "not live and not reproduction"
+
+  dss:
+    name: Python 3.13 with pinned DSS
+    runs-on: ubuntu-latest
+    steps:
+      - name: Check out source
+        uses: actions/checkout@08c6903cd8c0fde910a37f88322edcfb5dd907a8 # v5.0.0
+      - name: Check out DSS
+        uses: actions/checkout@08c6903cd8c0fde910a37f88322edcfb5dd907a8 # v5.0.0
+        with:
+          repository: bc1cindy/dense-subset-sum
+          ref: 30fc21ee521016061532008f8dfea31f953d7e6d
+          path: .ci/dense-subset-sum
+      - name: Set up Python
+        uses: actions/setup-python@a309ff8b426b58ec0e2a45f0f869d46889d02405 # v6.2.0
+        with:
+          python-version: "3.13"
+          cache: pip
+      - name: Select DSS minimum Rust toolchain
+        run: |
+          rustup toolchain install 1.88.0 --profile minimal
+          rustup default 1.88.0
+      - name: Install project and DSS
+        run: |
+          python -m pip install --disable-pip-version-check ".[test,data]"
+          python -m pip install --disable-pip-version-check .ci/dense-subset-sum
+      - name: Verify DSS revision
+        run: python -c 'import dss; assert dss.__rev__ == "30fc21ee521016061532008f8dfea31f953d7e6d"'
+      - name: Run offline gate with DSS
+        run: python -m pytest -m "not live and not reproduction"
