@@ -15,6 +15,7 @@ ROOT = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 MANIFESTS = sorted(glob.glob(os.path.join(ROOT, "results", "manifests", "*.json")))
 MIGRATED_RUN_DOCS = {
     "RESULTS-amount-channel-survey.md": "catalog/runs/amount-channel-survey-v1.json",
+    "RESULTS-counting-methods.md": "catalog/runs/counting-methods-v1.json",
     "RESULTS-exact-oracle-audit.md": "catalog/runs/exact-oracle-audit-v1.json",
 }
 
@@ -68,7 +69,6 @@ NOT_YET_MIGRATED = {
     "RESULTS-conservation.md",
     "RESULTS-conspicuous-order.md",
     "RESULTS-contraction-2026.md",
-    "RESULTS-counting-methods.md",
     "RESULTS-def1-sparsity.md",
     "RESULTS-e2e.md",
     "RESULTS-em-m.md",

@@ -1,0 +1,20 @@
+{
+  "schema_version": 1,
+  "id": "counting-methods-v1",
+  "capabilities": ["verify_outputs", "reproduce_runs"],
+  "runs": ["counting-methods-v1"],
+  "blobs": [
+    {"name": "catalog/runs/counting-methods-v1.json", "role": "run_manifest", "bytes": 2464, "sha256": "61f55236883fa74ecec6369d060086d36a75cf23ab56657440614eff2e8e34c7", "locations": {"canonical": null, "mirrors": []}},
+    {"name": "results/artifacts/counting-router-v1.json", "role": "result", "bytes": 894, "sha256": "731164f77a75776fc91a9c5bc8bce16700e6084e44c75d7e83510ac8afec1ce5", "locations": {"canonical": null, "mirrors": []}},
+    {"name": "results/artifacts/counting-fee-sensitivity-v1.json", "role": "result", "bytes": 1968, "sha256": "0fef54735522470634c696ec026c31c86dff4d4dae23da956b49d8f89eb3a508", "locations": {"canonical": null, "mirrors": []}},
+    {"name": "results/artifacts/counting-methods-v1.json", "role": "result", "bytes": 3000, "sha256": "550b78a29abf23ebfdf73308a9287452336e2769e7d2aa1e5472a1121fd8f8bc", "locations": {"canonical": null, "mirrors": []}},
+    {"name": "results/generated/counting-methods-v1.md", "role": "result", "bytes": 796, "sha256": "1862919ac1ccca47ad99572e3e3d94fd10098d0d259a487f86a3c9a0b9c6043f", "locations": {"canonical": null, "mirrors": []}},
+    {"name": "sources/decluster-bb54d59-runtime.tar", "role": "source", "bytes": 1623040, "sha256": "d23f4973254a5b504dd3b88b0bafdbbf2f3b4d8a39d27f66b5e1cec3749e5b96", "locations": {"canonical": null, "mirrors": []}},
+    {"name": "reproduction/counting-methods/requirements.lock", "role": "lockfile", "bytes": 0, "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855", "locations": {"canonical": null, "mirrors": []}},
+    {"name": "reproduction/counting-methods/environment.json", "role": "environment", "bytes": 331, "sha256": "42a86ed02df57e51dead42c9aabdc164077329d7e7b0422b016172dd7331d852", "locations": {"canonical": null, "mirrors": []}}
+  ],
+  "limitations": [
+    "The bundled environment currently targets CPython 3.13 on macOS arm64.",
+    "Public bootstrap remains unavailable until every blob has a canonical HTTPS location and an independent mirror."
+  ]
+}
