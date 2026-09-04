@@ -202,8 +202,13 @@ exact conservation, and preserves the fee output's position after the reference'
 sort.
 Known-owner input groups are also a separate mode: overlapping index groups are merged transitively,
 replaced by summed inputs for traversal, and expanded back in the tool's order. This reproduces the
-reference's row replication without treating equal-valued inputs as the same object. Output-owner
-merges, `PRECHECK`, and JoinMarket intrafees remain open.
+reference's row replication without treating equal-valued inputs as the same object. `PRECHECK`
+now reports the deterministic input-output cells found by the reference's aggregate probe while
+leaving the exhaustive matrix authoritative. Explicit JoinMarket maker/taker bounds widen the
+matching interval exactly as in the pinned reference and disable precheck. These bounds are
+hypotheses, not observed fees. `MERGE_OUTPUTS` is not silently repaired: revision `ed0b649c` marks
+the option unreliable and its shared packer only examines inputs, so it does not define a stable
+baseline contract.
 
 The compatibility modules still disclose why their old names must not be used as evidence of a
 reference algorithm:

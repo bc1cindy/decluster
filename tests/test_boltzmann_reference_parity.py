@@ -4,6 +4,8 @@ Expected values were recomputed with commit ed0b649c6ca4abf0cecb69467de6c4e97e84
 ``options=[LINKABILITY]``. The reference matrix is transposed here to local input-by-output order.
 """
 
+import pytest
+
 from decluster.baselines.boltzmann import fee_tolerant_link_analysis
 from decluster.baselines.boltzmann_reference import (
     boltzmann_reference_analysis,
@@ -107,3 +109,40 @@ def test_overlapping_owner_groups_are_transitively_merged():
     assert result.linked_input_groups == ((0, 1, 2),)
     assert result.combination_count == 1
     assert result.link_counts == ((1, 1),) * 3
+
+
+def test_precheck_exposes_deterministic_links_without_changing_linkability():
+    ordinary = boltzmann_reference_analysis((1, 2), (1, 2))
+    checked = boltzmann_reference_analysis((1, 2), (1, 2), precheck=True)
+
+    assert checked.combination_count == ordinary.combination_count == 2
+    assert checked.link_counts == ordinary.link_counts == ((2, 1), (1, 2))
+    assert checked.precheck_deterministic_links == ((0, 0), (1, 1))
+
+
+def test_precheck_links_expand_across_packed_inputs():
+    result = boltzmann_reference_with_linked_inputs(
+        (1, 1, 1), (1, 2), [{0, 1}], precheck=True
+    )
+
+    assert result.inputs == (1, 1, 1)
+    assert result.precheck_deterministic_links == ((0, 0), (1, 0), (2, 1))
+
+
+def test_joinmarket_intrafees_widen_the_reference_matching_interval():
+    ordinary = boltzmann_reference_analysis((10, 10), (8, 2, 3, 7))
+    bounded = boltzmann_reference_analysis(
+        (10, 10), (8, 2, 3, 7), intrafees=(1, 2), precheck=True
+    )
+
+    assert ordinary.combination_count == 3
+    assert bounded.combination_count == 5
+    assert bounded.link_counts == ((3, 3, 3, 3),) * 2
+    assert bounded.precheck_deterministic_links == ()
+    assert bounded.intrafees == (1.0, 2.0)
+
+
+@pytest.mark.parametrize("intrafees", [(-1, 0), (0, float("inf")), (True, 0), (1,)])
+def test_intrafees_reject_invalid_bounds(intrafees):
+    with pytest.raises(ValueError, match="intrafee"):
+        boltzmann_reference_analysis((2, 1), (2, 1), intrafees=intrafees)

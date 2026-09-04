@@ -5,17 +5,26 @@ the same object as Maurer's set of canonical sub-transaction mappings: when a
 transaction pays a fee, Boltzmann's decomposition tree can assign more than one
 occurrence to the same terminal partition.
 
-This implements default ``LINKABILITY`` plus explicit ``MERGE_FEES`` and
-known-owner input packing. ``PRECHECK``, output packing and JoinMarket
-intrafees remain separate options and are not silently approximated here.
+This implements default ``LINKABILITY`` plus explicit ``MERGE_FEES``,
+``PRECHECK``, known-owner input packing and JoinMarket intrafee bounds.  The
+upstream ``MERGE_OUTPUTS`` option is not ported: in the pinned reference
+revision it is documented as unreliable and its packer only examines inputs.
 """
 
 from collections import defaultdict, deque
 from dataclasses import dataclass
+from math import isfinite
 
 
 @dataclass(frozen=True)
 class BoltzmannReferenceAnalysis:
+    """Counts plus the optional diagnostic state of the pinned reference modes.
+
+    ``precheck_deterministic_links`` uses this module's input-by-output matrix
+    order. Intrafees are the maximum maker receipt and taker payment accepted
+    by the reference matching predicate; they are bounds, not observed fees.
+    """
+
     combination_count: int
     link_counts: tuple[tuple[int, ...], ...]
     probabilities: tuple[tuple[float, ...], ...]
@@ -25,6 +34,8 @@ class BoltzmannReferenceAnalysis:
     merge_fees: bool = False
     fee_output_index: int | None = None
     linked_input_groups: tuple[tuple[int, ...], ...] = ()
+    precheck_deterministic_links: tuple[tuple[int, int], ...] = ()
+    intrafees: tuple[float, float] = (0.0, 0.0)
 
 
 def _aggregate_values(values):
@@ -48,24 +59,48 @@ def _add_counts(target, source, multiplier=1):
             target[i][o] += value * multiplier
 
 
-def boltzmann_reference_analysis(inputs, outputs, *, max_coins=12, merge_fees=False):
+def _validated_intrafees(intrafees):
+    try:
+        maker, taker = intrafees
+    except (TypeError, ValueError) as exc:
+        raise ValueError("intrafees must contain maker and taker bounds") from exc
+    if any(isinstance(value, bool) or not isinstance(value, (int, float))
+           or not isfinite(value) or value < 0 for value in (maker, taker)):
+        raise ValueError("intrafee bounds must be finite non-negative numbers")
+    return float(maker), float(taker)
+
+
+def boltzmann_reference_analysis(
+    inputs, outputs, *, max_coins=12, merge_fees=False, precheck=False,
+    intrafees=(0, 0),
+):
     """Reproduce Boltzmann's default aggregate traversal and link matrix.
 
     Values must be non-negative integers and the observed transaction fee must
-    be non-negative.  The bound applies to each side, matching the reference
+    be non-negative. The bound applies to each side, matching the reference
     tool's ``max_txos`` guard rather than Maurer's combined-coin bound.
+    ``precheck`` exposes the reference aggregate test but does not alter the
+    final exhaustive result. The two intrafee bounds are accepted only as an
+    explicit hypothesis and disable precheck, as in the pinned implementation.
     """
 
     inputs, outputs = tuple(inputs), tuple(outputs)
+    intrafees = _validated_intrafees(intrafees)
     values = inputs + outputs
     if not inputs or not outputs:
-        return BoltzmannReferenceAnalysis(0, (), (), 0, inputs, outputs, merge_fees, None)
+        return BoltzmannReferenceAnalysis(
+            0, (), (), 0, inputs, outputs, merge_fees, None,
+            intrafees=intrafees,
+        )
     if any(isinstance(value, bool) or not isinstance(value, int) or value < 0
            for value in values):
         raise ValueError("coin values must be non-negative integers")
     fee = sum(inputs) - sum(outputs)
     if fee < 0:
-        return BoltzmannReferenceAnalysis(0, (), (), fee, inputs, outputs, merge_fees, None)
+        return BoltzmannReferenceAnalysis(
+            0, (), (), fee, inputs, outputs, merge_fees, None,
+            intrafees=intrafees,
+        )
 
     output_entries = [(value, False, index) for index, value in enumerate(outputs)]
     traversal_fee = fee
@@ -96,9 +131,15 @@ def boltzmann_reference_analysis(inputs, outputs, *, max_coins=12, merge_fees=Fa
     for left in unique_in_values:
         for right in unique_out_values:
             difference = left - right
-            if difference < 0:
+            if intrafees == (0.0, 0.0) and difference < 0:
                 break
-            if difference <= traversal_fee:
+            maker_fee, taker_fee = intrafees
+            matches = (
+                -maker_fee <= difference <= traversal_fee + taker_fee
+                if intrafees != (0.0, 0.0)
+                else difference <= traversal_fee
+            )
+            if matches:
                 for mask, value in enumerate(in_values):
                     if value == left and mask not in input_value:
                         matching_inputs.append(mask)
@@ -107,9 +148,31 @@ def boltzmann_reference_analysis(inputs, outputs, *, max_coins=12, merge_fees=Fa
                     mask for mask, value in enumerate(out_values) if value == right
                 )
     matching_inputs.sort()
+    deterministic_links = ()
+    if precheck and intrafees == (0.0, 0.0) and matching_inputs:
+        raw_counts = [[0] * len(outputs) for _ in inputs]
+        input_occurrences = [0] * len(inputs)
+        for input_mask in matching_inputs:
+            value = input_value[input_mask]
+            for output_mask in outputs_by_input_value[value]:
+                _add_counts(
+                    raw_counts,
+                    _link_counts(input_mask, output_mask, len(inputs), len(outputs)),
+                )
+                for index in range(len(inputs)):
+                    input_occurrences[index] += int(bool(input_mask & (1 << index)))
+        reference_count = input_occurrences[0]
+        deterministic_links = tuple(
+            (input_index, output_index)
+            for input_index, row in enumerate(raw_counts)
+            for output_index, count in enumerate(row)
+            if count == reference_count
+        )
     if len(matching_inputs) < 2:
         return BoltzmannReferenceAnalysis(
-            0, (), (), fee, inputs, outputs, merge_fees, fee_output_index
+            0, (), (), fee, inputs, outputs, merge_fees, fee_output_index,
+            precheck_deterministic_links=deterministic_links,
+            intrafees=intrafees,
         )
 
     target = matching_inputs[-1]
@@ -198,7 +261,7 @@ def boltzmann_reference_analysis(inputs, outputs, *, max_coins=12, merge_fees=Fa
     )
     return BoltzmannReferenceAnalysis(
         combination_count, frozen_counts, probabilities, fee, inputs, outputs,
-        merge_fees, fee_output_index,
+        merge_fees, fee_output_index, (), deterministic_links, intrafees,
     )
 
 
@@ -220,7 +283,8 @@ def _merged_index_groups(groups, size):
 
 
 def boltzmann_reference_with_linked_inputs(
-    inputs, outputs, linked_inputs, *, max_coins=12, merge_fees=False
+    inputs, outputs, linked_inputs, *, max_coins=12, merge_fees=False,
+    precheck=False, intrafees=(0, 0),
 ):
     """Reproduce TxosLinker's input packing and matrix expansion.
 
@@ -238,21 +302,33 @@ def boltzmann_reference_with_linked_inputs(
     sorted_entries = sorted(entries, key=lambda entry: entry[1], reverse=True)
     analysis = boltzmann_reference_analysis(
         tuple(value for _, value in entries), outputs,
-        max_coins=max_coins, merge_fees=merge_fees,
+        max_coins=max_coins, merge_fees=merge_fees, precheck=precheck,
+        intrafees=intrafees,
     )
     # The core uses the same stable descending sort as ``sorted_entries``.
     expanded_rows = []
     expanded_inputs = []
-    for (members, _), row in zip(sorted_entries, analysis.link_counts):
+    expanded_precheck = []
+    for packed_index, ((members, _), row) in enumerate(
+        zip(sorted_entries, analysis.link_counts)
+    ):
         for index in members:
             expanded_inputs.append(inputs[index])
             expanded_rows.append(row)
+            expanded_precheck.append(packed_index)
     counts = tuple(expanded_rows)
     probabilities = tuple(
         tuple(value / analysis.combination_count for value in row) for row in counts
     ) if analysis.combination_count else ()
+    deterministic = tuple(
+        (expanded_index, output_index)
+        for expanded_index, packed_index in enumerate(expanded_precheck)
+        for candidate, output_index in analysis.precheck_deterministic_links
+        if candidate == packed_index
+    )
     return BoltzmannReferenceAnalysis(
         analysis.combination_count, counts, probabilities, analysis.observed_fee,
         tuple(expanded_inputs), analysis.outputs, analysis.merge_fees,
-        analysis.fee_output_index, groups,
+        analysis.fee_output_index, groups, deterministic,
+        analysis.intrafees,
     )
