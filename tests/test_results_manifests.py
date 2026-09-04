@@ -33,6 +33,7 @@ MIGRATED_RUN_DOCS = {
     "RESULTS-path-counting-analysis.md": "catalog/runs/path-count-contract-v1.json",
     "RESULTS-reid.md": "catalog/runs/reid-v1.json",
     "RESULTS-slice-a-channels.md": "catalog/runs/slice-channels-v1.json",
+    "RESULTS-subtx-demix.md": "catalog/runs/subtx-demix-v1.json",
     "RESULTS-weight-sensitivity.md": "catalog/runs/weight-sensitivity-v1.json",
 }
 
@@ -100,7 +101,6 @@ NOT_YET_MIGRATED = {
     "RESULTS-rejoin.md",
     "RESULTS-slice-gate-2026.md",
     "RESULTS-special-change.md",
-    "RESULTS-subtx-demix.md",
     "RESULTS-temporal.md",
     "RESULTS-topology.md",
     "RESULTS-view-match-2026.md",

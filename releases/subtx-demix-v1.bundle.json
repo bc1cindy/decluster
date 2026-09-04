@@ -1,0 +1,21 @@
+{
+  "schema_version":1,
+  "id":"subtx-demix-v1",
+  "capabilities":["verify_outputs","reproduce_runs"],
+  "runs":["subtx-demix-v1"],
+  "blobs":[
+    {"name":"catalog/runs/subtx-demix-v1.json","role":"run_manifest","bytes":2343,"sha256":"7daef8a848409f138f9644f7212a70e4d9d543df9762e2369d2d62228eb34040","locations":{"canonical":null,"mirrors":[]}},
+    {"name":"data/subtx-demix-cache-2026-09-04.tar.gz","role":"dataset","bytes":114994,"sha256":"191c8c2f082ac84af71b28a70169207d785243a276cf5b6e472ae6f5588a65a6","locations":{"canonical":null,"mirrors":[]}},
+    {"name":"results/artifacts/subtx-demix-v1.json","role":"result","bytes":1140,"sha256":"4485f64416d0839e876f4333c8d86e1bbb4ea8ab72c68b3f067812be6983a600","locations":{"canonical":null,"mirrors":[]}},
+    {"name":"results/generated/subtx-demix-v1.md","role":"result","bytes":516,"sha256":"1def26d56c2c64f5c7e0ce9208628a6c335981811c47d219c7f92ef019096f57","locations":{"canonical":null,"mirrors":[]}},
+    {"name":"sources/decluster-a03e7ac-runtime.tar","role":"source","bytes":1300480,"sha256":"fc8c0b6a7831a981c17496a5543e4cee1e9e708ec9f28298e4bcf5e4a81fc060","locations":{"canonical":null,"mirrors":[]}},
+    {"name":"reproduction/subtx-demix/requirements.lock","role":"lockfile","bytes":0,"sha256":"e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855","locations":{"canonical":null,"mirrors":[]}},
+    {"name":"reproduction/subtx-demix/environment.json","role":"environment","bytes":306,"sha256":"9bfe4a44f9632f45ff7277134f345fcd2df858e504454a2d2e5d31d6af966522","locations":{"canonical":null,"mirrors":[]}}
+  ],
+  "limitations":[
+    "The environment targets CPython 3.13 on macOS arm64.",
+    "The cache is CoinJoin-adjacent and has no ordinary-transaction labels.",
+    "The historical Wasabi corpus is unavailable.",
+    "Public bootstrap awaits canonical HTTPS locations and independent mirrors."
+  ]
+}
