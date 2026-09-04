@@ -1,8 +1,8 @@
-"""Cost-function contract.
+"""Experimental channel contract for adversarial diagnostics.
 
-Every quantity here is an attacker's weight-of-evidence / lower bound under no auxiliary
-information, never a positive "bits of privacy". Sign discipline: leak and topology may penalise;
-the amount channel is REFUSE-ONLY (it can cut a coin from the graph, never add anonymity).
+The quantities retain their channel-specific interpretation and assumptions.  They are not
+interchangeable privacy scores or universal bounds.  Sign discipline: leak and topology may
+penalise; the amount channel is refuse-only and can propose cuts but never add anonymity.
 """
 from dataclasses import dataclass
 
@@ -79,8 +79,11 @@ def amount_cuts(inputs, outputs, oracle, cut_threshold=1.0, count_oracle=None):
 
 
 def topology_bits(members_a, members_b, neigh, tau=1.0):
-    """Cluster-level N–S counterparty-overlap weight (bits): a shared rare counterparty corroborates
-    same owner (+), disjoint neighbourhoods refuse (−). Rarity-weighted, global (field-independent)."""
+    """Local cluster-level counterparty-overlap weight in bits.
+
+    A shared rare counterparty corroborates same owner; disjoint neighbourhoods refuse. This
+    rarity-weighted adaptation is not the seeded cross-view N-S matching algorithm.
+    """
     cbits = counterparty_bits(neigh)
     return cluster_topology_weight(members_a, members_b, neigh, cbits=cbits, tau=tau)
 
@@ -131,7 +134,10 @@ def boltzmann_oracle(inputs, outputs):
 
 
 def dss_oracle(inputs, outputs):
-    """Default production amount oracle: the dense-subset-sum per-coin density/ambiguity signal.
-    Lazy import so decluster.cost loads without the compiled `dss` module (build: maturin develop)."""
+    """Return DSS's model-relative per-coin density diagnostic.
+
+    This adapter is not an exact mapping oracle or a CoinScore.  Lazy import keeps
+    :mod:`decluster.cost` importable without the optional compiled ``dss`` module.
+    """
     import dss
     return dss.per_coin_density(list(inputs), list(outputs))

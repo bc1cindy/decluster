@@ -1,13 +1,11 @@
 # Fingerprint-Aware Probabilistic De-anonymization of Bitcoin Transaction Graphs
 
-*Every empirical number below is reproducible from this repository:
-`decluster/library.py` (measured bits), `results/RESULTS-bigquery.txt` (calibration on a
-~105k uniform whole-chain sample), `results/RESULTS-fingerprint-validation.md` (attribution AUC ≈0.93
-on 4,000 same-wallet + 4,000 random pairs drawn from a witness-bearing mainnet cache),
-`results/RESULTS-graph-deanon.md` (structural de-anon across five eras), and
-`results/RESULTS-wp4.md` (the same-owner-labelled case study). Scope: a fingerprint-aware
-clustering **method**, validated at mainnet scale without an archival node; the one thing
-left is a whole-chain **entity-reduction rate** (§10).*
+*Reproducibility is tracked per result rather than asserted for this manuscript as a whole.
+Canonical runs declare code, data, parameters, environment, outputs and limitations in
+`catalog/runs`; `results/generated` is derived from those artifacts. Historical `RESULTS-*`
+documents without a run manifest remain evidence records, not independently reproducible results.
+Public cold-start reproduction also remains pending until every required blob has an immutable
+public location and an independent mirror.*
 
 ## Abstract
 
@@ -558,12 +556,12 @@ low-dimensional axes.
 (The one timing signal we *do* measure is the **block-feerate
 broadcast-time** estimate — a bound read from on-chain feerate ordering, not network relay — as the
 `locktime_vs_broadcast` axis; `results/RESULTS-broadcast.md`.) The relative clustering-overcount
-diagnostic is **delivered** (§6, `decluster/graph_metric.py`), and the community-structure premise
-(Narayanan–Shmatikov) is now **measured on a real slice** (§6, `decluster/graph_deanon.py`, AUC
-0.95); the full seed-and-extend attack at chain scale over this topology channel still needs
-adjacency infra + labels. (The provenance channel's seed-and-propagate, above, is a separate
-instantiation of the same N-S mechanism — it is built and evaluated on a synthetic fixture plus a preliminary cache-bounded real run already;
-chain-scale validation is the shared pending item, §10.)
+diagnostic is **delivered** (§6, `decluster/graph_metric.py`), and a local common-neighbour
+structural-linkage adaptation is measured on a selected real slice (§6,
+`decluster/graph_deanon.py`, AUC 0.95). That experiment is not the seeded cross-view
+Narayanan–Shmatikov attack and its selected weak labels do not establish ownership accuracy. The
+separate N-S baseline and Bitcoin snapshot experiment require supplied seeds; independent seed
+discovery, social-corpus reproduction and chain-scale validation remain pending (§10).
 These are named so absence is explicit, not hidden.
 
 ### Change identification: validating the ordering against same-owner change labels

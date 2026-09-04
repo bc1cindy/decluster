@@ -1,8 +1,10 @@
 # decluster
 
-Evidence-weighted **de-anonymization of Bitcoin transactions**. It reads how each
-transaction was built (wallet fingerprints) and how its amounts partition (subtransaction
-structure), scores every signal as **bits of evidence**, and clusters coins by owner.
+An adversarial laboratory for testing **de-anonymization failure modes in Bitcoin
+transactions**. It keeps construction fingerprints, amount models, graph structure,
+attribution and provenance as distinct evidence channels, including explicit abstention and
+cannot-link outcomes. Those channels are model-relative and do not establish true ownership or
+a general privacy score.
 
 Two coins spent in the same transaction are normally assumed to share an owner. Because the
 evidence here is *signed*, the clustering can instead **keep them apart** when their
@@ -18,9 +20,9 @@ two people into one).
   of the time** (AUC 0.933) on 166k real mainnet transactions. Shuffle the labels and it
   drops to 0.50 (a coin flip) — so the 0.933 is real signal, not an artifact.
 
-- **The shape of the payment graph reveals owners too.** Independently of who-spent-with-whom,
-  the *structure* of the graph (who pays whom) betrays common ownership — the same effect
-  that de-anonymized social networks (Narayanan–Shmatikov). Across five eras (2012–2024),
+- **The shape of the payment graph provides another model-relative signal.** Independently of
+  who-spent-with-whom, recurring counterparty structure can support linkage. The local
+  common-neighbour experiment is not the seeded cross-view Narayanan–Shmatikov attack. Across five eras (2012–2024),
   payment-graph structure *alone* predicts whether two addresses share an owner, ranking
   same-owner pairs correctly **0.95–0.97 of the time at one hop on the clean eras**, and
   **0.97–1.00 across all five eras by four hops** (1.0 = perfect, 0.5 = chance; the churny
@@ -44,7 +46,9 @@ two people into one).
   no client model), `provenance` (which inputs descend from known transactions), `monitor` (watches
   tracked coins for the co-spend an intersection argument needs), `intersect` (the N-ary origin
   intersection, handed to `cluster_refined` to score rather than asserted)
-- `PAPER.md` — the manuscript; `results/` — reproducible outputs; `catalog/`, `bigquery/`
+- `PAPER.md` — the manuscript; `results/` — a mixture of canonical generated artifacts and
+  explicitly inventoried historical reports; `catalog/` — claims, datasets and executable run
+  manifests; `bigquery/` — versioned extraction recipes
 
 Installable (`pip install -e .`), so a protocol-specific client model can consume these primitives
 from above without this repository knowing the protocol exists.
