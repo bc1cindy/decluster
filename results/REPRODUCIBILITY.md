@@ -43,7 +43,8 @@ subsampled fixture would assert a different number.
 | refusal shares (declining CIOH) | `test_cluster_refined.py`, `test_cluster.py` | `slice_2026.ndjson` |
 | cross-view matcher precision vs baseline **(direction — owes migration, see state 5)** | `test_view_match.py` | `slice_2026.ndjson` |
 | (ε,δ) feature sparsity survival | `test_def1_sparsity.py` | `slice_2026.ndjson` |
-| fingerprint-regime / **bayes-vs-fs (direction — owes migration, see state 5)** / em-m / weight-sensitivity | `test_fingerprint_ns.py`, `test_fs_bayes.py`, `test_fs_em.py` | `.blkcache/` |
+| fingerprint-regime / em-m / weight-sensitivity | `test_fingerprint_ns.py`, `test_fs_em.py` | `.blkcache/` |
+| pair-level Bayesian vs Fellegi-Sunter (`RESULTS-bayes-vs-fs.md`; exact snapshot rerun; historical handwritten table not reproduced) | `test_fs_bayes.py`, `test_bayes_vs_fs_experiment.py` | `data/fs-blkcache-2026-09-04.tar.gz` |
 | cluster-bits, graph-shape, contraction | `test_cluster_bits.py`, `test_graph_shape.py`, `test_views.py` | `slice_2026.ndjson` |
 | entropy overcount, provenance overlap | `test_metric.py`, `test_provenance*.py` | live / `.cache/` |
 | Fellegi-Sunter fit early / scored late — the reported AUCs, thresholds and calibration (`RESULTS-fs-temporal.md`; manifest + recomputed invariants; the *direction* is pinned in state 1 above) | `test_fs_temporal.py` | `.blkcache/` |
@@ -96,8 +97,8 @@ on, not merely consistent with data chosen to display it. Where no such fixture 
 filing is state 5: report the value, decline the direction.
 
 A direction filed under state 2 is worse still, since by policy nothing there is asserted at all.
-Two rows of the state-2 table are direction claims by their own names — "cross-view matcher precision
-vs baseline" and "bayes-vs-fs" — and are flagged in that table as owing a migration to state 1 or 5. They are
+One row of the state-2 table remains a direction claim by its own name — "cross-view matcher precision
+vs baseline" — and is flagged in that table as owing a migration to state 1 or 5. It is
 recorded rather than quietly relabelled, because the number each reports is real; it is the direction
 read off it that is not yet established.
 
@@ -105,8 +106,7 @@ read off it that is not yet established.
 state, and it splits itself across it: `decluster/ns_bitcoin.py` calls `separable` on the paired
 discordant win counts, and the document files its 5% and 10% seeding rows as **state 5** — measured,
 not separable — while its 25% row clears all three gates. That is the intended shape of the state:
-one run, two verdicts, each named. The two state-2 rows flagged above ("cross-view matcher precision
-vs baseline", "bayes-vs-fs") still owe their migration.
+one run, two verdicts, each named. The cross-view matcher row flagged above still owes its migration.
 
 ### Manifests
 
