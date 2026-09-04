@@ -10,6 +10,7 @@ def test_every_legacy_result_receives_an_explicit_status():
     entries = inventory_results(ROOT)
 
     assert entries
+    assert all(entry.document.endswith(".md") for entry in entries)
     assert len({entry.document for entry in entries}) == len(entries)
     assert sum(summarize(entries).values()) == len(entries)
 
