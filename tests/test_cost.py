@@ -30,6 +30,7 @@ def test_amount_cuts_fires_only_on_low_w():
     cuts = cost.amount_cuts([100, 200], [150, 150], _fake_oracle(coins), cut_threshold=1.0,
                             count_oracle=_resolved())
     assert [c.index for c in cuts] == [0]
+    assert cuts[0].role == "maker"
     assert cuts[0].value == 100
 
 
@@ -55,15 +56,15 @@ def test_amount_cuts_on_a_lower_bound_reading_stays_a_candidate():
     coins = [{"role": "in", "index": 0, "value": 100, "log_w": 0.0, "kappa_c": 0.9}]
     cuts = cost.amount_cuts([100, 200], [150, 150], _fake_oracle(coins),
                             count_oracle=_resolved(kind="lower_bound"))
-    assert cuts[0].exact is False
+    assert cuts[0].transaction_count_exact is False
 
 
-def test_amount_cuts_exact_count_oracle_corroborates_rigorous_cut():
+def test_amount_cuts_preserves_exact_transaction_gate_provenance():
     coins = [{"role": "in", "index": 0, "value": 100, "log_w": 0.0, "kappa_c": 0.9}]
     exact_count_oracle = lambda inputs, outputs: {"kind": "exact", "count": 3, "log_w": 1.58}
     cuts = cost.amount_cuts([100, 200], [150, 150], _fake_oracle(coins),
                              count_oracle=exact_count_oracle)
-    assert cuts[0].exact is True
+    assert cuts[0].transaction_count_exact is True
 
 
 def test_no_cuts_where_the_transaction_as_a_whole_did_not_resolve():

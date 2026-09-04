@@ -58,7 +58,7 @@ def test_an_exact_zero_does_not_corroborate_a_cut():
     found = lambda i, o: {"kind": "exact", "count": 3, "log_w": 1.58}
     # an exact zero resolved nothing, so there is nothing to apportion at all
     assert amount_cuts([10, 20], [25], oracle, count_oracle=zero) == []
-    assert amount_cuts([10, 20], [25], oracle, count_oracle=found)[0].exact is True
+    assert amount_cuts([10, 20], [25], oracle, count_oracle=found)[0].transaction_count_exact is True
 
 
 def test_the_per_coin_path_returns_where_the_whole_tx_count_will_not():

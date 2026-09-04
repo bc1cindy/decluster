@@ -13,10 +13,11 @@ from .weighted_path_count import path_count_anonymity
 
 @dataclass(frozen=True)
 class CutCandidate:
+    role: str
     index: int
     value: int
     log_w: float
-    exact: bool = False
+    transaction_count_exact: bool = False
 
 
 def leak_bits(tx_a, tx_b, combiner):
@@ -52,14 +53,11 @@ def amount_cuts(inputs, outputs, oracle, cut_threshold=1.0, count_oracle=None):
     per-coin oracle answering anyway is the oracle guessing rather than measuring.
 
     `count_oracle` performs that second step, defaulting to the routed count. It also corroborates
-    each cut with the TX-LEVEL exact-count flag
-    (`kind == "exact"` with a positive count): when the
-    tx's total W(E) is exact, no knee-truncation bites, so the per-coin `log_w` from `oracle` is itself
-    untruncated and the cut is RIGOROUS (`exact=True`); when the count is approximate (Sasamoto) or
-    off-regime — the per-coin `log_w` stays a lower bound and the cut
-    remains a candidate (`exact=False`). dss exposes the exact
-    W(E) per TRANSACTION, not per coin, so this is a tx-level corroboration, never a fabricated
-    per-coin exact count. `oracle(inputs, outputs)` follows the dss.per_coin_density shape."""
+    each cut with a TX-LEVEL exact-count flag (`kind == "exact"` with a positive count). This is
+    provenance about the gate only. Transaction W(E) and per-coin density are different objects, so
+    an exact transaction count does not make the coin reading exact or turn the candidate into a
+    proof. dss exposes no exact per-coin W(E). `oracle(inputs, outputs)` follows the
+    dss.per_coin_density shape."""
     from .counting import count_w, guaranteed_log_w
     if count_oracle is None:
         count_oracle = count_w
@@ -72,9 +70,10 @@ def amount_cuts(inputs, outputs, oracle, cut_threshold=1.0, count_oracle=None):
     # An exact count of ZERO is the counter completing and finding no balancing subset, which is
     # what a fee-paying transaction produces under a fee-blind count — the weakest corroboration
     # there is, not the strongest. Rigour requires the count to have found something.
-    exact = whole.get("kind") == "exact" and (whole.get("count") or 0) > 0
+    transaction_count_exact = whole.get("kind") == "exact" and (whole.get("count") or 0) > 0
     report = oracle(list(inputs), list(outputs))
-    return [CutCandidate(c["index"], c["value"], c["log_w"], exact=exact)
+    return [CutCandidate(c["role"], c["index"], c["value"], c["log_w"],
+                         transaction_count_exact=transaction_count_exact)
             for c in report["coins"]
             if _reachable(c["log_w"]) and c["log_w"] <= cut_threshold]
 
