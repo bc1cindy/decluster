@@ -1,0 +1,54 @@
+{
+  "schema_version": 1,
+  "id": "candidate-set-intersection-v1",
+  "capabilities": ["verify_outputs", "reproduce_runs"],
+  "runs": ["candidate-set-intersection-v1"],
+  "blobs": [
+    {
+      "name": "catalog/runs/candidate-set-intersection-v1.json",
+      "role": "run_manifest",
+      "bytes": 2397,
+      "sha256": "5885fd8ab841f95898bdca7b9feb9830dcb19af0350a8980530d19ae280286ec",
+      "locations": {"canonical": null, "mirrors": []}
+    },
+    {
+      "name": "results/artifacts/candidate-set-intersection-v1.json",
+      "role": "result",
+      "bytes": 2127,
+      "sha256": "57ec942ab96fa6a4da7335d4c936391b163f850a3018fe4d043dae377067493e",
+      "locations": {"canonical": null, "mirrors": []}
+    },
+    {
+      "name": "results/generated/candidate-set-intersection-v1.md",
+      "role": "result",
+      "bytes": 454,
+      "sha256": "7967116277698ee234507683274cd315b18c44503209d76d51d304aa9dd2a816",
+      "locations": {"canonical": null, "mirrors": []}
+    },
+    {
+      "name": "sources/decluster-20949ce-runtime.tar",
+      "role": "source",
+      "bytes": 1146880,
+      "sha256": "afaa4de9649255520d3f43bb6cd134235b241f491363de4ed0ede2e56a7e9f08",
+      "locations": {"canonical": null, "mirrors": []}
+    },
+    {
+      "name": "reproduction/candidate-set-intersection/requirements.lock",
+      "role": "lockfile",
+      "bytes": 31,
+      "sha256": "c7d402576511073ed4fcf076c77ffa6b3be124e0a2ef996d2da1cd3b02fbe541",
+      "locations": {"canonical": null, "mirrors": []}
+    },
+    {
+      "name": "reproduction/candidate-set-intersection/environment.json",
+      "role": "environment",
+      "bytes": 388,
+      "sha256": "e7e5448f275698335a9e309a883a93f901537c83090dea3a5c4f588c7395c3dc",
+      "locations": {"canonical": null, "mirrors": []}
+    }
+  ],
+  "limitations": [
+    "The bundled environment currently targets CPython 3.13 on macOS arm64.",
+    "Public bootstrap remains unavailable until every blob has a canonical HTTPS location and an independent mirror."
+  ]
+}
