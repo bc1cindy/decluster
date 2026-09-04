@@ -148,8 +148,8 @@ def run_configuration(args):
             "thetas": list(args.thetas), "rng_seed": args.seed}
 
 
-def main(args):
-    started = time.monotonic()
+def build_report(args):
+    """Compute the scientific report without volatile execution metadata."""
     rng = random.Random(args.seed)
     left_lo, left_hi = args.boundary - args.blocks, args.boundary - 1
     right_lo, right_hi = args.boundary, args.boundary + args.blocks - 1
@@ -201,6 +201,12 @@ def main(args):
                                                  args.fractions, args.thetas,
                                                  rng_seed=args.seed):
         report["runs"].append(asdict(result))
+    return report
+
+
+def main(args):
+    started = time.monotonic()
+    report = build_report(args)
     report["seconds"] = round(time.monotonic() - started, 1)
 
     print(json.dumps(report, indent=2, sort_keys=True))

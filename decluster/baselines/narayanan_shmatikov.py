@@ -19,7 +19,7 @@ end-to-end reproduction of the 2009 experiment.
 from __future__ import annotations
 
 from dataclasses import dataclass
-from math import sqrt
+from math import fsum, sqrt
 from statistics import pstdev
 from typing import Hashable, Mapping
 
@@ -53,20 +53,20 @@ def match_scores(left, right, mapping: Mapping[Vertex, Vertex], node: Vertex):
     claimed = set(mapping.values())
     scores = {candidate: 0.0 for candidate in right.vertices if candidate not in claimed}
 
-    for neighbour in left._in[node]:
+    for neighbour in sorted(left._in[node], key=repr):
         image = mapping.get(neighbour)
         if image is None:
             continue
-        for candidate in right._out[image]:
+        for candidate in sorted(right._out[image], key=repr):
             if candidate in scores:
                 degree = len(right._in[candidate])
                 scores[candidate] += 1.0 / sqrt(degree)
 
-    for neighbour in left._out[node]:
+    for neighbour in sorted(left._out[node], key=repr):
         image = mapping.get(neighbour)
         if image is None:
             continue
-        for candidate in right._in[image]:
+        for candidate in sorted(right._in[image], key=repr):
             if candidate in scores:
                 degree = len(right._out[candidate])
                 scores[candidate] += 1.0 / sqrt(degree)
@@ -109,11 +109,11 @@ def _sparse_winner(scores: Mapping[Vertex, float], population: int, theta: float
 
 def _sparse_match_scores(left, right, mapping, node):
     claimed = set(mapping.values())
-    scores = {}
+    contributions = {}
 
     def vote(candidate, degree):
         if candidate not in claimed and degree:
-            scores[candidate] = scores.get(candidate, 0.0) + 1.0 / sqrt(degree)
+            contributions.setdefault(candidate, []).append(1.0 / sqrt(degree))
 
     for neighbour in left._in[node]:
         image = mapping.get(neighbour)
@@ -125,6 +125,7 @@ def _sparse_match_scores(left, right, mapping, node):
         if image is not None:
             for candidate in right._in[image]:
                 vote(candidate, len(right._out[candidate]))
+    scores = {candidate: fsum(values) for candidate, values in contributions.items()}
     return scores, len(right.vertices) - len(claimed)
 
 

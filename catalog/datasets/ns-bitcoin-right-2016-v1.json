@@ -1,0 +1,16 @@
+{
+  "schema_version": 1,
+  "id": "ns-bitcoin-right-2016-v1",
+  "title": "N-S Bitcoin right observation window",
+  "kind": "immutable_snapshot",
+  "schema": "bitcoin-address-flow-ndjson-v1",
+  "format": "ndjson.gz",
+  "content": {"bytes": 26043862, "sha256": "1d46dcccb51cd8f1a1d89481db4df45599caaaf8569f9e8e2de37e81e0e5d122"},
+  "locations": {"local_path": "data/ns-bitcoin-2016-v1/right-392112-392231.ndjson.gz", "canonical": null, "mirrors": []},
+  "source": {"provider": "project-provided public Bitcoin on-chain snapshot", "snapshot_time": "2026-09-04", "recipe": "decluster/ns_bitcoin_snapshot.py", "recipe_sha256": "0b05957e99c38e9f56bc390437b3ca220018c3d873f6c3b60c649983b06d5605"},
+  "license": {"data": "redistribution authorized by snapshot provider", "recipe": "MIT"},
+  "redistribution": "allowed",
+  "sensitivity": "public_on_chain",
+  "normalization": {"code_revision": null, "parameters": {"minimum_height": 392112, "maximum_height": 392231, "records": 157724, "gzip_mtime": 0}, "parents": []},
+  "determinism": {"ordering": "source record order", "rng_algorithm": null, "rng_seed": null}
+}
