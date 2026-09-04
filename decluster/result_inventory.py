@@ -10,6 +10,7 @@ from pathlib import Path
 DOCUMENT_RUN_ALIASES = {
     "RESULTS-analyze.md": "analyze-contract-v1",
     "RESULTS-ancestry.md": "ancestry-contract-v1",
+    "RESULTS-catalog-axes.md": "fingerprint-catalog-axes-v1",
     "RESULTS-conservation.md": "conservation-round-three-v1",
     "RESULTS-path-count.md": "path-count-contract-v1",
     "RESULTS-path-counting-analysis.md": "path-count-contract-v1",

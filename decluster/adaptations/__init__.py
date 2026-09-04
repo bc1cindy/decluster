@@ -17,6 +17,7 @@ from .intersection import (
     evaluate_ancestry_reports,
     evaluate_report,
 )
+from .pseudonym_graph import contract_evidence, contract_report
 
 __all__ = [
     "AncestryReport",
@@ -31,6 +32,8 @@ __all__ = [
     "UnobservedAncestry",
     "ancestry_signature_report",
     "cluster_refined_report",
+    "contract_evidence",
+    "contract_report",
     "evaluate_report",
     "evaluate_ancestry_reports",
 ]

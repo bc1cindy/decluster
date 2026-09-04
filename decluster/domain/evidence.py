@@ -118,6 +118,31 @@ class MappingEvidence:
 
 
 @dataclass(frozen=True)
+class UnanimousMappingLinksEvidence:
+    """Input-output links present in every member of one declared mapping family."""
+
+    inputs: tuple[Subject, ...]
+    outputs: tuple[Subject, ...]
+    mapping_count: int
+    links: tuple[tuple[Subject, Subject], ...]
+    context: EvidenceContext
+
+    def __post_init__(self) -> None:
+        if not self.inputs or not self.outputs or self.mapping_count < 1:
+            raise ValueError("unanimous links require inputs, outputs, and mappings")
+        if len(set(self.inputs)) != len(self.inputs) or len(set(self.outputs)) != len(
+            self.outputs
+        ):
+            raise ValueError("mapping subjects must be unique on each side")
+        allowed_inputs = set(self.inputs)
+        allowed_outputs = set(self.outputs)
+        if len(set(self.links)) != len(self.links):
+            raise ValueError("unanimous mapping links must be unique")
+        if any(left not in allowed_inputs or right not in allowed_outputs for left, right in self.links):
+            raise ValueError("unanimous link endpoints must belong to the mapping")
+
+
+@dataclass(frozen=True)
 class CandidateSetEvidence:
     subject: Subject
     candidates: frozenset[Subject]
@@ -241,10 +266,153 @@ class GraphFractureEvidence:
             raise ValueError("graph fracture must increase the component count")
 
 
+@dataclass(frozen=True)
+class CorrespondentDistributionEvidence:
+    """Finite-sample estimate of a target's persistent correspondent distribution.
+
+    Scores are not constrained to ``[0, 1]`` because subtraction of an estimated
+    background distribution can produce negative finite-sample values.
+    """
+
+    target: Subject
+    scores: tuple[tuple[Subject, float], ...]
+    observations: int
+    batch_size: int
+    context: EvidenceContext
+
+    def __post_init__(self) -> None:
+        if not self.scores:
+            raise ValueError("correspondent scores must not be empty")
+        correspondents: set[Subject] = set()
+        total = 0.0
+        for correspondent, score in self.scores:
+            _require_pair(self.target, correspondent)
+            _require_finite(score, "correspondent score")
+            if correspondent in correspondents:
+                raise ValueError("correspondents must be unique")
+            correspondents.add(correspondent)
+            total += score
+        if abs(total - 1.0) > 1e-9:
+            raise ValueError("correspondent scores must sum to one")
+        if self.observations < 1:
+            raise ValueError("observations must be positive")
+        if self.batch_size < 2:
+            raise ValueError("batch_size must be at least two")
+
+
+@dataclass(frozen=True)
+class PerfectMatchingEvidence:
+    """Jointly optimal bijective message assignments for one observed round."""
+
+    senders: tuple[Subject, ...]
+    receivers: tuple[Subject, ...]
+    optimal_assignments: tuple[tuple[tuple[Subject, Subject], ...], ...]
+    log_likelihood: float
+    context: EvidenceContext
+
+    def __post_init__(self) -> None:
+        if len(self.senders) < 2 or len(self.senders) != len(self.receivers):
+            raise ValueError("perfect matching requires equal sides of size at least two")
+        if len(set(self.senders)) != len(self.senders) or len(set(self.receivers)) != len(
+            self.receivers
+        ):
+            raise ValueError("message nodes on each side must be unique")
+        if not self.optimal_assignments:
+            raise ValueError("perfect matching evidence requires an optimum")
+        expected_senders = set(self.senders)
+        expected_receivers = set(self.receivers)
+        for assignment in self.optimal_assignments:
+            if len(assignment) != len(self.senders):
+                raise ValueError("every assignment must cover the round")
+            if {sender for sender, _ in assignment} != expected_senders or {
+                receiver for _, receiver in assignment
+            } != expected_receivers:
+                raise ValueError("every assignment must be a perfect matching")
+        _require_finite(self.log_likelihood, "log_likelihood")
+
+
+@dataclass(frozen=True)
+class TransactionFingerprintEvidence:
+    """Named observable features of one transaction under a declared rule."""
+
+    subject: Subject
+    features: tuple[tuple[str, int], ...]
+    context: EvidenceContext
+
+    def __post_init__(self) -> None:
+        if self.subject.kind is not SubjectKind.TRANSACTION:
+            raise ValueError("transaction fingerprint requires a transaction subject")
+        if not self.features:
+            raise ValueError("transaction fingerprint features must not be empty")
+        names = tuple(name for name, _ in self.features)
+        if any(not name for name in names) or len(set(names)) != len(names):
+            raise ValueError("transaction fingerprint feature names must be unique")
+
+
+@dataclass(frozen=True)
+class CoSpendEvidence:
+    """Inputs observed together in one transaction, before an ownership inference."""
+
+    transaction: Subject
+    inputs: tuple[Subject, ...]
+    context: EvidenceContext
+
+    def __post_init__(self) -> None:
+        if self.transaction.kind is not SubjectKind.TRANSACTION:
+            raise ValueError("co-spend evidence requires a transaction subject")
+        if len(self.inputs) < 2 or len(set(self.inputs)) != len(self.inputs):
+            raise ValueError("co-spend evidence requires at least two unique inputs")
+        if any(subject.kind is not SubjectKind.COIN for subject in self.inputs):
+            raise ValueError("co-spend inputs must be coin subjects")
+
+
+@dataclass(frozen=True)
+class ContractedTransfer:
+    source: Subject
+    target: Subject
+    transfers: int
+    value: int
+    first_height: int
+    last_height: int
+
+    def __post_init__(self) -> None:
+        _require_pair(self.source, self.target)
+        if self.transfers < 1:
+            raise ValueError("contracted transfer count must be positive")
+        if self.value < 0:
+            raise ValueError("contracted transfer value must be non-negative")
+        if self.first_height < 0 or self.last_height < self.first_height:
+            raise ValueError("contracted transfer height span is invalid")
+
+
+@dataclass(frozen=True)
+class PseudonymGraphEvidence:
+    vertices: tuple[Subject, ...]
+    edges: tuple[ContractedTransfer, ...]
+    self_transfers: tuple[tuple[Subject, int], ...]
+    context: EvidenceContext
+
+    def __post_init__(self) -> None:
+        if not self.vertices or len(set(self.vertices)) != len(self.vertices):
+            raise ValueError("pseudonym graph requires unique vertices")
+        vertices = set(self.vertices)
+        if any(edge.source not in vertices or edge.target not in vertices for edge in self.edges):
+            raise ValueError("contracted transfer endpoint must be a graph vertex")
+        pairs = tuple((edge.source, edge.target) for edge in self.edges)
+        if len(set(pairs)) != len(pairs):
+            raise ValueError("parallel transfers must be folded into one attributed edge")
+        seen = set()
+        for vertex, count in self.self_transfers:
+            if vertex not in vertices or vertex in seen or count < 1:
+                raise ValueError("self-transfer counts require unique graph vertices")
+            seen.add(vertex)
+
+
 Evidence: TypeAlias = Union[
     OwnershipLikelihoodEvidence,
     CannotLinkEvidence,
     MappingEvidence,
+    UnanimousMappingLinksEvidence,
     CandidateSetEvidence,
     PartitionPosteriorEvidence,
     ProvenanceDistributionEvidence,
@@ -253,4 +421,9 @@ Evidence: TypeAlias = Union[
     AbstentionEvidence,
     CandidateEliminationEvidence,
     GraphFractureEvidence,
+    CorrespondentDistributionEvidence,
+    PerfectMatchingEvidence,
+    TransactionFingerprintEvidence,
+    CoSpendEvidence,
+    PseudonymGraphEvidence,
 ]

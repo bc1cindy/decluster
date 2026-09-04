@@ -1,12 +1,19 @@
 """Closed outcomes for adversarial analysis and partition operations."""
 
 from dataclasses import dataclass
+from math import isfinite
 from typing import TypeAlias, Union
 
 from .evidence import (
     CandidateEliminationEvidence,
+    CoSpendEvidence,
     Evidence,
     GraphFractureEvidence,
+    CorrespondentDistributionEvidence,
+    PerfectMatchingEvidence,
+    TransactionFingerprintEvidence,
+    PseudonymGraphEvidence,
+    UnanimousMappingLinksEvidence,
     IntersectionEvidence,
     ProvenanceDistributionEvidence,
     Subject,
@@ -173,6 +180,73 @@ class GraphFractureMeasured:
     evidence: GraphFractureEvidence
 
 
+@dataclass(frozen=True)
+class PersistentCorrespondentRanked:
+    evidence: CorrespondentDistributionEvidence
+    correspondent: Subject
+    margin: float
+
+    def __post_init__(self) -> None:
+        if self.correspondent not in dict(self.evidence.scores):
+            raise ValueError("ranked correspondent must occur in evidence")
+        if not isfinite(self.margin) or self.margin < 0:
+            raise ValueError("ranking margin must be finite and non-negative")
+
+
+@dataclass(frozen=True)
+class MessageAssignmentRecovered:
+    evidence: PerfectMatchingEvidence
+    assignment: tuple[tuple[Subject, Subject], ...]
+
+    def __post_init__(self) -> None:
+        if len(self.evidence.optimal_assignments) != 1:
+            raise ValueError("recovered assignment requires a unique optimum")
+        if self.assignment != self.evidence.optimal_assignments[0]:
+            raise ValueError("assignment must equal the unique optimum")
+
+
+@dataclass(frozen=True)
+class TransactionFingerprintObserved:
+    evidence: TransactionFingerprintEvidence
+    rule: str
+
+    def __post_init__(self) -> None:
+        if not self.rule:
+            raise ValueError("fingerprint rule must not be empty")
+
+
+@dataclass(frozen=True)
+class PseudonymGraphConstructed:
+    evidence: PseudonymGraphEvidence
+
+
+@dataclass(frozen=True)
+class ConditionalLinksMeasured:
+    """Unanimous links measured within, and only within, a declared mapping model."""
+
+    evidence: UnanimousMappingLinksEvidence
+
+
+@dataclass(frozen=True)
+class ReferenceOwnershipConflict:
+    """A predicted merge conflicts with distinct ownership labels supplied by a fixture."""
+
+    subject: Subject
+    target: Subject
+    evidence: CoSpendEvidence
+    subject_owner: str
+    target_owner: str
+
+    def __post_init__(self) -> None:
+        _require_pair(self.subject, self.target)
+        if self.subject not in self.evidence.inputs or self.target not in self.evidence.inputs:
+            raise ValueError("conflicting subjects must occur in the co-spend")
+        if not self.subject_owner or not self.target_owner:
+            raise ValueError("reference owner labels must not be empty")
+        if self.subject_owner == self.target_owner:
+            raise ValueError("ownership conflict requires distinct reference labels")
+
+
 Outcome: TypeAlias = Union[
     ClusterMerge,
     MergeRefused,
@@ -190,4 +264,10 @@ Outcome: TypeAlias = Union[
     NotObserved,
     AdditiveDecayMeasured,
     GraphFractureMeasured,
+    PersistentCorrespondentRanked,
+    MessageAssignmentRecovered,
+    TransactionFingerprintObserved,
+    PseudonymGraphConstructed,
+    ConditionalLinksMeasured,
+    ReferenceOwnershipConflict,
 ]

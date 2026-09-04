@@ -6,6 +6,9 @@ from . import (
     equal_output_consolidation,
     eve_alice_eve,
     provenance_decay,
+    perfect_matching_disclosure,
+    denomination_preparation,
+    statistical_disclosure,
 )
 
 __all__ = [
@@ -14,4 +17,7 @@ __all__ = [
     "equal_output_consolidation",
     "eve_alice_eve",
     "provenance_decay",
+    "perfect_matching_disclosure",
+    "denomination_preparation",
+    "statistical_disclosure",
 ]

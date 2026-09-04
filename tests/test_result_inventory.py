@@ -48,3 +48,11 @@ def test_slice_channel_document_uses_its_explicit_run_alias():
 
     assert channels.status == "superseded_by_canonical_run"
     assert channels.canonical_run == "slice-channels-v1"
+
+
+def test_catalog_axes_document_uses_the_run_it_names():
+    entries = {entry.document: entry for entry in inventory_results(ROOT)}
+    axes = entries["results/RESULTS-catalog-axes.md"]
+
+    assert axes.status == "superseded_by_canonical_run"
+    assert axes.canonical_run == "fingerprint-catalog-axes-v1"

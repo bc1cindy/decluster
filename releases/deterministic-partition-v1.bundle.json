@@ -1,0 +1,54 @@
+{
+  "schema_version": 1,
+  "id": "deterministic-partition-v1",
+  "capabilities": ["verify_outputs", "reproduce_runs"],
+  "runs": ["deterministic-partition-v1"],
+  "blobs": [
+    {
+      "name": "catalog/runs/deterministic-partition-v1.json",
+      "role": "run_manifest",
+      "bytes": 2821,
+      "sha256": "52a2c0f1ed8d099e9266e1006f4dc491c33b8c42f5b3224ec0df5b8f2f8acfa3",
+      "locations": {"canonical": null, "mirrors": []}
+    },
+    {
+      "name": "results/artifacts/deterministic-partition-v1.json",
+      "role": "result",
+      "bytes": 868,
+      "sha256": "9ef88ed2230876552f3f18ebf4e1bf462e7bd401160a5d287de443abc03f7415",
+      "locations": {"canonical": null, "mirrors": []}
+    },
+    {
+      "name": "results/generated/deterministic-partition-v1.md",
+      "role": "result",
+      "bytes": 599,
+      "sha256": "bcd7c6a58c1206d78841bceba862f9b9eabd9b978040bcf717a5967f0355df29",
+      "locations": {"canonical": null, "mirrors": []}
+    },
+    {
+      "name": "sources/decluster-03fe60e-runtime.tar",
+      "role": "source",
+      "bytes": 1413120,
+      "sha256": "9bcf75151fa3c11493f242703c648861fc26cbf44a7b945224f513712cabb0d8",
+      "locations": {"canonical": null, "mirrors": []}
+    },
+    {
+      "name": "reproduction/deterministic-partition/requirements.lock",
+      "role": "lockfile",
+      "bytes": 30,
+      "sha256": "e0d6a8cada5d383c0aca2bd2a37f28c15721392469c94084128d369c29c5544d",
+      "locations": {"canonical": null, "mirrors": []}
+    },
+    {
+      "name": "reproduction/deterministic-partition/environment.json",
+      "role": "environment",
+      "bytes": 382,
+      "sha256": "698bd4b56de1d9d1af54818d6fbb300270dd952ed4e700664547285971537516",
+      "locations": {"canonical": null, "mirrors": []}
+    }
+  ],
+  "limitations": [
+    "The bundled environment currently targets CPython 3.13 on macOS arm64.",
+    "Public bootstrap remains unavailable until every blob has a canonical HTTPS location and an independent mirror."
+  ]
+}

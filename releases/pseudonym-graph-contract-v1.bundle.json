@@ -1,0 +1,54 @@
+{
+  "schema_version": 1,
+  "id": "pseudonym-graph-contract-v1",
+  "capabilities": ["verify_outputs", "reproduce_runs"],
+  "runs": ["pseudonym-graph-contract-v1"],
+  "blobs": [
+    {
+      "name": "catalog/runs/pseudonym-graph-contract-v1.json",
+      "role": "run_manifest",
+      "bytes": 2679,
+      "sha256": "6d87607f056678a4c7ddc39ec25bf1852cea46e37f71c390c9311ada12c328a8",
+      "locations": {"canonical": null, "mirrors": []}
+    },
+    {
+      "name": "results/artifacts/pseudonym-graph-contract-v1.json",
+      "role": "result",
+      "bytes": 850,
+      "sha256": "ab830f2e56b40e961015fda9c9685ddcab4feff1e486bde6ee825ea4db9d33a6",
+      "locations": {"canonical": null, "mirrors": []}
+    },
+    {
+      "name": "results/generated/pseudonym-graph-contract-v1.md",
+      "role": "result",
+      "bytes": 761,
+      "sha256": "f0533dbe40ddfa8af55d31fbb1e53b2f0a925582a7567670496717e786b0c827",
+      "locations": {"canonical": null, "mirrors": []}
+    },
+    {
+      "name": "sources/decluster-1f984d2-runtime.tar",
+      "role": "source",
+      "bytes": 1382400,
+      "sha256": "e24c3653a276fd95573f659bfc082245f0894d010b802398e6e86c8557ebbba1",
+      "locations": {"canonical": null, "mirrors": []}
+    },
+    {
+      "name": "reproduction/pseudonym-graph-contract/requirements.lock",
+      "role": "lockfile",
+      "bytes": 30,
+      "sha256": "e0d6a8cada5d383c0aca2bd2a37f28c15721392469c94084128d369c29c5544d",
+      "locations": {"canonical": null, "mirrors": []}
+    },
+    {
+      "name": "reproduction/pseudonym-graph-contract/environment.json",
+      "role": "environment",
+      "bytes": 384,
+      "sha256": "b0e39c18ea70532a86bc80ce1e315f058f228cf1cdd9ec01681e17de41eb116e",
+      "locations": {"canonical": null, "mirrors": []}
+    }
+  ],
+  "limitations": [
+    "The bundled environment currently targets CPython 3.13 on macOS arm64.",
+    "Public bootstrap remains unavailable until every blob has a canonical HTTPS location and an independent mirror."
+  ]
+}
