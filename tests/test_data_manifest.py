@@ -228,7 +228,22 @@ def test_bitwise_run_requires_exact_verification(tmp_path):
 
 def test_all_committed_dataset_manifests_match_their_files():
     manifests = sorted((ROOT / "catalog" / "datasets").glob("*.json"))
-    assert len(manifests) == 13
+    expected_ids = {
+        "amount-channel-812695-812831-v1",
+        "boltzmann-fee-audit-v1",
+        "conservation-round-three-v1",
+        "entity-bitmex-2019-v1",
+        "entity-satoshidice-2013-v1",
+        "fingerprint-blkcache-sample-v1",
+        "fs-blkcache-2026-09-04-v1",
+        "graph-deanon-2016-v1",
+        "lumen-explorer-data-v1",
+        "ns-bitcoin-left-2016-v1",
+        "ns-bitcoin-right-2016-v1",
+        "reid-signatures-v1",
+        "slice-a-channels-2016-v1",
+        "subtx-demix-cache-2026-09-04-v1",
+    }
     seen = set()
     for path in manifests:
         manifest = load_dataset_manifest(path)
@@ -239,6 +254,7 @@ def test_all_committed_dataset_manifests_match_their_files():
         assert fixture.stat().st_size == manifest.content.bytes, manifest.id
         digest = hashlib.sha256(fixture.read_bytes()).hexdigest()
         assert digest == manifest.content.sha256, manifest.id
+    assert seen == expected_ids
 
 
 def test_unknown_fixture_licensing_is_not_presented_as_redistributable():
@@ -269,3 +285,34 @@ def test_all_committed_run_manifests_resolve_and_their_outputs_match():
         checks = verify_run_outputs(manifest, ROOT)
         assert checks
         assert all(check.status is OutputStatus.VERIFIED for check in checks)
+
+
+def test_every_canonical_artifact_is_owned_by_a_run_manifest():
+    sources = load_sources(ROOT / "catalog" / "ctp-sources.json")
+    claims = load_claims(
+        ROOT / "catalog" / "ctp-claims.json", {source.id for source in sources}
+    )
+    datasets = {
+        manifest.id: manifest
+        for manifest in (
+            load_dataset_manifest(path)
+            for path in (ROOT / "catalog" / "datasets").glob("*.json")
+        )
+    }
+    declared = set()
+    for path in sorted((ROOT / "catalog" / "runs").glob("*.json")):
+        manifest = load_run_manifest(
+            path, claim_ids={claim.id for claim in claims}, datasets=datasets,
+        )
+        declared.update(output.path for output in manifest.outputs)
+    canonical = {
+        str(path.relative_to(ROOT))
+        for directory in (ROOT / "results" / "artifacts", ROOT / "results" / "generated")
+        for path in directory.iterdir()
+        if path.is_file()
+    }
+
+    assert canonical == declared, (
+        f"canonical outputs without manifests={sorted(canonical - declared)}; "
+        f"manifest outputs without canonical files={sorted(declared - canonical)}"
+    )

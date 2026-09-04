@@ -20,6 +20,25 @@ EXPECTED_CTP_SOURCE_IDS = {
     "scroll-intersection", "serjantov-danezis", "sudoku", "syverson", "troncoso",
     "tx0", "uih-adamisz", "uih-ghesmati",
 }
+EXPECTED_CTP_CLAIM_IDS = {
+    "ctp.amount.denomination_preparation_fingerprint",
+    "ctp.amount.deterministic_partition",
+    "ctp.amount.subtransaction_ambiguity",
+    "ctp.cioh.collaborative_false_merge",
+    "ctp.disclosure.perfect_matching",
+    "ctp.disclosure.statistical_longitudinal",
+    "ctp.entropy.not_sufficient",
+    "ctp.fingerprint.statistical_linkage",
+    "ctp.graph.pseudonym_representation",
+    "ctp.intersection.longitudinal",
+    "ctp.payjoin.unnecessary_input",
+    "ctp.provenance.traceability",
+    "ctp.robustness.counterfactual_paths",
+    "ctp.social_graph.link_prediction",
+    "ctp.social_graph.propagation",
+    "ctp.social_graph.structural_linkage",
+    "ctp.sparse_dataset.feature_uniqueness",
+}
 
 
 def test_ctp_registry_pins_every_footnote_in_the_reviewed_revision():
@@ -33,9 +52,7 @@ def test_ctp_registry_pins_every_footnote_in_the_reviewed_revision():
 def test_every_claim_resolves_to_registered_sources():
     sources = load_sources(SOURCES)
     claims = load_claims(CLAIMS, {source.id for source in sources})
-    assert len(claims) == 12
-    assert any(claim.id == "ctp.social_graph.structural_linkage" for claim in claims)
-    assert any(claim.id == "ctp.sparse_dataset.feature_uniqueness" for claim in claims)
+    assert {claim.id for claim in claims} == EXPECTED_CTP_CLAIM_IDS
 
 
 def test_context_only_sources_are_not_silently_dropped():

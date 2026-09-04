@@ -1,0 +1,54 @@
+{
+  "schema_version": 1,
+  "id": "entropy-insufficiency-v1",
+  "capabilities": ["verify_outputs", "reproduce_runs"],
+  "runs": ["entropy-insufficiency-v1"],
+  "blobs": [
+    {
+      "name": "catalog/runs/entropy-insufficiency-v1.json",
+      "role": "run_manifest",
+      "bytes": 2684,
+      "sha256": "035a86cf58827e1b4170e817eb4223fd262ba1af23778ce66ace14bae0575178",
+      "locations": {"canonical": null, "mirrors": []}
+    },
+    {
+      "name": "results/artifacts/entropy-insufficiency-v1.json",
+      "role": "result",
+      "bytes": 662,
+      "sha256": "a323b5b930835a020812272aa8df80af7c922a116b3def6bca2ca4715e94d466",
+      "locations": {"canonical": null, "mirrors": []}
+    },
+    {
+      "name": "results/generated/entropy-insufficiency-v1.md",
+      "role": "result",
+      "bytes": 580,
+      "sha256": "d1ae4828869980634e3739f926f61bb3530a43b31f018f0e8fb6a6ce865eb50a",
+      "locations": {"canonical": null, "mirrors": []}
+    },
+    {
+      "name": "sources/decluster-5d59916-runtime.tar",
+      "role": "source",
+      "bytes": 1310720,
+      "sha256": "2f690bae4092946a0af100636beeaf6350ff5d46565fdab7bb27b603dcf8e85b",
+      "locations": {"canonical": null, "mirrors": []}
+    },
+    {
+      "name": "reproduction/entropy-insufficiency/requirements.lock",
+      "role": "lockfile",
+      "bytes": 30,
+      "sha256": "e0d6a8cada5d383c0aca2bd2a37f28c15721392469c94084128d369c29c5544d",
+      "locations": {"canonical": null, "mirrors": []}
+    },
+    {
+      "name": "reproduction/entropy-insufficiency/environment.json",
+      "role": "environment",
+      "bytes": 378,
+      "sha256": "a9f09016e0257c22288dd88dc6a70b7f0b852fdce19caf0bcc73187d6794d7e1",
+      "locations": {"canonical": null, "mirrors": []}
+    }
+  ],
+  "limitations": [
+    "The bundled environment currently targets CPython 3.13 on macOS arm64.",
+    "Public bootstrap remains unavailable until every blob has a canonical HTTPS location and an independent mirror."
+  ]
+}

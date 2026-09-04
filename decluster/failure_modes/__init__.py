@@ -2,6 +2,7 @@
 
 from . import (
     change_consolidation,
+    entropy_insufficiency,
     equal_output_consolidation,
     eve_alice_eve,
     provenance_decay,
@@ -9,6 +10,7 @@ from . import (
 
 __all__ = [
     "change_consolidation",
+    "entropy_insufficiency",
     "equal_output_consolidation",
     "eve_alice_eve",
     "provenance_decay",
