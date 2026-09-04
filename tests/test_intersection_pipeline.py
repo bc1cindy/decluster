@@ -1,4 +1,7 @@
+import pytest
+
 from examples.intersection_pipeline import run
+from decluster.adaptations.ancestry import ancestry_signature_report
 
 
 def _fixture():
@@ -31,6 +34,29 @@ def test_the_four_channels_chain_end_to_end():
     assert [x[0] for x in entry["narrowing"]["shared"]] == ["red"]
     assert entry["narrowing"]["collapsed"] == 1
     assert entry["verdict"]["believed"] is True
+
+
+def test_pipeline_accepts_atomic_ancestry_reports():
+    get_tx, get_outspends = _fixture()
+
+    def coinbase(txid):
+        return {"vin": [{"is_coinbase": True}], "vout": [{"value": 1}, {"value": 1}]}
+
+    out = run(
+        seeds=[("seed", 0), ("seed", 1)],
+        get_tx=get_tx,
+        get_outspends=get_outspends,
+        ancestry_report_of=lambda outpoint: ancestry_signature_report(
+            outpoint, fetch=coinbase
+        ),
+    )
+
+    assert out["results"][0]["narrowing"]["blind"] is False
+
+
+def test_pipeline_rejects_two_ancestry_sources():
+    with pytest.raises(ValueError, match="not both"):
+        run(seeds=[], signature_of=lambda op: None, ancestry_report_of=lambda op: None)
 
 
 def test_the_engine_can_refuse_a_cospend_the_walk_found():

@@ -20,6 +20,7 @@ the run says so rather than printing nothing.
 """
 
 from decluster.fetch import fetch_outspends, fetch_tx
+from decluster.adaptations.intersection import evaluate_ancestry_reports
 from decluster.intersect import evaluate, score_candidate
 from decluster.monitor import summarise, walk_frontier
 
@@ -67,6 +68,16 @@ def default_signature_of(depth=SIGNATURE_DEPTH):
         outpoint, depth=depth, link_oracle=dss_link_oracle)
 
 
+def default_ancestry_report_of(depth=SIGNATURE_DEPTH):
+    """Atomic ancestry observation used by the typed intersection path."""
+    from decluster.adaptations.ancestry import ancestry_signature_report
+    from decluster.ancestry import dss_link_oracle
+
+    return lambda outpoint: ancestry_signature_report(
+        outpoint, depth=depth, link_oracle=dss_link_oracle
+    )
+
+
 def default_cluster_fn():
     """The engine, built on first use so a walk that finds nothing costs nothing.
 
@@ -94,24 +105,38 @@ def default_cluster_fn():
 
 
 def run(seeds=None, get_tx=fetch_tx, get_outspends=fetch_outspends,
-        signature_of=None, cluster_fn=None, max_depth=3):
+        signature_of=None, ancestry_report_of=None, cluster_fn=None, max_depth=3):
     """Walk, intersect, and score. Returns one dict per co-spend candidate.
 
-    `signature_of` returns `(signature, truncated)` for an outpoint — the origin set and, as an
+    `ancestry_report_of` is the preferred interface: one typed result binds a
+    signature to the truncation observed by the same walk. `signature_of` is the
+    compatibility interface and returns `(signature, truncated)` for an outpoint — the origin set and, as an
     `ancestry.TruncationSupport`, how much of its boundary is truncation rather than an origin and
     which walk limit produced it. Both are needed: without the second, an empty intersection cannot
     be told from a walk that could not see, and without its split a blind branch does not say
     whether the oracle refused or the node cap bit. `cluster_fn` takes
-    `(nodes, signatures)`. Both are injected so the pipeline can be exercised without a network walk;
-    production passes `default_signature_of()` and `default_cluster_fn()`.
+    `(nodes, signatures)`. The functions are injected so the pipeline can be exercised without a
+    network walk; production uses `default_ancestry_report_of()` and `default_cluster_fn()`.
     """
+    if signature_of is not None and ancestry_report_of is not None:
+        raise ValueError("provide signature_of or ancestry_report_of, not both")
     seeds = default_seeds(get_tx) if seeds is None else seeds
     walked = walk_frontier(seeds, get_tx, get_outspends, max_depth=max_depth)
     results = []
     for candidate in walked["candidates"]:
         entry = {"candidate": candidate}
         sigs = None
-        if signature_of is not None:
+        if ancestry_report_of is not None:
+            ancestry_reports = {
+                op: ancestry_report_of(op) for op in candidate.get("outpoints", [])
+            }
+            sigs = {
+                op: report.as_legacy()[0] for op, report in ancestry_reports.items()
+            }
+            entry["narrowing"] = evaluate_ancestry_reports(
+                candidate, ancestry_reports.__getitem__
+            ).as_legacy()
+        elif signature_of is not None:
             # Computed once: the narrowing reads them, and the engine's
             # provenance channel is offered the same ones rather than a
             # second walk.
@@ -130,7 +155,10 @@ def run(seeds=None, get_tx=fetch_tx, get_outspends=fetch_outspends,
 
 
 def main():
-    out = run(signature_of=default_signature_of(), cluster_fn=default_cluster_fn())
+    out = run(
+        ancestry_report_of=default_ancestry_report_of(),
+        cluster_fn=default_cluster_fn(),
+    )
     print(f"seeds: {len(default_seeds())}")
     print(f"walk: {summarise(out['walk'])}")
     for entry in out["walk"]["frontier"]:
