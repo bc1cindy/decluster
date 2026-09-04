@@ -749,7 +749,8 @@ calls, returning a truncated lower bound in bounded time — ≈5 min on a real 
 (`results/RESULTS-path-count.md`) — where the unbounded walk does not terminate. The bound is honest: it
 can only omit origins, never invent them; exact deep resolution is not possible.
 
-**Path counting (§07).** The path-like anonymity set (`path_count.path_count_anonymity`) weights each
+**Provenance route accumulation (§07 diagnostic).**
+`provenance_route_accumulation.provenance_route_accumulation` weights each
 ancestral origin by link probability alone, summed over every counterfactual input→output route
 reaching it; subset-sum multiplicity does not enter the bound, because `cost.py` declares the amount
 channel refuse-only (§1): it may cut a coin from the graph, never weight one, and folding a mapping
@@ -878,7 +879,8 @@ users or a robust negative.
   tested as a candidate quasi-identifier and reported as a **negative result**: a naive split-half
   gives AUC 0.92, but a persistence split with matched negatives collapses it to **0.49 (chance)**, so
   the schedule does not identify owners in this data (`results/RESULTS-temporal.md`).
-- **No structural-property term in the construction-side path count.** `path_count_anonymity` (§8)
+- **No structural-property term in provenance route accumulation.**
+  `provenance_route_accumulation` (§8)
   weights ancestral origins by link probability alone; subset-sum multiplicity does not enter, because
   the amount channel is refuse-only (§1). It therefore measures no structural property of the graph.
   Measuring one would need edge-disjoint plausible-flow paths in the transaction graph: transactions

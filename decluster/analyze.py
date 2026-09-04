@@ -13,7 +13,7 @@ from .anonymity_set import anonymity_bits, cluster_of_from_tx_groups, provenance
     subjective_oracle_for
 from .rarity_weight_baseline import Combiner
 from .partition_model import build_evidence, contract_cospend
-from .weighted_path_count import path_count_anonymity
+from .provenance_route_accumulation import provenance_route_accumulation
 from .report import _spendable_vouts
 from .split_merge import M3_MAX_SUPERNODES, m3_gap_and_samples
 
@@ -83,8 +83,13 @@ def analyze(tx, targets=None, depth=5, *, fetch=None, link_oracle=None,
             entry["fused"] = {"min_entropy": min(fb["min_entropy"], provenance["min_entropy"]),
                               "shannon": min(fb["shannon"], provenance["shannon"])}
         if path_count:
-            pc = path_count_anonymity((txid, vout), depth=depth, max_nodes=max_nodes, fetch=fetch,
-                                       link_oracle=link_oracle)
+            pc = provenance_route_accumulation(
+                (txid, vout),
+                depth=depth,
+                max_nodes=max_nodes,
+                fetch=fetch,
+                link_oracle=link_oracle,
+            )
             entry["path_count"] = {k: pc[k] for k in
                                     ("min_entropy", "shannon", "origins_weighted")}
         out[vout] = entry

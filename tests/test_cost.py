@@ -102,10 +102,10 @@ def test_construction_cost_returns_structured_terms_with_path_count_target():
     assert terms == {"leak": 1.0, "topology": 0.0, "target": path_count_anonymity}
 
 
-def test_construction_cost_default_target_is_path_count_anonymity():
-    from decluster.path_count import path_count_anonymity
+def test_construction_cost_default_target_is_provenance_route_accumulation():
+    from decluster.provenance_route_accumulation import provenance_route_accumulation
     terms = cost.construction_cost(leak=1.0, topology=0.0)
-    assert terms["target"] is path_count_anonymity
+    assert terms["target"] is provenance_route_accumulation
 
 
 def test_construction_cost_combine_still_raises_citing_only_combination():

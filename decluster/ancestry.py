@@ -180,7 +180,8 @@ def build_extended_graph(target, depth=6, fetch=None, link_oracle=None, value_we
     overstating it). De-duplicates states by coin identity, so shared ancestors (diamonds) are exact.
 
     `link_oracle` is required, and what it returns decides the transition model. The library's
-    facades (`analyze`, `report`, `path_count_anonymity`, `ancestry_entropy`, `anonymity_set`) now
+    facades (`analyze`, `report`, `provenance_route_accumulation`, `ancestry_entropy`,
+    `anonymity_set`) now
     pass `value_flow_link_oracle`; the paragraph below describes the subset-sum oracle, which is
     opt-in.
 

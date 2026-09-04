@@ -8,7 +8,7 @@ from dataclasses import dataclass
 
 from .cluster import cluster_topology_weight, counterparty_bits
 from .ancestry import ancestry_entropy
-from .weighted_path_count import path_count_anonymity
+from .provenance_route_accumulation import provenance_route_accumulation
 
 
 @dataclass(frozen=True)
@@ -89,9 +89,11 @@ def topology_bits(members_a, members_b, neigh, tau=1.0):
 # `decluster.report.report` (the per-tx orchestrator). This module holds the leaf terms it composes.
 
 
-def construction_cost(leak, topology, target_fn=path_count_anonymity, graph=None, combine=False):
+def construction_cost(
+    leak, topology, target_fn=provenance_route_accumulation, graph=None, combine=False
+):
     """(A) construction objective — the component terms, structured. `target_fn` is the §07
-    path-counting target (`path_count.path_count_anonymity`, now wired) or any compatible target
+    provenance-route target (`provenance_route_accumulation`, now wired) or any compatible target
     (e.g. `ancestry_entropy`); the missing-target blocker is gone, so this no longer raises by
     default. It returns the terms UNCOMBINED: `{"leak": leak, "topology": topology,
     "target": target_fn}` — leak/topology as given, `target_fn` itself as the target marker (this

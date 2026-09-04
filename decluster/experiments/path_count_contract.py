@@ -1,4 +1,4 @@
-"""Measure the implemented route-accumulation contract of path_count_anonymity."""
+"""Measure the implemented provenance-route accumulation contract."""
 
 from __future__ import annotations
 
@@ -8,7 +8,7 @@ import math
 from pathlib import Path
 
 from ..ancestry import absorber_distribution, build_extended_graph
-from ..path_count import path_count_anonymity
+from ..provenance_route_accumulation import provenance_route_accumulation
 from ..result_artifacts import canonical_json_bytes, write_canonical_json
 
 EXPERIMENT_ID = "path-count-contract-v1"
@@ -72,14 +72,14 @@ def _serialize_distribution(distribution):
 def build_artifact():
     graph = build_extended_graph(TARGET, depth=6, fetch=_fetch, link_oracle=_link_oracle)
     ancestry = absorber_distribution(graph, TARGET)
-    low_count = path_count_anonymity(
+    low_count = provenance_route_accumulation(
         TARGET,
         depth=6,
         fetch=_fetch,
         link_oracle=_link_oracle,
         count_oracle=_count_oracle(0.0),
     )
-    high_count = path_count_anonymity(
+    high_count = provenance_route_accumulation(
         TARGET,
         depth=6,
         fetch=_fetch,

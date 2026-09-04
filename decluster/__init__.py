@@ -10,4 +10,5 @@ from .monitor import walk_frontier
 from .intersect import evaluate, score_candidate
 from .analyze import analyze, cluster_map, cluster_posterior
 from .oracle import bounded_dss_link_oracle, bounded_link_oracle, subprocess_link_oracle
-from .weighted_path_count import path_count_anonymity
+from .path_count import path_count_anonymity
+from .provenance_route_accumulation import provenance_route_accumulation

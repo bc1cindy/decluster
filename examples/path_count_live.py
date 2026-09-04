@@ -1,7 +1,7 @@
 """Live end-to-end proof of the two things task 5/6 shipped: (a) `max_nodes` tames the deep-coinjoin
 `analyze(depth=5, path_count=True)` call that `RESULTS-analyze.md` (b) found hung past a 25-minute
 wall cap uncapped — bounded, it returns fast with a truncated LOWER BOUND, never a crash; (b) the §07
-path-count object (`decluster.path_count.path_count_anonymity`) walks the SAME tractable envelope as
+provenance-route object (`decluster.provenance_route_accumulation`) walks the SAME tractable envelope as
 §04's set-size entropy, weighted by link probability alone (§07 does not extend the envelope either —
 see `RESULTS-path-counting-analysis.md`).
 
