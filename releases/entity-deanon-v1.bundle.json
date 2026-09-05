@@ -1,15 +1,23 @@
 {
   "schema_version": 1,
   "id": "entity-deanon-v1",
-  "capabilities": ["verify_outputs", "reproduce_runs"],
-  "runs": ["entity-deanon-v1"],
+  "capabilities": [
+    "verify_outputs",
+    "reproduce_runs"
+  ],
+  "runs": [
+    "entity-deanon-v1"
+  ],
   "blobs": [
     {
       "name": "catalog/runs/entity-deanon-v1.json",
       "role": "run_manifest",
-      "bytes": 3349,
-      "sha256": "0cc741590ee640c42392ccec60a23161efef8895af84cac62d643002353e8e13",
-      "locations": {"canonical": null, "mirrors": []}
+      "bytes": 3453,
+      "sha256": "f616310081edeec399f277f3285c110208444ab8b285989f5ba59822071ce272",
+      "locations": {
+        "canonical": null,
+        "mirrors": []
+      }
     },
     {
       "name": "tests/fixtures/entity_satoshidice_2013.ndjson.gz",
@@ -36,35 +44,50 @@
       "role": "result",
       "bytes": 1100,
       "sha256": "4825de7e64906f0d708bdcbd3bd23836675ff168166c5ff06fc0ea25d95afb38",
-      "locations": {"canonical": null, "mirrors": []}
+      "locations": {
+        "canonical": null,
+        "mirrors": []
+      }
     },
     {
       "name": "results/generated/entity-deanon-v1.md",
       "role": "result",
       "bytes": 557,
       "sha256": "9a3fdc6c79bc5c94cc687b5a41ebff8c663ecf3358cb080883e93cd30d94d850",
-      "locations": {"canonical": null, "mirrors": []}
+      "locations": {
+        "canonical": null,
+        "mirrors": []
+      }
     },
     {
-      "name": "sources/decluster-1464f89-runtime.tar",
+      "name": "sources/decluster-39ac38f-runtime.tar",
       "role": "source",
-      "bytes": 1515520,
-      "sha256": "7619ec0206c1cd40487c36e9bfb61616b712f07d4999d35805ae38c7507ee166",
-      "locations": {"canonical": null, "mirrors": []}
+      "bytes": 2027520,
+      "sha256": "c7b16b0c77e40a8c98bb24f4348b6c4fdf9a4d53bfb5f63c5767f4b480f40436",
+      "locations": {
+        "canonical": null,
+        "mirrors": []
+      }
     },
     {
       "name": "reproduction/entity-deanon/requirements.lock",
       "role": "lockfile",
       "bytes": 0,
       "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
-      "locations": {"canonical": null, "mirrors": []}
+      "locations": {
+        "canonical": null,
+        "mirrors": []
+      }
     },
     {
       "name": "reproduction/entity-deanon/environment.json",
       "role": "environment",
       "bytes": 362,
-      "sha256": "a42a850cdba97059e61395c14f5b43f1bdd52c665b9999ef64b9f448a79f4ebe",
-      "locations": {"canonical": null, "mirrors": []}
+      "sha256": "fb98eba12cd314911b305fc7874087747c250f0a961f4474fe85e425e95889a3",
+      "locations": {
+        "canonical": null,
+        "mirrors": []
+      }
     }
   ],
   "limitations": [

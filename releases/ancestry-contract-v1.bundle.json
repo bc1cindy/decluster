@@ -1,15 +1,74 @@
 {
   "schema_version": 1,
   "id": "ancestry-contract-v1",
-  "capabilities": ["verify_outputs", "reproduce_runs"],
-  "runs": ["ancestry-contract-v1"],
+  "capabilities": [
+    "verify_outputs",
+    "reproduce_runs"
+  ],
+  "runs": [
+    "ancestry-contract-v1"
+  ],
   "blobs": [
-    {"name": "catalog/runs/ancestry-contract-v1.json", "role": "run_manifest", "bytes": 2802, "sha256": "d58b88a5331e1d2f452f1ccfa527ce9cf4e644112f0878bd6b6a5b0a79147a10", "locations": {"canonical": null, "mirrors": []}},
-    {"name": "results/artifacts/ancestry-contract-v1.json", "role": "result", "bytes": 1252, "sha256": "5c2be778959f5ab96df33af132a1cebc213375d43725969ba0a6cfec2063d533", "locations": {"canonical": null, "mirrors": []}},
-    {"name": "results/generated/ancestry-contract-v1.md", "role": "result", "bytes": 783, "sha256": "f14fa583584595c85f81b7cb4a84072cbbec64150d8eedb38e77b18b015d2ef9", "locations": {"canonical": null, "mirrors": []}},
-    {"name": "sources/decluster-758680a-runtime.tar", "role": "source", "bytes": 1413120, "sha256": "84df09a689caf0c23a67a359e4f252651de0d9c5c8b7c8dd048eb0310ec9cd17", "locations": {"canonical": null, "mirrors": []}},
-    {"name": "reproduction/ancestry-contract/requirements.lock", "role": "lockfile", "bytes": 0, "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855", "locations": {"canonical": null, "mirrors": []}},
-    {"name": "reproduction/ancestry-contract/environment.json", "role": "environment", "bytes": 370, "sha256": "ddc49381a76cbfde53dfa2a6cf3d3a2fc41e870b9d7fad4325e5b0bbe40fbbbd", "locations": {"canonical": null, "mirrors": []}}
+    {
+      "name": "catalog/runs/ancestry-contract-v1.json",
+      "role": "run_manifest",
+      "bytes": 2840,
+      "sha256": "c3e4cb985e352c34437e155a8f9cafc20d558ef8d7ac16799a7c1ce6d286a516",
+      "locations": {
+        "canonical": null,
+        "mirrors": []
+      }
+    },
+    {
+      "name": "results/artifacts/ancestry-contract-v1.json",
+      "role": "result",
+      "bytes": 1252,
+      "sha256": "5c2be778959f5ab96df33af132a1cebc213375d43725969ba0a6cfec2063d533",
+      "locations": {
+        "canonical": null,
+        "mirrors": []
+      }
+    },
+    {
+      "name": "results/generated/ancestry-contract-v1.md",
+      "role": "result",
+      "bytes": 783,
+      "sha256": "f14fa583584595c85f81b7cb4a84072cbbec64150d8eedb38e77b18b015d2ef9",
+      "locations": {
+        "canonical": null,
+        "mirrors": []
+      }
+    },
+    {
+      "name": "sources/decluster-39ac38f-runtime.tar",
+      "role": "source",
+      "bytes": 2027520,
+      "sha256": "c7b16b0c77e40a8c98bb24f4348b6c4fdf9a4d53bfb5f63c5767f4b480f40436",
+      "locations": {
+        "canonical": null,
+        "mirrors": []
+      }
+    },
+    {
+      "name": "reproduction/ancestry-contract/requirements.lock",
+      "role": "lockfile",
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "locations": {
+        "canonical": null,
+        "mirrors": []
+      }
+    },
+    {
+      "name": "reproduction/ancestry-contract/environment.json",
+      "role": "environment",
+      "bytes": 370,
+      "sha256": "f2b3ef9f21a4f3654e4e305c1a3249fe6dc3b8570c8c1a53b329e90821ff72eb",
+      "locations": {
+        "canonical": null,
+        "mirrors": []
+      }
+    }
   ],
   "limitations": [
     "The bundled environment currently targets CPython 3.13 on macOS arm64.",

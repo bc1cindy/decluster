@@ -1,15 +1,74 @@
 {
   "schema_version": 1,
   "id": "provenance-decay-v1",
-  "capabilities": ["verify_outputs", "reproduce_runs"],
-  "runs": ["provenance-decay-v1"],
+  "capabilities": [
+    "verify_outputs",
+    "reproduce_runs"
+  ],
+  "runs": [
+    "provenance-decay-v1"
+  ],
   "blobs": [
-    {"name": "catalog/runs/provenance-decay-v1.json", "role": "run_manifest", "bytes": 2435, "sha256": "cf63b4c65e2758e596ccc17310ca2ef4514cb39850f31879be5b6e4be976090a", "locations": {"canonical": null, "mirrors": []}},
-    {"name": "results/artifacts/provenance-decay-v1.json", "role": "result", "bytes": 502, "sha256": "879dc6c49619b18d267fd30510472da99e341b6a3eebef6d6ab65faf319c2e9c", "locations": {"canonical": null, "mirrors": []}},
-    {"name": "results/generated/provenance-decay-v1.md", "role": "result", "bytes": 357, "sha256": "e09b7649b43e9238da355048e2205281c00f63c1e08b230c2a3588b7efb94ab8", "locations": {"canonical": null, "mirrors": []}},
-    {"name": "sources/decluster-57f6599-runtime.tar", "role": "source", "bytes": 911360, "sha256": "47033a8cb6695bca2c25305c99e64c14e2afe4a470f144b90fd8023b56135c75", "locations": {"canonical": null, "mirrors": []}},
-    {"name": "reproduction/provenance-decay/requirements.lock", "role": "lockfile", "bytes": 30, "sha256": "e0d6a8cada5d383c0aca2bd2a37f28c15721392469c94084128d369c29c5544d", "locations": {"canonical": null, "mirrors": []}},
-    {"name": "reproduction/provenance-decay/environment.json", "role": "environment", "bytes": 368, "sha256": "afb15879dd57f9f8b947df838d6bfd9d73ac2af63e5880b13b5af6b2edcfb8b2", "locations": {"canonical": null, "mirrors": []}}
+    {
+      "name": "catalog/runs/provenance-decay-v1.json",
+      "role": "run_manifest",
+      "bytes": 2473,
+      "sha256": "7ed82d4eb9a03e25f5b760b1b3dc6e6814d21e0a34ce928234113a011ceffd5f",
+      "locations": {
+        "canonical": null,
+        "mirrors": []
+      }
+    },
+    {
+      "name": "results/artifacts/provenance-decay-v1.json",
+      "role": "result",
+      "bytes": 502,
+      "sha256": "879dc6c49619b18d267fd30510472da99e341b6a3eebef6d6ab65faf319c2e9c",
+      "locations": {
+        "canonical": null,
+        "mirrors": []
+      }
+    },
+    {
+      "name": "results/generated/provenance-decay-v1.md",
+      "role": "result",
+      "bytes": 357,
+      "sha256": "e09b7649b43e9238da355048e2205281c00f63c1e08b230c2a3588b7efb94ab8",
+      "locations": {
+        "canonical": null,
+        "mirrors": []
+      }
+    },
+    {
+      "name": "sources/decluster-39ac38f-runtime.tar",
+      "role": "source",
+      "bytes": 2027520,
+      "sha256": "c7b16b0c77e40a8c98bb24f4348b6c4fdf9a4d53bfb5f63c5767f4b480f40436",
+      "locations": {
+        "canonical": null,
+        "mirrors": []
+      }
+    },
+    {
+      "name": "reproduction/provenance-decay/requirements.lock",
+      "role": "lockfile",
+      "bytes": 30,
+      "sha256": "e0d6a8cada5d383c0aca2bd2a37f28c15721392469c94084128d369c29c5544d",
+      "locations": {
+        "canonical": null,
+        "mirrors": []
+      }
+    },
+    {
+      "name": "reproduction/provenance-decay/environment.json",
+      "role": "environment",
+      "bytes": 368,
+      "sha256": "b39ac25424460ea62a170e2773aadeaf5c900bf14d5c053566bf6636f4e55d05",
+      "locations": {
+        "canonical": null,
+        "mirrors": []
+      }
+    }
   ],
   "limitations": [
     "The bundled environment currently targets CPython 3.13 on macOS arm64.",

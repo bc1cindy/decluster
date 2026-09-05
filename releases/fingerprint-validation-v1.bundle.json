@@ -1,16 +1,84 @@
 {
   "schema_version": 1,
   "id": "fingerprint-validation-v1",
-  "capabilities": ["verify_outputs", "reproduce_runs"],
-  "runs": ["fingerprint-validation-v1"],
+  "capabilities": [
+    "verify_outputs",
+    "reproduce_runs"
+  ],
+  "runs": [
+    "fingerprint-validation-v1"
+  ],
   "blobs": [
-    {"name": "catalog/runs/fingerprint-validation-v1.json", "role": "run_manifest", "bytes": 2728, "sha256": "f1ee1030b9d0660d1a00d681ed36e9202bbe2dd66139fb10449f3aac1c12ed1b", "locations": {"canonical": null, "mirrors": []}},
-    {"name": "tests/fixtures/fingerprint_blkcache_sample.json", "role": "dataset", "bytes": 1701974, "sha256": "406ce2d7d0a04f7c73281bce6b6a781012a8765e079693f010a0154e926c6a6c", "locations": {"canonical": "https://github.com/bc1cindy/decluster/raw/2f1bbae5ac4923ff7b799b25be0dd66b4ec3f692/tests/fixtures/fingerprint_blkcache_sample.json", "mirrors": []}},
-    {"name": "results/artifacts/fingerprint-validation-v1.json", "role": "result", "bytes": 1062, "sha256": "81e9af1328a344323e7a86b219711cbe9ee1428e3bbce4b1995681b9ae35b669", "locations": {"canonical": null, "mirrors": []}},
-    {"name": "results/generated/fingerprint-validation-v1.md", "role": "result", "bytes": 590, "sha256": "2fe5d3f085bb7b93ba2d275b442bb31f6ba8c1e95ca670c726474f2c874b0eea", "locations": {"canonical": null, "mirrors": []}},
-    {"name": "sources/decluster-1464f89-runtime.tar", "role": "source", "bytes": 1515520, "sha256": "7619ec0206c1cd40487c36e9bfb61616b712f07d4999d35805ae38c7507ee166", "locations": {"canonical": null, "mirrors": []}},
-    {"name": "reproduction/fingerprint-validation/requirements.lock", "role": "lockfile", "bytes": 0, "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855", "locations": {"canonical": null, "mirrors": []}},
-    {"name": "reproduction/fingerprint-validation/environment.json", "role": "environment", "bytes": 380, "sha256": "4b3ea3cae471758575fe34ed3893e2f6b3d69b4795d59a8a31a1f25a81e995c5", "locations": {"canonical": null, "mirrors": []}}
+    {
+      "name": "catalog/runs/fingerprint-validation-v1.json",
+      "role": "run_manifest",
+      "bytes": 3124,
+      "sha256": "38166902b9c8650386630f712f474620ffe7424917652270c37ea938170a4503",
+      "locations": {
+        "canonical": null,
+        "mirrors": []
+      }
+    },
+    {
+      "name": "tests/fixtures/fingerprint_blkcache_sample.json",
+      "role": "dataset",
+      "bytes": 1701974,
+      "sha256": "406ce2d7d0a04f7c73281bce6b6a781012a8765e079693f010a0154e926c6a6c",
+      "locations": {
+        "canonical": "https://github.com/bc1cindy/decluster/raw/2f1bbae5ac4923ff7b799b25be0dd66b4ec3f692/tests/fixtures/fingerprint_blkcache_sample.json",
+        "mirrors": []
+      }
+    },
+    {
+      "name": "results/artifacts/fingerprint-validation-v1.json",
+      "role": "result",
+      "bytes": 1062,
+      "sha256": "81e9af1328a344323e7a86b219711cbe9ee1428e3bbce4b1995681b9ae35b669",
+      "locations": {
+        "canonical": null,
+        "mirrors": []
+      }
+    },
+    {
+      "name": "results/generated/fingerprint-validation-v1.md",
+      "role": "result",
+      "bytes": 590,
+      "sha256": "2fe5d3f085bb7b93ba2d275b442bb31f6ba8c1e95ca670c726474f2c874b0eea",
+      "locations": {
+        "canonical": null,
+        "mirrors": []
+      }
+    },
+    {
+      "name": "sources/decluster-39ac38f-runtime.tar",
+      "role": "source",
+      "bytes": 2027520,
+      "sha256": "c7b16b0c77e40a8c98bb24f4348b6c4fdf9a4d53bfb5f63c5767f4b480f40436",
+      "locations": {
+        "canonical": null,
+        "mirrors": []
+      }
+    },
+    {
+      "name": "reproduction/fingerprint-validation/requirements.lock",
+      "role": "lockfile",
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "locations": {
+        "canonical": null,
+        "mirrors": []
+      }
+    },
+    {
+      "name": "reproduction/fingerprint-validation/environment.json",
+      "role": "environment",
+      "bytes": 380,
+      "sha256": "8a97c9980fe8cfe1471dd4e48e930c0f995ba63c63bdddf553ddd3f1094577ed",
+      "locations": {
+        "canonical": null,
+        "mirrors": []
+      }
+    }
   ],
   "limitations": [
     "The bundled environment currently targets CPython 3.13 on macOS arm64.",

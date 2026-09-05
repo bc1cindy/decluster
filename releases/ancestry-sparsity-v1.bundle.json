@@ -1,16 +1,84 @@
 {
   "schema_version": 1,
   "id": "ancestry-sparsity-v1",
-  "capabilities": ["verify_outputs", "reproduce_runs"],
-  "runs": ["ancestry-sparsity-v1"],
+  "capabilities": [
+    "verify_outputs",
+    "reproduce_runs"
+  ],
+  "runs": [
+    "ancestry-sparsity-v1"
+  ],
   "blobs": [
-    {"name": "catalog/runs/ancestry-sparsity-v1.json", "role": "run_manifest", "bytes": 2907, "sha256": "4bbb55944eff4c960cb74478be9e6f8f0c224814be82f245d28fade4cb979ab8", "locations": {"canonical": null, "mirrors": []}},
-    {"name": "tests/fixtures/reid_sigs.json.gz", "role": "dataset", "bytes": 2051632, "sha256": "dbc4214fb499a96327326c4ea31341a76878c1867bfa3ccc57df88d850cdaa6a", "locations": {"canonical": "https://github.com/bc1cindy/decluster/raw/495874b5063bd83fc24e32eec1ebeb933471f6b9/tests/fixtures/reid_sigs.json.gz", "mirrors": []}},
-    {"name": "results/artifacts/ancestry-sparsity-v1.json", "role": "result", "bytes": 768, "sha256": "c0c417c8efc84acfcb88c465123e910aad0af32d55fd074fc3729091ce748693", "locations": {"canonical": null, "mirrors": []}},
-    {"name": "results/generated/ancestry-sparsity-v1.md", "role": "result", "bytes": 665, "sha256": "83c424ce8501bffc44b4e0af0ccdf37b6e11aaf8c355be0cfca81659d542b77a", "locations": {"canonical": null, "mirrors": []}},
-    {"name": "sources/decluster-1e4360b-runtime.tar", "role": "source", "bytes": 1423360, "sha256": "0f9323f210f58b6e02971695c023d090e5ef438ce471cc71328b487efad7a745", "locations": {"canonical": null, "mirrors": []}},
-    {"name": "reproduction/ancestry-sparsity/requirements.lock", "role": "lockfile", "bytes": 0, "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855", "locations": {"canonical": null, "mirrors": []}},
-    {"name": "reproduction/ancestry-sparsity/environment.json", "role": "environment", "bytes": 370, "sha256": "7a30ec8a4691c2afcf7b1020efd1cc7ea938aaf9734c63aa7dacf836fd544749", "locations": {"canonical": null, "mirrors": []}}
+    {
+      "name": "catalog/runs/ancestry-sparsity-v1.json",
+      "role": "run_manifest",
+      "bytes": 2951,
+      "sha256": "0a9160f972b0e7aaa7a703343d325964fbe4f948b3861216f22762426f73c9ca",
+      "locations": {
+        "canonical": null,
+        "mirrors": []
+      }
+    },
+    {
+      "name": "tests/fixtures/reid_sigs.json.gz",
+      "role": "dataset",
+      "bytes": 2051632,
+      "sha256": "dbc4214fb499a96327326c4ea31341a76878c1867bfa3ccc57df88d850cdaa6a",
+      "locations": {
+        "canonical": "https://github.com/bc1cindy/decluster/raw/495874b5063bd83fc24e32eec1ebeb933471f6b9/tests/fixtures/reid_sigs.json.gz",
+        "mirrors": []
+      }
+    },
+    {
+      "name": "results/artifacts/ancestry-sparsity-v1.json",
+      "role": "result",
+      "bytes": 768,
+      "sha256": "c0c417c8efc84acfcb88c465123e910aad0af32d55fd074fc3729091ce748693",
+      "locations": {
+        "canonical": null,
+        "mirrors": []
+      }
+    },
+    {
+      "name": "results/generated/ancestry-sparsity-v1.md",
+      "role": "result",
+      "bytes": 665,
+      "sha256": "83c424ce8501bffc44b4e0af0ccdf37b6e11aaf8c355be0cfca81659d542b77a",
+      "locations": {
+        "canonical": null,
+        "mirrors": []
+      }
+    },
+    {
+      "name": "sources/decluster-39ac38f-runtime.tar",
+      "role": "source",
+      "bytes": 2027520,
+      "sha256": "c7b16b0c77e40a8c98bb24f4348b6c4fdf9a4d53bfb5f63c5767f4b480f40436",
+      "locations": {
+        "canonical": null,
+        "mirrors": []
+      }
+    },
+    {
+      "name": "reproduction/ancestry-sparsity/requirements.lock",
+      "role": "lockfile",
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "locations": {
+        "canonical": null,
+        "mirrors": []
+      }
+    },
+    {
+      "name": "reproduction/ancestry-sparsity/environment.json",
+      "role": "environment",
+      "bytes": 370,
+      "sha256": "594a5784a1f1cb24ef13f90e1caa5600f51c101da341b283815d706587fde96a",
+      "locations": {
+        "canonical": null,
+        "mirrors": []
+      }
+    }
   ],
   "limitations": [
     "The bundled environment currently targets CPython 3.13 on macOS arm64.",

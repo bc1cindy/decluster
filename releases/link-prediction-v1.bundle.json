@@ -1,15 +1,74 @@
 {
   "schema_version": 1,
   "id": "link-prediction-v1",
-  "capabilities": ["verify_outputs", "reproduce_runs"],
-  "runs": ["link-prediction-v1"],
+  "capabilities": [
+    "verify_outputs",
+    "reproduce_runs"
+  ],
+  "runs": [
+    "link-prediction-v1"
+  ],
   "blobs": [
-    {"name": "catalog/runs/link-prediction-v1.json", "role": "run_manifest", "bytes": 2508, "sha256": "f0e2ddd8593a13091d68348aabafa9ffec1edfb7d92c87743cb2de17272d2908", "locations": {"canonical": null, "mirrors": []}},
-    {"name": "results/artifacts/link-prediction-v1.json", "role": "result", "bytes": 17650, "sha256": "b119c9d6d6782e6fca449004b11096cba93a9dc37b631b27fd42954e66db3618", "locations": {"canonical": null, "mirrors": []}},
-    {"name": "results/generated/link-prediction-v1.md", "role": "result", "bytes": 502, "sha256": "7858a3c1059896469a5858a9dfc69b66bf2090cd0668db66270e590344bc9fc0", "locations": {"canonical": null, "mirrors": []}},
-    {"name": "sources/decluster-05a6a5c-runtime.tar", "role": "source", "bytes": 1218560, "sha256": "85c8f28132b1690e5524c1c6a9ebf0d8435ee176fb101dcdd36c37698800906e", "locations": {"canonical": null, "mirrors": []}},
-    {"name": "reproduction/link-prediction/requirements.lock", "role": "lockfile", "bytes": 30, "sha256": "e0d6a8cada5d383c0aca2bd2a37f28c15721392469c94084128d369c29c5544d", "locations": {"canonical": null, "mirrors": []}},
-    {"name": "reproduction/link-prediction/environment.json", "role": "environment", "bytes": 366, "sha256": "de44d3547d76a268974fe061aa4f9c32c24371d6e5887778e026e60cb841e03b", "locations": {"canonical": null, "mirrors": []}}
+    {
+      "name": "catalog/runs/link-prediction-v1.json",
+      "role": "run_manifest",
+      "bytes": 2672,
+      "sha256": "ca51e36b54d3b1658281258702033a93feacebdebc9aa09a397f2ef1953053de",
+      "locations": {
+        "canonical": null,
+        "mirrors": []
+      }
+    },
+    {
+      "name": "results/artifacts/link-prediction-v1.json",
+      "role": "result",
+      "bytes": 17650,
+      "sha256": "b119c9d6d6782e6fca449004b11096cba93a9dc37b631b27fd42954e66db3618",
+      "locations": {
+        "canonical": null,
+        "mirrors": []
+      }
+    },
+    {
+      "name": "results/generated/link-prediction-v1.md",
+      "role": "result",
+      "bytes": 502,
+      "sha256": "7858a3c1059896469a5858a9dfc69b66bf2090cd0668db66270e590344bc9fc0",
+      "locations": {
+        "canonical": null,
+        "mirrors": []
+      }
+    },
+    {
+      "name": "sources/decluster-39ac38f-runtime.tar",
+      "role": "source",
+      "bytes": 2027520,
+      "sha256": "c7b16b0c77e40a8c98bb24f4348b6c4fdf9a4d53bfb5f63c5767f4b480f40436",
+      "locations": {
+        "canonical": null,
+        "mirrors": []
+      }
+    },
+    {
+      "name": "reproduction/link-prediction/requirements.lock",
+      "role": "lockfile",
+      "bytes": 30,
+      "sha256": "e0d6a8cada5d383c0aca2bd2a37f28c15721392469c94084128d369c29c5544d",
+      "locations": {
+        "canonical": null,
+        "mirrors": []
+      }
+    },
+    {
+      "name": "reproduction/link-prediction/environment.json",
+      "role": "environment",
+      "bytes": 366,
+      "sha256": "a006c4912c072d6e4bc2bb2400a07cf5e9c893d04ae5b4bb9c69f5cee60be5bd",
+      "locations": {
+        "canonical": null,
+        "mirrors": []
+      }
+    }
   ],
   "limitations": [
     "The bundled environment currently targets CPython 3.13 on macOS arm64.",

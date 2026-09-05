@@ -1,16 +1,84 @@
 {
   "schema_version": 1,
   "id": "amount-local-channels-v1",
-  "capabilities": ["verify_outputs", "reproduce_runs"],
-  "runs": ["amount-local-channels-v1"],
+  "capabilities": [
+    "verify_outputs",
+    "reproduce_runs"
+  ],
+  "runs": [
+    "amount-local-channels-v1"
+  ],
   "blobs": [
-    {"name": "catalog/runs/amount-local-channels-v1.json", "role": "run_manifest", "bytes": 2980, "sha256": "94e4bbc699a6a8e71077e0be0c81d0cf4cba8e7f3d378ad811f242b1ea8bdcd8", "locations": {"canonical": null, "mirrors": []}},
-    {"name": "data/amount-channel-812695-812831-v1.json", "role": "dataset", "bytes": 8028513, "sha256": "83b4391f78d07a2fa85a67218d5ae4420d8965da3c95af577592e9ec1850104d", "locations": {"canonical": null, "mirrors": []}},
-    {"name": "results/artifacts/amount-local-channels-v1.json", "role": "result", "bytes": 825, "sha256": "210ecb06ecaa32cc4cabe03ced8b85b0882a824dca2c361bd2c5dede7dcccf02", "locations": {"canonical": null, "mirrors": []}},
-    {"name": "results/generated/amount-local-channels-v1.md", "role": "result", "bytes": 436, "sha256": "4f4ea247a4bbca8cbe1ef24bc7b2ae070576d046c1f04a62bb8d528118fe1c28", "locations": {"canonical": null, "mirrors": []}},
-    {"name": "sources/decluster-6adae46-runtime.tar", "role": "source", "bytes": 1280000, "sha256": "e7f84d1a11ee95d887f041491081ef6c030a29403e34c4b01f355514a867e99e", "locations": {"canonical": null, "mirrors": []}},
-    {"name": "reproduction/amount-local-channels/requirements.lock", "role": "lockfile", "bytes": 30, "sha256": "e0d6a8cada5d383c0aca2bd2a37f28c15721392469c94084128d369c29c5544d", "locations": {"canonical": null, "mirrors": []}},
-    {"name": "reproduction/amount-local-channels/environment.json", "role": "environment", "bytes": 378, "sha256": "6234a98dd6b238aac0b4200fa9746edd5c2bbc3ea050e6b107a29faf8191ac20", "locations": {"canonical": null, "mirrors": []}}
+    {
+      "name": "catalog/runs/amount-local-channels-v1.json",
+      "role": "run_manifest",
+      "bytes": 3064,
+      "sha256": "d721d15999aefefcd41bb197f4649abf1d69c7dfd673a6c4e058167fabd23926",
+      "locations": {
+        "canonical": null,
+        "mirrors": []
+      }
+    },
+    {
+      "name": "data/amount-channel-812695-812831-v1.json",
+      "role": "dataset",
+      "bytes": 8028513,
+      "sha256": "83b4391f78d07a2fa85a67218d5ae4420d8965da3c95af577592e9ec1850104d",
+      "locations": {
+        "canonical": null,
+        "mirrors": []
+      }
+    },
+    {
+      "name": "results/artifacts/amount-local-channels-v1.json",
+      "role": "result",
+      "bytes": 825,
+      "sha256": "210ecb06ecaa32cc4cabe03ced8b85b0882a824dca2c361bd2c5dede7dcccf02",
+      "locations": {
+        "canonical": null,
+        "mirrors": []
+      }
+    },
+    {
+      "name": "results/generated/amount-local-channels-v1.md",
+      "role": "result",
+      "bytes": 436,
+      "sha256": "4f4ea247a4bbca8cbe1ef24bc7b2ae070576d046c1f04a62bb8d528118fe1c28",
+      "locations": {
+        "canonical": null,
+        "mirrors": []
+      }
+    },
+    {
+      "name": "sources/decluster-39ac38f-runtime.tar",
+      "role": "source",
+      "bytes": 2027520,
+      "sha256": "c7b16b0c77e40a8c98bb24f4348b6c4fdf9a4d53bfb5f63c5767f4b480f40436",
+      "locations": {
+        "canonical": null,
+        "mirrors": []
+      }
+    },
+    {
+      "name": "reproduction/amount-local-channels/requirements.lock",
+      "role": "lockfile",
+      "bytes": 30,
+      "sha256": "e0d6a8cada5d383c0aca2bd2a37f28c15721392469c94084128d369c29c5544d",
+      "locations": {
+        "canonical": null,
+        "mirrors": []
+      }
+    },
+    {
+      "name": "reproduction/amount-local-channels/environment.json",
+      "role": "environment",
+      "bytes": 378,
+      "sha256": "62b12548195dd07a9ade699267c8f0d82f3a913aa463f0f0f81e459fa58a3b8e",
+      "locations": {
+        "canonical": null,
+        "mirrors": []
+      }
+    }
   ],
   "limitations": [
     "The bundled environment currently targets CPython 3.13 on macOS arm64.",

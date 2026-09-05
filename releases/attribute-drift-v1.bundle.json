@@ -1,16 +1,84 @@
 {
   "schema_version": 1,
   "id": "attribute-drift-v1",
-  "capabilities": ["verify_outputs", "reproduce_runs"],
-  "runs": ["attribute-drift-v1"],
+  "capabilities": [
+    "verify_outputs",
+    "reproduce_runs"
+  ],
+  "runs": [
+    "attribute-drift-v1"
+  ],
   "blobs": [
-    {"name": "catalog/runs/attribute-drift-v1.json", "role": "run_manifest", "bytes": 2820, "sha256": "fa229dd63395273098baea916d9ec93b636795df792b01d053a0b8eca58ecc2d", "locations": {"canonical": null, "mirrors": []}},
-    {"name": "tests/fixtures/lumen_explorer_data.json", "role": "dataset", "bytes": 432353, "sha256": "5337d4bdc574726a2cb4e28f329f16709b497479a7493882bd38d77875660ac9", "locations": {"canonical": "https://github.com/bc1cindy/decluster/raw/103b13efc9e32569642983d7038f365dcb0c09c6/tests/fixtures/lumen_explorer_data.json", "mirrors": []}},
-    {"name": "results/artifacts/attribute-drift-v1.json", "role": "result", "bytes": 7210, "sha256": "620d6fe56cbfb545dfb2908865f66a18a3fad6a2fa1af96acdda37815ab0f610", "locations": {"canonical": null, "mirrors": []}},
-    {"name": "results/generated/attribute-drift-v1.md", "role": "result", "bytes": 1241, "sha256": "9e36c5f5337bfda4db92e2f52d2db42d82ddf368cbb8aa3c8bdf2e18d821de8f", "locations": {"canonical": null, "mirrors": []}},
-    {"name": "sources/decluster-1464f89-runtime.tar", "role": "source", "bytes": 1515520, "sha256": "7619ec0206c1cd40487c36e9bfb61616b712f07d4999d35805ae38c7507ee166", "locations": {"canonical": null, "mirrors": []}},
-    {"name": "reproduction/attribute-drift/requirements.lock", "role": "lockfile", "bytes": 0, "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855", "locations": {"canonical": null, "mirrors": []}},
-    {"name": "reproduction/attribute-drift/environment.json", "role": "environment", "bytes": 366, "sha256": "eed612bcf69ea7dff568b33911c936c806eaacc228576517434f40d2f24d2e5e", "locations": {"canonical": null, "mirrors": []}}
+    {
+      "name": "catalog/runs/attribute-drift-v1.json",
+      "role": "run_manifest",
+      "bytes": 3288,
+      "sha256": "93f6e3c8dfa0572afd680de0a3d5b5268e7d77f8353745615428b6a6406bbcba",
+      "locations": {
+        "canonical": null,
+        "mirrors": []
+      }
+    },
+    {
+      "name": "tests/fixtures/lumen_explorer_data.json",
+      "role": "dataset",
+      "bytes": 432353,
+      "sha256": "5337d4bdc574726a2cb4e28f329f16709b497479a7493882bd38d77875660ac9",
+      "locations": {
+        "canonical": "https://github.com/bc1cindy/decluster/raw/103b13efc9e32569642983d7038f365dcb0c09c6/tests/fixtures/lumen_explorer_data.json",
+        "mirrors": []
+      }
+    },
+    {
+      "name": "results/artifacts/attribute-drift-v1.json",
+      "role": "result",
+      "bytes": 7210,
+      "sha256": "620d6fe56cbfb545dfb2908865f66a18a3fad6a2fa1af96acdda37815ab0f610",
+      "locations": {
+        "canonical": null,
+        "mirrors": []
+      }
+    },
+    {
+      "name": "results/generated/attribute-drift-v1.md",
+      "role": "result",
+      "bytes": 1241,
+      "sha256": "9e36c5f5337bfda4db92e2f52d2db42d82ddf368cbb8aa3c8bdf2e18d821de8f",
+      "locations": {
+        "canonical": null,
+        "mirrors": []
+      }
+    },
+    {
+      "name": "sources/decluster-39ac38f-runtime.tar",
+      "role": "source",
+      "bytes": 2027520,
+      "sha256": "c7b16b0c77e40a8c98bb24f4348b6c4fdf9a4d53bfb5f63c5767f4b480f40436",
+      "locations": {
+        "canonical": null,
+        "mirrors": []
+      }
+    },
+    {
+      "name": "reproduction/attribute-drift/requirements.lock",
+      "role": "lockfile",
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "locations": {
+        "canonical": null,
+        "mirrors": []
+      }
+    },
+    {
+      "name": "reproduction/attribute-drift/environment.json",
+      "role": "environment",
+      "bytes": 366,
+      "sha256": "a96eecbbb23da765d9bfeff93554180f50522c4eb4b66f2aab09004cf6d4e6bf",
+      "locations": {
+        "canonical": null,
+        "mirrors": []
+      }
+    }
   ],
   "limitations": [
     "The bundled environment currently targets CPython 3.13 on macOS arm64.",

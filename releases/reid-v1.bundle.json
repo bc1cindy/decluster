@@ -1,16 +1,84 @@
 {
   "schema_version": 1,
   "id": "reid-v1",
-  "capabilities": ["verify_outputs", "reproduce_runs"],
-  "runs": ["reid-v1"],
+  "capabilities": [
+    "verify_outputs",
+    "reproduce_runs"
+  ],
+  "runs": [
+    "reid-v1"
+  ],
   "blobs": [
-    {"name": "catalog/runs/reid-v1.json", "role": "run_manifest", "bytes": 2554, "sha256": "fbf85168b693f30be860706a745d41af9e82ed31f7906d7808e4a264ff1b85d3", "locations": {"canonical": null, "mirrors": []}},
-    {"name": "tests/fixtures/reid_sigs.json.gz", "role": "dataset", "bytes": 2051632, "sha256": "dbc4214fb499a96327326c4ea31341a76878c1867bfa3ccc57df88d850cdaa6a", "locations": {"canonical": "https://github.com/bc1cindy/decluster/raw/495874b5063bd83fc24e32eec1ebeb933471f6b9/tests/fixtures/reid_sigs.json.gz", "mirrors": []}},
-    {"name": "results/artifacts/reid-v1.json", "role": "result", "bytes": 1517, "sha256": "2c63a3d460c19e8c49926eef1203d9d42036dda1da8e4836b70f90d8a38f2f59", "locations": {"canonical": null, "mirrors": []}},
-    {"name": "results/generated/reid-v1.md", "role": "result", "bytes": 795, "sha256": "685acc5dc71a32295f04409c3e11b310934dbba6b44d4bd709255767f6b47c20", "locations": {"canonical": null, "mirrors": []}},
-    {"name": "sources/decluster-1464f89-runtime.tar", "role": "source", "bytes": 1515520, "sha256": "7619ec0206c1cd40487c36e9bfb61616b712f07d4999d35805ae38c7507ee166", "locations": {"canonical": null, "mirrors": []}},
-    {"name": "reproduction/reid/requirements.lock", "role": "lockfile", "bytes": 0, "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855", "locations": {"canonical": null, "mirrors": []}},
-    {"name": "reproduction/reid/environment.json", "role": "environment", "bytes": 344, "sha256": "090acb345da3f4ea3da4f292061aa76769156052f8f7a134d00654d3f60f8317", "locations": {"canonical": null, "mirrors": []}}
+    {
+      "name": "catalog/runs/reid-v1.json",
+      "role": "run_manifest",
+      "bytes": 2962,
+      "sha256": "a8066f13496f1666f7bfe9072cf1f5719c52f32437ea9dd2299fc50890ac23da",
+      "locations": {
+        "canonical": null,
+        "mirrors": []
+      }
+    },
+    {
+      "name": "tests/fixtures/reid_sigs.json.gz",
+      "role": "dataset",
+      "bytes": 2051632,
+      "sha256": "dbc4214fb499a96327326c4ea31341a76878c1867bfa3ccc57df88d850cdaa6a",
+      "locations": {
+        "canonical": "https://github.com/bc1cindy/decluster/raw/495874b5063bd83fc24e32eec1ebeb933471f6b9/tests/fixtures/reid_sigs.json.gz",
+        "mirrors": []
+      }
+    },
+    {
+      "name": "results/artifacts/reid-v1.json",
+      "role": "result",
+      "bytes": 1517,
+      "sha256": "2c63a3d460c19e8c49926eef1203d9d42036dda1da8e4836b70f90d8a38f2f59",
+      "locations": {
+        "canonical": null,
+        "mirrors": []
+      }
+    },
+    {
+      "name": "results/generated/reid-v1.md",
+      "role": "result",
+      "bytes": 795,
+      "sha256": "685acc5dc71a32295f04409c3e11b310934dbba6b44d4bd709255767f6b47c20",
+      "locations": {
+        "canonical": null,
+        "mirrors": []
+      }
+    },
+    {
+      "name": "sources/decluster-39ac38f-runtime.tar",
+      "role": "source",
+      "bytes": 2027520,
+      "sha256": "c7b16b0c77e40a8c98bb24f4348b6c4fdf9a4d53bfb5f63c5767f4b480f40436",
+      "locations": {
+        "canonical": null,
+        "mirrors": []
+      }
+    },
+    {
+      "name": "reproduction/reid/requirements.lock",
+      "role": "lockfile",
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "locations": {
+        "canonical": null,
+        "mirrors": []
+      }
+    },
+    {
+      "name": "reproduction/reid/environment.json",
+      "role": "environment",
+      "bytes": 344,
+      "sha256": "17120e774c4806ccf5b828a9a7bb3ec949c2e49d058c6a44f590869f11deafbf",
+      "locations": {
+        "canonical": null,
+        "mirrors": []
+      }
+    }
   ],
   "limitations": [
     "The bundled environment currently targets CPython 3.13 on macOS arm64.",

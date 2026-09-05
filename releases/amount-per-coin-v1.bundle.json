@@ -1,17 +1,94 @@
 {
   "schema_version": 1,
   "id": "amount-per-coin-v1",
-  "capabilities": ["verify_outputs", "reproduce_runs"],
-  "runs": ["amount-per-coin-v1"],
+  "capabilities": [
+    "verify_outputs",
+    "reproduce_runs"
+  ],
+  "runs": [
+    "amount-per-coin-v1"
+  ],
   "blobs": [
-    {"name": "catalog/runs/amount-per-coin-v1.json", "role": "run_manifest", "bytes": 3312, "sha256": "799949535c72761f185f76265f51c0853674caf7909c65c4eed6fd1a360c96c6", "locations": {"canonical": null, "mirrors": []}},
-    {"name": "data/amount-channel-812695-812831-v1.json", "role": "dataset", "bytes": 8028513, "sha256": "83b4391f78d07a2fa85a67218d5ae4420d8965da3c95af577592e9ec1850104d", "locations": {"canonical": null, "mirrors": []}},
-    {"name": "results/artifacts/amount-per-coin-v1.json", "role": "result", "bytes": 1158, "sha256": "7be46858e221d0c942e7fa3ccc93b5eba28cf3a494fd00f07c2d50f2caa473df", "locations": {"canonical": null, "mirrors": []}},
-    {"name": "results/generated/amount-per-coin-v1.md", "role": "result", "bytes": 658, "sha256": "d73a6c87bd423afb72bea410c65351a7b4da76f7903f3ca77d54847b85a1fa54", "locations": {"canonical": null, "mirrors": []}},
-    {"name": "sources/decluster-391d1ff-runtime.tar", "role": "source", "bytes": 1300480, "sha256": "bac8aa5c1090a243764464c306acebbf42172103aade9beb4a79aa619b111963", "locations": {"canonical": null, "mirrors": []}},
-    {"name": "dependencies/dss-0.1.0-cp313-cp313-macosx_11_0_arm64.whl", "role": "dependency", "bytes": 336582, "sha256": "91b81d7c6d211fbe59f2c14da9c5dd6fb6514d4c39cf3b57154b4e30f6a6604f", "locations": {"canonical": null, "mirrors": []}},
-    {"name": "reproduction/amount-per-coin/requirements.lock", "role": "lockfile", "bytes": 90, "sha256": "c87b26aedbefac1731d03ced97dc197a86c0687c7376b3186f8752676f977fab", "locations": {"canonical": null, "mirrors": []}},
-    {"name": "reproduction/amount-per-coin/environment.json", "role": "environment", "bytes": 350, "sha256": "46733ce7de5f5164e431a29835c044532ecc8b41cbfb94e6b26a7754e16ae31e", "locations": {"canonical": null, "mirrors": []}}
+    {
+      "name": "catalog/runs/amount-per-coin-v1.json",
+      "role": "run_manifest",
+      "bytes": 3472,
+      "sha256": "e951ba189b17a29b1f303e72fb159d0ba03ccd6bddb34ae27997e4963d592cdb",
+      "locations": {
+        "canonical": null,
+        "mirrors": []
+      }
+    },
+    {
+      "name": "data/amount-channel-812695-812831-v1.json",
+      "role": "dataset",
+      "bytes": 8028513,
+      "sha256": "83b4391f78d07a2fa85a67218d5ae4420d8965da3c95af577592e9ec1850104d",
+      "locations": {
+        "canonical": null,
+        "mirrors": []
+      }
+    },
+    {
+      "name": "results/artifacts/amount-per-coin-v1.json",
+      "role": "result",
+      "bytes": 1158,
+      "sha256": "7be46858e221d0c942e7fa3ccc93b5eba28cf3a494fd00f07c2d50f2caa473df",
+      "locations": {
+        "canonical": null,
+        "mirrors": []
+      }
+    },
+    {
+      "name": "results/generated/amount-per-coin-v1.md",
+      "role": "result",
+      "bytes": 658,
+      "sha256": "d73a6c87bd423afb72bea410c65351a7b4da76f7903f3ca77d54847b85a1fa54",
+      "locations": {
+        "canonical": null,
+        "mirrors": []
+      }
+    },
+    {
+      "name": "sources/decluster-39ac38f-runtime.tar",
+      "role": "source",
+      "bytes": 2027520,
+      "sha256": "c7b16b0c77e40a8c98bb24f4348b6c4fdf9a4d53bfb5f63c5767f4b480f40436",
+      "locations": {
+        "canonical": null,
+        "mirrors": []
+      }
+    },
+    {
+      "name": "dependencies/dss-0.1.0-cp313-cp313-macosx_11_0_arm64.whl",
+      "role": "dependency",
+      "bytes": 336582,
+      "sha256": "91b81d7c6d211fbe59f2c14da9c5dd6fb6514d4c39cf3b57154b4e30f6a6604f",
+      "locations": {
+        "canonical": null,
+        "mirrors": []
+      }
+    },
+    {
+      "name": "reproduction/amount-per-coin/requirements.lock",
+      "role": "lockfile",
+      "bytes": 90,
+      "sha256": "c87b26aedbefac1731d03ced97dc197a86c0687c7376b3186f8752676f977fab",
+      "locations": {
+        "canonical": null,
+        "mirrors": []
+      }
+    },
+    {
+      "name": "reproduction/amount-per-coin/environment.json",
+      "role": "environment",
+      "bytes": 350,
+      "sha256": "6958ecc36d45d905591c73a9ab9848a7d18c5221481819b306c64e7b9183b8ef",
+      "locations": {
+        "canonical": null,
+        "mirrors": []
+      }
+    }
   ],
   "limitations": [
     "The bundled environment currently targets CPython 3.13 on macOS arm64.",

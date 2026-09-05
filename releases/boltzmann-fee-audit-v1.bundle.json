@@ -1,16 +1,84 @@
 {
   "schema_version": 1,
   "id": "boltzmann-fee-audit-v1",
-  "capabilities": ["verify_outputs", "reproduce_runs"],
-  "runs": ["boltzmann-fee-audit-v1"],
+  "capabilities": [
+    "verify_outputs",
+    "reproduce_runs"
+  ],
+  "runs": [
+    "boltzmann-fee-audit-v1"
+  ],
   "blobs": [
-    {"name": "catalog/runs/boltzmann-fee-audit-v1.json", "role": "run_manifest", "bytes": 2886, "sha256": "b4be98b5a0d604798cd3628e7d9442514629d3a2c72680a74c22b81e63447a71", "locations": {"canonical": null, "mirrors": []}},
-    {"name": "data/boltzmann-fee-audit-v1.json", "role": "dataset", "bytes": 309025, "sha256": "17ee62e307d34660be2c4f50382a63ba044d0ad67f0674873e304d0b8203dc1c", "locations": {"canonical": null, "mirrors": []}},
-    {"name": "results/artifacts/boltzmann-fee-audit-v1.json", "role": "result", "bytes": 52813, "sha256": "9cf09b7659cf0f8f3e429623a903708c450a2c1605035cc4f45f6e1dcb34d2b3", "locations": {"canonical": null, "mirrors": []}},
-    {"name": "results/generated/boltzmann-fee-audit-v1.md", "role": "result", "bytes": 523, "sha256": "f4e6c0afd79425e8259d4112190a5df3b3eee81344cd7023f786c4671264e112", "locations": {"canonical": null, "mirrors": []}},
-    {"name": "sources/decluster-39378ce-runtime.tar", "role": "source", "bytes": 1269760, "sha256": "2255691c4a527c183b81615342f1c5e56c6fe8de8513b05fffaa1f7451dd2702", "locations": {"canonical": null, "mirrors": []}},
-    {"name": "reproduction/boltzmann-fee-audit/requirements.lock", "role": "lockfile", "bytes": 30, "sha256": "e0d6a8cada5d383c0aca2bd2a37f28c15721392469c94084128d369c29c5544d", "locations": {"canonical": null, "mirrors": []}},
-    {"name": "reproduction/boltzmann-fee-audit/environment.json", "role": "environment", "bytes": 374, "sha256": "ba718ae9131a804a3ee738731efc0083db7b9b8f781a0e9d1944e91879fc6bae", "locations": {"canonical": null, "mirrors": []}}
+    {
+      "name": "catalog/runs/boltzmann-fee-audit-v1.json",
+      "role": "run_manifest",
+      "bytes": 2990,
+      "sha256": "c19a76fa78e771b13e8bc6c989a1d773861cecf0f7f2cec54b27d54d6d3a2188",
+      "locations": {
+        "canonical": null,
+        "mirrors": []
+      }
+    },
+    {
+      "name": "data/boltzmann-fee-audit-v1.json",
+      "role": "dataset",
+      "bytes": 309025,
+      "sha256": "17ee62e307d34660be2c4f50382a63ba044d0ad67f0674873e304d0b8203dc1c",
+      "locations": {
+        "canonical": null,
+        "mirrors": []
+      }
+    },
+    {
+      "name": "results/artifacts/boltzmann-fee-audit-v1.json",
+      "role": "result",
+      "bytes": 52813,
+      "sha256": "9cf09b7659cf0f8f3e429623a903708c450a2c1605035cc4f45f6e1dcb34d2b3",
+      "locations": {
+        "canonical": null,
+        "mirrors": []
+      }
+    },
+    {
+      "name": "results/generated/boltzmann-fee-audit-v1.md",
+      "role": "result",
+      "bytes": 523,
+      "sha256": "f4e6c0afd79425e8259d4112190a5df3b3eee81344cd7023f786c4671264e112",
+      "locations": {
+        "canonical": null,
+        "mirrors": []
+      }
+    },
+    {
+      "name": "sources/decluster-39ac38f-runtime.tar",
+      "role": "source",
+      "bytes": 2027520,
+      "sha256": "c7b16b0c77e40a8c98bb24f4348b6c4fdf9a4d53bfb5f63c5767f4b480f40436",
+      "locations": {
+        "canonical": null,
+        "mirrors": []
+      }
+    },
+    {
+      "name": "reproduction/boltzmann-fee-audit/requirements.lock",
+      "role": "lockfile",
+      "bytes": 30,
+      "sha256": "e0d6a8cada5d383c0aca2bd2a37f28c15721392469c94084128d369c29c5544d",
+      "locations": {
+        "canonical": null,
+        "mirrors": []
+      }
+    },
+    {
+      "name": "reproduction/boltzmann-fee-audit/environment.json",
+      "role": "environment",
+      "bytes": 374,
+      "sha256": "faa12ef10545cfb984abfce190334e075facfc7dc65d763321fb399b8138e748",
+      "locations": {
+        "canonical": null,
+        "mirrors": []
+      }
+    }
   ],
   "limitations": [
     "The bundled environment currently targets CPython 3.13 on macOS arm64.",

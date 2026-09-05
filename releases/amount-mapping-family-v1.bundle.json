@@ -1,17 +1,94 @@
 {
   "schema_version": 1,
   "id": "amount-mapping-family-v1",
-  "capabilities": ["verify_outputs", "reproduce_runs"],
-  "runs": ["amount-mapping-family-v1"],
+  "capabilities": [
+    "verify_outputs",
+    "reproduce_runs"
+  ],
+  "runs": [
+    "amount-mapping-family-v1"
+  ],
   "blobs": [
-    {"name": "catalog/runs/amount-mapping-family-v1.json", "role": "run_manifest", "bytes": 3345, "sha256": "856767de2962b0f91030ef08911b438de0ed9780b89d86ceb83995904ac3989c", "locations": {"canonical": null, "mirrors": []}},
-    {"name": "data/amount-channel-812695-812831-v1.json", "role": "dataset", "bytes": 8028513, "sha256": "83b4391f78d07a2fa85a67218d5ae4420d8965da3c95af577592e9ec1850104d", "locations": {"canonical": null, "mirrors": []}},
-    {"name": "results/artifacts/amount-mapping-family-v1.json", "role": "result", "bytes": 942, "sha256": "11f0ec645ea1be334dc7d24fbfc31047b234f335f48b5a514960472c7444b7d6", "locations": {"canonical": null, "mirrors": []}},
-    {"name": "results/generated/amount-mapping-family-v1.md", "role": "result", "bytes": 559, "sha256": "73afd1c112bcec43f16464f0589d4107d33a76c4085bd508d00aadc703366c0b", "locations": {"canonical": null, "mirrors": []}},
-    {"name": "sources/decluster-b9abcc5-runtime.tar", "role": "source", "bytes": 1320960, "sha256": "7da4c60d4d69fbf2733ec4bd4118a35a19252b1942280a7b2bb68c387ca834e1", "locations": {"canonical": null, "mirrors": []}},
-    {"name": "dependencies/dss-0.1.0-cp313-cp313-macosx_11_0_arm64.whl", "role": "dependency", "bytes": 336582, "sha256": "91b81d7c6d211fbe59f2c14da9c5dd6fb6514d4c39cf3b57154b4e30f6a6604f", "locations": {"canonical": null, "mirrors": []}},
-    {"name": "reproduction/amount-mapping-family/requirements.lock", "role": "lockfile", "bytes": 90, "sha256": "c87b26aedbefac1731d03ced97dc197a86c0687c7376b3186f8752676f977fab", "locations": {"canonical": null, "mirrors": []}},
-    {"name": "reproduction/amount-mapping-family/environment.json", "role": "environment", "bytes": 356, "sha256": "99f0bdfcbe5fe6115d9450a83c1ecadbf5ebae8decb068d45157f8d5a4b31c7d", "locations": {"canonical": null, "mirrors": []}}
+    {
+      "name": "catalog/runs/amount-mapping-family-v1.json",
+      "role": "run_manifest",
+      "bytes": 3529,
+      "sha256": "fc42ec06e64e64f7c21caeab2496c1eb056eee0a89a9c285d1d30c7b42c3650d",
+      "locations": {
+        "canonical": null,
+        "mirrors": []
+      }
+    },
+    {
+      "name": "data/amount-channel-812695-812831-v1.json",
+      "role": "dataset",
+      "bytes": 8028513,
+      "sha256": "83b4391f78d07a2fa85a67218d5ae4420d8965da3c95af577592e9ec1850104d",
+      "locations": {
+        "canonical": null,
+        "mirrors": []
+      }
+    },
+    {
+      "name": "results/artifacts/amount-mapping-family-v1.json",
+      "role": "result",
+      "bytes": 942,
+      "sha256": "11f0ec645ea1be334dc7d24fbfc31047b234f335f48b5a514960472c7444b7d6",
+      "locations": {
+        "canonical": null,
+        "mirrors": []
+      }
+    },
+    {
+      "name": "results/generated/amount-mapping-family-v1.md",
+      "role": "result",
+      "bytes": 559,
+      "sha256": "73afd1c112bcec43f16464f0589d4107d33a76c4085bd508d00aadc703366c0b",
+      "locations": {
+        "canonical": null,
+        "mirrors": []
+      }
+    },
+    {
+      "name": "sources/decluster-39ac38f-runtime.tar",
+      "role": "source",
+      "bytes": 2027520,
+      "sha256": "c7b16b0c77e40a8c98bb24f4348b6c4fdf9a4d53bfb5f63c5767f4b480f40436",
+      "locations": {
+        "canonical": null,
+        "mirrors": []
+      }
+    },
+    {
+      "name": "dependencies/dss-0.1.0-cp313-cp313-macosx_11_0_arm64.whl",
+      "role": "dependency",
+      "bytes": 336582,
+      "sha256": "91b81d7c6d211fbe59f2c14da9c5dd6fb6514d4c39cf3b57154b4e30f6a6604f",
+      "locations": {
+        "canonical": null,
+        "mirrors": []
+      }
+    },
+    {
+      "name": "reproduction/amount-mapping-family/requirements.lock",
+      "role": "lockfile",
+      "bytes": 90,
+      "sha256": "c87b26aedbefac1731d03ced97dc197a86c0687c7376b3186f8752676f977fab",
+      "locations": {
+        "canonical": null,
+        "mirrors": []
+      }
+    },
+    {
+      "name": "reproduction/amount-mapping-family/environment.json",
+      "role": "environment",
+      "bytes": 356,
+      "sha256": "920c998ff5ed5a7f87d132ddf19e88265c199cdfd1c77af12a41e8886172055b",
+      "locations": {
+        "canonical": null,
+        "mirrors": []
+      }
+    }
   ],
   "limitations": [
     "The bundled environment currently targets CPython 3.13 on macOS arm64.",

@@ -1,16 +1,84 @@
 {
   "schema_version": 1,
   "id": "slice-channels-v1",
-  "capabilities": ["verify_outputs", "reproduce_runs"],
-  "runs": ["slice-channels-v1"],
+  "capabilities": [
+    "verify_outputs",
+    "reproduce_runs"
+  ],
+  "runs": [
+    "slice-channels-v1"
+  ],
   "blobs": [
-    {"name": "catalog/runs/slice-channels-v1.json", "role": "run_manifest", "bytes": 2617, "sha256": "1bb456afcf80105620ea0ebaa042fa14d0c28ab97e3ffff38b23ad222463626a", "locations": {"canonical": null, "mirrors": []}},
-    {"name": "tests/fixtures/slice_a_channels_2016.ndjson.gz", "role": "dataset", "bytes": 1837504, "sha256": "66104889f8b79f2938edb6666f16dfa19a74c68cd8016832b4f2a5e03b11865f", "locations": {"canonical": "https://github.com/bc1cindy/decluster/raw/43d3faaab07f6703361c300fb6d01a916bb063f0/tests/fixtures/slice_a_channels_2016.ndjson.gz", "mirrors": []}},
-    {"name": "results/artifacts/slice-channels-v1.json", "role": "result", "bytes": 1305, "sha256": "cdc6fdc150bbea565df185648d60cdb3a08404814f2a024de6bce310befa8eed", "locations": {"canonical": null, "mirrors": []}},
-    {"name": "results/generated/slice-channels-v1.md", "role": "result", "bytes": 673, "sha256": "ab9301b81682c916c84f2dd2e8d8be8937e310ae90e7dd3816c56f1fe81f2dff", "locations": {"canonical": null, "mirrors": []}},
-    {"name": "sources/decluster-1464f89-runtime.tar", "role": "source", "bytes": 1515520, "sha256": "7619ec0206c1cd40487c36e9bfb61616b712f07d4999d35805ae38c7507ee166", "locations": {"canonical": null, "mirrors": []}},
-    {"name": "reproduction/slice-channels/requirements.lock", "role": "lockfile", "bytes": 0, "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855", "locations": {"canonical": null, "mirrors": []}},
-    {"name": "reproduction/slice-channels/environment.json", "role": "environment", "bytes": 364, "sha256": "1eb9678593373b9e68e443c8d5f6255ae16fb854a23af9cda02724c2c21ffc58", "locations": {"canonical": null, "mirrors": []}}
+    {
+      "name": "catalog/runs/slice-channels-v1.json",
+      "role": "run_manifest",
+      "bytes": 3065,
+      "sha256": "97ca9455036bc2543fda66052b17e94a937d7c3e6e533ffd08f0a386d1e79673",
+      "locations": {
+        "canonical": null,
+        "mirrors": []
+      }
+    },
+    {
+      "name": "tests/fixtures/slice_a_channels_2016.ndjson.gz",
+      "role": "dataset",
+      "bytes": 1837504,
+      "sha256": "66104889f8b79f2938edb6666f16dfa19a74c68cd8016832b4f2a5e03b11865f",
+      "locations": {
+        "canonical": "https://github.com/bc1cindy/decluster/raw/43d3faaab07f6703361c300fb6d01a916bb063f0/tests/fixtures/slice_a_channels_2016.ndjson.gz",
+        "mirrors": []
+      }
+    },
+    {
+      "name": "results/artifacts/slice-channels-v1.json",
+      "role": "result",
+      "bytes": 1305,
+      "sha256": "cdc6fdc150bbea565df185648d60cdb3a08404814f2a024de6bce310befa8eed",
+      "locations": {
+        "canonical": null,
+        "mirrors": []
+      }
+    },
+    {
+      "name": "results/generated/slice-channels-v1.md",
+      "role": "result",
+      "bytes": 673,
+      "sha256": "ab9301b81682c916c84f2dd2e8d8be8937e310ae90e7dd3816c56f1fe81f2dff",
+      "locations": {
+        "canonical": null,
+        "mirrors": []
+      }
+    },
+    {
+      "name": "sources/decluster-39ac38f-runtime.tar",
+      "role": "source",
+      "bytes": 2027520,
+      "sha256": "c7b16b0c77e40a8c98bb24f4348b6c4fdf9a4d53bfb5f63c5767f4b480f40436",
+      "locations": {
+        "canonical": null,
+        "mirrors": []
+      }
+    },
+    {
+      "name": "reproduction/slice-channels/requirements.lock",
+      "role": "lockfile",
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "locations": {
+        "canonical": null,
+        "mirrors": []
+      }
+    },
+    {
+      "name": "reproduction/slice-channels/environment.json",
+      "role": "environment",
+      "bytes": 364,
+      "sha256": "d97f13c83fa5a4f74c52b64c441a7987175fcfcd660c3836556173d6c06e9a61",
+      "locations": {
+        "canonical": null,
+        "mirrors": []
+      }
+    }
   ],
   "limitations": [
     "The bundled environment currently targets CPython 3.13 on macOS arm64.",

@@ -1,50 +1,73 @@
 {
   "schema_version": 1,
   "id": "equal-output-consolidation-v1",
-  "capabilities": ["verify_outputs", "reproduce_runs"],
-  "runs": ["equal-output-consolidation-v1"],
+  "capabilities": [
+    "verify_outputs",
+    "reproduce_runs"
+  ],
+  "runs": [
+    "equal-output-consolidation-v1"
+  ],
   "blobs": [
     {
       "name": "catalog/runs/equal-output-consolidation-v1.json",
       "role": "run_manifest",
-      "bytes": 2566,
-      "sha256": "1bd0b65784c66fb9381f28ecfcd5ea09a7c92f8f15146dea8b78f543511518e5",
-      "locations": {"canonical": null, "mirrors": []}
+      "bytes": 2574,
+      "sha256": "44bdeab516565c07b39fb2aa5a97a9eb12852c26722d30b30b0768ec80670610",
+      "locations": {
+        "canonical": null,
+        "mirrors": []
+      }
     },
     {
       "name": "results/artifacts/equal-output-consolidation-v1.json",
       "role": "result",
       "bytes": 490,
       "sha256": "595b933cee5566a8c613c7006731088ad89d046f2428ab3e960cda8f1a690e88",
-      "locations": {"canonical": null, "mirrors": []}
+      "locations": {
+        "canonical": null,
+        "mirrors": []
+      }
     },
     {
       "name": "results/generated/equal-output-consolidation-v1.md",
       "role": "result",
       "bytes": 460,
       "sha256": "5c9d2fdbc1b11a5439d1e588a1ec95f71fec09bb1c064ae7902c123cffd9260b",
-      "locations": {"canonical": null, "mirrors": []}
+      "locations": {
+        "canonical": null,
+        "mirrors": []
+      }
     },
     {
-      "name": "sources/decluster-82b8619-runtime.tar",
+      "name": "sources/decluster-39ac38f-runtime.tar",
       "role": "source",
-      "bytes": 860160,
-      "sha256": "ce9573389399a82e7c438116871fcf079843c8ef6eebb28474a8864acbf90433",
-      "locations": {"canonical": null, "mirrors": []}
+      "bytes": 2027520,
+      "sha256": "c7b16b0c77e40a8c98bb24f4348b6c4fdf9a4d53bfb5f63c5767f4b480f40436",
+      "locations": {
+        "canonical": null,
+        "mirrors": []
+      }
     },
     {
       "name": "reproduction/equal-output-consolidation/requirements.lock",
       "role": "lockfile",
       "bytes": 31,
       "sha256": "c7d402576511073ed4fcf076c77ffa6b3be124e0a2ef996d2da1cd3b02fbe541",
-      "locations": {"canonical": null, "mirrors": []}
+      "locations": {
+        "canonical": null,
+        "mirrors": []
+      }
     },
     {
       "name": "reproduction/equal-output-consolidation/environment.json",
       "role": "environment",
       "bytes": 388,
-      "sha256": "c6507368bafe0b34f4073ba4b58fac7e686d8b6ccacf82766a057e00dc2457b4",
-      "locations": {"canonical": null, "mirrors": []}
+      "sha256": "ae3e405f8af41d43a99e519302e69cfc5f60925e4f98029e36f9f61739d8770a",
+      "locations": {
+        "canonical": null,
+        "mirrors": []
+      }
     }
   ],
   "limitations": [

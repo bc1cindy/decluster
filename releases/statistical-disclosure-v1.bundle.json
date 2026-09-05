@@ -1,50 +1,73 @@
 {
   "schema_version": 1,
   "id": "statistical-disclosure-v1",
-  "capabilities": ["verify_outputs", "reproduce_runs"],
-  "runs": ["statistical-disclosure-v1"],
+  "capabilities": [
+    "verify_outputs",
+    "reproduce_runs"
+  ],
+  "runs": [
+    "statistical-disclosure-v1"
+  ],
   "blobs": [
     {
       "name": "catalog/runs/statistical-disclosure-v1.json",
       "role": "run_manifest",
-      "bytes": 2632,
-      "sha256": "8c930b1aa21e6c0040edbe6587b562522fcc92834f6f544f01f9cdb476c771e3",
-      "locations": {"canonical": null, "mirrors": []}
+      "bytes": 2670,
+      "sha256": "2d8ca0204d1689cc5243f5df67ee3c22ec1d7d7618e4fea92c56141a7def3153",
+      "locations": {
+        "canonical": null,
+        "mirrors": []
+      }
     },
     {
       "name": "results/artifacts/statistical-disclosure-v1.json",
       "role": "result",
       "bytes": 847,
       "sha256": "0b877bc93744b60f4704eef1cbaf15eb767185d8ef5d9c8791c6ecb2a918913c",
-      "locations": {"canonical": null, "mirrors": []}
+      "locations": {
+        "canonical": null,
+        "mirrors": []
+      }
     },
     {
       "name": "results/generated/statistical-disclosure-v1.md",
       "role": "result",
       "bytes": 682,
       "sha256": "f2c946337645978c160b5ff30321be082e46576608a54aae761d3e137ffd74b7",
-      "locations": {"canonical": null, "mirrors": []}
+      "locations": {
+        "canonical": null,
+        "mirrors": []
+      }
     },
     {
-      "name": "sources/decluster-83504af-runtime.tar",
+      "name": "sources/decluster-39ac38f-runtime.tar",
       "role": "source",
-      "bytes": 1331200,
-      "sha256": "23e439dc4a174e488e4b0fd2a3078c887c5562101b50437b1b0fb1f6f854f068",
-      "locations": {"canonical": null, "mirrors": []}
+      "bytes": 2027520,
+      "sha256": "c7b16b0c77e40a8c98bb24f4348b6c4fdf9a4d53bfb5f63c5767f4b480f40436",
+      "locations": {
+        "canonical": null,
+        "mirrors": []
+      }
     },
     {
       "name": "reproduction/statistical-disclosure/requirements.lock",
       "role": "lockfile",
       "bytes": 30,
       "sha256": "e0d6a8cada5d383c0aca2bd2a37f28c15721392469c94084128d369c29c5544d",
-      "locations": {"canonical": null, "mirrors": []}
+      "locations": {
+        "canonical": null,
+        "mirrors": []
+      }
     },
     {
       "name": "reproduction/statistical-disclosure/environment.json",
       "role": "environment",
       "bytes": 380,
-      "sha256": "da046c158333442f28e8c6611d4bdc3f0708bf24ad368fac24b435f285eae51c",
-      "locations": {"canonical": null, "mirrors": []}
+      "sha256": "36069bc4d5525d19efe9e9259ab37c73c75cb2a0764daf59d63c61df0127b095",
+      "locations": {
+        "canonical": null,
+        "mirrors": []
+      }
     }
   ],
   "limitations": [

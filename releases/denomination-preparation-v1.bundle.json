@@ -1,50 +1,73 @@
 {
   "schema_version": 1,
   "id": "denomination-preparation-v1",
-  "capabilities": ["verify_outputs", "reproduce_runs"],
-  "runs": ["denomination-preparation-v1"],
+  "capabilities": [
+    "verify_outputs",
+    "reproduce_runs"
+  ],
+  "runs": [
+    "denomination-preparation-v1"
+  ],
   "blobs": [
     {
       "name": "catalog/runs/denomination-preparation-v1.json",
       "role": "run_manifest",
-      "bytes": 2626,
-      "sha256": "ae75b318bda9a87a13b450967f5028a29cf0c1a469f0ceb23444e8af1b2655c0",
-      "locations": {"canonical": null, "mirrors": []}
+      "bytes": 2664,
+      "sha256": "060aa7c364309582df4a5747ad1f0abc97337a1240e7a4c36e0db95ee49bfa80",
+      "locations": {
+        "canonical": null,
+        "mirrors": []
+      }
     },
     {
       "name": "results/artifacts/denomination-preparation-v1.json",
       "role": "result",
       "bytes": 1299,
       "sha256": "6102106a1ac39bdfb1f668a7c90772f01c29c214a1fb2a76088403165dbe4ce2",
-      "locations": {"canonical": null, "mirrors": []}
+      "locations": {
+        "canonical": null,
+        "mirrors": []
+      }
     },
     {
       "name": "results/generated/denomination-preparation-v1.md",
       "role": "result",
       "bytes": 546,
       "sha256": "c433cfc5c966ba7af33ea595cad134862726168033c2029d8b11574319cf0fc8",
-      "locations": {"canonical": null, "mirrors": []}
+      "locations": {
+        "canonical": null,
+        "mirrors": []
+      }
     },
     {
-      "name": "sources/decluster-f655d3f-runtime.tar",
+      "name": "sources/decluster-39ac38f-runtime.tar",
       "role": "source",
-      "bytes": 1372160,
-      "sha256": "4012d84ed347494e8ec2d126568c3370f69728925473aab93da63828483e4e9b",
-      "locations": {"canonical": null, "mirrors": []}
+      "bytes": 2027520,
+      "sha256": "c7b16b0c77e40a8c98bb24f4348b6c4fdf9a4d53bfb5f63c5767f4b480f40436",
+      "locations": {
+        "canonical": null,
+        "mirrors": []
+      }
     },
     {
       "name": "reproduction/denomination-preparation/requirements.lock",
       "role": "lockfile",
       "bytes": 30,
       "sha256": "e0d6a8cada5d383c0aca2bd2a37f28c15721392469c94084128d369c29c5544d",
-      "locations": {"canonical": null, "mirrors": []}
+      "locations": {
+        "canonical": null,
+        "mirrors": []
+      }
     },
     {
       "name": "reproduction/denomination-preparation/environment.json",
       "role": "environment",
       "bytes": 384,
-      "sha256": "2cc1aa75ee2f6376aeadf04736c684d2202d7daa420d49dfc5667226d026fea7",
-      "locations": {"canonical": null, "mirrors": []}
+      "sha256": "6622eec4fcd6cccf9de8e2bd97bb73a1eb2e0d22ce1a83740083a2bbc7a2f188",
+      "locations": {
+        "canonical": null,
+        "mirrors": []
+      }
     }
   ],
   "limitations": [

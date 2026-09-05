@@ -1,16 +1,84 @@
 {
   "schema_version": 1,
   "id": "fingerprint-regime-v1",
-  "capabilities": ["verify_outputs", "reproduce_runs"],
-  "runs": ["fingerprint-regime-v1"],
+  "capabilities": [
+    "verify_outputs",
+    "reproduce_runs"
+  ],
+  "runs": [
+    "fingerprint-regime-v1"
+  ],
   "blobs": [
-    {"name": "catalog/runs/fingerprint-regime-v1.json", "role": "run_manifest", "bytes": 2745, "sha256": "06b1a6cd4a900c854df2079d917615205a7030b5c2ef4ac366c739419bab6cf8", "locations": {"canonical": null, "mirrors": []}},
-    {"name": "tests/fixtures/fingerprint_blkcache_sample.json", "role": "dataset", "bytes": 1701974, "sha256": "406ce2d7d0a04f7c73281bce6b6a781012a8765e079693f010a0154e926c6a6c", "locations": {"canonical": "https://github.com/bc1cindy/decluster/raw/2f1bbae5ac4923ff7b799b25be0dd66b4ec3f692/tests/fixtures/fingerprint_blkcache_sample.json", "mirrors": []}},
-    {"name": "results/artifacts/fingerprint-regime-v1.json", "role": "result", "bytes": 1293, "sha256": "d1381ece51a105db16c2ea60a37e60bb01fe94093adef9c5efb151d6e8d3a997", "locations": {"canonical": null, "mirrors": []}},
-    {"name": "results/generated/fingerprint-regime-v1.md", "role": "result", "bytes": 774, "sha256": "271fa7e6601871b7fad9ac6e50b23a5f164d4a0ca30bc88c7629828b4858789b", "locations": {"canonical": null, "mirrors": []}},
-    {"name": "sources/decluster-9b655df-runtime.tar", "role": "source", "bytes": 1198080, "sha256": "560c6f502714f776592ff1bcbed39d06ab25ccbb30b9f9d495d5aad56e3c011f", "locations": {"canonical": null, "mirrors": []}},
-    {"name": "reproduction/fingerprint-regime/requirements.lock", "role": "lockfile", "bytes": 0, "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855", "locations": {"canonical": null, "mirrors": []}},
-    {"name": "reproduction/fingerprint-regime/environment.json", "role": "environment", "bytes": 372, "sha256": "f3ccde3ccbf845f0fa03395b7a58b1b6637ed7c43bc478459d9e3cd8361a76e7", "locations": {"canonical": null, "mirrors": []}}
+    {
+      "name": "catalog/runs/fingerprint-regime-v1.json",
+      "role": "run_manifest",
+      "bytes": 3163,
+      "sha256": "231b2d545a114bb58afadf5dc82cda9572284abb003341d4291c8314f2b7aa2f",
+      "locations": {
+        "canonical": null,
+        "mirrors": []
+      }
+    },
+    {
+      "name": "tests/fixtures/fingerprint_blkcache_sample.json",
+      "role": "dataset",
+      "bytes": 1701974,
+      "sha256": "406ce2d7d0a04f7c73281bce6b6a781012a8765e079693f010a0154e926c6a6c",
+      "locations": {
+        "canonical": "https://github.com/bc1cindy/decluster/raw/2f1bbae5ac4923ff7b799b25be0dd66b4ec3f692/tests/fixtures/fingerprint_blkcache_sample.json",
+        "mirrors": []
+      }
+    },
+    {
+      "name": "results/artifacts/fingerprint-regime-v1.json",
+      "role": "result",
+      "bytes": 1293,
+      "sha256": "d1381ece51a105db16c2ea60a37e60bb01fe94093adef9c5efb151d6e8d3a997",
+      "locations": {
+        "canonical": null,
+        "mirrors": []
+      }
+    },
+    {
+      "name": "results/generated/fingerprint-regime-v1.md",
+      "role": "result",
+      "bytes": 774,
+      "sha256": "271fa7e6601871b7fad9ac6e50b23a5f164d4a0ca30bc88c7629828b4858789b",
+      "locations": {
+        "canonical": null,
+        "mirrors": []
+      }
+    },
+    {
+      "name": "sources/decluster-39ac38f-runtime.tar",
+      "role": "source",
+      "bytes": 2027520,
+      "sha256": "c7b16b0c77e40a8c98bb24f4348b6c4fdf9a4d53bfb5f63c5767f4b480f40436",
+      "locations": {
+        "canonical": null,
+        "mirrors": []
+      }
+    },
+    {
+      "name": "reproduction/fingerprint-regime/requirements.lock",
+      "role": "lockfile",
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "locations": {
+        "canonical": null,
+        "mirrors": []
+      }
+    },
+    {
+      "name": "reproduction/fingerprint-regime/environment.json",
+      "role": "environment",
+      "bytes": 372,
+      "sha256": "ad1b9bca20f3a5afd0135d221bfdf02e4ddf2b3127146233257b91914dacdc0a",
+      "locations": {
+        "canonical": null,
+        "mirrors": []
+      }
+    }
   ],
   "limitations": [
     "The bundled environment currently targets CPython 3.13 on macOS arm64.",

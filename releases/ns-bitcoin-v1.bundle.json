@@ -1,17 +1,94 @@
 {
   "schema_version": 1,
   "id": "ns-bitcoin-v1",
-  "capabilities": ["verify_outputs", "reproduce_runs"],
-  "runs": ["ns-bitcoin-v1"],
+  "capabilities": [
+    "verify_outputs",
+    "reproduce_runs"
+  ],
+  "runs": [
+    "ns-bitcoin-v1"
+  ],
   "blobs": [
-    {"name": "catalog/runs/ns-bitcoin-v1.json", "role": "run_manifest", "bytes": 3205, "sha256": "906efba002c65ee7149d79672ec3f90d0c37ce77d74b1bd04f0786fb7e17243b", "locations": {"canonical": null, "mirrors": []}},
-    {"name": "data/ns-bitcoin-2016-v1/left-391992-392111.ndjson.gz", "role": "dataset", "bytes": 23234649, "sha256": "069d207b44dcbbeaec0fae98262a3fcb76b3fe834834609e67fe883e229f26d3", "locations": {"canonical": null, "mirrors": []}},
-    {"name": "data/ns-bitcoin-2016-v1/right-392112-392231.ndjson.gz", "role": "dataset", "bytes": 26043862, "sha256": "1d46dcccb51cd8f1a1d89481db4df45599caaaf8569f9e8e2de37e81e0e5d122", "locations": {"canonical": null, "mirrors": []}},
-    {"name": "results/artifacts/ns-bitcoin-v1.json", "role": "result", "bytes": 6912, "sha256": "39bb12560c4c96749910324b85097938a7efe57e45ce380127bc7783c978f182", "locations": {"canonical": null, "mirrors": []}},
-    {"name": "results/generated/ns-bitcoin-v1.md", "role": "result", "bytes": 416, "sha256": "ce6ae206e95d2be86e8ea13a9161a26a0a6566787abf396a5eeffbb23efa3fcb", "locations": {"canonical": null, "mirrors": []}},
-    {"name": "sources/decluster-4998edc-runtime.tar", "role": "source", "bytes": 1259520, "sha256": "4a0849a0073c5ae595667fdea369852ee0410a9857e8129c7f94c6903581bcbd", "locations": {"canonical": null, "mirrors": []}},
-    {"name": "reproduction/ns-bitcoin/requirements.lock", "role": "lockfile", "bytes": 30, "sha256": "e0d6a8cada5d383c0aca2bd2a37f28c15721392469c94084128d369c29c5544d", "locations": {"canonical": null, "mirrors": []}},
-    {"name": "reproduction/ns-bitcoin/environment.json", "role": "environment", "bytes": 356, "sha256": "da36c45762be49af50f7f54df333b5d1634eb99ba06098e6c2e02a3b79f98536", "locations": {"canonical": null, "mirrors": []}}
+    {
+      "name": "catalog/runs/ns-bitcoin-v1.json",
+      "role": "run_manifest",
+      "bytes": 3351,
+      "sha256": "3e7095732579de3cda3c1d19e6c0c86590559ebad360e225e7993c62fc21fd9a",
+      "locations": {
+        "canonical": null,
+        "mirrors": []
+      }
+    },
+    {
+      "name": "data/ns-bitcoin-2016-v1/left-391992-392111.ndjson.gz",
+      "role": "dataset",
+      "bytes": 23234649,
+      "sha256": "069d207b44dcbbeaec0fae98262a3fcb76b3fe834834609e67fe883e229f26d3",
+      "locations": {
+        "canonical": null,
+        "mirrors": []
+      }
+    },
+    {
+      "name": "data/ns-bitcoin-2016-v1/right-392112-392231.ndjson.gz",
+      "role": "dataset",
+      "bytes": 26043862,
+      "sha256": "1d46dcccb51cd8f1a1d89481db4df45599caaaf8569f9e8e2de37e81e0e5d122",
+      "locations": {
+        "canonical": null,
+        "mirrors": []
+      }
+    },
+    {
+      "name": "results/artifacts/ns-bitcoin-v1.json",
+      "role": "result",
+      "bytes": 6912,
+      "sha256": "39bb12560c4c96749910324b85097938a7efe57e45ce380127bc7783c978f182",
+      "locations": {
+        "canonical": null,
+        "mirrors": []
+      }
+    },
+    {
+      "name": "results/generated/ns-bitcoin-v1.md",
+      "role": "result",
+      "bytes": 416,
+      "sha256": "ce6ae206e95d2be86e8ea13a9161a26a0a6566787abf396a5eeffbb23efa3fcb",
+      "locations": {
+        "canonical": null,
+        "mirrors": []
+      }
+    },
+    {
+      "name": "sources/decluster-39ac38f-runtime.tar",
+      "role": "source",
+      "bytes": 2027520,
+      "sha256": "c7b16b0c77e40a8c98bb24f4348b6c4fdf9a4d53bfb5f63c5767f4b480f40436",
+      "locations": {
+        "canonical": null,
+        "mirrors": []
+      }
+    },
+    {
+      "name": "reproduction/ns-bitcoin/requirements.lock",
+      "role": "lockfile",
+      "bytes": 30,
+      "sha256": "e0d6a8cada5d383c0aca2bd2a37f28c15721392469c94084128d369c29c5544d",
+      "locations": {
+        "canonical": null,
+        "mirrors": []
+      }
+    },
+    {
+      "name": "reproduction/ns-bitcoin/environment.json",
+      "role": "environment",
+      "bytes": 356,
+      "sha256": "003a47913fe4b19e3790c7f3512b1ff2f6d17267428b215208e026a2f0223ab5",
+      "locations": {
+        "canonical": null,
+        "mirrors": []
+      }
+    }
   ],
   "limitations": [
     "The bundled environment currently targets CPython 3.13 on macOS arm64.",
