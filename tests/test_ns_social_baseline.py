@@ -3,6 +3,7 @@ import random
 import pytest
 
 from decluster.baselines.narayanan_shmatikov import (
+    conservative_revisit,
     eccentricity,
     evaluate,
     match_scores,
@@ -92,3 +93,53 @@ def test_bad_or_nonexistent_seed_mapping_is_rejected():
         propagate(left, right, {999: truth[0]})
     with pytest.raises(ValueError, match="right view"):
         propagate(left, right, {0: "absent"})
+
+
+def test_conservative_revisit_preserves_seeds_bijection_and_coverage():
+    left, right, truth = two_views(seed=23)
+    seeds = {node: truth[node] for node in range(16)}
+    base = propagate(left, right, seeds)
+    revisited = propagate(left, right, seeds, conservative_revisit_rounds=5)
+
+    assert revisited.revisit_policy == "conservative_leave_one_out"
+    assert all(revisited.mapping[node] == image for node, image in seeds.items())
+    assert len(revisited.mapping) == len(set(revisited.mapping.values()))
+    assert set(revisited.mapping) == set(base.mapping)
+
+
+def test_conservative_revisit_corrects_an_unclaimed_wrong_image():
+    left = graph(["s", "t", "x", "z"], [("s", "x"), ("t", "x")])
+    right = graph(["S", "T", "X", "Y"], [("S", "X"), ("T", "X")])
+    seeds = {"s": "S", "t": "T"}
+
+    result = conservative_revisit(
+        left,
+        right,
+        {**seeds, "x": "Y"},
+        seeds,
+        theta=0.5,
+        max_rounds=2,
+    )
+
+    assert result.mapping == {**seeds, "x": "X"}
+    assert result.remapped_per_round == (1,)
+
+
+def test_revisit_is_disabled_by_default_and_rejects_negative_budget():
+    left, right, truth = two_views(n=10)
+    result = propagate(left, right, {0: truth[0], 1: truth[1]})
+
+    assert result.revisit_policy == "disabled"
+    assert result.remapped_per_round == ()
+    with pytest.raises(ValueError, match="non-negative"):
+        propagate(left, right, {0: truth[0]}, conservative_revisit_rounds=-1)
+
+
+def test_revisit_rejects_mapping_vertices_outside_either_view():
+    left, right, truth = two_views(n=10)
+    seeds = {0: truth[0]}
+
+    with pytest.raises(ValueError, match="left view"):
+        conservative_revisit(left, right, {**seeds, 999: truth[1]}, seeds)
+    with pytest.raises(ValueError, match="right view"):
+        conservative_revisit(left, right, {**seeds, 1: "absent"}, seeds)

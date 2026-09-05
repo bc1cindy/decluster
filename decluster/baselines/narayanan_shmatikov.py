@@ -11,9 +11,10 @@ baseline usable by controlled synthetic tests without coupling it to Bitcoin rec
 
 The score, eccentricity gate, direction handling, degree normalization and reverse match follow
 the paper's propagation pseudocode. This is not the complete published attack: seeds are supplied
-instead of found with the paper's clique search, and accepted nodes are not revisited/remapped as
-the prose specifies. Results from this module therefore test the propagation mechanism, not an
-end-to-end reproduction of the 2009 experiment.
+instead of found with the paper's clique search. The paper does not specify enough detail to
+reproduce its occasional correction policy. Results from this module therefore test the
+propagation mechanism, not an end-to-end reproduction of the 2009 experiment. The optional
+conservative revisit pass is a declared local policy.
 """
 
 from __future__ import annotations
@@ -134,15 +135,80 @@ class PropagationResult:
     mapping: dict[Vertex, Vertex]
     rounds: int
     accepted_per_round: tuple[int, ...]
+    revisit_policy: str = "disabled"
+    remapped_per_round: tuple[int, ...] = ()
 
 
-def propagate(left, right, seeds: Mapping[Vertex, Vertex], theta: float = 1.5):
+@dataclass(frozen=True)
+class RevisitResult:
+    mapping: dict[Vertex, Vertex]
+    remapped_per_round: tuple[int, ...]
+
+
+def conservative_revisit(
+    left,
+    right,
+    accepted: Mapping[Vertex, Vertex],
+    seeds: Mapping[Vertex, Vertex],
+    *,
+    theta: float = 1.5,
+    max_rounds: int = 5,
+):
+    """Re-score accepted nodes without changing seeds or stealing claimed images.
+
+    The paper mentions occasional correction but does not define its schedule or conflict
+    resolution. This bounded leave-one-out policy is therefore an explicit adaptation.
+    """
+
+    if max_rounds < 0:
+        raise ValueError("max_rounds must be non-negative")
+    mapping = dict(accepted)
+    if any(mapping.get(node) != image for node, image in seeds.items()):
+        raise ValueError("accepted mapping must contain every seed unchanged")
+    if len(mapping) != len(set(mapping.values())):
+        raise ValueError("accepted mapping must be one-to-one")
+    if not set(mapping).issubset(left.vertices):
+        raise ValueError("accepted mapping contains a vertex absent from the left view")
+    if not set(mapping.values()).issubset(right.vertices):
+        raise ValueError("accepted mapping contains a vertex absent from the right view")
+    remapped_per_round = []
+    for _ in range(max_rounds):
+        remapped = 0
+        for node in sorted((vertex for vertex in mapping if vertex not in seeds), key=repr):
+            old = mapping.pop(node)
+            scores, population = _sparse_match_scores(left, right, mapping, node)
+            candidate = _sparse_winner(scores, population, theta)
+            if candidate is not None:
+                reverse = {image: vertex for vertex, image in mapping.items()}
+                reverse_scores, reverse_population = _sparse_match_scores(
+                    right, left, reverse, candidate
+                )
+                if _sparse_winner(reverse_scores, reverse_population, theta) != node:
+                    candidate = None
+            mapping[node] = old if candidate is None else candidate
+            remapped += candidate is not None and candidate != old
+        if not remapped:
+            break
+        remapped_per_round.append(remapped)
+    return RevisitResult(mapping, tuple(remapped_per_round))
+
+
+def propagate(
+    left,
+    right,
+    seeds: Mapping[Vertex, Vertex],
+    theta: float = 1.5,
+    *,
+    conservative_revisit_rounds: int = 0,
+):
     """Propagate a seed mapping to convergence using the 2009 scoring kernel.
 
     Each proposed match must clear the eccentricity threshold in both directions and
     must map back to the proposing node.  The returned mapping includes the seeds.
     """
 
+    if conservative_revisit_rounds < 0:
+        raise ValueError("conservative_revisit_rounds must be non-negative")
     mapping = dict(seeds)
     if len(mapping) != len(set(mapping.values())):
         raise ValueError("seed mapping must be one-to-one")
@@ -175,7 +241,24 @@ def propagate(left, right, seeds: Mapping[Vertex, Vertex], theta: float = 1.5):
             break
         accepted_per_round.append(accepted)
 
-    return PropagationResult(mapping, len(accepted_per_round), tuple(accepted_per_round))
+    revisit = conservative_revisit(
+        left,
+        right,
+        mapping,
+        seeds,
+        theta=theta,
+        max_rounds=conservative_revisit_rounds,
+    )
+    policy = (
+        "conservative_leave_one_out" if conservative_revisit_rounds else "disabled"
+    )
+    return PropagationResult(
+        revisit.mapping,
+        len(accepted_per_round),
+        tuple(accepted_per_round),
+        policy,
+        revisit.remapped_per_round,
+    )
 
 
 def evaluate(mapping: Mapping[Vertex, Vertex], truth: Mapping[Vertex, Vertex], seeds=()):
