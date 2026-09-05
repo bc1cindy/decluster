@@ -76,7 +76,7 @@ def build_artifact(dataset=DEFAULT_DATASET):
             "exact-vector class size is not nearest-neighbour sparsity in a general feature metric",
             "the result concerns per-transaction vectors, not cluster feature distributions",
             "the scan ends at height 962720 and differs by 6219 records from the cataloged raw export",
-            "the fixture redistribution status remains unknown",
+            "the dataset publisher authorized redistribution of the aggregate fixture on 2026-09-04",
         ],
     }
 

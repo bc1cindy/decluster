@@ -3,7 +3,7 @@
   "id": "entity-deanon-v1",
   "claim_ids": ["ctp.social_graph.structural_linkage"],
   "code": {
-    "revision": "dd1446c71212747ce382011056da212422af7fdd",
+    "revision": "1464f89be6cae426800ee98235eb8a883b480a76",
     "dirty": false
   },
   "command": {
@@ -44,8 +44,8 @@
   "outputs": [
     {
       "path": "results/artifacts/entity-deanon-v1.json",
-      "bytes": 1064,
-      "sha256": "0d43e7f39539d79b3d4f884554f0fd5cf923f5f2cdd61a687d07c554e90ef4f8"
+      "bytes": 1100,
+      "sha256": "4825de7e64906f0d708bdcbd3bd23836675ff168166c5ff06fc0ea25d95afb38"
     },
     {
       "path": "results/generated/entity-deanon-v1.md",
@@ -86,7 +86,7 @@
     "vanity-prefix detectors label the fixtures and are not general entity attribution",
     "the run evaluates common-neighbour structure, not the full Narayanan-Shmatikov algorithm",
     "the contrast does not establish a universal property of gambling services or exchanges",
-    "dataset licensing and redistribution remain unknown in the catalog",
+    "upstream data licensing is undetermined; the dataset publisher authorized redistribution on 2026-09-04",
     "the result is not a privacy score or CoinScore"
   ]
 }

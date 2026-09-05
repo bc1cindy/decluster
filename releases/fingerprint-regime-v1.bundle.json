@@ -14,7 +14,7 @@
   ],
   "limitations": [
     "The bundled environment currently targets CPython 3.13 on macOS arm64.",
-    "The dataset origin is public, but its cataloged redistribution status remains unknown.",
+    "The dataset publisher authorized redistribution of the public fixture on 2026-09-04; upstream licensing remains undetermined.",
     "Public bootstrap remains incomplete until every blob has a canonical HTTPS location and an independent mirror."
   ]
 }

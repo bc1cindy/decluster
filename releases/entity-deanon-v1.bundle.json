@@ -7,8 +7,8 @@
     {
       "name": "catalog/runs/entity-deanon-v1.json",
       "role": "run_manifest",
-      "bytes": 3313,
-      "sha256": "b114fcc22e5f6a6faed579f145543c374c6dc2f4109f3260e652cc9a803f21fe",
+      "bytes": 3349,
+      "sha256": "0cc741590ee640c42392ccec60a23161efef8895af84cac62d643002353e8e13",
       "locations": {"canonical": null, "mirrors": []}
     },
     {
@@ -34,8 +34,8 @@
     {
       "name": "results/artifacts/entity-deanon-v1.json",
       "role": "result",
-      "bytes": 1064,
-      "sha256": "0d43e7f39539d79b3d4f884554f0fd5cf923f5f2cdd61a687d07c554e90ef4f8",
+      "bytes": 1100,
+      "sha256": "4825de7e64906f0d708bdcbd3bd23836675ff168166c5ff06fc0ea25d95afb38",
       "locations": {"canonical": null, "mirrors": []}
     },
     {
@@ -46,10 +46,10 @@
       "locations": {"canonical": null, "mirrors": []}
     },
     {
-      "name": "sources/decluster-dd1446c-runtime.tar",
+      "name": "sources/decluster-1464f89-runtime.tar",
       "role": "source",
-      "bytes": 1157120,
-      "sha256": "203961313ec1ddc12f5dd5e853ab6d384ebf5661a0568e9dd7443dd026bbbd71",
+      "bytes": 1515520,
+      "sha256": "7619ec0206c1cd40487c36e9bfb61616b712f07d4999d35805ae38c7507ee166",
       "locations": {"canonical": null, "mirrors": []}
     },
     {
@@ -63,13 +63,13 @@
       "name": "reproduction/entity-deanon/environment.json",
       "role": "environment",
       "bytes": 362,
-      "sha256": "f80b1cf84ae4e334e7083993a6d7fd0b242e9deb138cf3d1ec8fd0cb2495eb98",
+      "sha256": "a42a850cdba97059e61395c14f5b43f1bdd52c665b9999ef64b9f448a79f4ebe",
       "locations": {"canonical": null, "mirrors": []}
     }
   ],
   "limitations": [
     "The bundled environment currently targets CPython 3.13 on macOS arm64.",
-    "The dataset origins are public, but their cataloged redistribution status remains unknown.",
+    "The dataset publisher authorized redistribution of both public fixtures on 2026-09-04; upstream licensing remains undetermined.",
     "Public bootstrap remains incomplete until every blob has a canonical HTTPS location and an independent mirror."
   ]
 }

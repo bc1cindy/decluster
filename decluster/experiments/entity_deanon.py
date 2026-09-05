@@ -69,7 +69,7 @@ def build_artifact(
             "vanity-prefix detectors label the fixtures and are not general entity attribution",
             "the run evaluates common-neighbour structure, not the full Narayanan-Shmatikov algorithm",
             "the contrast does not establish a universal property of gambling services or exchanges",
-            "dataset licensing and redistribution remain unknown in the catalog",
+            "upstream data licensing is undetermined; the dataset publisher authorized redistribution on 2026-09-04",
             "the result is not a privacy score or CoinScore",
         ],
     }

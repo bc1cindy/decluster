@@ -6,7 +6,7 @@
     "system": "Darwin",
     "machine": "arm64"
   },
-  "source_archive": "sources/decluster-d3261a0-runtime.tar",
+  "source_archive": "sources/decluster-1464f89-runtime.tar",
   "project_root": "decluster",
   "requirements": "reproduction/fingerprint-sparsity/requirements.lock",
   "dependency_directory": "reproduction/fingerprint-sparsity"

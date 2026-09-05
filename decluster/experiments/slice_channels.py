@@ -81,7 +81,7 @@ def build_artifact(dataset=DEFAULT_DATASET):
             "the run does not reproduce historical measurements on larger unpreserved slices",
             "dense attributes do not prove resistance to other linkage channels",
             "negative assortativity does not by itself determine graph-matching performance",
-            "the snapshot recipe is unavailable and dataset redistribution remains unknown",
+            "the snapshot recipe is unavailable; the dataset publisher authorized redistribution on 2026-09-04",
             "the result is not a privacy score or CoinScore",
         ],
     }

@@ -2,14 +2,14 @@
   "schema_version": 1,
   "id": "slice-channels-v1",
   "claim_ids": ["ctp.sparse_dataset.feature_uniqueness"],
-  "code": {"revision": "a29e1f9c51b69f0a0c1dcd5b532d5a9e38b533b6", "dirty": false},
+  "code": {"revision": "1464f89be6cae426800ee98235eb8a883b480a76", "dirty": false},
   "command": {"argv": ["python", "-m", "decluster.experiments.slice_channels", "--dataset", "tests/fixtures/slice_a_channels_2016.ndjson.gz", "reproduce", "--artifact", "results/artifacts/slice-channels-v1.json", "--markdown", "results/generated/slice-channels-v1.md"]},
   "environment": {"python": "3.13.7", "lock_digest": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855", "platform": "macOS-26.6.2-arm64-arm-64bit-Mach-O", "dependencies": []},
   "datasets": [{"id": "slice-a-channels-2016-v1", "sha256": "66104889f8b79f2938edb6666f16dfa19a74c68cd8016832b4f2a5e03b11865f"}],
   "parameters": {"refuse_guard": true, "query_records": 1200, "background_records": 12000, "seed": 0, "minimum_degrees": [2, 20], "epsilons": [0.5, 0.9, 0.99]},
   "rng": {"algorithm": "python.random.Random", "seeds": [0]},
   "outputs": [
-    {"path": "results/artifacts/slice-channels-v1.json", "bytes": 1285, "sha256": "cf86201dcf22b209b5b544bf210079a768a60fd357e00bddb43c717fd430c205"},
+    {"path": "results/artifacts/slice-channels-v1.json", "bytes": 1305, "sha256": "cdc6fdc150bbea565df185648d60cdb3a08404814f2a024de6bce310befa8eed"},
     {"path": "results/generated/slice-channels-v1.md", "bytes": 673, "sha256": "ab9301b81682c916c84f2dd2e8d8be8937e310ae90e7dd3816c56f1fe81f2dff"}
   ],
   "reproducibility": {"level": "bitwise_reproducible", "availability": "partial"},
@@ -20,5 +20,5 @@
     "properties": ["seeded vertex sampling uses a sorted population", "graph statistics use stable vertex and neighbour order", "density is measured separately for minimum degree 2 and 20", "the generated Markdown equals the canonical rendering"],
     "tolerance": null
   },
-  "limitations": ["the snapshot contains six 2016 blocks and is not a chain-wide sample", "the run does not reproduce historical measurements on larger unpreserved slices", "dense attributes do not prove resistance to other linkage channels", "negative assortativity does not by itself determine graph-matching performance", "the snapshot recipe is unavailable and dataset redistribution remains unknown", "the result is not a privacy score or CoinScore"]
+  "limitations": ["the snapshot contains six 2016 blocks and is not a chain-wide sample", "the run does not reproduce historical measurements on larger unpreserved slices", "dense attributes do not prove resistance to other linkage channels", "negative assortativity does not by itself determine graph-matching performance", "the snapshot recipe is unavailable; the dataset publisher authorized redistribution on 2026-09-04", "the result is not a privacy score or CoinScore"]
 }

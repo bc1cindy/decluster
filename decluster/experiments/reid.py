@@ -64,7 +64,7 @@ def build_artifact(dataset=DEFAULT_DATASET):
             "the auxiliary origins are sampled from the target signature rather than observed independently",
             "this is an adaptation, not a reproduction of the published Netflix experiment",
             "the result does not establish a chain-wide deanonymization rate or privacy score",
-            "dataset licensing and redistribution remain unknown in the catalog",
+            "upstream data licensing is undetermined; the dataset publisher authorized redistribution on 2026-09-04",
         ],
     }
 

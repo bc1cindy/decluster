@@ -4,17 +4,17 @@
   "capabilities": ["verify_outputs", "reproduce_runs"],
   "runs": ["slice-channels-v1"],
   "blobs": [
-    {"name": "catalog/runs/slice-channels-v1.json", "role": "run_manifest", "bytes": 2597, "sha256": "ff4e5c0ee52de145107f7c8750333935281fdef9886a71f431d19e08cf349a7a", "locations": {"canonical": null, "mirrors": []}},
+    {"name": "catalog/runs/slice-channels-v1.json", "role": "run_manifest", "bytes": 2617, "sha256": "1bb456afcf80105620ea0ebaa042fa14d0c28ab97e3ffff38b23ad222463626a", "locations": {"canonical": null, "mirrors": []}},
     {"name": "tests/fixtures/slice_a_channels_2016.ndjson.gz", "role": "dataset", "bytes": 1837504, "sha256": "66104889f8b79f2938edb6666f16dfa19a74c68cd8016832b4f2a5e03b11865f", "locations": {"canonical": "https://github.com/bc1cindy/decluster/raw/43d3faaab07f6703361c300fb6d01a916bb063f0/tests/fixtures/slice_a_channels_2016.ndjson.gz", "mirrors": []}},
-    {"name": "results/artifacts/slice-channels-v1.json", "role": "result", "bytes": 1285, "sha256": "cf86201dcf22b209b5b544bf210079a768a60fd357e00bddb43c717fd430c205", "locations": {"canonical": null, "mirrors": []}},
+    {"name": "results/artifacts/slice-channels-v1.json", "role": "result", "bytes": 1305, "sha256": "cdc6fdc150bbea565df185648d60cdb3a08404814f2a024de6bce310befa8eed", "locations": {"canonical": null, "mirrors": []}},
     {"name": "results/generated/slice-channels-v1.md", "role": "result", "bytes": 673, "sha256": "ab9301b81682c916c84f2dd2e8d8be8937e310ae90e7dd3816c56f1fe81f2dff", "locations": {"canonical": null, "mirrors": []}},
-    {"name": "sources/decluster-a29e1f9-runtime.tar", "role": "source", "bytes": 1177600, "sha256": "1004f3dcf4bd64f1b30fd1106ec37692da84e98f233e0df1deae0c590e20f859", "locations": {"canonical": null, "mirrors": []}},
+    {"name": "sources/decluster-1464f89-runtime.tar", "role": "source", "bytes": 1515520, "sha256": "7619ec0206c1cd40487c36e9bfb61616b712f07d4999d35805ae38c7507ee166", "locations": {"canonical": null, "mirrors": []}},
     {"name": "reproduction/slice-channels/requirements.lock", "role": "lockfile", "bytes": 0, "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855", "locations": {"canonical": null, "mirrors": []}},
-    {"name": "reproduction/slice-channels/environment.json", "role": "environment", "bytes": 364, "sha256": "47c2f46ee7d394e0b3ac7dbd7c3b48e0dbe98193dddc7aebdafc00a934c7ba29", "locations": {"canonical": null, "mirrors": []}}
+    {"name": "reproduction/slice-channels/environment.json", "role": "environment", "bytes": 364, "sha256": "1eb9678593373b9e68e443c8d5f6255ae16fb854a23af9cda02724c2c21ffc58", "locations": {"canonical": null, "mirrors": []}}
   ],
   "limitations": [
     "The bundled environment currently targets CPython 3.13 on macOS arm64.",
-    "The dataset origin is public, but its cataloged redistribution status remains unknown.",
+    "The dataset publisher authorized redistribution of the public fixture on 2026-09-04; upstream licensing remains undetermined.",
     "Public bootstrap remains incomplete until every blob has a canonical HTTPS location and an independent mirror."
   ]
 }
