@@ -8,6 +8,7 @@ from decluster.baselines.boltzmann import (
     fee_tolerant_link_analysis,
     fee_tolerant_subtransaction_mappings,
     link_analysis,
+    same_block_probabilities,
 )
 from decluster.baselines.maurer import (
     exact_non_derived_mappings,
@@ -56,6 +57,54 @@ def test_maurer_paper_figure_2_distinguishes_derived_mapping():
     )
 
 
+def test_maurer_paper_figure_6_keeps_both_knapsack_mixed_mappings():
+    """Maurer et al. Fig. 6: splitting output 3 of Fig. 2 into 31 and 19 turns the
+    single non-derived mapping into two, neither of which can be preferred.
+    """
+
+    inputs = [21, 12, 36, 28]
+    outputs = [25, 8, 31, 19, 14]
+    all_mappings = exact_subtransaction_mappings(inputs, outputs)
+    non_derived = exact_non_derived_mappings(inputs, outputs)
+
+    assert len(all_mappings) == 3
+    assert {mapping.blocks for mapping in non_derived} == {
+        (((0, 1), (0, 1)), ((2, 3), (2, 3, 4))),
+        (((0, 1), (3, 4)), ((2, 3), (0, 1, 2))),
+    }
+
+
+def test_maurer_values_are_satoshis_not_floats():
+    # The paper's coin domain is [0..2**64-1].  0.1 + 0.2 + 0.4 != 0.7 in binary
+    # floating point, so accepting floats would drop a mapping in silence.
+    with pytest.raises(ValueError, match="non-negative integers"):
+        exact_subtransaction_mappings([0.1, 0.2, 0.3, 0.4, 0.5], [0.7, 0.8])
+    with pytest.raises(ValueError, match="non-negative integers"):
+        exact_subtransaction_mappings([True, True], [True, True])
+    assert len(exact_non_derived_mappings([10, 20, 30, 40, 50], [70, 80])) == 3
+
+
+def test_same_block_probabilities_expose_the_input_input_metric():
+    # Fig. 2: both mappings keep 21 and 12 together, only the merged one puts
+    # 21 with 36.  p_II is the quantity the input-ownership heuristic asserts.
+    analysis = same_block_probabilities([21, 12, 36, 28], [25, 8, 50, 14])
+
+    assert analysis.mapping_count == 2
+    assert analysis.input_matrix == (
+        (1.0, 1.0, 0.5, 0.5),
+        (1.0, 1.0, 0.5, 0.5),
+        (0.5, 0.5, 1.0, 1.0),
+        (0.5, 0.5, 1.0, 1.0),
+    )
+    assert analysis.output_matrix == analysis.input_matrix
+
+
+def test_same_block_probabilities_report_no_family_instead_of_zero():
+    analysis = same_block_probabilities([500, 500], [600, 390])
+    assert analysis.mapping_count == 0
+    assert analysis.input_matrix == () and analysis.output_matrix == ()
+
+
 def test_fee_tolerant_balance_is_separate_and_bounded():
     assert fee_tolerant_subtransaction_mappings(
         [500, 500], [600, 390], fee_tolerance=9
@@ -86,6 +135,16 @@ def test_roundness_is_not_silently_used_as_a_balance_prior():
     a = fee_tolerant_link_analysis([500, 500], [600, 390], fee_tolerance=10)
     b = fee_tolerant_link_analysis([500, 500], [601, 389], fee_tolerance=10)
     assert a.matrix == b.matrix
+
+
+def test_fee_tolerant_model_cannot_express_a_maker_receiving_block():
+    # {10} -> {12} needs a block deficit of -2.  Every block here is a payer, so
+    # no tolerance recovers the split and only the all-coins reading survives.
+    for tolerance in range(1, 6):
+        mappings = fee_tolerant_subtransaction_mappings(
+            [10, 20], [12, 17], fee_tolerance=tolerance
+        )
+        assert [len(mapping.blocks) for mapping in mappings] == [1]
 
 
 @pytest.mark.parametrize("model,tolerance", [("unknown", 0), ("exact", 1)])

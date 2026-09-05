@@ -87,12 +87,17 @@ def exact_subtransaction_mappings(inputs, outputs, *, max_coins=12):
     Each input and output occurs in exactly one block and each block independently
     conserves value.  The all-coins/single-owner interpretation is included.  The
     bound is explicit because exhaustive set-partition enumeration is exponential.
+
+    Values must be integers: the paper's coin domain is satoshis, and binary
+    floating point silently breaks exact conservation.  ``0.1 + 0.2 + 0.4`` is
+    not ``0.7``, so a float-valued transaction loses mappings without error.
     """
     inputs, outputs = tuple(inputs), tuple(outputs)
     if not inputs or not outputs:
         return ()
-    if any(value < 0 for value in inputs + outputs):
-        raise ValueError("coin values must be non-negative")
+    if any(isinstance(value, bool) or not isinstance(value, int) or value < 0
+           for value in inputs + outputs):
+        raise ValueError("coin values must be non-negative integers")
     if len(inputs) + len(outputs) > max_coins:
         raise ValueError("exact baseline exceeds max_coins")
     if sum(inputs) != sum(outputs):

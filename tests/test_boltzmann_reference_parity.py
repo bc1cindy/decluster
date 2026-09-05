@@ -111,6 +111,27 @@ def test_overlapping_owner_groups_are_transitively_merged():
     assert result.link_counts == ((1, 1),) * 3
 
 
+def test_null_value_txos_are_filtered_like_the_reference():
+    # The reference drops null-value txos (OP_RETURN and the like) before any
+    # aggregate is formed, so an added zero output must change nothing.
+    plain = boltzmann_reference_analysis((5, 5), (5, 5))
+    padded = boltzmann_reference_analysis((5, 5), (5, 5, 0))
+
+    assert padded.combination_count == plain.combination_count == 3
+    assert padded.link_counts == plain.link_counts == ((2, 2), (2, 2))
+    assert padded.outputs == (5, 5)
+    assert boltzmann_reference_analysis((5, 5, 0), (5, 5)).inputs == (5, 5)
+
+
+def test_null_value_inputs_are_filtered_before_known_owners_are_packed():
+    result = boltzmann_reference_with_linked_inputs((5, 0, 5), (5, 5), [{0, 2}])
+
+    assert result.inputs == (5, 5)
+    assert result.combination_count == 1
+    assert result.link_counts == ((1, 1), (1, 1))
+    assert result.linked_input_groups == ((0, 2),)
+
+
 def test_precheck_exposes_deterministic_links_without_changing_linkability():
     ordinary = boltzmann_reference_analysis((1, 2), (1, 2))
     checked = boltzmann_reference_analysis((1, 2), (1, 2), precheck=True)
@@ -118,6 +139,14 @@ def test_precheck_exposes_deterministic_links_without_changing_linkability():
     assert checked.combination_count == ordinary.combination_count == 2
     assert checked.link_counts == ordinary.link_counts == ((2, 1), (1, 2))
     assert checked.precheck_deterministic_links == ((0, 0), (1, 1))
+
+
+def test_precheck_does_not_reorder_inputs_the_way_the_reference_does():
+    # The reference packs its deterministic links before the traversal and
+    # reinserts them where the pack sat, which can leave the returned inputs off
+    # descending-value order.  This port never repacks, so its order is stable.
+    result = boltzmann_reference_analysis((1, 2, 3), (2, 4), precheck=True)
+    assert result.inputs == (3, 2, 1)
 
 
 def test_precheck_links_expand_across_packed_inputs():
