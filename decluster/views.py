@@ -129,42 +129,14 @@ def merge_order(sample):
     return ranked
 
 
-def cluster_addresses(sample, refuse=True, change_link=False, staged=False,
-                      doubt_min_side=0):
-    """{address: cluster id} over the WHOLE sample. The lookup is global on purpose: it is
-    what lets a cluster keep one identity across the partition.
-
-    `staged` clusters the most conspicuous transactions first (`merge_order`) instead of in block
-    order. On its own that changes nothing — union-find over a fixed set of merges is
-    order-independent — so it is paired with `doubt_min_side`, which is what the order is for: a
-    transaction that argues against itself (`merge_objections` above zero) is declined when its
-    inputs already span two clusters of that size or more, because that merge would fuse two
-    established entities on evidence the transaction itself undermines. The conspicuous merges run
-    first precisely so that "already established" means built from unambiguous evidence rather
-    than from whatever the block order happened to supply. Zero disables the gate. Both need an
-    export carrying input values or script types.
-
-    `refuse` declines to apply common-input ownership where the transaction itself argues
-    against it, which is the difference between the framework's competent adversary and the
-    one whose blind merging collapses clusters. Two rules, both decidable from the spending
-    transaction alone:
-
-      coinjoin shape    many inputs against many outputs is where co-spending stops implying
-                        common ownership, so no input is merged with any other.
-      de-mix partition  when `coinjoin_demix` resolves inputs to distinct participants, only
-                        inputs of the same participant merge. Inputs it could not resolve
-                        merge with nobody: under refusal, an unresolved input is unknown
-                        ownership, not shared ownership.
-
-    Two channels the engine has are absent here and their absence is a real limitation, not
-    a simplification: the fingerprint channel compares the *funding* transactions, which for
-    a two-day slice lie almost entirely outside it, and the roundness channel is gated on
-    the fingerprint disagreeing, so using it alone would refuse ordinary round payments.
-    """
+def _merge_pass(sample, order, refuse, doubt_min_side):
+    """Apply the merges in `order`, returning the union-find and the positions eligible for a
+    change link — the transactions whose inputs already stood in one cluster when they were
+    reached, which is a property of the order and so is returned with it rather than read
+    back off the finished partition."""
     uf = UF()
     size = {}                       # root -> addresses under it, so the doubt gate stays linear
-    change_eligible = set()
-    order = merge_order(sample) if staged else range(len(sample))
+    eligible = set()
     for tx_index in order:
         tx, _ = sample[tx_index]
         ins = _in_addrs(tx)
@@ -172,7 +144,7 @@ def cluster_addresses(sample, refuse=True, change_link=False, staged=False,
         # Require earlier evidence that all inputs already belong to one cluster; otherwise a
         # collaborative transaction could be mistaken for a unilateral spend.
         if ins and all(a in uf.p for a in ins) and len({uf.find(a) for a in ins}) == 1:
-            change_eligible.add(tx_index)
+            eligible.add(tx_index)
         if not refuse:
             _union_tracking_size(uf, size, ins)
             continue
@@ -192,10 +164,59 @@ def cluster_addresses(sample, refuse=True, change_link=False, staged=False,
             first = group[0]
             for a in group[1:]:
                 uf.union(first, a)
+    return uf, eligible
+
+
+def cluster_addresses(sample, refuse=True, change_link=False, staged=False,
+                      doubt_min_side=0):
+    """{address: cluster id} over the WHOLE sample. The lookup is global on purpose: it is
+    what lets a cluster keep one identity across the partition.
+
+    `staged` clusters the most conspicuous transactions first (`merge_order`) instead of in block
+    order. On its own that changes nothing — union-find over a fixed set of merges is
+    order-independent, and the one decision that reads the partition built so far, change
+    eligibility, is taken in sample order under either setting — so it is paired with
+    `doubt_min_side`, which is what the order is for: a transaction that argues against itself
+    (`merge_objections` above zero) is declined when its inputs already span two clusters of that
+    size or more, because that merge would fuse two established entities on evidence the
+    transaction itself undermines. The conspicuous merges run first precisely so that "already
+    established" means built from unambiguous evidence rather than from whatever the block order
+    happened to supply. Zero disables the gate. Both need an export carrying input values or
+    script types.
+
+    `refuse` declines to apply common-input ownership where the transaction itself argues
+    against it, which is the difference between the framework's competent adversary and the
+    one whose blind merging collapses clusters. Two rules, both decidable from the spending
+    transaction alone:
+
+      coinjoin shape    many inputs against many outputs is where co-spending stops implying
+                        common ownership, so no input is merged with any other.
+      de-mix partition  when `coinjoin_demix` resolves inputs to distinct participants, only
+                        inputs of the same participant merge. Inputs it could not resolve
+                        merge with nobody: under refusal, an unresolved input is unknown
+                        ownership, not shared ownership.
+
+    Two channels the engine has are absent here and their absence is a real limitation, not
+    a simplification: the fingerprint channel compares the *funding* transactions, which for
+    a two-day slice lie almost entirely outside it, and the roundness channel is gated on
+    the fingerprint disagreeing, so using it alone would refuse ordinary round payments.
+    """
+    if staged and change_link:
+        # Eligibility is read off the partition standing before each transaction, so it is a
+        # property of the order it is read in. Take it in sample order, the same order the
+        # unstaged run takes it in, so that staging changes which merges are judged against
+        # which context and nothing else.
+        _, change_eligible = _merge_pass(sample, range(len(sample)), refuse, doubt_min_side)
+        uf, _ = _merge_pass(sample, merge_order(sample), refuse, doubt_min_side)
+    else:
+        order = merge_order(sample) if staged else range(len(sample))
+        uf, change_eligible = _merge_pass(sample, order, refuse, doubt_min_side)
     if change_link:
         # Optimal-change (the unnecessary-input heuristics, cit-15/16), collapse-safe: only link
         # a *fresh* change address (never seen as an input) so it cannot merge two existing
-        # clusters -- it only extends one.
+        # clusters -- it only extends one. Eligibility above is a prefix condition, so this pass
+        # is sensitive to the sample's own sequence: a different sequence is a different set of
+        # links, and only the staging flag is held not to move it.
         from .change_special import label_optimal_change
         from .change_gt import out_addr
         input_seen = set()
@@ -531,16 +552,36 @@ def decore_partition(sample, core_frac=0.01, scheme="epoch", bounds=None):
     raise ValueError(f"unknown inner scheme for decore: {scheme}")
 
 
+def _fold(store, key, val, height):
+    """Add one transfer to the folded record at `key`, extending its value and height span."""
+    e = store.get(key)
+    if e is None:
+        store[key] = {"transfers": 1, "value": val, "first": height, "last": height}
+        return
+    e["transfers"] += 1
+    e["value"] += val
+    if height < e["first"]:
+        e["first"] = height
+    elif height > e["last"]:
+        e["last"] = height
+
+
 class PseudonymGraph:
     """Contracted view. Vertices are clusters; `edges[(src, dst)]` is the single directed
     edge folding every transfer from src to dst, carrying how many there were and how much
     value moved. Value is kept because connectivity means a plausible flow, not merely a
-    traceable one, so a matcher may discount an edge that only dust created."""
+    traceable one, so a matcher may discount an edge that only dust created.
+
+    A transfer whose destination is its own source is a loop, which the user network has and
+    which no ordered pair can hold. `self_edges[vid]` folds those under the same schema as an
+    edge, so the value and the height span survive contraction there too; the vertex record's
+    `self_transfers` is the same count, kept because that record is what gets serialised."""
 
     def __init__(self, axes=True):
         self.axes = axes                # whether vertex records carry the per-axis counters
         self.vertices = {}
         self.edges = {}
+        self.self_edges = {}            # vid -> the folded loop, same attributes as an edge
         self.edge_sig = {}              # (src, dst) -> the axis values of its first transfer
         self.base_rates = {axis: Counter() for axis in AXES}
         self.skipped = Counter()      # axis -> transactions it could not be read from
@@ -747,21 +788,13 @@ def contract(sample, indices=None, lookup=None, min_value=0, axes=True, keep=Non
             for s in srcs:
                 if s == dst:
                     g.vertices[s]["self_transfers"] += 1
+                    _fold(g.self_edges, s, val, height)
                     continue
                 key = (s, dst)
-                e = g.edges.get(key)
-                if e is None:
-                    # Reid and Harrigan label every user-network edge with value *and* time. The
-                    # span is what separates a relationship that recurs from a one-off, which is
-                    # the property cross-view matching actually depends on.
-                    e = {"transfers": 0, "value": 0, "first": height, "last": height}
-                    g.edges[key] = e
-                e["transfers"] += 1
-                e["value"] += val
-                if height < e["first"]:
-                    e["first"] = height
-                elif height > e["last"]:
-                    e["last"] = height
+                # Reid and Harrigan label every user-network edge with value *and* time. The
+                # span is what separates a relationship that recurs from a one-off, which is
+                # the property cross-view matching actually depends on.
+                _fold(g.edges, key, val, height)
                 if axes and key not in g.edge_sig:
                     # The framework wants the statistical features to inform the EDGE
                     # attributes too, not only the vertices. Stored as the axis values of

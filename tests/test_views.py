@@ -114,6 +114,15 @@ def test_self_transfer_is_a_vertex_attribute_not_an_edge():
     assert g.degree("A") == 0
 
 
+def test_self_transfer_keeps_its_value_and_span():
+    """The loop stays out of the structure, but it is still a labelled edge of the user
+    network, so contracting it must not drop the value and time it carries."""
+    s = S(tx(["a"], [("b", 100)], height=10), tx(["b"], [("c", 250)], height=40))
+    g = contract(s, [0, 1], {"a": "A", "b": "A", "c": "A"})
+    assert g.edges == {}
+    assert g.self_edges == {"A": {"transfers": 2, "value": 350, "first": 10, "last": 40}}
+
+
 def test_unknown_address_is_its_own_pseudonym():
     """A partial clustering is the premise, so an address outside the lookup is a singleton
     pseudonym rather than an error."""
@@ -585,6 +594,28 @@ def test_staging_leaves_the_partition_reachable_by_either_order_alone():
     plain = cluster_addresses(s, refuse=False)
     ordered = cluster_addresses(s, refuse=False, staged=True)
     assert {frozenset(g) for g in _groups(plain)} == {frozenset(g) for g in _groups(ordered)}
+
+
+def test_staging_leaves_the_partition_alone_under_change_linking_too():
+    """The change link is the one decision that reads the partition built so far, so it is where
+    the order could leak into the result. A doubtful merge of a,b followed by a clean spend of
+    a,b with fresh optimal change: in sample order the spend sees a,b already joined and the
+    change attaches, and staging must not take that away by running the clean spend first."""
+    from decluster.views import cluster_addresses
+
+    def vtx_out(in_vals, out_pairs, addrs, height=100):
+        t = vtx_typed(in_vals, [v for _, v in out_pairs], addrs, height=height)
+        for o, (addr, _) in zip(t["vout"], out_pairs):
+            o["scriptpubkey_address"] = addr
+        return t
+
+    doubtful = vtx_out([90_000, 10_000], [("pay0", 60_000), ("out0", 39_000)], ["a", "b"], height=10)
+    clean = vtx_out([40_000, 50_000], [("pay1", 70_000), ("chg", 19_000)], ["a", "b"], height=20)
+    s = S(doubtful, clean)
+    plain = cluster_addresses(s, change_link=True)
+    ordered = cluster_addresses(s, change_link=True, staged=True)
+    assert {frozenset(g) for g in _groups(plain)} == {frozenset(g) for g in _groups(ordered)}
+    assert plain["chg"] == plain["a"] == plain["b"]
 
 
 def _groups(lookup):
