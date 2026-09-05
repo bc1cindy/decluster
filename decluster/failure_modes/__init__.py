@@ -9,6 +9,7 @@ from . import (
     perfect_matching_disclosure,
     denomination_preparation,
     statistical_disclosure,
+    unnecessary_input,
 )
 
 __all__ = [
@@ -20,4 +21,5 @@ __all__ = [
     "perfect_matching_disclosure",
     "denomination_preparation",
     "statistical_disclosure",
+    "unnecessary_input",
 ]

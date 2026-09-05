@@ -350,6 +350,26 @@ class TransactionFingerprintEvidence:
 
 
 @dataclass(frozen=True)
+class UnnecessaryInputEvidence:
+    """A UIH classification without an ownership or protocol-form inference."""
+
+    transaction: Subject
+    definition: str
+    classification: str
+    fee: int
+    removed_input_index: int
+    context: EvidenceContext
+
+    def __post_init__(self) -> None:
+        if self.transaction.kind is not SubjectKind.TRANSACTION:
+            raise ValueError("unnecessary-input evidence requires a transaction")
+        if not self.definition or self.classification not in {"uih1", "uih2"}:
+            raise ValueError("unnecessary-input definition and classification are required")
+        if self.fee < 0 or self.removed_input_index < 0:
+            raise ValueError("fee and removed input index must be non-negative")
+
+
+@dataclass(frozen=True)
 class CoSpendEvidence:
     """Inputs observed together in one transaction, before an ownership inference."""
 
@@ -424,6 +444,7 @@ Evidence: TypeAlias = Union[
     CorrespondentDistributionEvidence,
     PerfectMatchingEvidence,
     TransactionFingerprintEvidence,
+    UnnecessaryInputEvidence,
     CoSpendEvidence,
     PseudonymGraphEvidence,
 ]
