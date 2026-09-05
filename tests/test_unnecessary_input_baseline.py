@@ -48,11 +48,17 @@ def test_tied_minimum_input_has_a_deterministic_witness():
     assert result.removed_input_index == 0
 
 
-def test_equal_outputs_do_not_create_change_attribution():
+def test_equal_outputs_fall_outside_both_algorithm_2_branches():
     result = analyze_blockstream([7, 7], [6, 6])
-    assert result.status is UIHStatus.UIH1
+    assert result.status is UIHStatus.UNCATEGORIZED
     assert result.change_output_index is None
-    assert result.reason == "equal outputs prevent change attribution"
+
+
+def test_algorithm_2_leaves_transactions_uncategorized():
+    result = analyze_blockstream([20, 22], [9, 16])
+    assert result.status is UIHStatus.UNCATEGORIZED
+    assert result.fee == 17
+    assert result.change_output_index is None
 
 
 def test_scope_and_invalid_amounts_are_explicit():
@@ -76,12 +82,18 @@ def test_closed_form_agrees_with_independent_subset_enumeration():
         ([10, 2], [10, 1]),
         ([2, 4, 9], [8, 6]),
         ([3, 3, 8], [8, 5]),
+        ([20, 22], [9, 16]),
+        ([7, 7], [6, 6]),
     ]
     for inputs, outputs in cases:
         fee = sum(inputs) - sum(outputs)
-        expected = _proper_subset_can_fund(inputs, max(outputs) + fee)
-        actual = analyze_blockstream(inputs, outputs).status is UIHStatus.UIH2
-        assert actual is expected
+        status = analyze_blockstream(inputs, outputs).status
+        assert (status is UIHStatus.UIH2) is _proper_subset_can_fund(
+            inputs, max(outputs) + fee
+        )
+        assert (status is not UIHStatus.UNCATEGORIZED) is _proper_subset_can_fund(
+            inputs, min(outputs) + fee
+        )
 
 
 def test_transaction_adapter_does_not_fall_back_when_amounts_are_missing():
@@ -109,3 +121,34 @@ def test_optimal_change_candidate_is_values_only_and_output_equivariant():
     assert optimal_change_candidate([100, 200], [50, 500]) == 0
     assert optimal_change_candidate([100, 200], [500, 50]) == 1
     assert optimal_change_candidate([1_000, 2_000], [50, 60]) is None
+
+
+def test_the_three_branches_reduce_to_the_position_of_the_smallest_input():
+    for first in range(1, 8):
+        for second in range(1, 8):
+            for larger in range(1, 8):
+                for smaller in range(1, 8):
+                    inputs, outputs = [first, second], [larger, smaller]
+                    status = analyze_blockstream(inputs, outputs).status
+                    if status is UIHStatus.INVALID:
+                        continue
+                    if min(inputs) <= min(outputs):
+                        assert status is UIHStatus.UIH2
+                    elif min(inputs) <= max(outputs):
+                        assert status is UIHStatus.UIH1
+                    else:
+                        assert status is UIHStatus.UNCATEGORIZED
+
+
+def test_change_attribution_never_contradicts_the_optimal_change_candidate():
+    for first in range(1, 8):
+        for second in range(1, 8):
+            for larger in range(1, 8):
+                for smaller in range(1, 8):
+                    inputs, outputs = [first, second], [larger, smaller]
+                    result = analyze_blockstream(inputs, outputs)
+                    if result.status is UIHStatus.INVALID:
+                        continue
+                    assert result.change_output_index == optimal_change_candidate(
+                        inputs, outputs
+                    )
