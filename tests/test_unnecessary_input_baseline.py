@@ -8,6 +8,7 @@ from decluster.baselines.unnecessary_input import (
     analyze_transaction,
     blocksci_uih1,
     gibson_flags,
+    optimal_change_candidate,
 )
 
 
@@ -102,3 +103,9 @@ def test_legacy_extractor_and_paper_baseline_are_named_separately():
     }
     assert x_uih(transaction) == "none"
     assert x_uih_fee_aware(transaction) == "uih2"
+
+
+def test_optimal_change_candidate_is_values_only_and_output_equivariant():
+    assert optimal_change_candidate([100, 200], [50, 500]) == 0
+    assert optimal_change_candidate([100, 200], [500, 50]) == 1
+    assert optimal_change_candidate([1_000, 2_000], [50, 60]) is None

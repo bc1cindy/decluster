@@ -101,6 +101,22 @@ def blocksci_uih1(inputs: Sequence[int], outputs: Sequence[int]) -> bool | None:
     return min(outputs) < min(inputs)
 
 
+def optimal_change_candidate(
+    inputs: Sequence[int], outputs: Sequence[int]
+) -> int | None:
+    """Return the unique smaller-than-every-input output using values only.
+
+    This is a candidate under the BlockSci/Gibson UIH1 assumption, not an
+    ownership label.  Equal or multiple qualifying outputs are ambiguous.
+    """
+
+    if blocksci_uih1(inputs, outputs) is not True:
+        return None
+    smallest_input = min(inputs)
+    candidates = [index for index, value in enumerate(outputs) if value < smallest_input]
+    return candidates[0] if len(candidates) == 1 else None
+
+
 def gibson_flags(inputs: Sequence[int], outputs: Sequence[int]) -> tuple[bool, bool] | None:
     """Return the independent UIH1/UIH2 flags from Algorithm 3.
 

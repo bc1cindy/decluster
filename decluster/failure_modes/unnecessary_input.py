@@ -41,6 +41,71 @@ class UnnecessaryInputScenario:
             raise ValueError("scenario requires at least two distinct latent forms")
 
 
+@dataclass(frozen=True)
+class FormObservation:
+    """A collaborative form and the amounts visible to an external observer."""
+
+    form: LatentTransactionForm
+    inputs: tuple[int, ...]
+    outputs: tuple[int, ...]
+
+
+@dataclass(frozen=True)
+class Obligation:
+    payer: str
+    receiver: str
+    amount: int
+
+    def __post_init__(self) -> None:
+        if not self.payer or not self.receiver or self.payer == self.receiver:
+            raise ValueError("obligation requires distinct named parties")
+        if self.amount <= 0:
+            raise ValueError("obligation amount must be positive")
+
+
+def net_balances(obligations: tuple[Obligation, ...]) -> dict[str, int]:
+    """Return received minus sent for each participant."""
+
+    balances: dict[str, int] = {}
+    for obligation in obligations:
+        balances.setdefault(obligation.payer, 0)
+        balances.setdefault(obligation.receiver, 0)
+        balances[obligation.payer] -= obligation.amount
+        balances[obligation.receiver] += obligation.amount
+    return dict(sorted(balances.items()))
+
+
+def collaborative_form_examples() -> tuple[FormObservation, FormObservation]:
+    """CTP-style NS1R and NSNR shapes outside the paper's two-output scope."""
+
+    return (
+        FormObservation(
+            LatentTransactionForm.NS1R,
+            (40, 50, 60, 90),
+            (160, 30, 30, 20),
+        ),
+        FormObservation(
+            LatentTransactionForm.NSNR,
+            (90, 15, 40, 30, 45, 35),
+            (85, 25, 50, 40, 45, 10),
+        ),
+    )
+
+
+def cycle_equivalent_obligations() -> tuple[
+    tuple[Obligation, ...], tuple[Obligation, ...]
+]:
+    """Two gross obligation graphs with identical observable net balances."""
+
+    simple = (Obligation("alice", "bob", 500),)
+    with_cycle = (
+        Obligation("alice", "bob", 800),
+        Obligation("bob", "carol", 300),
+        Obligation("carol", "alice", 300),
+    )
+    return simple, with_cycle
+
+
 def observationally_equivalent_example() -> UnnecessaryInputScenario:
     """One amount vector compatible with unilateral and collaborative worlds."""
 

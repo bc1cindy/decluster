@@ -75,6 +75,7 @@ from .unnecessary_input import (
     analyze_transaction,
     blocksci_uih1,
     gibson_flags,
+    optimal_change_candidate,
 )
 
 __all__ = [
@@ -129,6 +130,7 @@ __all__ = [
     "identify_objects",
     "goldfeder_cluster_intersection",
     "gibson_flags",
+    "optimal_change_candidate",
     "intersect_candidate_sets",
     "join_ancestors",
     "manifest_invariants",

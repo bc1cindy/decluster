@@ -6,8 +6,11 @@ from decluster.domain import Inconclusive, UnnecessaryInputEvidence
 from decluster.failure_modes.unnecessary_input import (
     LatentTransactionForm,
     UnnecessaryInputScenario,
+    collaborative_form_examples,
+    cycle_equivalent_obligations,
     evaluate,
     observationally_equivalent_example,
+    net_balances,
 )
 
 
@@ -65,3 +68,29 @@ def test_duplicate_worlds_do_not_satisfy_the_gate():
                 LatentTransactionForm.NET_SETTLEMENT,
             ),
         )
+
+
+def test_ns1r_and_nsnr_are_explicitly_outside_two_output_uih_baseline():
+    from decluster.baselines.unnecessary_input import UIHStatus, analyze_blockstream
+
+    ns1r, nsnr = collaborative_form_examples()
+    assert {ns1r.form, nsnr.form} == {
+        LatentTransactionForm.NS1R,
+        LatentTransactionForm.NSNR,
+    }
+    assert analyze_blockstream(ns1r.inputs, ns1r.outputs).status is UIHStatus.OUT_OF_SCOPE
+    assert analyze_blockstream(nsnr.inputs, nsnr.outputs).status is UIHStatus.OUT_OF_SCOPE
+
+
+def test_adding_a_gross_cycle_preserves_every_net_balance():
+    simple, with_cycle = cycle_equivalent_obligations()
+
+    assert net_balances(simple) == {"alice": -500, "bob": 500}
+    assert net_balances(with_cycle) == {"alice": -500, "bob": 500, "carol": 0}
+    nonzero_cycle_balances = {
+        party: balance
+        for party, balance in net_balances(with_cycle).items()
+        if balance
+    }
+    assert nonzero_cycle_balances == net_balances(simple)
+    assert sum(item.amount for item in with_cycle) != sum(item.amount for item in simple)
