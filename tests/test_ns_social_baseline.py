@@ -3,6 +3,9 @@ import random
 import pytest
 
 from decluster.baselines.narayanan_shmatikov import (
+    _sparse_match_scores,
+    _sparse_winner,
+    _winner,
     conservative_revisit,
     eccentricity,
     evaluate,
@@ -143,3 +146,51 @@ def test_revisit_rejects_mapping_vertices_outside_either_view():
         conservative_revisit(left, right, {**seeds, 999: truth[1]}, seeds)
     with pytest.raises(ValueError, match="right view"):
         conservative_revisit(left, right, {**seeds, 1: "absent"}, seeds)
+
+
+def test_the_sparse_gate_propagate_runs_agrees_with_the_dense_reference():
+    """`propagate` scores with `_sparse_match_scores`/`_sparse_winner`; only `match_scores`
+    and `eccentricity` are checked against the paper. Pin that the two families decide the
+    same way on every call a real propagation makes."""
+    decisions = 0
+    for fixture_seed in (7, 19, 23):
+        left, right, truth = two_views(seed=fixture_seed)
+        mapping = {node: truth[node] for node in range(16)}
+        while True:
+            accepted = 0
+            for node in sorted((v for v in left.vertices if v not in mapping), key=repr):
+                dense = _winner(match_scores(left, right, mapping, node), 1.5)
+                sparse = _sparse_winner(*_sparse_match_scores(left, right, mapping, node), 1.5)
+                assert dense == sparse
+                decisions += 1
+                if sparse is None:
+                    continue
+                reverse = {image: v for v, image in mapping.items()}
+                back = _sparse_winner(
+                    *_sparse_match_scores(right, left, reverse, sparse), 1.5
+                )
+                if back != node:
+                    continue
+                mapping[node] = sparse
+                accepted += 1
+            if not accepted:
+                break
+    assert decisions > 200
+
+
+def test_the_two_readings_of_the_eccentricity_population_are_both_available():
+    """The prose scores against the unmapped right vertices, the pseudocode against all of
+    them with the claimed ones left at zero. On this fixture the wider population declares
+    one vertex more; the default is the prose, which every published run used."""
+    left, right, truth = two_views()
+    seeds = {node: truth[node] for node in range(16)}
+
+    prose = evaluate(propagate(left, right, seeds).mapping, truth, seeds)
+    pseudocode = evaluate(
+        propagate(left, right, seeds, population="all").mapping, truth, seeds
+    )
+
+    assert (prose["declared"], prose["correct"]) == (63, 63)
+    assert (pseudocode["declared"], pseudocode["correct"]) == (64, 64)
+    with pytest.raises(ValueError, match="population"):
+        propagate(left, right, seeds, population="every")

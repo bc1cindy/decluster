@@ -1,10 +1,11 @@
-"""Algorithm 3 combiner from Narayanan, Shi and Rubinstein (2011).
+"""Components of Narayanan, Shi and Rubinstein (2011), one at a time.
 
-This is one paper-faithful component, not the complete published pipeline.
-The caller supplies its deterministic mapping, candidate mappings and machine-
-learning scores.  Seed discovery, propagation, candidate generation and the
-25-feature random forest are deliberately outside this module until separately
-implemented and validated.
+These are paper-faithful components, not the complete published pipeline:
+Algorithm 1's similarity, Algorithm 2's distance and its annealer, the two-stage
+propagation, and the Algorithm 3 cascade, which takes its machine-learning score
+from the caller.  Confidence pruning, the correction of accepted mappings and the
+25-feature random forest are absent.  :func:`pipeline_coverage` is the machine-
+readable version of that boundary and :func:`require_components` enforces it.
 """
 
 from dataclasses import dataclass
@@ -63,15 +64,22 @@ def pipeline_coverage() -> tuple[ComponentCoverage, ...]:
         ),
         ComponentCoverage(
             PipelineComponent.ALGORITHM2_DUMMY_WEIGHTS,
-            ComponentStatus.MATHEMATICALLY_UNDEFINED,
-            "dummy incident weights are zero but the published ratio divides by weights",
+            ComponentStatus.IMPLEMENTED,
+            "a dummy-incident node term is fixed at zero; the paper states this in prose, "
+            "not in the printed formula",
         ),
         ComponentCoverage(
             PipelineComponent.ANNEALING,
             ComponentStatus.PARTIAL,
             "iteration budget, RNG and best-state return are explicit local controls",
         ),
-        ComponentCoverage(PipelineComponent.TWO_STAGE_MAPPING, ComponentStatus.IMPLEMENTED),
+        ComponentCoverage(
+            PipelineComponent.TWO_STAGE_MAPPING,
+            ComponentStatus.IMPLEMENTED,
+            "the paper picks an arbitrary unmapped node and stage 1 feeds back, so the "
+            "``repr`` order this driver imposes is a result-bearing local choice; injectivity "
+            "comes from Algorithm 3's 1-1 mapping, not from the propagation section",
+        ),
         ComponentCoverage(
             PipelineComponent.CONFIDENCE_PRUNING,
             ComponentStatus.NOT_REPRODUCED,
@@ -121,7 +129,7 @@ class SimilarityEvidence:
 
 
 class UndefinedAlgorithm2Weight(ValueError):
-    """Algorithm 2's published ratio is undefined for a zero weight."""
+    """Algorithm 2's published ratio has no value for the arguments it was given."""
 
 
 @dataclass(frozen=True)
@@ -134,14 +142,20 @@ class TwoStageMapping:
 def algorithm2_pair_distance(left: float, right: float, *, alpha=0.5) -> float:
     """The paper's ``(max(x/y, y/x) - 1)^alpha`` pair distance.
 
-    The publication specifies no zero convention. Refusing that domain keeps
-    an implementation choice from being misattributed to the paper.
+    Only zero against zero is undefined. A zero against a positive weight is an infinite
+    ratio and so an infinite penalty, which is what the printed formula says rather than a
+    convention added here; the weights are in-neighbourhood cosines, so zeros between real
+    nodes are ordinary and a state can legitimately carry infinite potential.
     """
 
-    if left <= 0 or right <= 0:
+    if left < 0 or right < 0:
+        raise ValueError("Algorithm 2 weights must be non-negative")
+    if not left and not right:
         raise UndefinedAlgorithm2Weight(
-            "Algorithm 2 does not define ratios involving zero weights"
+            "Algorithm 2 does not define the ratio of two zero weights"
         )
+    if not left or not right:
+        return float("inf")
     ratio = max(left / right, right / left)
     return (ratio - 1) ** alpha
 
@@ -158,7 +172,23 @@ def algorithm2_node_distance(
     alpha=0.5,
     beta=0.5,
 ) -> float:
-    """Algorithm 2's distance for one pair of mapped nodes."""
+    """Algorithm 2's distance for one pair of mapped nodes.
+
+    A node incident only on dummies has an all-zero weight vector and so a zero mean, and the
+    paper fixes the resulting term at zero in prose: every edge incident on a dummy has weight
+    zero, which is why "adding k dummy nodes ... has the effect of finding a mapping of size
+    n - k" and why a dummy-to-dummy pair is "sub-optimal ... improvable in 1 step". Both
+    statements are true only when a dummy-incident term costs nothing, so the convention is a
+    reading of the paper rather than an invention. Refusing it instead pins the annealer at
+    zero dummies, where the paper reports output no better than a random permutation.
+
+    The paper's index conditions are per graph — a position is dropped from one vector when it
+    holds a dummy in *that* graph — while ``PairDist(sigmaK[j], sigmaF[j])`` reads both vectors
+    at one ``j``. When the two graphs put their dummies at different positions the vectors line
+    up in length but not in index, and the paper does not say which pairing it means. This
+    implementation pairs by position within each filtered vector, and refuses outright when the
+    lengths do not even match.
+    """
 
     target_nodes, auxiliary_nodes = tuple(target_nodes), tuple(auxiliary_nodes)
     if len(target_nodes) != len(auxiliary_nodes):
@@ -166,6 +196,9 @@ def algorithm2_node_distance(
     if not 0 <= index < len(target_nodes):
         raise IndexError("mapped-node index out of range")
     target_dummies, auxiliary_dummies = set(target_dummies), set(auxiliary_dummies)
+    if (target_nodes[index] in target_dummies
+            or auxiliary_nodes[index] in auxiliary_dummies):
+        return 0.0
     target_vector = tuple(
         float(target_weight(target_nodes[index], node))
         for position, node in enumerate(target_nodes)
@@ -176,8 +209,13 @@ def algorithm2_node_distance(
         for position, node in enumerate(auxiliary_nodes)
         if position != index and node not in auxiliary_dummies
     )
-    if len(target_vector) != len(auxiliary_vector) or not target_vector:
-        raise ValueError("Algorithm 2 requires paired non-dummy weight vectors")
+    if not target_vector or not auxiliary_vector:
+        raise ValueError("Algorithm 2 requires a non-empty non-dummy weight vector")
+    if len(target_vector) != len(auxiliary_vector):
+        raise ValueError(
+            "unequal numbers of dummies leave the per-graph index conditions of Algorithm 2 "
+            "with no common index to pair on"
+        )
     target_mean = sum(target_vector) / len(target_vector)
     auxiliary_mean = sum(auxiliary_vector) / len(auxiliary_vector)
     if target_mean <= 0 or auxiliary_mean <= 0:
@@ -232,6 +270,9 @@ def anneal_seed_mapping(
     The fixed iteration budget and injected RNG are reproducibility controls,
     not parameters reported by the paper. The best visited bijection is
     returned rather than whichever state happens to be last.
+
+    Dummies are supported under the zero convention :func:`algorithm2_node_distance`
+    documents, which is what lets the annealer return a partial mapping of size ``n - k``.
     """
 
     target_nodes, auxiliary_nodes = tuple(target_nodes), list(auxiliary_nodes)
@@ -239,11 +280,6 @@ def anneal_seed_mapping(
         raise ValueError("annealing requires equally sized node sets of size at least two")
     if iterations < 0:
         raise ValueError("iterations must be non-negative")
-    if tuple(target_dummies) or tuple(auxiliary_dummies):
-        raise UndefinedAlgorithm2Weight(
-            "the published distance assigns zero incident weights to dummies "
-            "but does not define its resulting zero ratios"
-        )
     rng.shuffle(auxiliary_nodes)
 
     def potential(order):
@@ -283,7 +319,14 @@ def similarity_evidence(
     crawled_target: Iterable[Vertex],
     crawled_auxiliary: Iterable[Vertex],
 ) -> SimilarityEvidence:
-    """Compute the directed, crawl-aware similarity in the paper's Algorithm 1."""
+    """Compute the directed, crawl-aware similarity in the paper's Algorithm 1.
+
+    Cosine similarity is undefined when either neighbourhood is empty, and the paper says
+    nothing about that case either. Scoring it ``0.0`` is a declared convention of this
+    module, matching the zero convention :func:`algorithm2_node_distance` takes for the same
+    shape of degeneracy in Algorithm 2: an empty neighbourhood is no evidence, and no
+    evidence must not become a match.
+    """
 
     crawled_target = set(crawled_target)
     crawled_auxiliary = set(crawled_auxiliary)
@@ -340,6 +383,13 @@ def stage2_candidates(evidence: Iterable[SimilarityEvidence], *, k=3, theta=0.5,
     These candidates are intentionally not fed back into similarity scoring;
     the caller receives an immutable tuple and must keep it separate from the
     deterministic stage-1 mapping.
+
+    This is the stage 2 of the propagation section: ``k = 3``, the margin criterion dropped,
+    and the best three candidates at or above ``theta``. The paper's voting coverage figures
+    come from a *different* run of stage 2, preceded by a prune of the de-anonymization
+    output by confidence score and with the "sufficiently similar" criterion eliminated
+    altogether so that far more candidates survive. Neither the prune nor that variant is
+    reproduced here, so no voting coverage number may be read off this function.
     """
 
     if limit < 1:

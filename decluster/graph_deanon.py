@@ -143,7 +143,13 @@ def shuffle_auc(pos_scores, neg_scores, seed=0):
 
 
 def _pairs(clusters, neigh, cospent, rng, cap=5000):
-    """positives = same cluster but not directly co-spent (held-out); negatives = cross-cluster."""
+    """positives = same cluster but not directly co-spent (held-out); negatives = cross-cluster.
+
+    The two classes are not degree-balanced, and the score reads degree. Positives are *every*
+    intra-cluster pair, so they are quadratic in cluster size and dominated by the largest,
+    highest-degree clusters; negatives are drawn uniformly over cluster *roots*, which gives a
+    two-address cluster the same weight as a thousand-address one. `degree_matched_auc` is the
+    control that says how much of the separation survives once that channel is closed."""
     pos, neg = [], []
     for members in clusters.values():
         for i in range(len(members)):
@@ -157,6 +163,57 @@ def _pairs(clusters, neigh, cospent, rng, cap=5000):
         r1, r2 = rng.sample(roots, 2)
         neg.append(structural_score(rng.choice(clusters[r1]), rng.choice(clusters[r2]), neigh))
     return pos, neg
+
+
+def _degree_matched_negatives(clusters, neigh, positives, rng, tries=50):
+    """One cross-cluster pair per positive, matching each endpoint's degree exactly.
+
+    Endpoints are drawn from the addresses that share their positive counterpart's degree, so the
+    negative class carries the positive class's degree distribution and a degree-only score sits
+    at chance. A positive whose degree admits no cross-cluster partner is dropped, which is why
+    the returned list can be shorter than `positives`."""
+    root_of = {a: r for r, members in clusters.items() for a in members}
+    by_degree = {}
+    for a in root_of:
+        by_degree.setdefault(len(neigh.get(a, ())), []).append(a)
+    out = []
+    for a, b in positives:
+        left = by_degree.get(len(neigh.get(a, ())), ())
+        right = by_degree.get(len(neigh.get(b, ())), ())
+        if not left or not right:
+            continue
+        for _ in range(tries):
+            x, y = rng.choice(left), rng.choice(right)
+            if root_of[x] != root_of[y]:
+                out.append((x, y))
+                break
+    return out
+
+
+def degree_matched_auc(sample, seed=0):
+    """`evaluate`'s AUCs recomputed against degree-matched negatives.
+
+    `evaluate` publishes the numbers; this says how much of them is the degree asymmetry
+    `_pairs` documents rather than shared structure. Reported alongside `degree_only_*`, the
+    AUC of a score that is nothing but the pair's degree sum: at chance under this control by
+    construction, and far from it under the published sampling."""
+    uf, neigh_full, neigh_pay, cospent = build(sample)
+    rng = random.Random(seed)
+    out = {}
+    for name, neigh in (("full", neigh_full), ("payment", neigh_pay)):
+        clusters = _clusters(uf, neigh)
+        pos = [(m[i], m[j]) for m in clusters.values()
+               for i in range(len(m)) for j in range(i + 1, len(m))
+               if frozenset((m[i], m[j])) not in cospent]
+        neg = _degree_matched_negatives(clusters, neigh, pos, rng)
+        labels = [True] * len(pos) + [False] * len(neg)
+        pairs = pos + neg
+        out[f"auc_{name}"] = exact_auc(
+            [structural_score(a, b, neigh) for a, b in pairs], labels)
+        out[f"degree_only_{name}"] = exact_auc(
+            [len(neigh.get(a, ())) + len(neigh.get(b, ())) for a, b in pairs], labels)
+        out[f"pos_pairs_{name}"], out[f"neg_pairs_{name}"] = len(pos), len(neg)
+    return out
 
 
 def _clusters(uf, neigh):

@@ -21,7 +21,7 @@ Three guards, each answering something measured rather than assumed:
 
 WHERE THIS DEPARTS FROM THE PAPER. This is the closest module in `decluster/` to the cited
 algorithm, but it is not the faithful implementation of it; that is
-`decluster/baselines/narayanan_shmatikov.py`. Two differences change verdicts:
+`decluster/baselines/narayanan_shmatikov.py`. Five differences change verdicts:
 
   * A candidate set of size one is accepted with `eccentricity = float("inf")`
     (`ViewMatcher._best`), skipping the gate entirely rather than computing a large-but-finite
@@ -34,6 +34,20 @@ algorithm, but it is not the faithful implementation of it; that is
     vote. The baseline's gate (`_sparse_winner`) normalises over the whole unclaimed candidate
     population, implicit zeros included, which is a larger population and a different sigma. The
     two formulas agree given the same values; they are not given the same values.
+  * `candidate_scores` damps by `1/sqrt(conn(image))` — the connectedness of the *matched
+    neighbour's image*, one weight for every candidate that neighbour reaches. The paper divides
+    each vote by the square root of the degree of the *candidate* being voted for, which is what
+    makes it a cosine-like similarity; the baseline does that at
+    `narayanan_shmatikov._sparse_match_scores`. Different quantity, different ranking: the two
+    agree only where every candidate reached by a matched neighbour has that neighbour's degree.
+  * `directional` is off by default, so a vote from a matched neighbour is scored over the
+    undirected neighbourhood. The paper scores in- and out-edges separately and sums the two,
+    which is a strictly finer constraint — a candidate must be on the *same side* of the matched
+    neighbour. Turning it on changes both coverage and precision, and not by a little.
+  * `hubcap` drops any matched neighbour whose connectedness exceeds it, and defaults to 100.
+    The paper has no such filter. The guard answers a measured property of a contracted Bitcoin
+    view rather than anything in the algorithm, so it is a local addition and not a parameter
+    choice.
 """
 from collections import Counter
 from math import sqrt
