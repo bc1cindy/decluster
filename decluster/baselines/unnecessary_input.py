@@ -19,6 +19,7 @@ class UIHStatus(str, Enum):
 
     UIH1 = "uih1"
     UIH2 = "uih2"
+    UNCATEGORIZED = "uncategorized"
     OUT_OF_SCOPE = "out_of_scope"
     INVALID = "invalid"
 
@@ -44,9 +45,10 @@ def analyze_blockstream(inputs: Sequence[int], outputs: Sequence[int]) -> UIHAna
     UIH2 holds when removing one occurrence of the smallest input still leaves
     enough value to fund the largest output and the observed transaction fee.
     UIH1 holds when the analogous test succeeds only for the smaller output.
-    For a valid, value-conserving two-output transaction these cases partition
-    the paper's domain.  Ties between smallest inputs use the first index only
-    to make the witness deterministic.
+    Algorithm 2 has no closing ``else``: when neither test succeeds the
+    transaction stays uncategorized, which the paper reports as a measured
+    outcome rather than an omission.  Ties between smallest inputs use the
+    first index only to make the witness deterministic.
     """
 
     if len(inputs) < 2 or len(outputs) != 2:
@@ -70,21 +72,22 @@ def analyze_blockstream(inputs: Sequence[int], outputs: Sequence[int]) -> UIHAna
 
     removed_index = min(range(len(inputs)), key=inputs.__getitem__)
     remaining = total_in - inputs[removed_index]
-    smaller_index = (
-        0
-        if outputs[0] < outputs[1]
-        else 1
-        if outputs[1] < outputs[0]
-        else None
-    )
     if remaining >= max(outputs) + fee:
         return UIHAnalysis(UIHStatus.UIH2, fee=fee, removed_input_index=removed_index)
+    if remaining >= min(outputs) + fee:
+        # this branch reduces to min(out) < min(in) <= max(out), so the outputs
+        # differ and the smaller one is the only optimal-change candidate
+        return UIHAnalysis(
+            UIHStatus.UIH1,
+            fee=fee,
+            removed_input_index=removed_index,
+            change_output_index=min(range(len(outputs)), key=outputs.__getitem__),
+        )
     return UIHAnalysis(
-        UIHStatus.UIH1,
+        UIHStatus.UNCATEGORIZED,
         fee=fee,
         removed_input_index=removed_index,
-        change_output_index=smaller_index,
-        reason=None if smaller_index is not None else "equal outputs prevent change attribution",
+        reason="every output is smaller than every input, so neither branch applies",
     )
 
 

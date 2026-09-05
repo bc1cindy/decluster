@@ -9,10 +9,26 @@ from decluster.adaptations.intersection import (
 )
 from decluster.adaptations.ancestry import ancestry_signature_report
 from decluster.ancestry import TruncationSupport
+from decluster.domain import SubjectKind
 
 
 def candidate():
     return {"txid": "spend", "outpoints": [("a", 0), ("b", 1)]}
+
+
+def test_surviving_origins_are_coins_unless_they_were_lifted_to_wallets():
+    """The lift is what makes an origin a cluster, so the kind has to follow `cluster_of`."""
+    signatures = {("a", 0): {"x": 1.0, "y": 1.0}, ("b", 1): {"x": 1.0, "z": 1.0}}
+
+    unlifted = evaluate_report(candidate(), signatures.__getitem__)
+    assert {s.kind for s in unlifted.state.evidence.candidates_after} == {SubjectKind.COIN}
+    assert {s.identifier for s in unlifted.state.evidence.candidates_after} == {"x"}
+
+    lifted = evaluate_report(
+        candidate(), signatures.__getitem__, cluster_of={"x": "wallet", "y": "y", "z": "z"}
+    )
+    assert {s.kind for s in lifted.state.evidence.candidates_after} == {SubjectKind.CLUSTER}
+    assert {s.identifier for s in lifted.state.evidence.candidates_after} == {"wallet"}
 
 
 def test_complete_empty_intersection_is_not_blind():

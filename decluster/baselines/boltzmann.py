@@ -3,6 +3,12 @@
 This is not parity with the Boltzmann tool.  ``exact`` is the Maurer-style conservation oracle;
 ``fee_tolerant`` permits a non-negative fee allocation across participant blocks, bounded by a
 caller-supplied total tolerance.  Roundness is deliberately not an admissibility rule or prior.
+
+Because every block deficit here is non-negative, a block that receives more value than it
+contributes is inexpressible, and that block is exactly the JoinMarket maker: the reference tool
+admits it through a negative-difference bound (``diff >= -fees_maker``).  So the intrafee case
+usually cited alongside this mechanism is outside this module, not merely untested.
+``boltzmann_reference`` carries the reference intrafee interval; it is not modelled here.
 """
 
 from dataclasses import dataclass
@@ -18,6 +24,18 @@ class ExactLinkAnalysis:
     matrix: tuple[tuple[float, ...], ...]
     entropy_bits: float
     deterministic_links: tuple[tuple[int, int], ...]
+    balance_model: str = "exact"
+    observed_fee: int = 0
+    fee_tolerance: int = 0
+
+
+@dataclass(frozen=True)
+class SameBlockAnalysis:
+    """Same-side link probabilities: Maurer's ``p_II`` and ``p_OO``."""
+
+    mapping_count: int
+    input_matrix: tuple[tuple[float, ...], ...]
+    output_matrix: tuple[tuple[float, ...], ...]
     balance_model: str = "exact"
     observed_fee: int = 0
     fee_tolerance: int = 0
@@ -109,7 +127,13 @@ def link_analysis(inputs, outputs, *, max_coins=12, balance_model="exact", fee_t
     """Compute uniform input-output link probabilities for the exact baseline.
 
     A link is present when an input and output share a sub-transaction block.
-    With no external prior, every distinct exact mapping has equal mass.
+    This is Maurer's ``p_IO`` over the *full* mapping family, which is how §4.1
+    defines it; the paper's own evaluation in §4.3 instead restricts to the
+    non-derived family, for which see ``oracle_audit.exact_finest_link_matrix``.
+
+    Equal mass per mapping is a modelling choice, not a measurement.  It is the
+    choice that makes the resulting entropy largest, and a non-uniform posterior
+    over the same family would leave less privacy than these numbers show.
     """
     inputs, outputs = tuple(inputs), tuple(outputs)
     observed_fee = sum(inputs) - sum(outputs)
@@ -137,6 +161,44 @@ def link_analysis(inputs, outputs, *, max_coins=12, balance_model="exact", fee_t
     )
     return ExactLinkAnalysis(mappings, matrix, log2(total), deterministic,
                              balance_model, observed_fee, fee_tolerance)
+
+
+def _same_block_counts(mappings, size, side):
+    counts = [[0] * size for _ in range(size)]
+    for mapping in mappings:
+        for blocks in mapping.blocks:
+            for first in blocks[side]:
+                for second in blocks[side]:
+                    counts[first][second] += 1
+    return tuple(tuple(row) for row in counts)
+
+
+def same_block_probabilities(inputs, outputs, *, max_coins=12, balance_model="exact",
+                             fee_tolerance=0):
+    """Compute Maurer's ``p_II`` and ``p_OO`` over the family ``link_analysis`` uses.
+
+    Two coins on the same side are linked when one block holds both.  ``p_II`` is
+    the quantity the common-input-ownership heuristic asserts and the one the
+    paper states its own conclusion in, so ``p_IO`` alone does not cover the
+    paper's metrics.  Diagonal entries are 1.0 whenever a mapping exists, since a
+    coin always shares its own block.
+    """
+    inputs, outputs = tuple(inputs), tuple(outputs)
+    analysis = link_analysis(inputs, outputs, max_coins=max_coins,
+                             balance_model=balance_model, fee_tolerance=fee_tolerance)
+    total = len(analysis.mappings)
+    if not total:
+        return SameBlockAnalysis(0, (), (), balance_model, analysis.observed_fee,
+                                 fee_tolerance)
+
+    def matrix(size, side):
+        return tuple(
+            tuple(count / total for count in row)
+            for row in _same_block_counts(analysis.mappings, size, side)
+        )
+
+    return SameBlockAnalysis(total, matrix(len(inputs), 0), matrix(len(outputs), 1),
+                             balance_model, analysis.observed_fee, fee_tolerance)
 
 
 def exact_link_analysis(inputs, outputs, *, max_coins=12):

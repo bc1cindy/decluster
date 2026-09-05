@@ -426,7 +426,7 @@ def truncated_support(signature, graph):
 def provenance_link(sig_a, sig_b, rarity=None):
     """Narayanan–Shmatikov quasi-identifier overlap of two provenance signatures: the shared ancestral
     coins, each scored by the mass it carries in *both* and, optionally, its global rarity
-    `wt = 1/log2(support)` (a shared *rare* ancestor is strong same-origin evidence; a shared common
+    `wt = 1/log2(support+1)` (a shared *rare* ancestor is strong same-origin evidence; a shared common
     one — a hub coinbase spent by everyone — is weak). `rarity` maps ancestor -> support count; absent,
     all shared ancestors weigh equally. Returns a non-negative link score (0 = disjoint provenance)."""
     shared = set(sig_a) & set(sig_b)
@@ -447,7 +447,11 @@ def ancestry_entropy(target, depth=6, fetch=None, link_oracle=value_flow_link_or
     entropy. No bound direction is promised for an arbitrary supplied oracle; in particular the
     opt-in DSS pairwise model is diagnostic. This is not a privacy score. Returns Shannon and
     min-entropy, boundary size and truncation count. `Graph.oracle_refused` and
-    `Graph.node_capped` keep the two principal truncation causes apart."""
+    `Graph.node_capped` keep the two principal truncation causes apart.
+
+    Unnormalized bits, after Serjantov and Danezis; Diaz et al.'s degree of anonymity
+    `d = H/H_M` is not adopted, because a truncated walk has no fixed candidate population
+    to put in `H_M`."""
     if fetch is None:
         from .fetch import fetch_tx
         fetch = fetch_tx

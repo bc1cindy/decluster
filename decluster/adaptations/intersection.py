@@ -126,8 +126,10 @@ def evaluate_report(
     """Evaluate an intersection and replace boolean blindness with a typed state."""
     legacy = evaluate(candidate, signature_of, **options)
     branches = tuple(_outpoint(value) for value in candidate.get("outpoints", ()))
+    # Without `cluster_of` the surviving origins are the ancestry walk's coins, not wallets.
+    kind = SubjectKind.CLUSTER if options.get("cluster_of") is not None else SubjectKind.COIN
     shared_subjects = frozenset(
-        Subject(SubjectKind.CLUSTER, origin) for origin, _mass, _weight in legacy["shared"]
+        Subject(kind, origin) for origin, _mass, _weight in legacy["shared"]
     )
     context = EvidenceContext(
         adversary="external on-chain observer",

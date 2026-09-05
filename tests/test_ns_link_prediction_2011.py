@@ -6,6 +6,7 @@ from decluster.baselines.ns_link_prediction_2011 import (
     PipelineComponent,
     SimilarityEvidence,
     UndefinedAlgorithm2Weight,
+    algorithm2_node_distance,
     algorithm2_pair_distance,
     algorithm2_potential,
     anneal_seed_mapping,
@@ -30,8 +31,9 @@ def test_pipeline_coverage_separates_components_from_end_to_end_reproduction():
     assert coverage[PipelineComponent.ANNEALING].status is ComponentStatus.PARTIAL
     assert (
         coverage[PipelineComponent.ALGORITHM2_DUMMY_WEIGHTS].status
-        is ComponentStatus.MATHEMATICALLY_UNDEFINED
+        is ComponentStatus.IMPLEMENTED
     )
+    assert coverage[PipelineComponent.TWO_STAGE_MAPPING].limitation
     assert (
         coverage[PipelineComponent.CONFIDENCE_PRUNING].status
         is ComponentStatus.NOT_REPRODUCED
@@ -47,8 +49,7 @@ def test_component_gate_accepts_only_fully_implemented_parts():
         PipelineComponent.ALGORITHM1_SIMILARITY,
         PipelineComponent.ALGORITHM3_CASCADE,
     )
-    with pytest.raises(IncompletePipelineError, match="dummy_weights=mathematically_undefined"):
-        require_components(PipelineComponent.ALGORITHM2_DUMMY_WEIGHTS)
+    require_components(PipelineComponent.ALGORITHM2_DUMMY_WEIGHTS)
     with pytest.raises(IncompletePipelineError, match="annealing=partial"):
         require_components(PipelineComponent.ANNEALING)
 
@@ -88,10 +89,12 @@ def test_stage2_drops_margin_and_returns_at_most_three_eligible_candidates():
     assert stage2_candidates(rows) == ("f0", "f1", "f2")
 
 
-def test_algorithm2_pair_distance_is_symmetric_and_refuses_unspecified_zero_case():
+def test_algorithm2_pair_distance_refuses_only_the_ratio_the_paper_leaves_open():
     assert algorithm2_pair_distance(1, 4) == algorithm2_pair_distance(4, 1) == 3 ** 0.5
-    with pytest.raises(UndefinedAlgorithm2Weight, match="zero weights"):
-        algorithm2_pair_distance(0, 1)
+    # A zero against a positive weight is an infinite ratio, which the formula does define.
+    assert algorithm2_pair_distance(0, 1) == algorithm2_pair_distance(1, 0) == float("inf")
+    with pytest.raises(UndefinedAlgorithm2Weight, match="two zero weights"):
+        algorithm2_pair_distance(0, 0)
 
 
 def test_algorithm2_potential_prefers_the_weight_preserving_bijection():
@@ -126,13 +129,51 @@ def test_seed_annealing_is_reproducible_and_returns_best_visited_mapping():
     assert first == second == ({"a": "A", "b": "B", "c": "C"}, 0.0)
 
 
-def test_annealing_refuses_to_invent_the_papers_missing_dummy_zero_policy():
-    with pytest.raises(UndefinedAlgorithm2Weight, match="dummies"):
-        anneal_seed_mapping(
-            ("a", "dummy-k"), ("A", "dummy-f"), {"dummy-k"}, {"dummy-f"},
-            lambda left, right: 1.0, lambda left, right: 1.0,
-            iterations=1, rng=random.Random(0),
-        )
+def test_a_dummy_incident_node_term_costs_nothing():
+    """The paper's own claims about dummies — a mapping of size n-k, and dummy-to-dummy being
+    improvable in one step — hold only if a dummy-incident term is zero."""
+    nodes = ("a", "b", "dk")
+    weights = {("a", "b"): 1.0, ("b", "a"): 1.0}
+    weight = lambda left, right: weights.get((left, right), 0.0)
+
+    assert algorithm2_node_distance(nodes, ("A", "B", "DF"), {"dk"}, {"DF"},
+                                    weight, weight, 2) == 0.0
+    # A real node whose image is a dummy is equally free, which is what buys the partial map.
+    assert algorithm2_node_distance(nodes, ("A", "DF", "B"), {"dk"}, {"DF"},
+                                    weight, weight, 1) == 0.0
+
+
+def test_unequal_dummy_counts_leave_the_paper_with_no_common_index():
+    """sigmaK drops the positions holding a Kaggle dummy and sigmaF those holding a Flickr
+    dummy, but PairDist reads both at one j. With unequal dummy counts the vectors are not
+    even the same length, and the paper says nothing about how to pair them."""
+    nodes = ("a", "b", "dk")
+    weight = lambda left, right: 1.0
+
+    with pytest.raises(ValueError, match="no common index"):
+        algorithm2_node_distance(nodes, ("A", "B", "C"), {"dk"}, (), weight, weight, 0)
+
+
+def test_annealing_uses_dummies_to_return_a_partial_mapping():
+    """With k dummies a side the annealer must leave k real nodes matched to dummies, and
+    prefer that over pairing the two dummies with each other."""
+    nodes = ("a", "b", "c", "dk")
+    images = ("A", "B", "C", "DF")
+    target = {("a", "b"): 1.0, ("a", "c"): 4.0, ("b", "c"): 2.0}
+    auxiliary = {("A", "B"): 1.0, ("A", "C"): 4.0, ("B", "C"): 2.0}
+
+    def weight(table):
+        return lambda left, right: table.get((left, right), table.get((right, left), 0.0))
+
+    mapping, potential = anneal_seed_mapping(
+        nodes, images, {"dk"}, {"DF"}, weight(target), weight(auxiliary),
+        iterations=400, rng=random.Random(0),
+    )
+
+    assert potential == 0.0
+    assert mapping["dk"] != "DF"
+    assert sum(1 for node, image in mapping.items()
+               if node != "dk" and image != "DF") == 2
 
 
 def test_two_stage_driver_feeds_stage1_back_but_not_stage2_candidates():

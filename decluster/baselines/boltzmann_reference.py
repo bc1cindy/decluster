@@ -9,6 +9,14 @@ This implements default ``LINKABILITY`` plus explicit ``MERGE_FEES``,
 ``PRECHECK``, known-owner input packing and JoinMarket intrafee bounds.  The
 upstream ``MERGE_OUTPUTS`` option is not ported: in the pinned reference
 revision it is documented as unreliable and its packer only examines inputs.
+
+Two upstream layers above the traversal are also absent.  Intrafee bounds must
+be supplied by the caller: the reference derives them from a maximum intrafee
+ratio by first testing the transaction for a CoinJoin output pattern and
+estimating the participant count, and neither the test nor the derivation is
+ported, so nothing here decides *whether* a transaction is a CoinJoin or what
+its intrafees would be.  Known-owner input groups are likewise given, not
+recovered from shared addresses.
 """
 
 from collections import defaultdict, deque
@@ -79,9 +87,15 @@ def boltzmann_reference_analysis(
     Values must be non-negative integers and the observed transaction fee must
     be non-negative. The bound applies to each side, matching the reference
     tool's ``max_txos`` guard rather than Maurer's combined-coin bound.
-    ``precheck`` exposes the reference aggregate test but does not alter the
-    final exhaustive result. The two intrafee bounds are accepted only as an
-    explicit hypothesis and disable precheck, as in the pinned implementation.
+    ``precheck`` exposes the reference aggregate test. The reference then repacks
+    the deterministic links it finds before running the exhaustive traversal, and
+    this port does not. Across every zero- and positive-fee transaction of up to
+    four coins a side, that repacking changed neither the combination count nor
+    any link count; what it does change is the order of the returned coins, since
+    a pack is reinserted where it sat rather than at its descending-value
+    position. So callers must not read ``inputs`` positionally as reference order
+    under ``precheck``. The two intrafee bounds are accepted only as an explicit
+    hypothesis and disable precheck, as in the pinned implementation.
     """
 
     inputs, outputs = tuple(inputs), tuple(outputs)
@@ -97,6 +111,16 @@ def boltzmann_reference_analysis(
         raise ValueError("coin values must be non-negative integers")
     fee = sum(inputs) - sum(outputs)
     if fee < 0:
+        return BoltzmannReferenceAnalysis(
+            0, (), (), fee, inputs, outputs, merge_fees, None,
+            intrafees=intrafees,
+        )
+    # The reference tool discards null-value txos (OP_RETURN and the like) before
+    # any aggregate is formed, at both of its filter points.  Keeping them would
+    # match every aggregate value and inflate the combination count.
+    inputs = tuple(value for value in inputs if value > 0)
+    outputs = tuple(value for value in outputs if value > 0)
+    if not inputs or not outputs:
         return BoltzmannReferenceAnalysis(
             0, (), (), fee, inputs, outputs, merge_fees, None,
             intrafees=intrafees,
@@ -296,8 +320,16 @@ def boltzmann_reference_with_linked_inputs(
 
     inputs = tuple(inputs)
     groups = _merged_index_groups(linked_inputs, len(inputs))
+    # Null-value inputs are filtered before the reference packs known owners, so
+    # they join no pack and occupy no row.  Caller indices still name the groups.
+    kept = {index for index, value in enumerate(inputs) if value > 0}
+    groups = tuple(
+        kept_group
+        for kept_group in (tuple(i for i in group if i in kept) for group in groups)
+        if kept_group
+    )
     grouped = {index for group in groups for index in group}
-    entries = [((index,), value) for index, value in enumerate(inputs) if index not in grouped]
+    entries = [((index,), inputs[index]) for index in sorted(kept - grouped)]
     entries.extend((group, sum(inputs[index] for index in group)) for group in groups)
     sorted_entries = sorted(entries, key=lambda entry: entry[1], reverse=True)
     analysis = boltzmann_reference_analysis(
