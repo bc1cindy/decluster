@@ -10,6 +10,11 @@ from collections import Counter
 from .extractors import x_nsequence, x_input_order, locktime_policy
 from .engine import sample_recent_txs
 
+# A fixed three-axis choice, not the output of a selection procedure. Checked afterwards rather
+# than chosen for it: within-class phi over these three peaks at 0.125 (nsequence/locktime,
+# non-match class), so the additive kernel is not double-counting here. In the match class phi is
+# undefined — locktime and in_order agree on every scored match pair, so a marginal is degenerate.
+# That the triple is uncorrelated is a property of this particular triple, not of the method.
 AXES = {"nsequence": x_nsequence, "locktime": locktime_policy, "in_order": x_input_order}
 _LIB_AXIS = {"nsequence": "nsequence", "in_order": "input_order", "locktime": "locktime"}
 

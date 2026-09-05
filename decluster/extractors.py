@@ -191,7 +191,10 @@ from .broadcast import tx_feerate, broadcast_window, locktime_vs_broadcast
 
 def x_locktime_vs_broadcast(tx):
     """nLocktime vs estimated broadcast height. Reads the tx['_bc'] annotation
-    (prev_min/prev_time/incl_time); returns 'na' when unannotated / coinbase."""
+    (prev_min/prev_time/incl_time); returns 'na' when unannotated / coinbase.
+
+    Only `broadcast.annotate_broadcast` writes that annotation, and only at fetch time, so on any
+    stored dataset this returns 'na' for every transaction and the axis carries no evidence."""
     bc = tx.get("_bc")
     st = tx.get("status") or {}
     n = st.get("block_height")

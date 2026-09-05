@@ -102,6 +102,41 @@ def test_library_scorer_delegates_to_rarity_score():
                    {"value": 2000, "scriptpubkey_type": "v0_p2wpkh", "scriptpubkey_address": "bc1qd"}]}
     assert s.score(tx, tx) == combiner.rarity_score(s.axes, tx, tx, s.c, s.floor_n)
 
+def test_named_axis_variants_are_strict_subsets_of_the_default():
+    from decluster.fingerprint_validate import (ADDRESS_DETERMINED_AXES, LibraryScorer,
+                                                REDUNDANT_AXES, construction_only_scorer,
+                                                decorrelated_scorer)
+    full = {a[0] for a in LibraryScorer().axes}
+    decorrelated = {a[0] for a in decorrelated_scorer().axes}
+    construction = {a[0] for a in construction_only_scorer().axes}
+    assert decorrelated == full - REDUNDANT_AXES and len(decorrelated) == 14
+    assert construction == full - ADDRESS_DETERMINED_AXES and len(construction) == 18
+    assert REDUNDANT_AXES and ADDRESS_DETERMINED_AXES <= full
+
+def test_decorrelated_variant_keeps_one_axis_per_cluster():
+    from decluster.fingerprint_validate import AXIS_CLUSTERS, decorrelated_scorer
+    kept = {a[0] for a in decorrelated_scorer().axes}
+    for cluster, representative in AXIS_CLUSTERS:
+        assert kept & set(cluster) == {representative}
+
+def test_redundant_pair_is_the_measured_phi_one_pair():
+    from decluster import library
+    from decluster.fingerprint_validate import REDUNDANT_AXES
+    for a, b in library.REDUNDANT_AXIS_PAIRS:
+        assert (a in REDUNDANT_AXES) != (b in REDUNDANT_AXES)   # exactly one survives
+
+def test_annotation_only_axis_abstains_on_stored_records():
+    from decluster import library
+    from decluster.extractors import x_locktime_vs_broadcast
+    from decluster.fingerprint_validate import LibraryScorer
+    tx = {"txid": "T", "locktime": 0, "status": {"block_height": 800000},
+          "vin": [{"sequence": 0xfffffffd, "txid": "aa" * 32, "vout": 0, "prevout": {}}],
+          "vout": [{"value": 1, "scriptpubkey_type": "v0_p2wpkh"}]}
+    assert x_locktime_vs_broadcast(tx) == "na"           # no tx["_bc"] on a stored record
+    scored = {name for name, _, p, *_ in LibraryScorer().axes if "na" in p}
+    for axis in library.ANNOTATION_ONLY_AXES:
+        assert axis not in scored                        # "na" unmeasured -> the axis abstains
+
 if __name__ == "__main__":
     fns = [v for k, v in sorted(globals().items()) if k.startswith("test_") and callable(v)]
     for fn in fns: fn(); print(f"ok  {fn.__name__}")
