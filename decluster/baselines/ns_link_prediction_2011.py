@@ -8,6 +8,7 @@ implemented and validated.
 """
 
 from dataclasses import dataclass
+from enum import Enum
 from math import exp, sqrt
 import random
 from typing import Callable, Hashable, Iterable, Mapping
@@ -15,6 +16,92 @@ from typing import Callable, Hashable, Iterable, Mapping
 
 Vertex = Hashable
 Pair = tuple[Vertex, Vertex]
+
+
+class ComponentStatus(str, Enum):
+    IMPLEMENTED = "implemented"
+    PARTIAL = "partial"
+    MATHEMATICALLY_UNDEFINED = "mathematically_undefined"
+    NOT_REPRODUCED = "not_reproduced"
+
+
+class PipelineComponent(str, Enum):
+    ALGORITHM1_SIMILARITY = "algorithm1_similarity"
+    ALGORITHM2_POSITIVE_WEIGHTS = "algorithm2_positive_weights"
+    ALGORITHM2_DUMMY_WEIGHTS = "algorithm2_dummy_weights"
+    ANNEALING = "annealing"
+    TWO_STAGE_MAPPING = "two_stage_mapping"
+    CONFIDENCE_PRUNING = "confidence_pruning"
+    ACCEPTED_MAPPING_CORRECTION = "accepted_mapping_correction"
+    ALGORITHM3_CASCADE = "algorithm3_cascade"
+    LEARNED_25_FEATURE_MODEL = "learned_25_feature_model"
+
+
+@dataclass(frozen=True)
+class ComponentCoverage:
+    component: PipelineComponent
+    status: ComponentStatus
+    limitation: str | None = None
+
+
+class IncompletePipelineError(ValueError):
+    """A caller requested components this baseline does not reproduce."""
+
+
+def pipeline_coverage() -> tuple[ComponentCoverage, ...]:
+    """Return the executable boundary of the 2011 baseline.
+
+    ``implemented`` applies only to the named component, not the paper's end-to-end experiment.
+    The annealer is partial because its fixed iteration budget, RNG injection and best-state return
+    are reproducibility controls rather than parameters reported by the paper.
+    """
+
+    return (
+        ComponentCoverage(PipelineComponent.ALGORITHM1_SIMILARITY, ComponentStatus.IMPLEMENTED),
+        ComponentCoverage(
+            PipelineComponent.ALGORITHM2_POSITIVE_WEIGHTS, ComponentStatus.IMPLEMENTED
+        ),
+        ComponentCoverage(
+            PipelineComponent.ALGORITHM2_DUMMY_WEIGHTS,
+            ComponentStatus.MATHEMATICALLY_UNDEFINED,
+            "dummy incident weights are zero but the published ratio divides by weights",
+        ),
+        ComponentCoverage(
+            PipelineComponent.ANNEALING,
+            ComponentStatus.PARTIAL,
+            "iteration budget, RNG and best-state return are explicit local controls",
+        ),
+        ComponentCoverage(PipelineComponent.TWO_STAGE_MAPPING, ComponentStatus.IMPLEMENTED),
+        ComponentCoverage(
+            PipelineComponent.CONFIDENCE_PRUNING,
+            ComponentStatus.NOT_REPRODUCED,
+            "an implementation-complete pruning policy is not available",
+        ),
+        ComponentCoverage(
+            PipelineComponent.ACCEPTED_MAPPING_CORRECTION,
+            ComponentStatus.NOT_REPRODUCED,
+            "schedule and conflict resolution are not specified sufficiently",
+        ),
+        ComponentCoverage(PipelineComponent.ALGORITHM3_CASCADE, ComponentStatus.IMPLEMENTED),
+        ComponentCoverage(
+            PipelineComponent.LEARNED_25_FEATURE_MODEL,
+            ComponentStatus.NOT_REPRODUCED,
+            "the caller supplies an ML score; the published feature producer is absent",
+        ),
+    )
+
+
+def require_components(*components: PipelineComponent) -> None:
+    """Refuse unless every requested component is implemented in this baseline."""
+
+    coverage = {row.component: row for row in pipeline_coverage()}
+    unavailable = [coverage[component] for component in components
+                   if coverage[component].status is not ComponentStatus.IMPLEMENTED]
+    if unavailable:
+        details = ", ".join(
+            f"{row.component.value}={row.status.value}" for row in unavailable
+        )
+        raise IncompletePipelineError(f"N-S 2011 pipeline components unavailable: {details}")
 
 
 @dataclass(frozen=True)
