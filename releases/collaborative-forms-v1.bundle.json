@@ -1,0 +1,55 @@
+{
+  "schema_version": 1,
+  "id": "collaborative-forms-v1",
+  "capabilities": ["verify_outputs", "reproduce_runs"],
+  "runs": ["collaborative-forms-v1"],
+  "blobs": [
+    {
+      "name": "catalog/runs/collaborative-forms-v1.json",
+      "role": "run_manifest",
+      "bytes": 2894,
+      "sha256": "52350e46e889f1609862e7ce30d5663c080020d9b190c591b6aa867de5771479",
+      "locations": {"canonical": null, "mirrors": []}
+    },
+    {
+      "name": "results/artifacts/collaborative-forms-v1.json",
+      "role": "result",
+      "bytes": 5574,
+      "sha256": "2428a32ec1827bfa9b9a2f44756effc968c537413640927a009be00cee38b733",
+      "locations": {"canonical": null, "mirrors": []}
+    },
+    {
+      "name": "results/generated/collaborative-forms-v1.md",
+      "role": "result",
+      "bytes": 2762,
+      "sha256": "b696148f41f66df0756a3f7dbac1c1e53d0ad7d97c14bb194bcfadb4602c5c02",
+      "locations": {"canonical": null, "mirrors": []}
+    },
+    {
+      "name": "sources/decluster-8c760b0-runtime.tar",
+      "role": "source",
+      "bytes": 1515520,
+      "sha256": "2fc82531bc735513a7dc47516fc43a3f2357cdd78b05fbc58ab3cbd1b5067650",
+      "locations": {"canonical": null, "mirrors": []}
+    },
+    {
+      "name": "reproduction/collaborative-forms/requirements.lock",
+      "role": "lockfile",
+      "bytes": 30,
+      "sha256": "e0d6a8cada5d383c0aca2bd2a37f28c15721392469c94084128d369c29c5544d",
+      "locations": {"canonical": null, "mirrors": []}
+    },
+    {
+      "name": "reproduction/collaborative-forms/environment.json",
+      "role": "environment",
+      "bytes": 374,
+      "sha256": "1a105089b582983a4811bbc8b7df8daeffa307483d4e1b1efd2e657784c1c5cf",
+      "locations": {"canonical": null, "mirrors": []}
+    }
+  ],
+  "limitations": [
+    "The bundled environment currently targets CPython 3.13 on macOS arm64.",
+    "Public bootstrap remains unavailable until every blob has a canonical HTTPS location and an independent mirror.",
+    "The bundle proves the observer-knowledge contract, not empirical protocol indistinguishability or ownership."
+  ]
+}
