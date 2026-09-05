@@ -2,6 +2,7 @@
 
 from . import (
     change_consolidation,
+    collaborative_forms,
     entropy_insufficiency,
     equal_output_consolidation,
     eve_alice_eve,
@@ -14,6 +15,7 @@ from . import (
 
 __all__ = [
     "change_consolidation",
+    "collaborative_forms",
     "entropy_insufficiency",
     "equal_output_consolidation",
     "eve_alice_eve",

@@ -29,6 +29,7 @@ EXPECTED_CTP_CLAIM_IDS = {
     "ctp.disclosure.statistical_longitudinal",
     "ctp.entropy.not_sufficient",
     "ctp.fingerprint.statistical_linkage",
+    "ctp.forms.observer_knowledge",
     "ctp.graph.pseudonym_representation",
     "ctp.intersection.longitudinal",
     "ctp.payjoin.unnecessary_input",
