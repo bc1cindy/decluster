@@ -1,12 +1,17 @@
 """Executable contract for Algorithm 3 of Narayanan–Shi–Rubinstein (2011)."""
 
 from decluster.baselines.ns_link_prediction_2011 import (
+    ComponentStatus,
+    IncompletePipelineError,
+    PipelineComponent,
     SimilarityEvidence,
     UndefinedAlgorithm2Weight,
     algorithm2_pair_distance,
     algorithm2_potential,
     anneal_seed_mapping,
     combine_predictions,
+    pipeline_coverage,
+    require_components,
     similarity_evidence,
     stage1_match,
     stage2_candidates,
@@ -15,6 +20,37 @@ from decluster.baselines.ns_link_prediction_2011 import (
 import random
 import pytest
 from examples.link_prediction_run import directed_graph
+
+
+def test_pipeline_coverage_separates_components_from_end_to_end_reproduction():
+    coverage = {row.component: row for row in pipeline_coverage()}
+
+    assert set(coverage) == set(PipelineComponent)
+    assert coverage[PipelineComponent.ALGORITHM1_SIMILARITY].status is ComponentStatus.IMPLEMENTED
+    assert coverage[PipelineComponent.ANNEALING].status is ComponentStatus.PARTIAL
+    assert (
+        coverage[PipelineComponent.ALGORITHM2_DUMMY_WEIGHTS].status
+        is ComponentStatus.MATHEMATICALLY_UNDEFINED
+    )
+    assert (
+        coverage[PipelineComponent.CONFIDENCE_PRUNING].status
+        is ComponentStatus.NOT_REPRODUCED
+    )
+    assert (
+        coverage[PipelineComponent.LEARNED_25_FEATURE_MODEL].status
+        is ComponentStatus.NOT_REPRODUCED
+    )
+
+
+def test_component_gate_accepts_only_fully_implemented_parts():
+    require_components(
+        PipelineComponent.ALGORITHM1_SIMILARITY,
+        PipelineComponent.ALGORITHM3_CASCADE,
+    )
+    with pytest.raises(IncompletePipelineError, match="dummy_weights=mathematically_undefined"):
+        require_components(PipelineComponent.ALGORITHM2_DUMMY_WEIGHTS)
+    with pytest.raises(IncompletePipelineError, match="annealing=partial"):
+        require_components(PipelineComponent.ANNEALING)
 
 
 def test_algorithm1_uses_in_neighbours_and_conditionally_uses_out_neighbours():
