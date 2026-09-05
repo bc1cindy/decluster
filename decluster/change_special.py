@@ -1,24 +1,22 @@
-"""Special-case change labels (value-based heuristics, M&N Table 1): near-certain change identification from a single
-signal, used as an INDEPENDENT label to validate fingerprints non-circularly. label_optimal_change
-reads ONLY values — disjoint from co-spend/addresses AND from ordering/nSequence/version — which is
-what breaks the circularity that invalidates cluster findNext against an M&N co-spend label."""
+"""Special-case change candidates used to validate fingerprint signals.
+
+The optimal-change candidate is computed from values only.  It remains a
+heuristic conditioned on the absence of unnecessary inputs, not ground truth.
+"""
 from itertools import combinations
 from .change_gt import is_candidate, input_addrs, out_addr
 from .change_cluster import _addr_type
 from .change_validate import axis_rates
 
 def label_optimal_change(tx):
-    """Optimal-change / UIH: in a >=2-input 2-output tx, the output smaller than the smallest input
-    value MUST be change (else an input was unnecessary). Returns that index when exactly one output
-    qualifies, else None. Reads ONLY values."""
-    if not is_candidate(tx): return None
+    """Return the values-only UIH1 change candidate, or ``None`` if ambiguous."""
+    from .baselines.unnecessary_input import optimal_change_candidate
+
     iv = [v.get("prevout", {}).get("value") for v in tx["vin"]]
-    if any(v is None for v in iv) or len(iv) < 2: return None
+    if any(v is None for v in iv): return None
     ov = [o.get("value") for o in tx["vout"]]
     if any(v is None for v in ov): return None
-    smin = min(iv)
-    small = [i for i in (0, 1) if ov[i] < smin]
-    return small[0] if len(small) == 1 else None
+    return optimal_change_candidate(iv, ov)
 
 def label_address_reuse(tx):
     """Address reuse (self-change): the single output whose address is an input address. NOTE: reuse

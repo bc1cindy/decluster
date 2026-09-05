@@ -2,6 +2,7 @@
 
 from . import (
     change_consolidation,
+    collaborative_forms,
     entropy_insufficiency,
     equal_output_consolidation,
     eve_alice_eve,
@@ -9,10 +10,12 @@ from . import (
     perfect_matching_disclosure,
     denomination_preparation,
     statistical_disclosure,
+    unnecessary_input,
 )
 
 __all__ = [
     "change_consolidation",
+    "collaborative_forms",
     "entropy_insufficiency",
     "equal_output_consolidation",
     "eve_alice_eve",
@@ -20,4 +23,5 @@ __all__ = [
     "perfect_matching_disclosure",
     "denomination_preparation",
     "statistical_disclosure",
+    "unnecessary_input",
 ]

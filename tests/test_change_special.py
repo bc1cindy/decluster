@@ -41,6 +41,15 @@ def test_optimal_change_reads_only_values():
     # change a value so nothing is < min input -> label drops (value-sensitive)
     assert label_optimal_change(_tx(in_vals=(100, 200), out_vals=(150, 500))) is None
 
+
+def test_optimal_change_does_not_require_addresses():
+    tx = _tx(in_vals=(100, 200), out_vals=(50, 500))
+    for item in tx["vin"]:
+        item["prevout"].pop("scriptpubkey_address")
+    for item in tx["vout"]:
+        item.pop("scriptpubkey_address")
+    assert label_optimal_change(tx) == 0
+
 def test_address_reuse():
     assert label_address_reuse(_tx(in_addrs=("A", "B"), out_addrs=("A", "d"))) == 0   # output0 == input A
     assert label_address_reuse(_tx(in_addrs=("A", "B"), out_addrs=("c", "d"))) is None
