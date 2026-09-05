@@ -68,6 +68,14 @@ from .oracle_audit import (
     mapping_count_mechanism,
     verify_dss_marginal_family,
 )
+from .unnecessary_input import (
+    UIHAnalysis,
+    UIHStatus,
+    analyze_blockstream,
+    analyze_transaction,
+    blocksci_uih1,
+    gibson_flags,
+)
 
 __all__ = [
     "AbsorbingTransactionChain",
@@ -76,6 +84,8 @@ __all__ = [
     "CombinedPrediction",
     "SimilarityEvidence",
     "TwoStageMapping",
+    "UIHAnalysis",
+    "UIHStatus",
     "UndefinedAlgorithm2Weight",
     "ExactCoinLinkEvidence",
     "ExactLinkAnalysis",
@@ -95,8 +105,11 @@ __all__ = [
     "algorithm2_pair_distance",
     "algorithm2_potential",
     "anneal_seed_mapping",
+    "analyze_blockstream",
+    "analyze_transaction",
     "boltzmann_reference_analysis",
     "boltzmann_reference_with_linked_inputs",
+    "blocksci_uih1",
     "combine_predictions",
     "similarity_evidence",
     "stage1_match",
@@ -115,6 +128,7 @@ __all__ = [
     "finest_mappings",
     "identify_objects",
     "goldfeder_cluster_intersection",
+    "gibson_flags",
     "intersect_candidate_sets",
     "join_ancestors",
     "manifest_invariants",
