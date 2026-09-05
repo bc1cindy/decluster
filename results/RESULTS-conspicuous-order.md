@@ -28,15 +28,18 @@ inputs that disagree on script type. Over the 1,428 multi-input transactions:
 | 2 | 95 | 6.6% |
 | unrankable | 0 | — |
 
-> **This distribution does not reproduce and is pending re-execution.** Recomputing
-> `merge_objections` over the same 1,428 transactions of the same `sample.ndjson` gives
-> **855 / 512 / 61** (0 / 1 / 2 objections), not 513 / 820 / 95. The function is byte-identical to
-> the revision this document was published under and `x_uih` differs only in comments, so the
-> printed row is not explained by any correction in this round and its provenance is unknown.
-> Whichever way it resolves, the totals and the "unrankable = 0" row are unaffected, and so is
-> everything below: the partition tables, the ordering result and the doubt gate were re-run and
-> are unchanged. Only the *size* of the doubt being spent is in question, not what the refusal
-> does with it.
+> **This distribution was computed on string amounts and is arithmetically wrong.** `sample.ndjson`
+> stores every amount as a JSON string, so the comparison in `x_uih` ran lexicographically:
+> `"330" > "1000"` is true as text and false as a number. Over the same 1,428 transactions,
+> **51.3% of the UIH verdicts change** once the amounts are read as integers, which is what produces
+> the row above. The committed dataset for the same block range,
+> `data/amount-channel-812695-812831-v1.json`, holds integers and gives **855 / 512 / 61**
+> (0 / 1 / 2 objections). That is the correct distribution, and it makes the conspicuous tier
+> **59.9%** rather than 35.9% — the argument the ordering rests on is *stronger* under it, not
+> weaker. `x_uih` now refuses a non-integer amount instead of ranking it, so this cannot recur
+> silently. The table is left in place as the published record; the totals, the "unrankable = 0"
+> row, the partition tables, the ordering result and the doubt gate are unaffected and were re-run
+> unchanged.
 
 **A substantial share of multi-input transactions is not unambiguous** — between 36% and 60% of
 them raise no objection, depending on which of the two readings above survives, so blind
