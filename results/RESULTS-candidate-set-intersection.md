@@ -13,10 +13,18 @@ rate on this page is attributed to Goldfeder et al. The kernel cell is closed; e
 not.
 
 The baseline also states **no shrink law**. The reading that each observation cuts the candidate set
-by a constant factor is Danezis and Serjantov's statistical-disclosure result, not Goldfeder's — the
-intersection paper demonstrates the attack and states no such law. `decluster/intersect.py:120`
-already carries that distinction; this baseline carries it too, and the numbers below are properties
-of a constructed family, not of any observed shrink rate.
+by a constant factor is not Goldfeder's — the intersection paper demonstrates the attack and states
+no such law — and it is not sourced anywhere else here either. It was previously credited on this
+page to "Danezis and Serjantov's statistical-disclosure result", which does not exist: statistical
+disclosure is Danezis alone, and the one paper by both authors that could have carried it, *Statistical
+Disclosure or Intersection Attacks on Anonymity Systems* (IH 2004), was obtained and read in full. It
+is Bayesian throughout and states no constant-factor law; its §7 says in the authors' own words that
+analytic representations "would allow us to calculate the number of rounds", which is to say they did
+not have them. The statistical-disclosure line of work bounds the observations an adversary needs by a
+signal-to-noise condition and a confidence interval, not by a constant factor per observation.
+`decluster/intersect.py` and `decluster/baselines/candidate_set_intersection.py` carry the same
+distinction, and the numbers below are properties of a constructed family, not of any observed shrink
+rate.
 
 ## Scope
 

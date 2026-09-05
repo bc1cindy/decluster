@@ -15,13 +15,23 @@ no script types — so the clustering below is plain common-input ownership with
 refused, and the amount and fingerprint channels are absent by construction, not by choice.
 
 **Which algorithm.** `decluster/baselines/narayanan_shmatikov.py`: the 2009 topology-only
-propagation scoring kernel — direction-aware degree-normalised neighbour votes, eccentricity over the full
-candidate population including implicit zeros, a mandatory reverse match, iterated to convergence.
+propagation scoring kernel — direction-aware degree-normalised neighbour votes, eccentricity over the
+**unclaimed** candidate population including its implicit zeros, a mandatory reverse match, iterated
+to convergence. The population is a genuine ambiguity in the source rather than a choice made
+against it: the paper's prose scores "each unmapped node in v2", while its pseudocode two pages
+later initialises one score per right vertex and leaves the claimed ones at zero. Both readings are
+implemented (`population="unmapped"` / `"all"`); the default, and what is run below, is the prose.
 Seeds are supplied rather than found by the paper's clique search, and accepted nodes are not
-revisited/remapped as the paper's prose specifies. No vertex attributes, no edge attributes, no hub filter, no rarity weights. The repo's older
-cross-view numbers (`RESULTS-view-match-2026.md`, `RESULTS-graph-deanon.md`, including the "one
-match in 15,688" figure) come from `decluster/view_match.py`, a **different, experimental**
-matcher. None of those numbers are this attack's and none are reused here.
+revisited/remapped as the paper's prose specifies. No vertex attributes, no edge attributes, no hub
+filter, no rarity weights.
+
+The repo's older cross-view numbers are not this attack's and none are reused here, but they come
+from two different places and were previously credited to one. `RESULTS-view-match-2026.md` — and
+the "one match in 15,688" figure, which is `RESULTS-multiepoch-local-2016.md`'s — come from
+`decluster/view_match.py`, a **different, experimental** matcher. `RESULTS-graph-deanon.md` comes
+from `decluster/graph_deanon.py`, which is not a matcher at all: it is common-neighbour link
+prediction scored pairwise on a single graph, with no seed set, no vertex correspondence, no
+propagation and no second view.
 
 ## The two views, and why one adversary holds both
 

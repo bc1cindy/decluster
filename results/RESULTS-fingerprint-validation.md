@@ -19,9 +19,15 @@ including the witness ones: low-R, uncompressed pubkey, taproot sighash — are 
 
 **Method.** Same-owner labels = address reuse: two transactions that spend the same input address are
 the same wallet (near-certain). Positives = tx pairs sharing an input address (4,000 sampled);
-negatives = random tx pairs (4,000). Score = the Fellegi-Sunter weight of evidence in bits
+negatives = random tx pairs (4,000). Score = the rarity weight of evidence in bits
 (`fingerprint_validate.LibraryScorer`, summing agreement bits / clamped mismatch weights over the 23
-library axes). Metric = AUC, with a shuffle control.
+library axes). Metric = AUC, with a shuffle control. **`LibraryScorer` is not Fellegi-Sunter**, and
+was described as such here: agreement is Newcombe's frequency-based rarity weight `-log2(p)` taken
+from the library's measured shares, and disagreement is a clamped penalty from an assumed
+consistency, neither of them a fitted `log2(m/u)`. `decluster/combiner.py` says so of itself, and
+its `fs_score` entry point now raises a `DeprecationWarning` naming the same thing. The fitted,
+supervised Fellegi-Sunter baseline is `decluster/fellegi_sunter.py`, and it is not what produced any
+number on this page.
 
 ## Result
 

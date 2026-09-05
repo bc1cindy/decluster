@@ -56,10 +56,14 @@ everything.
 
 The clustering here is **naive common-input union-find**, which is precisely the adversary
 the framework calls incompetent. That simplification has since been measured rather than
-left standing: `RESULTS-refusing-clusterer.md` finds a refusing clusterer changes 0.33 % of
-merge decisions on this slice and leaves the 30 304-address cluster byte-identical, so the
-suspicion above is narrowed rather than confirmed. The refusal that would bear on it is the
-fingerprint channel, which compares *funding* transactions lying outside a two-day slice.
+left standing: `RESULTS-refusing-clusterer.md` measured a refusing clusterer against this slice
+and found it left the 30 304-address cluster byte-identical, so the suspicion above is narrowed
+rather than confirmed. **How narrow is now open.** That measurement put the refusal at 0.33 % of
+merge decisions, but it ran before `monitor.is_coinjoin` gained its equal-output arm and over a
+slice file no longer in the checkout, so the share is pending re-execution and should not be cited;
+on the slice that can still be measured the current rule is about 2.2x wider. The refusal that
+would bear on the mega-clusters is in any case the fingerprint channel, which compares *funding*
+transactions lying outside a two-day slice.
 
 Vertex attributes are stored as raw counts against each view's own base rates, never as
 bare shares, because a median 54 % of an axis value's variance tracks epoch volume

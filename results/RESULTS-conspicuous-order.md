@@ -28,9 +28,20 @@ inputs that disagree on script type. Over the 1,428 multi-input transactions:
 | 2 | 95 | 6.6% |
 | unrankable | 0 | — |
 
-**Only 36% of multi-input transactions are unambiguous.** Blind common-input ownership merges the
-other 64% regardless. That is a substantial amount of doubt for a clustering to be spending, and it
-is the quantity the refusal exists to act on.
+> **This distribution does not reproduce and is pending re-execution.** Recomputing
+> `merge_objections` over the same 1,428 transactions of the same `sample.ndjson` gives
+> **855 / 512 / 61** (0 / 1 / 2 objections), not 513 / 820 / 95. The function is byte-identical to
+> the revision this document was published under and `x_uih` differs only in comments, so the
+> printed row is not explained by any correction in this round and its provenance is unknown.
+> Whichever way it resolves, the totals and the "unrankable = 0" row are unaffected, and so is
+> everything below: the partition tables, the ordering result and the doubt gate were re-run and
+> are unchanged. Only the *size* of the doubt being spent is in question, not what the refusal
+> does with it.
+
+**A substantial share of multi-input transactions is not unambiguous** — between 36% and 60% of
+them raise no objection, depending on which of the two readings above survives, so blind
+common-input ownership merges the rest regardless. That is the quantity the refusal exists to act
+on, and pinning it down is what the re-run is for.
 
 ## What each rule does to the partition
 
@@ -53,10 +64,21 @@ entity, or one whose collapse happens through evidence none of these rules exami
 ## Why the order is inert
 
 Union-find over a fixed set of merges is order-independent, so ordering can only matter through a
-decision that reads the partition built so far. The refusal rules do not: the coinjoin shape and the
-de-mix both read the spending transaction alone. Adding a state-dependent decision — the doubt gate
-— makes the partition move, but not with the order, because at a two-address threshold a cluster
-becomes "established" almost immediately and the verdict is the same whenever it is taken.
+decision that reads the partition built so far. The refusal rules are not such a decision: the
+coinjoin shape and the de-mix both read the spending transaction alone.
+
+`cluster_addresses` does contain one, though, and it is worth naming rather than passing over.
+Change-link eligibility asks whether a transaction's inputs *already* stood in one cluster when it
+was reached, which is a property of the partition-so-far and therefore of the order. It is inert
+here for a different reason than the refusal rules are: `_merge_pass` takes that eligibility in
+sample order under both settings (`views.py:204-210`), so staging changes which merges are judged
+against which context and nothing else. The independence holds by construction, not because no
+order-sensitive decision exists — read the other way, this section would be claiming something the
+function does not support.
+
+Adding a state-dependent decision to the *merging* — the doubt gate — makes the partition move, but
+not with the order, because at a two-address threshold a cluster becomes "established" almost
+immediately and the verdict is the same whenever it is taken.
 
 That is a property of this gate, not a refutation of the idea. A gate whose threshold sat higher, or
 which read something that accumulates more slowly than cluster size, would be order-sensitive. The
