@@ -45,10 +45,14 @@ def x_uih(tx):
     # Legacy Gibson-like approximation retained so historical fingerprint artifacts do not change
     # silently. New attack code must use baselines.unnecessary_input.analyze_transaction, whose
     # fee-aware Algorithm 2 semantics are intentionally a separate observable.
+    # Amounts arrive as strings in some exports; comparing those lexicographically silently
+    # reverses the predicate ("330" > "1000"), so a non-integer amount is refused rather than
+    # ranked. Callers that hold string amounts must coerce before asking.
     in_vals = [iv for v in tx["vin"]
                if (iv := (v.get("prevout") or {}).get("value", v.get("value"))) is not None]
     out_vals = [o["value"] for o in tx["vout"]]
     if len(in_vals) < 2 or not out_vals: return "none"
+    if any(type(value) is not int for value in in_vals + out_vals): return "na"
     return "uih2" if max(in_vals) >= max(out_vals) else "none"
 
 def x_uih_fee_aware(tx):
