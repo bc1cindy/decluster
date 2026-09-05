@@ -7,10 +7,33 @@ from decluster.failure_modes.collaborative_forms import (
     form_matrix,
     knowledge,
 )
+from decluster.failure_modes.ns1r_change_readoff import ReadOffScenario, analyze
+
+TWO_PARTY_FORMS = (
+    CollaborativeForm.ORDINARY_TWO_INPUT,
+    CollaborativeForm.P2EP,
+    CollaborativeForm.BIP79,
+    CollaborativeForm.BIP78,
+    CollaborativeForm.BIP77,
+)
 
 
 def _by_form():
     return {row.form: row for row in form_matrix()}
+
+
+def _read_off(form, receiver_input, receiver_output, payments):
+    row = _by_form()[form]
+    return analyze(
+        ReadOffScenario.from_payments(
+            form.value,
+            row.observation.inputs,
+            row.observation.outputs,
+            receiver_input,
+            receiver_output,
+            payments,
+        )
+    )
 
 
 def test_all_declared_ctp_forms_are_present_once():
@@ -22,60 +45,56 @@ def test_all_declared_ctp_forms_are_present_once():
 
 def test_two_party_protocols_can_share_one_onchain_observation_with_ordinary_spend():
     rows = _by_form()
-    forms = (
-        CollaborativeForm.ORDINARY_TWO_INPUT,
-        CollaborativeForm.P2EP,
-        CollaborativeForm.BIP79,
-        CollaborativeForm.BIP78,
-        CollaborativeForm.BIP77,
-    )
 
-    assert {rows[form].observation for form in forms} == {TWO_PARTY_OBSERVATION}
-    assert len({rows[form].transport for form in forms}) == len(forms)
+    assert {rows[form].observation for form in TWO_PARTY_FORMS} == {TWO_PARTY_OBSERVATION}
+    assert len({rows[form].transport for form in TWO_PARTY_FORMS}) == len(TWO_PARTY_FORMS)
 
 
-def test_external_observer_does_not_receive_protocol_allocation_or_payment():
+def test_external_observer_sees_the_same_thing_in_every_two_party_form():
     rows = _by_form()
 
-    for form in (
-        CollaborativeForm.P2EP,
-        CollaborativeForm.BIP79,
-        CollaborativeForm.BIP78,
-        CollaborativeForm.BIP77,
-    ):
-        observed = knowledge(rows[form], Observer.EXTERNAL)
-        assert "participant allocation is not observed" in observed
-        assert "payment amount is not observed" in observed
+    external = {knowledge(rows[form], Observer.EXTERNAL) for form in TWO_PARTY_FORMS}
+    counterparty = {knowledge(rows[form], Observer.COUNTERPARTY) for form in TWO_PARTY_FORMS}
+
+    assert len(external) == 1
+    assert len(counterparty) == 2
+    assert knowledge(rows[CollaborativeForm.ORDINARY_TWO_INPUT], Observer.COUNTERPARTY) == ()
 
 
 def test_two_party_counterparty_can_eliminate_own_coins():
-    row = _by_form()[CollaborativeForm.BIP78]
+    analysis = _read_off(CollaborativeForm.BIP78, 1, 0, {"sender": 50})
 
-    assert "own inputs and outputs" in knowledge(row, Observer.COUNTERPARTY)
-    assert any("only other party" in item for item in knowledge(row, Observer.COUNTERPARTY))
+    assert analysis.readings == ((("sender", 90, 40),),)
+    assert analysis.unanimous_links == ((0, 1),)
 
 
 def test_ns1r_receiver_knowledge_does_not_become_input_attribution():
-    row = _by_form()[CollaborativeForm.NS1R]
-    known = knowledge(row, Observer.COUNTERPARTY)
+    analysis = _read_off(
+        CollaborativeForm.NS1R, 0, 0, {"Alice": 20, "Bob": 30, "Carol": 70}
+    )
+    local = dict(analysis.local_candidates)
 
-    assert any("knows each negotiated payment" in item for item in known)
-    assert any("may not know which input" in item for item in known)
+    assert len(local["Alice"]) > 1 and len(local["Bob"]) > 1
+    assert len(analysis.matchings) > 1
+    assert analysis.readings == (
+        (("Alice", 50, 30), ("Bob", 60, 30), ("Carol", 90, 20)),
+    )
 
 
-def test_nsnr_preserves_other_pairings_and_amount_signal_limit():
+def test_nsnr_row_keeps_six_parties_with_one_coin_per_party_on_each_side():
     row = _by_form()[CollaborativeForm.NSNR]
 
-    assert "other pairings remain latent" in knowledge(row, Observer.COUNTERPARTY)
-    assert any("amount-based" in limitation for limitation in row.limitations)
+    assert row.participants == 6
+    assert len(row.observation.inputs) == len(row.observation.outputs) == row.participants
+    assert sum(row.observation.inputs) == sum(row.observation.outputs)
 
 
-def test_net_settlement_exposes_net_balances_not_gross_obligations():
+def test_net_settlement_row_leaves_the_participant_count_latent():
     row = _by_form()[CollaborativeForm.NET_SETTLEMENT]
 
-    assert "net on-chain balances" in knowledge(row, Observer.EXTERNAL)
-    assert any("gross obligations remain latent" in item for item in knowledge(row, Observer.COUNTERPARTY))
-    assert any("cycles" in limitation for limitation in row.limitations)
+    assert row.participants is None
+    assert len(row.observation.inputs) == len(row.observation.outputs)
+    assert sum(row.observation.inputs) == sum(row.observation.outputs)
 
 
 def test_matrix_never_places_transport_in_external_onchain_knowledge():
