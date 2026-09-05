@@ -115,13 +115,13 @@ def count_w(inputs, outputs, knee=KNEE, radix_first=True, sparse_max=50):
     The order is the one the design calls for, and it deliberately does not include brute force,
     which is the same algorithm as the convolution below its crossover:
 
-      radix     a cheap lower bound on the mapping count, valid only where the amounts actually
-                decompose into repeated denominations. The crate hands back a number whether or not
-                they do, and that precondition is left to whoever consumes the bound — so it is
-                checked here, by `radix_applies`. Unguarded it answers on 37% of real transactions
+      radix     an output-only structural diagnostic, used only where amounts actually decompose
+                into repeated denominations. The crate hands back a number whether or not they do,
+                so that precondition is checked here by `radix_applies`. It is not a bound on the
+                transaction's mapping count. Unguarded it answers on 37% of real transactions
                 and 95.7% of those are not denominated at all.
-      sparse    the mapping count proper, bounded by `knee`. Exact where it can be, else a lower
-                bound.
+      sparse    the subset-sum solution count W(E), bounded by `knee`. It is exact where it can be
+                and otherwise a lower bound on W(E), not on the subtransaction mapping count.
 
     The saddle-point estimator is deliberately not a third tier, and the reason is narrow: it does
     not fill the holes a truncated lower bound leaves, so chaining it as an automatic upgrade mixes
