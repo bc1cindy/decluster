@@ -5,7 +5,7 @@
     "ctp.amount.subtransaction_ambiguity"
   ],
   "code": {
-    "revision": "39ac38f0ca12ef2e7c5737e34000c52795f1dfe6",
+    "revision": "92ba62c714cea1bbf2c34a3e2af62a1fabc3d4bf",
     "dirty": false
   },
   "command": {
@@ -59,12 +59,12 @@
     {
       "path": "results/artifacts/amount-per-coin-v1.json",
       "bytes": 1158,
-      "sha256": "7be46858e221d0c942e7fa3ccc93b5eba28cf3a494fd00f07c2d50f2caa473df"
+      "sha256": "2e75b1330181e7cbf8539a357e2bd3ad650c4d2d207c7a47ec687e991e24a622"
     },
     {
       "path": "results/generated/amount-per-coin-v1.md",
       "bytes": 658,
-      "sha256": "d73a6c87bd423afb72bea410c65351a7b4da76f7903f3ca77d54847b85a1fa54"
+      "sha256": "bf35f273b248388772cb2b34c69ab3cc9ba261e494455ddcf41a570ff3736e1d"
     }
   ],
   "reproducibility": {

@@ -13,7 +13,7 @@
       "name": "catalog/runs/amount-per-coin-v1.json",
       "role": "run_manifest",
       "bytes": 3472,
-      "sha256": "e951ba189b17a29b1f303e72fb159d0ba03ccd6bddb34ae27997e4963d592cdb",
+      "sha256": "299bb9a91029f64d411406fd894173f3794ac7dae3cab8617223503c2d361a25",
       "locations": {
         "canonical": null,
         "mirrors": []
@@ -33,7 +33,7 @@
       "name": "results/artifacts/amount-per-coin-v1.json",
       "role": "result",
       "bytes": 1158,
-      "sha256": "7be46858e221d0c942e7fa3ccc93b5eba28cf3a494fd00f07c2d50f2caa473df",
+      "sha256": "2e75b1330181e7cbf8539a357e2bd3ad650c4d2d207c7a47ec687e991e24a622",
       "locations": {
         "canonical": null,
         "mirrors": []
@@ -43,7 +43,7 @@
       "name": "results/generated/amount-per-coin-v1.md",
       "role": "result",
       "bytes": 658,
-      "sha256": "d73a6c87bd423afb72bea410c65351a7b4da76f7903f3ca77d54847b85a1fa54",
+      "sha256": "bf35f273b248388772cb2b34c69ab3cc9ba261e494455ddcf41a570ff3736e1d",
       "locations": {
         "canonical": null,
         "mirrors": []

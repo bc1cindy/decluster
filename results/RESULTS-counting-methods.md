@@ -162,9 +162,16 @@ upstream classifier work states the division explicitly: it delivers the per-ser
 counts and leaves "the gap/density check ... to the lower-bound consumer that uses it". This module
 is that consumer, and it was not checking.
 
-Unguarded, the path answers on 533 of 1,428 real multi-input transactions — and **510 of those
-(95.7%) carry no repeated output value at all**. It is now gated on the precondition, which is the
+Unguarded, the path answers on 64 of 1,428 real multi-input transactions — and **51 of those
+(79.7%) carry no repeated output value at all**. It is now gated on the precondition, which is the
 same three-fold floor the de-mix uses to call a value a mix denomination.
+
+Those two figures were 533 and 510 (95.7%) before the mapping count itself was corrected. The
+collapse from 533 to 64 is the same defect seen from the other side: almost every "answer" the
+ungated path returned was a permutation of a denomination the transaction does not contain, so it
+was counting a multiplicity that was not there rather than counting it without a licence. Current
+values are `raw_positive` 64 and `raw_positive_without_precondition` 51 in
+`results/artifacts/counting-router-v1.json`, rendered in `results/generated/counting-router-v1.md`.
 
 | revision | multiplicity live | why |
 |---|---:|---|
@@ -175,6 +182,14 @@ same three-fold floor the de-mix uses to call a value a mix denomination.
 
 The middle two rows are both wrong, in opposite directions, and are recorded because the first is
 the more tempting number and the second is the more comfortable one.
+
+**Every share in that table predates the mapping-count correction and is superseded.** They were
+measured when the radix path returned a positive reading 533 times; it now returns one 64 times, and
+the exact tier it used to fill is empty. The current router resolves **82 of 1,428 transactions
+(5.74%)** — 0 radix exact, 60 sparse exact, 22 sparse lower bound, 1,333 refused — per
+`results/artifacts/counting-router-v1.json`. The rows above are kept as a record of the two failure
+directions, not as current shares, and the generated report says the same: "Earlier router shares
+are superseded by the current run."
 
 
 ## The sequence, and making each step depend on the one before
@@ -187,14 +202,14 @@ decluster had all three, wired in parallel rather than in sequence:
 
 | step | where | was it grounded? |
 |---|---|---|
-| 1. classify radix-ness | `counting.radix_applies` | not checked at all — the bound was taken on 533 transactions, 510 of which had no denomination |
+| 1. classify radix-ness | `counting.radix_applies` | not checked at all — the bound was taken on 64 transactions, 51 of which had no denomination |
 | 2. evaluate the tx as a whole | `counting.count_w` | routed through the crate cascade, which stalls past twenty inputs |
 | 3. score per coin | `cost.amount_cuts` | ran independently of step 2 |
 
 Step three running independently is measurable. Over the slice, the per-coin oracle produced cuts for
-95 transactions and the transaction-level reading resolved for 95 — but they agree on only **63**.
-Thirty-two transactions were being cut on a per-coin reading that the transaction-level evaluation
-had found nothing to support, and thirty-two that did resolve got no cut because the truncation could
+95 transactions and the transaction-level reading resolved for 82 — but they agree on only **62**.
+Thirty-three transactions were being cut on a per-coin reading that the transaction-level evaluation
+had found nothing to support, and twenty that did resolve got no cut because the truncation could
 not reach their coins.
 
 Gating the third step on the second closes that:
@@ -202,9 +217,9 @@ Gating the third step on the second closes that:
 | | transactions cut | cuts | share of coins |
 |---|---:|---:|---:|
 | ungated | 95 | 318 | 1.35% |
-| **gated on step 2** | **63** | **102** | **0.43%** |
+| **gated on step 2** | **62** | **101** | **0.43%** |
 
-The remaining 63 are the transactions where the amounts classify, the transaction as a whole
+The remaining 62 are the transactions where the amounts classify, the transaction as a whole
 resolves, and the coins are individually reachable — which is what a per-coin score was supposed to
 mean. That the number is small is the finding, not a failure of the plumbing: it is the same 6%
 ceiling the fee-blind criterion imposes, now reached through a chain where each link is earned.

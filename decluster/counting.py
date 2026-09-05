@@ -1,8 +1,8 @@
 """Per-transaction W(E) count provider.
 
 Thin delegate to `dss.w_count` — the crate's feasibility-cascade dispatcher (brute -> dp -> sparse ->
-sasamoto), which picks the counting method by feasibility and returns the best-available guarantee
-plus the method used. Method SELECTION is the dss caller-toolkit's job (done once, in Rust, beside the
+sasamoto), which picks the counting method by feasibility and returns the accepted reading plus the
+method used. Method SELECTION is the dss caller-toolkit's job (done once, in Rust, beside the
 regime logic and with cross-validated tests); decluster just consumes the unified result. Counts are
 weight-of-evidence, not a score, and an off-regime or panicking call must never fabricate a count.
 """
@@ -10,7 +10,8 @@ weight-of-evidence, not a score, and an off-regime or panicking call must never 
 _UNKNOWN = {"kind": "unknown", "count": None, "log_w": None}
 
 # The tiers that carry a guarantee of not exceeding the true multiplicity. The saddle-point
-# estimate is not among them: it errs in both directions.
+# estimate is not among them: it errs in both directions. Neither is the denominational path,
+# whose `diagnostic` kind counts a different object altogether.
 _GUARANTEED = frozenset({"exact", "lowerbound"})
 
 
@@ -22,6 +23,12 @@ def guaranteed_log_w(count):
     holder does not have. Undercounting is the safe direction: a path the adversary failed to see
     is still a path. So an approximate or unrecognised tier is refused here rather than discounted,
     and the caller falls back to multiplicity 1.
+
+    The denominational path is refused for a second reason, which is not about direction: it counts
+    denomination exchanges among the outputs, never sees the inputs, and moves under a rescaling
+    that leaves the mapping count fixed. A quantity blind to a parameter its supposed target depends
+    on, and sensitive to one it does not, bounds that target in neither direction, so there is no
+    safe direction to fall back on. The crate spells it `diagnostic` for that reason.
     """
     kind = str(count.get("kind", "")).strip().lower().replace("_", "").replace("-", "")
     return count.get("log_w") if kind in _GUARANTEED else None
@@ -49,8 +56,10 @@ def w_total(inputs, outputs, max_size=MAX_INPUTS):
     Maurer's full matched-partition mapping count |M| nor a mapping-entropy), as {"kind", "count", "log_w",
     "method"}. Delegates to `dss.w_count`, which cascades the four exact/approx counting primitives by
     feasibility (brute for tiny N, exact DP, sparse convolution, then the Sasamoto saddle-point for the
-    Dense regime) and returns the strongest guarantee available — Exact where tractable, a LowerBound
-    where the exact count saturates, a LogApprox in the large Dense regime, else unknown.
+    Dense regime). Its acceptance order is Exact, then a Dense LogApprox, then a truncated LowerBound,
+    then unknown — magnitude order rather than guarantee order, because a lower bound that saturated
+    far below the true count describes a large dense mix worse than an approximation of its logarithm.
+    `guaranteed_log_w` is what re-imposes the guarantee, on the returned kind.
 
     `max_size` caps the input count the call is attempted on; above it the answer is `unknown`,
     which every consumer already reads as multiplicity 1. Undercounting is the safe direction for a
@@ -118,8 +127,9 @@ def count_w(inputs, outputs, knee=KNEE, radix_first=True, sparse_max=50):
       radix     an output-only structural diagnostic, used only where amounts actually decompose
                 into repeated denominations. The crate hands back a number whether or not they do,
                 so that precondition is checked here by `radix_applies`. It is not a bound on the
-                transaction's mapping count. Unguarded it answers on 37% of real transactions
-                and 95.7% of those are not denominated at all.
+                transaction's mapping count, and the crate tags it `diagnostic` so it cannot pass
+                `guaranteed_log_w`. Unguarded it answers on 64 of 1,428 real multi-input
+                transactions, 51 of which carry no repeated denomination.
       sparse    the subset-sum solution count W(E), bounded by `knee`. It is exact where it can be
                 and otherwise a lower bound on W(E), not on the subtransaction mapping count.
 
@@ -164,7 +174,7 @@ def _resolved(call):
     A tier that completes with a count of zero has found no mapping at all, which is the absence of
     an answer and not an answer of "no ambiguity" — the same distinction `cost.amount_cuts` draws
     for an unreachable coin. Treating it as resolved would let the first tier short-circuit the rest
-    on a non-result: the radix path returns an exact zero on 63% of real multi-input transactions.
+    on a non-result: the radix path returns zero on 1,364 of 1,428 real multi-input transactions.
     """
     try:
         r = call()
@@ -246,12 +256,12 @@ def radix_series(value, bases=RADIX_BASES):
 
 
 def radix_applies(outputs, min_multiplicity=RADIX_MIN_MULTIPLICITY, bases=RADIX_BASES):
-    """Whether the denominational lower bound is valid for these outputs.
+    """Whether the denominational diagnostic is meaningful for these outputs.
 
-    The bound counts the ways a repeated denomination can be permuted among the participants, so it
-    means nothing unless a denomination actually repeats. The crate computes it either way and
-    leaves this precondition to the caller; unguarded, it answers on 37% of real multi-input
-    transactions and 95.7% of those carry no repeated value at all.
+    It counts the ways a repeated denomination can be permuted among the participants, so it means
+    nothing unless a denomination actually repeats. The crate computes it either way and leaves this
+    precondition to the caller; unguarded, it answers on 64 of 1,428 real multi-input transactions,
+    51 of which carry no repeated value at all.
 
     Following the classification the upstream work describes: separate the values into multiplicity
     counts per *kind* of value, and take the low-Hamming-weight ones seriously. A value that is not

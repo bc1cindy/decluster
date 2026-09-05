@@ -13,7 +13,7 @@
       "name": "catalog/runs/counting-router-v1.json",
       "role": "run_manifest",
       "bytes": 3217,
-      "sha256": "e6922de1d88371d1c59e34fa23002b3024e5b5ed66b42bcc28320c7a20e47a31",
+      "sha256": "9892d467f0ac60bf5626a84a5fac7cb177c6765cf743815b0e6b9fdc10a77b3e",
       "locations": {
         "canonical": null,
         "mirrors": []
@@ -32,8 +32,8 @@
     {
       "name": "results/artifacts/counting-router-v1.json",
       "role": "result",
-      "bytes": 894,
-      "sha256": "731164f77a75776fc91a9c5bc8bce16700e6084e44c75d7e83510ac8afec1ce5",
+      "bytes": 897,
+      "sha256": "7c0764b7f39ad8795b4e349cff0903f68b7edcbc3f0d75cc6691a138813239b7",
       "locations": {
         "canonical": null,
         "mirrors": []
@@ -42,8 +42,8 @@
     {
       "name": "results/generated/counting-router-v1.md",
       "role": "result",
-      "bytes": 508,
-      "sha256": "f95ad5c12ea0ed2119771ee6c300361d8c6fbbe48950510a071a4c8772f35a37",
+      "bytes": 505,
+      "sha256": "a002dd84d74d51b0106a6bccd4c625300d838becbfc1edff36b7cfd46eda682f",
       "locations": {
         "canonical": null,
         "mirrors": []

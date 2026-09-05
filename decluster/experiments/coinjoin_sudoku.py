@@ -40,11 +40,12 @@ def build_artifact():
         "published_mechanism": {
             "balance": "exact integer sum per paired group",
             "selection": "all valid equal-sum groupings",
-            "fee_model": "explicit equal pseudo-outputs",
+            "fee_constraint": "fee is a multiple of a constant, currently 0.0001 BTC",
         },
         "local_adaptation": {
             "selection": "valid interpretations with the largest group count",
             "weighting": "uniform over indexed selected groupings",
+            "fee_model": "the fee split into explicit equal pseudo-outputs of one fee unit",
             "purpose": "reconstruct the SX symmetry argument under explicit semantics",
         },
         "advisory_group_examples": {
@@ -77,7 +78,8 @@ def build_artifact():
         "conclusion": "the published mechanism accepts the advisory's balanced example; a separately labelled maximal/uniform adaptation recovers the SX control's one-third symmetry",
         "limitations": [
             "this is an independent reconstruction, not parity with the unavailable historical analyzer",
-            "largest-group selection and uniform weighting are local semantics, not published analyzer rules",
+            "largest-group selection, uniform weighting and the fee pseudo-output split are local semantics, not published analyzer rules",
+            "the marginals are a function of the local fee unit: at one 30,000-sat unit the same control reads 1.0 instead of one third",
             "digit skipping and the reported 2014 SharedCoin grouping result are not reproduced",
             "amount relations within this family are not ownership attribution",
         ],

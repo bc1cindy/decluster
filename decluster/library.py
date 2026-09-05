@@ -15,7 +15,11 @@ pre-fix tx carries it). Two cases live in `catalog/tx-construction-matrix.md`, n
 here, because they are not static extracted values: **BTCPay/NBitcoin** samples
 version/locktime/low-R from the on-chain distribution, so it lands on the common
 values (~0 distinctive bits, no new entry); **coin-selection prediction** is a
-replay technique against a deterministic selector, not a per-tx fingerprint bit."""
+replay technique against a deterministic selector, not a per-tx fingerprint bit.
+
+Twenty-three axes are catalogued here, but only twenty-two are scorable from stored
+transaction records: see ``ANNOTATION_ONLY_AXES``. Two further axes are perfectly
+redundant with each other on measured data: see ``REDUNDANT_AXIS_PAIRS``."""
 
 _EX3 = "8fb80573d8871efee060a34dcb97fd12d5229444b7262b26358cd84912a04a75"
 
@@ -49,6 +53,10 @@ AXES = [
     {"axis": "fee_rate", "extractor": "x_fee_rate", "severity": "medium",
      "chain_proven": "16d3fad11242d95da3d12991e176b04cbb474bda95b968b3c4635453d4f9c90e",
      "bits": {"precise": 0.28, "round": 2.53, "na": 7.99}},
+    # input_script_type and input_types_present are one fact scored twice: the first is the
+    # single shared type or "mixed", the second the sorted type set. On the measured cache their
+    # agreement indicators have phi = 1.000 in both the match and the non-match class, so any
+    # additive scorer double-counts them. See REDUNDANT_AXIS_PAIRS.
     {"axis": "input_script_type", "extractor": "x_input_script_type", "severity": "high",
      "chain_proven": "dce69633124d7a3240cc76de5fcc947881f6a140d6d2d0b009f70938136c6bb9",
      "bits": {"uniform_p2pkh": 0.87, "uniform_v0_p2wpkh": 2.18, "uniform_p2sh": 2.59,
@@ -92,6 +100,8 @@ AXES = [
     {"axis": "multisig", "extractor": "x_multisig", "severity": "medium",
      "chain_proven": "065ba81e754450f0f8ae373bf56b0bc3ef454b981f31db9ca92a7280f6ceb623",
      "bits": {"none": 0.09, "multisig": 4.02}},
+    # Scorable only against a live broadcast annotation; inert on stored records. See
+    # ANNOTATION_ONLY_AXES.
     {"axis": "locktime_vs_broadcast", "extractor": "x_locktime_vs_broadcast", "severity": "medium",
      "chain_proven": "0ab4abca70d71f4554baa708a75604c0f05ad43f21f23cb0b25bd3e0e308b129",
      # na_loose = abstention (loose bound): non-evidential, weight 0. It is rare (~0.3%), but
@@ -102,6 +112,16 @@ AXES = [
 
 _BY = {a["axis"]: a for a in AXES}
 
+# `x_locktime_vs_broadcast` reads the `tx["_bc"]` annotation that `broadcast.annotate_broadcast`
+# writes at fetch time. No stored dataset carries it, so the extractor returns "na", which is not
+# a measured value here, so the axis abstains on every pair: 0 of 4,000 pairs scored on the
+# 22,112-tx cache. Report axis counts as "23 catalogued / 22 active" on stored data.
+ANNOTATION_ONLY_AXES = ("locktime_vs_broadcast",)
+
+# Axis pairs measured as perfectly dependent within both classes (phi = 1.000), i.e. one fact
+# scored twice by any additive combiner. See `fingerprint_validate.REDUNDANT_AXES`.
+REDUNDANT_AXIS_PAIRS = (("input_script_type", "input_types_present"),)
+
 def bits(axis, value):
     """Evidence bits for (axis, value); None if the axis is unmeasured or the value unknown."""
     a = _BY.get(axis)
@@ -110,5 +130,5 @@ def bits(axis, value):
 
 def p_from_bits(bits):
     """{value: p} from a measured-bits dict: p = 2**-bits, dropping 0-bit (abstain) values.
-    The value-frequency prior shared by the F-S axis builders (combiner, LibraryScorer)."""
+    The value-frequency prior shared by the rarity axis builders (combiner, LibraryScorer)."""
     return {v: 2 ** -b for v, b in (bits or {}).items() if b > 0}

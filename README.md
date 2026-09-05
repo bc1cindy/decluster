@@ -16,9 +16,15 @@ two people into one).
   how it constructs a transaction — nSequence values, script types, signature grinding, and
   more. Do those quirks actually identify the wallet? Taking address reuse as the same-owner
   label (two transactions spending the same address are the same wallet), the measured
-  fingerprint bits rank a *same-wallet* pair of transactions above a *random* pair **93.3%
-  of the time** (AUC 0.933) on 166k real mainnet transactions. Shuffle the labels and it
-  drops to 0.50 (a coin flip) — so the 0.933 is real signal, not an artifact.
+  fingerprint bits rank a *same-wallet* pair of transactions above a *random* pair **94.6%
+  of the time** on the committed 600-transaction fixture (AUC 0.9459, the manifest-backed run)
+  and **92.4%** on the preserved 22,112-transaction cache (AUC 0.9244). Shuffle the labels and
+  both drop to ~0.50 (a coin flip) — so the separation is real signal, not an artifact. An
+  earlier figure of 0.933 over a 166k-transaction cache is a historical record: that cache was
+  not preserved and the number is not recomputable. Two caveats travel with these: the
+  preserved cache is Taproot-era only (heights 800,000–965,220), and on that cache 0.024 of
+  the AUC is the address-reuse label restating itself — dropping the five axes the shared
+  input address fixes outright takes 0.9244 to 0.9003.
 
 - **The shape of the payment graph provides another model-relative signal.** Independently of
   who-spent-with-whom, recurring counterparty structure can support linkage. The local
@@ -26,7 +32,11 @@ two people into one).
   payment-graph structure *alone* predicts whether two addresses share an owner, ranking
   same-owner pairs correctly **0.95–0.97 of the time at one hop on the clean eras**, and
   **0.97–1.00 across all five eras by four hops** (1.0 = perfect, 0.5 = chance; the churny
-  2013 slice starts near chance at one hop and needs the deeper hops).
+  2013 slice starts near chance at one hop and needs the deeper hops). That is a *pairwise
+  ranking* score, and it is the premise the attack needs rather than the attack: run to
+  completion on two real Bitcoin views, the faithful 2009 propagation kernel reaches
+  **0.41%–1.28% precision**, against a shuffled-seed control that gets nothing right
+  (`results/RESULTS-ns-bitcoin.md`).
 
 - **It survives a transaction built to fool it.** On a real transaction deliberately
   constructed to merge two owners into one (the false link from above), the method keeps

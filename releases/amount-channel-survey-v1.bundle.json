@@ -13,7 +13,7 @@
       "name": "catalog/runs/amount-channel-survey-v1.json",
       "role": "run_manifest",
       "bytes": 3149,
-      "sha256": "5bd4257829e0f0f50ac2ff4a6b1ba3ab2ead727747c3fb290b4f1557ed43365e",
+      "sha256": "7242ef873afc132605ad6cd82d83155391db0ef350e1f68686764625667a460f",
       "locations": {
         "canonical": null,
         "mirrors": []
@@ -43,7 +43,7 @@
       "name": "results/artifacts/amount-per-coin-v1.json",
       "role": "result",
       "bytes": 1158,
-      "sha256": "7be46858e221d0c942e7fa3ccc93b5eba28cf3a494fd00f07c2d50f2caa473df",
+      "sha256": "2e75b1330181e7cbf8539a357e2bd3ad650c4d2d207c7a47ec687e991e24a622",
       "locations": {
         "canonical": null,
         "mirrors": []
@@ -73,7 +73,7 @@
       "name": "results/artifacts/amount-channel-survey-v1.json",
       "role": "result",
       "bytes": 2589,
-      "sha256": "dc82caeee450663b7382b7a2826e6f3898fbd7c6c38ab886c96faa63ea10db4a",
+      "sha256": "fcd4ad596d735b7c5a8dba43bc96481946ce5e78c3806932b60c10c865d1dcf8",
       "locations": {
         "canonical": null,
         "mirrors": []
@@ -83,7 +83,7 @@
       "name": "results/generated/amount-channel-survey-v1.md",
       "role": "result",
       "bytes": 1082,
-      "sha256": "30c7b4a60a99336d9999cb6cea10fbac31b3ff3c682352dfcbeefa3366968b13",
+      "sha256": "2f74b40fb24558a23f162d09da46a5f76a4434c170a78e0deb75eabba5d2ca28",
       "locations": {
         "canonical": null,
         "mirrors": []

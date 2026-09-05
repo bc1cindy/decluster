@@ -7,19 +7,22 @@ def test_report_preserves_current_router_outcomes():
     report = experiment.build_report()
 
     assert report["population"] == {"multi_input_transactions": 1428}
+    # The denominational path answers `diagnostic`, which the guarantee gate refuses: none of its
+    # readings count towards `guaranteed_nonzero_log_w`, and six of the nineteen it used to answer
+    # fall through to the convolution instead.
     assert report["current_router"] == {
         "by_method_and_kind": {
             "none:unknown": 1333,
-            "radix:exact": 19,
+            "radix:diagnostic": 13,
             "sparse:exact": 60,
-            "sparse:lower_bound": 16,
+            "sparse:lower_bound": 22,
         },
-        "guaranteed_nonzero_log_w": 95,
+        "guaranteed_nonzero_log_w": 82,
     }
     assert report["radix_precondition_audit"] == {
         "precondition_applies": 20,
-        "raw_positive": 533,
-        "raw_positive_without_precondition": 514,
+        "raw_positive": 64,
+        "raw_positive_without_precondition": 51,
     }
 
 

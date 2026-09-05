@@ -66,7 +66,8 @@ def build_artifact() -> dict:
         ),
         "limitations": [
             "the published Flickr/Kaggle corpus and reported metrics are not reproduced",
-            "dummy-node zero ratios remain mathematically undefined without an added convention",
+            "the zero convention for dummy-incident terms is read from the paper's prose, "
+            "not from its formula",
             "annealing uses explicit local reproducibility controls",
             "confidence pruning, accepted-mapping correction and the learned 25-feature model "
             "are not reproduced",

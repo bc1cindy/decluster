@@ -110,10 +110,10 @@ def test_the_saddle_point_is_available_but_never_a_tier():
     assert counting.saddle_point_log_w([1, 2, 3], [3]) is None      # declines, never invents
 
 
-def test_the_denominational_bound_needs_a_repeated_denomination():
-    """It counts the ways a repeated denomination permutes among participants, so it bounds nothing
+def test_the_denominational_diagnostic_needs_a_repeated_denomination():
+    """It counts the ways a repeated denomination permutes among participants, so it says nothing
     unless one repeats. The crate returns a number either way and leaves the precondition to the
-    caller: unguarded it answers on 37% of real multi-input transactions, 95.7% of which carry no
+    caller: unguarded it answers on 64 of 1,428 real multi-input transactions, 51 of which carry no
     repeated value."""
     pytest.importorskip("dss")
     from decluster import counting
@@ -123,6 +123,27 @@ def test_the_denominational_bound_needs_a_repeated_denomination():
     assert counting.radix_applies([]) is False
     ordinary = counting.count_w([500_000, 300_000, 200_000], [600_000, 400_000])
     assert ordinary["method"] != "radix"
+
+
+def test_the_denominational_count_never_passes_the_guarantee_gate():
+    """It is a function of the outputs alone and moves under a rescaling that leaves the mapping
+    count fixed, so it bounds the transaction's ambiguity in neither direction. The crate tags it
+    `diagnostic`; the gate refuses that kind, and `cost.amount_cuts` cannot read it as exact."""
+    pytest.importorskip("dss")
+    import dss
+    from decluster import counting
+    denominated = [5_000, 5_000, 5_000]
+    reading = dss.radix_mappings(denominated, counting.KNEE)
+    assert reading["kind"] == "diagnostic"
+    # One value repeated three times contributes 3! once, not once per coin, and a decomposition
+    # naming a denomination no output carries has no subset to exchange.
+    assert reading["count"] == 6
+    assert dss.radix_mappings(denominated + [5_512], counting.KNEE)["count"] == 6
+    assert counting.guaranteed_log_w(reading) is None
+
+    routed = counting.count_w([15_000], denominated)
+    assert routed["method"] == "radix"
+    assert counting.guaranteed_log_w(routed) is None
 
 
 def test_a_repeated_value_is_not_automatically_a_denomination():

@@ -34,9 +34,19 @@ skipped) — 200 labeled nodes, each a distinct txid, over 57 distinct owners (a
   prior, path given via the `LUMEN_PRIOR` environment variable, falling back to `library` per
   feature; the source is omitted entirely, not silently duplicated, if `LUMEN_PRIOR` is unset or
   the file doesn't exist).
-- **F-S** (`decluster.fingerprint_validate.LibraryScorer`): the canonical Fellegi-Sunter combiner
-  (agreement bits and clamped mismatch penalties over the same 23 axes) — fixed across all rows
-  since it doesn't consume the N-S rarity source.
+- **F-S** (`decluster.fingerprint_validate.LibraryScorer`): agreement bits and clamped mismatch
+  penalties over the same 23 axes — fixed across all rows since it doesn't consume the N-S rarity
+  source.
+
+**What the two arms actually differ in, since the labels overstate it.** The `FS_` columns are not
+fitted Fellegi-Sunter and the `NS_` columns are not the 2009 propagation algorithm; the key names
+are kept because they are written verbatim into
+`results/artifacts/fingerprint-regime-v1.json`. Both arms sum `-log2(p)` rarity weights over the
+same axes from the same shares. The **only** structural difference is that `LibraryScorer` adds a
+clamped penalty when two axis values disagree and `fingerprint_link` does not. So the comparison
+below isolates the mismatch penalty, and nothing more: it supports no conclusion about the
+Narayanan--Shmatikov method, and none about Fellegi-Sunter, whose fitted `m`/`u` baseline
+(`decluster/fellegi_sunter.py`) is not in this experiment at all.
 
 Two measurements per source:
 

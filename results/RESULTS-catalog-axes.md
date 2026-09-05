@@ -13,8 +13,14 @@ The record-linkage corpus (`fingerprints.md`, Table 4) lists two construction fi
 the paper's axis catalog (§8) marks ◐ — **output count** ("more than two outputs is less
 likely an ordinary wallet") and **SegWit-conform** ("a segwit-capable wallet is forced to
 non-segwit serialization when no input is segwit"). This measures whether adding them to the
-canonical 23-axis Fellegi–Sunter scorer buys anything. It does not — and the *shape* of the
+canonical 23-axis rarity scorer buys anything. It does not — and the *shape* of the
 non-result is the point.
+
+(The scorer is `fingerprint_validate.LibraryScorer`, called the Fellegi-Sunter scorer here until
+now. It is not: agreement carries Newcombe's `-log2(p)` rarity weight and disagreement a clamped
+penalty from an assumed consistency, with no fitted `m`/`u`. The fitted Fellegi-Sunter baseline is
+`decluster/fellegi_sunter.py` and is a different object. Nothing measured below changes — only what
+it is called.)
 
 ## Probes
 
@@ -62,16 +68,21 @@ moving, not the axes.)
   redundant axis producing the larger swing is the signature of that double-count.
 - **Not additive.** Both together ≤ segwit alone on *both* snapshots: `output_count` adds
   essentially nothing once `segwit_serialization` is in. Independent signals would add up.
-- **Within noise.** Every delta above is smaller than the EM per-axis-`m` refinement
-  (+0.0035, `RESULTS-em-m.md`) and deep inside the weight-sensitivity band (AUC moves ~0.04
-  across the realistic `c` sweep, `RESULTS-weight-sensitivity.md`).
+- **Within noise, though by less than was claimed.** Every delta above is smaller than the EM
+  per-axis-`m` refinement (+0.0035, `RESULTS-em-m.md`). The weight-sensitivity comparison used to
+  read "AUC moves ~0.04 across the realistic `c` sweep", which overstates the floor by about 2.5x:
+  `results/generated/weight-sensitivity-v1.md` puts the full 0.60-0.99 grid at **0.0161**
+  (0.9084 to 0.9245) and the realistic 0.90-0.99 band at **0.00055**. Read against the band that
+  actually brackets the shipped `c=0.95`, the +0.0026 and +0.0020 deltas are *larger* than the
+  weight sensitivity, not deep inside it. What keeps them out of the model is the sign flip and the
+  non-additivity above, not a noise floor wide enough to swallow them.
 
 ## Conclusion
 
 The canonical 23-axis model **correctly excludes** both. `output_count` is subsumed by
 `io_shape`; `segwit_serialization` by `input_script_type` + `nested_segwit`. Folding them in
 would violate the scorer's conditional-independence assumption and buy only a
-double-counting artifact within the noise floor — so they stay out, and the library ships no
+double-counting artifact whose contribution is not even sign-stable — so they stay out, and the library ships no
 extractor that no result consumes. `fingerprints.md` does not cover the taproot
 script-tree-depth-from-round-fee leak (a separate derived signal) or "change is always
 bech32" (a cross-transaction consistency claim, not a single-tx bit); both remain out of

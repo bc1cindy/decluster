@@ -11,7 +11,9 @@ paper's similarity weights a shared attribute by `1/log|support|` — the form t
 functions and are not interchangeable. (2) `reid_gap` computes the eccentricity gap and RETURNS it;
 nothing in this module gates on it, so no candidate is ever refused for being a diffuse tie — the
 refusal is left to the caller. There is no seed set, no propagation and no second view here either.
-The faithful reference implementation is `decluster/baselines/narayanan_shmatikov.py`."""
+This repository holds no faithful implementation of the cited algorithm; the module closest to it
+is `decluster.reid`, itself declared an adaptation. (`decluster/baselines/narayanan_shmatikov.py`
+is a different paper: the 2009 social-graph propagation kernel, not this record-matching one.)"""
 
 import json
 import math
@@ -38,7 +40,8 @@ def fingerprint_signature(tx, axis_fns, weights):
 
 def fingerprint_link(sig_a, sig_b):
     """Rarity-weighted overlap over agreeing features (same axis AND same value). Agreements
-    only — no disagreement penalty (that is the F-S structure this channel steps away from)."""
+    only — no mismatch penalty, which is the one term the rarity combiner adds and this channel
+    drops."""
     return sum(w for k, w in sig_a.items() if k in sig_b)
 
 

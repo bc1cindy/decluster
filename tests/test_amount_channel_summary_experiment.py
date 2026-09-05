@@ -9,7 +9,7 @@ def test_summary_is_derived_from_all_pinned_components():
     artifact = experiment.build_artifact()
 
     assert set(artifact["report"]["components"]) == set(experiment.COMPONENTS)
-    assert artifact["report"]["per_coin_candidates"]["transaction_gated"]["candidates"]["total"] == 102
+    assert artifact["report"]["per_coin_candidates"]["transaction_gated"]["candidates"]["total"] == 101
     assert artifact["report"]["mapping_family"]["outcomes"]["answered"] == 223
     assert artifact["report"]["pairwise_family"]["restricted_family_rows"]["singleton_support"] == 367
 

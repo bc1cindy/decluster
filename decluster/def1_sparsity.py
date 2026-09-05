@@ -14,6 +14,14 @@ Nearest-neighbour similarity over all pairs is quadratic, so it is estimated: ea
 sample of query clusters is compared against a background sample, and its top similarity
 recorded. Reported as an estimate over the sample, with the background size stated.
 
+The similarity used here is the standard cosine, `dot / (||a|| * ||b||)`. The definition's own
+`Sim` generalises cosine differently: it sums the per-attribute similarities and normalises by
+`|supp(a) union supp(b)|`, so two records agreeing on a few attributes each score lower the more
+attributes either one has. The substitution is local, not a reading of the source, and it changes
+the scale: `cosine` is insensitive to support size, so the epsilon thresholds in `survival` are not
+the source's thresholds. Both fixtures reach the same conclusion under either form, but a result
+quoted against the definition's own epsilon must be recomputed with the union normalisation.
+
 Offline, stdlib only.
 """
 import math
@@ -21,6 +29,8 @@ import random
 
 
 def cosine(a, b):
+    """Standard cosine, not the union-of-supports normalisation the definition uses (see module
+    docstring)."""
     if not a or not b:
         return 0.0
     dot = sum(a.get(k, 0.0) * v for k, v in b.items())

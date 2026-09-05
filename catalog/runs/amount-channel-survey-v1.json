@@ -6,7 +6,7 @@
     "ctp.amount.subtransaction_ambiguity"
   ],
   "code": {
-    "revision": "39ac38f0ca12ef2e7c5737e34000c52795f1dfe6",
+    "revision": "92ba62c714cea1bbf2c34a3e2af62a1fabc3d4bf",
     "dirty": false
   },
   "command": {
@@ -46,12 +46,12 @@
     {
       "path": "results/artifacts/amount-channel-survey-v1.json",
       "bytes": 2589,
-      "sha256": "dc82caeee450663b7382b7a2826e6f3898fbd7c6c38ab886c96faa63ea10db4a"
+      "sha256": "fcd4ad596d735b7c5a8dba43bc96481946ce5e78c3806932b60c10c865d1dcf8"
     },
     {
       "path": "results/generated/amount-channel-survey-v1.md",
       "bytes": 1082,
-      "sha256": "30c7b4a60a99336d9999cb6cea10fbac31b3ff3c682352dfcbeefa3366968b13"
+      "sha256": "2f74b40fb24558a23f162d09da46a5f76a4434c170a78e0deb75eabba5d2ca28"
     }
   ],
   "reproducibility": {

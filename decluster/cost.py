@@ -56,8 +56,9 @@ def amount_cuts(inputs, outputs, oracle, cut_threshold=1.0, count_oracle=None):
     each cut with a TX-LEVEL exact-count flag (`kind == "exact"` with a positive count). This is
     provenance about the gate only. Transaction W(E) and per-coin density are different objects, so
     an exact transaction count does not make the coin reading exact or turn the candidate into a
-    proof. dss exposes no exact per-coin W(E). `oracle(inputs, outputs)` follows the
-    dss.per_coin_density shape."""
+    proof. dss exposes no exact per-coin W(E). Only the subset-sum tiers can raise the flag: the
+    denominational path answers `diagnostic`, which neither passes the gate above nor reads as
+    exact here. `oracle(inputs, outputs)` follows the dss.per_coin_density shape."""
     from .counting import count_w, guaranteed_log_w
     if count_oracle is None:
         count_oracle = count_w
