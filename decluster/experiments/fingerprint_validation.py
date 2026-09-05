@@ -59,7 +59,7 @@ def build_artifact(dataset=DEFAULT_DATASET):
             "positive pairs are draws with replacement rather than independent observations",
             "random negative pairs can include transactions controlled by the same wallet",
             "the 600-transaction snapshot is selected and is not a chain-wide sample",
-            "the source recipe is unavailable and dataset redistribution remains unknown",
+            "the source recipe is unavailable; the dataset publisher authorized redistribution on 2026-09-04",
             "the result measures pair ranking and is not an ownership certificate or privacy score",
         ],
     }

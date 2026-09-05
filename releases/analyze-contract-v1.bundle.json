@@ -1,15 +1,74 @@
 {
   "schema_version": 1,
   "id": "analyze-contract-v1",
-  "capabilities": ["verify_outputs", "reproduce_runs"],
-  "runs": ["analyze-contract-v1"],
+  "capabilities": [
+    "verify_outputs",
+    "reproduce_runs"
+  ],
+  "runs": [
+    "analyze-contract-v1"
+  ],
   "blobs": [
-    {"name": "catalog/runs/analyze-contract-v1.json", "role": "run_manifest", "bytes": 2597, "sha256": "92ebdb7e3009b4696940036fe52bb09e1552c4e97b01b20eaee65f29f9121ea6", "locations": {"canonical": null, "mirrors": []}},
-    {"name": "results/artifacts/analyze-contract-v1.json", "role": "result", "bytes": 1697, "sha256": "0cd5877aee284f8a234688c93b586d9f9e556a49f31c2c0605fa53be1d994553", "locations": {"canonical": null, "mirrors": []}},
-    {"name": "results/generated/analyze-contract-v1.md", "role": "result", "bytes": 744, "sha256": "2d6a16cb098df8648a8964f46d50daab59b8f1d04a37e6a5b471ac10f7f64599", "locations": {"canonical": null, "mirrors": []}},
-    {"name": "sources/decluster-0491114-runtime.tar", "role": "source", "bytes": 1402880, "sha256": "455d0d50ab56ec08b125d2071f445997bd113d414cee8c45527a46280f4fae3e", "locations": {"canonical": null, "mirrors": []}},
-    {"name": "reproduction/analyze-contract/requirements.lock", "role": "lockfile", "bytes": 0, "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855", "locations": {"canonical": null, "mirrors": []}},
-    {"name": "reproduction/analyze-contract/environment.json", "role": "environment", "bytes": 368, "sha256": "4a453d1ea92a7308ad4dd9ccdcfa99ad3fa03b519902ec0acd043c672c64cddd", "locations": {"canonical": null, "mirrors": []}}
+    {
+      "name": "catalog/runs/analyze-contract-v1.json",
+      "role": "run_manifest",
+      "bytes": 2653,
+      "sha256": "b3193a39a026f2b7d83f58e9e4c82e5aa45ee25172b031d368984600973867e4",
+      "locations": {
+        "canonical": null,
+        "mirrors": []
+      }
+    },
+    {
+      "name": "results/artifacts/analyze-contract-v1.json",
+      "role": "result",
+      "bytes": 1697,
+      "sha256": "0cd5877aee284f8a234688c93b586d9f9e556a49f31c2c0605fa53be1d994553",
+      "locations": {
+        "canonical": null,
+        "mirrors": []
+      }
+    },
+    {
+      "name": "results/generated/analyze-contract-v1.md",
+      "role": "result",
+      "bytes": 744,
+      "sha256": "2d6a16cb098df8648a8964f46d50daab59b8f1d04a37e6a5b471ac10f7f64599",
+      "locations": {
+        "canonical": null,
+        "mirrors": []
+      }
+    },
+    {
+      "name": "sources/decluster-39ac38f-runtime.tar",
+      "role": "source",
+      "bytes": 2027520,
+      "sha256": "c7b16b0c77e40a8c98bb24f4348b6c4fdf9a4d53bfb5f63c5767f4b480f40436",
+      "locations": {
+        "canonical": null,
+        "mirrors": []
+      }
+    },
+    {
+      "name": "reproduction/analyze-contract/requirements.lock",
+      "role": "lockfile",
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "locations": {
+        "canonical": null,
+        "mirrors": []
+      }
+    },
+    {
+      "name": "reproduction/analyze-contract/environment.json",
+      "role": "environment",
+      "bytes": 368,
+      "sha256": "187b5ad892e107d084cf7603d01a0b5c0242c1f58e0dc9a3b0127c16db817176",
+      "locations": {
+        "canonical": null,
+        "mirrors": []
+      }
+    }
   ],
   "limitations": [
     "The bundled environment currently targets CPython 3.13 on macOS arm64.",

@@ -1,16 +1,84 @@
 {
   "schema_version": 1,
   "id": "counting-fee-sensitivity-v1",
-  "capabilities": ["verify_outputs", "reproduce_runs"],
-  "runs": ["counting-fee-sensitivity-v1"],
+  "capabilities": [
+    "verify_outputs",
+    "reproduce_runs"
+  ],
+  "runs": [
+    "counting-fee-sensitivity-v1"
+  ],
   "blobs": [
-    {"name": "catalog/runs/counting-fee-sensitivity-v1.json", "role": "run_manifest", "bytes": 2599, "sha256": "eb4efa9d92097876085558b03d85bb10b5fe9eb24907d2c2b77b6a14bcff6ef4", "locations": {"canonical": null, "mirrors": []}},
-    {"name": "results/artifacts/counting-fee-sensitivity-v1.json", "role": "result", "bytes": 1968, "sha256": "0fef54735522470634c696ec026c31c86dff4d4dae23da956b49d8f89eb3a508", "locations": {"canonical": null, "mirrors": []}},
-    {"name": "results/generated/counting-fee-sensitivity-v1.md", "role": "result", "bytes": 526, "sha256": "df9d25a028a5f5c9f7527923cd354a674865b3012d71b23405c08a6ec643a84b", "locations": {"canonical": null, "mirrors": []}},
-    {"name": "sources/decluster-7047c51-runtime.tar", "role": "source", "bytes": 1361920, "sha256": "66ef84bbb9c9ee0e94465719a3f68e0a622dc3c674eb19e0029ff6613e77d692", "locations": {"canonical": null, "mirrors": []}},
-    {"name": "dependencies/dss-0.1.0-cp313-cp313-macosx_11_0_arm64.whl", "role": "dependency", "bytes": 336582, "sha256": "91b81d7c6d211fbe59f2c14da9c5dd6fb6514d4c39cf3b57154b4e30f6a6604f", "locations": {"canonical": null, "mirrors": []}},
-    {"name": "reproduction/counting-fee-sensitivity/requirements.lock", "role": "lockfile", "bytes": 90, "sha256": "c87b26aedbefac1731d03ced97dc197a86c0687c7376b3186f8752676f977fab", "locations": {"canonical": null, "mirrors": []}},
-    {"name": "reproduction/counting-fee-sensitivity/environment.json", "role": "environment", "bytes": 339, "sha256": "3eb8ef0e278d917f4ec19423ed0d30ca7e3452c388bf784a0e79bc8ab584794d", "locations": {"canonical": null, "mirrors": []}}
+    {
+      "name": "catalog/runs/counting-fee-sensitivity-v1.json",
+      "role": "run_manifest",
+      "bytes": 2899,
+      "sha256": "9658bc1634a3ead2a8c20c3ad05a364ea6884a05d70b4694133d45015ab3999d",
+      "locations": {
+        "canonical": null,
+        "mirrors": []
+      }
+    },
+    {
+      "name": "results/artifacts/counting-fee-sensitivity-v1.json",
+      "role": "result",
+      "bytes": 1968,
+      "sha256": "0fef54735522470634c696ec026c31c86dff4d4dae23da956b49d8f89eb3a508",
+      "locations": {
+        "canonical": null,
+        "mirrors": []
+      }
+    },
+    {
+      "name": "results/generated/counting-fee-sensitivity-v1.md",
+      "role": "result",
+      "bytes": 526,
+      "sha256": "df9d25a028a5f5c9f7527923cd354a674865b3012d71b23405c08a6ec643a84b",
+      "locations": {
+        "canonical": null,
+        "mirrors": []
+      }
+    },
+    {
+      "name": "sources/decluster-39ac38f-runtime.tar",
+      "role": "source",
+      "bytes": 2027520,
+      "sha256": "c7b16b0c77e40a8c98bb24f4348b6c4fdf9a4d53bfb5f63c5767f4b480f40436",
+      "locations": {
+        "canonical": null,
+        "mirrors": []
+      }
+    },
+    {
+      "name": "dependencies/dss-0.1.0-cp313-cp313-macosx_11_0_arm64.whl",
+      "role": "dependency",
+      "bytes": 336582,
+      "sha256": "91b81d7c6d211fbe59f2c14da9c5dd6fb6514d4c39cf3b57154b4e30f6a6604f",
+      "locations": {
+        "canonical": null,
+        "mirrors": []
+      }
+    },
+    {
+      "name": "reproduction/counting-fee-sensitivity/requirements.lock",
+      "role": "lockfile",
+      "bytes": 90,
+      "sha256": "c87b26aedbefac1731d03ced97dc197a86c0687c7376b3186f8752676f977fab",
+      "locations": {
+        "canonical": null,
+        "mirrors": []
+      }
+    },
+    {
+      "name": "reproduction/counting-fee-sensitivity/environment.json",
+      "role": "environment",
+      "bytes": 359,
+      "sha256": "1d3dfe6e93ffed031e275ced9f19de4a7d215819acde34dd5b5d70120b2f6dc6",
+      "locations": {
+        "canonical": null,
+        "mirrors": []
+      }
+    }
   ],
   "limitations": [
     "The bundled environment currently targets CPython 3.13 on macOS arm64.",

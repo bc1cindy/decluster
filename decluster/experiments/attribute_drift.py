@@ -151,7 +151,7 @@ def build_artifact(dataset=DEFAULT_DATASET):
             "volume is reconstructed from redundant template match shares rather than stored directly",
             "population drift does not measure per-cluster attribute distinctiveness",
             "the result is diagnostic and does not produce a clustering score",
-            "the fixture redistribution status remains unknown",
+            "the dataset publisher authorized redistribution of the aggregate fixture on 2026-09-04",
         ],
     }
 

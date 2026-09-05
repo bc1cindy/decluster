@@ -1,57 +1,83 @@
 {
   "schema_version": 1,
   "id": "conservation-round-three-v1",
-  "capabilities": ["verify_outputs", "reproduce_runs"],
-  "runs": ["conservation-round-three-v1"],
+  "capabilities": [
+    "verify_outputs",
+    "reproduce_runs"
+  ],
+  "runs": [
+    "conservation-round-three-v1"
+  ],
   "blobs": [
     {
       "name": "catalog/runs/conservation-round-three-v1.json",
       "role": "run_manifest",
-      "bytes": 3036,
-      "sha256": "e1908fe388f565012f948eba0215d4c249da76aa78bf785488ff37d8b76da2c8",
-      "locations": {"canonical": null, "mirrors": []}
+      "bytes": 3128,
+      "sha256": "dca8595bc2b7b03f6cda3d7d03263ce99009c656ac4b49f7194a1d5574d39557",
+      "locations": {
+        "canonical": null,
+        "mirrors": []
+      }
     },
     {
       "name": "tests/fixtures/conservation_round_three.json",
       "role": "dataset",
       "bytes": 758,
       "sha256": "e4a9048fa27e28732af5449d9b9a2098f401b203c793d79763d0be685fb86660",
-      "locations": {"canonical": null, "mirrors": []}
+      "locations": {
+        "canonical": null,
+        "mirrors": []
+      }
     },
     {
       "name": "results/artifacts/conservation-round-three-v1.json",
       "role": "result",
       "bytes": 9263,
       "sha256": "142f9dc03f39ab280a77e07c6f4e85b04d5e77b411a9c3cdb476d955280d6cfe",
-      "locations": {"canonical": null, "mirrors": []}
+      "locations": {
+        "canonical": null,
+        "mirrors": []
+      }
     },
     {
       "name": "results/generated/conservation-round-three-v1.md",
       "role": "result",
       "bytes": 558,
       "sha256": "8e32849b0f691361403dcbe219f436c2542cb0a2ecab24b98b1ed79b90c2a942",
-      "locations": {"canonical": null, "mirrors": []}
+      "locations": {
+        "canonical": null,
+        "mirrors": []
+      }
     },
     {
-      "name": "sources/decluster-a2900c4-runtime.tar",
+      "name": "sources/decluster-39ac38f-runtime.tar",
       "role": "source",
-      "bytes": 1146880,
-      "sha256": "30ed3758222b766c06db3276c01e99d1d991c016d87d56880f8cb7589d8564c4",
-      "locations": {"canonical": null, "mirrors": []}
+      "bytes": 2027520,
+      "sha256": "c7b16b0c77e40a8c98bb24f4348b6c4fdf9a4d53bfb5f63c5767f4b480f40436",
+      "locations": {
+        "canonical": null,
+        "mirrors": []
+      }
     },
     {
       "name": "reproduction/conservation-round-three/requirements.lock",
       "role": "lockfile",
       "bytes": 0,
       "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
-      "locations": {"canonical": null, "mirrors": []}
+      "locations": {
+        "canonical": null,
+        "mirrors": []
+      }
     },
     {
       "name": "reproduction/conservation-round-three/environment.json",
       "role": "environment",
       "bytes": 384,
-      "sha256": "a84ea234b08a6ae438311842daa1a8a970ea53a4cccd61e4ccd5a4d11897ee18",
-      "locations": {"canonical": null, "mirrors": []}
+      "sha256": "4fa5cbab8e56870680f81a50f48a83b1d44ccfa0d94954cc9259a4038328e01f",
+      "locations": {
+        "canonical": null,
+        "mirrors": []
+      }
     }
   ],
   "limitations": [

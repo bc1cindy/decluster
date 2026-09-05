@@ -1,20 +1,88 @@
 {
   "schema_version": 1,
   "id": "fingerprint-sparsity-v1",
-  "capabilities": ["verify_outputs", "reproduce_runs"],
-  "runs": ["fingerprint-sparsity-v1"],
+  "capabilities": [
+    "verify_outputs",
+    "reproduce_runs"
+  ],
+  "runs": [
+    "fingerprint-sparsity-v1"
+  ],
   "blobs": [
-    {"name": "catalog/runs/fingerprint-sparsity-v1.json", "role": "run_manifest", "bytes": 2715, "sha256": "ee048fbe3a735172d3f59c4e26711d3f639f0501898e88c5c61605d69dfd3b69", "locations": {"canonical": null, "mirrors": []}},
-    {"name": "tests/fixtures/lumen_explorer_data.json", "role": "dataset", "bytes": 432353, "sha256": "5337d4bdc574726a2cb4e28f329f16709b497479a7493882bd38d77875660ac9", "locations": {"canonical": "https://github.com/bc1cindy/decluster/raw/103b13efc9e32569642983d7038f365dcb0c09c6/tests/fixtures/lumen_explorer_data.json", "mirrors": []}},
-    {"name": "results/artifacts/fingerprint-sparsity-v1.json", "role": "result", "bytes": 1392, "sha256": "eeb82ae02dd2dbe819cb847acff6220d308e2c67e02d2e1776f4b7726e30a7cd", "locations": {"canonical": null, "mirrors": []}},
-    {"name": "results/generated/fingerprint-sparsity-v1.md", "role": "result", "bytes": 694, "sha256": "9740d4ad0c64d229df372b81499ae33f1dd54c097a4e26a2fccbee73b80bec6d", "locations": {"canonical": null, "mirrors": []}},
-    {"name": "sources/decluster-d3261a0-runtime.tar", "role": "source", "bytes": 1218560, "sha256": "046ee2ddb90399a6025dd77c3da88d7dc450f40c45287993fe1d57f1ead351de", "locations": {"canonical": null, "mirrors": []}},
-    {"name": "reproduction/fingerprint-sparsity/requirements.lock", "role": "lockfile", "bytes": 0, "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855", "locations": {"canonical": null, "mirrors": []}},
-    {"name": "reproduction/fingerprint-sparsity/environment.json", "role": "environment", "bytes": 376, "sha256": "1e7a8bb5aa7d33429f711613f24b4e8ff9a9224f6f5013702e2bcb96b8941243", "locations": {"canonical": null, "mirrors": []}}
+    {
+      "name": "catalog/runs/fingerprint-sparsity-v1.json",
+      "role": "run_manifest",
+      "bytes": 3180,
+      "sha256": "fca1ec43cfb16abca5fd3082dfe2d3584cfc127170dd7b2805fc9986d162368c",
+      "locations": {
+        "canonical": null,
+        "mirrors": []
+      }
+    },
+    {
+      "name": "tests/fixtures/lumen_explorer_data.json",
+      "role": "dataset",
+      "bytes": 432353,
+      "sha256": "5337d4bdc574726a2cb4e28f329f16709b497479a7493882bd38d77875660ac9",
+      "locations": {
+        "canonical": "https://github.com/bc1cindy/decluster/raw/103b13efc9e32569642983d7038f365dcb0c09c6/tests/fixtures/lumen_explorer_data.json",
+        "mirrors": []
+      }
+    },
+    {
+      "name": "results/artifacts/fingerprint-sparsity-v1.json",
+      "role": "result",
+      "bytes": 1429,
+      "sha256": "923000f70f5eaaf7349a0715d3ed83c382d4b414d28c0e8aa617103871f9ec79",
+      "locations": {
+        "canonical": null,
+        "mirrors": []
+      }
+    },
+    {
+      "name": "results/generated/fingerprint-sparsity-v1.md",
+      "role": "result",
+      "bytes": 694,
+      "sha256": "9740d4ad0c64d229df372b81499ae33f1dd54c097a4e26a2fccbee73b80bec6d",
+      "locations": {
+        "canonical": null,
+        "mirrors": []
+      }
+    },
+    {
+      "name": "sources/decluster-39ac38f-runtime.tar",
+      "role": "source",
+      "bytes": 2027520,
+      "sha256": "c7b16b0c77e40a8c98bb24f4348b6c4fdf9a4d53bfb5f63c5767f4b480f40436",
+      "locations": {
+        "canonical": null,
+        "mirrors": []
+      }
+    },
+    {
+      "name": "reproduction/fingerprint-sparsity/requirements.lock",
+      "role": "lockfile",
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "locations": {
+        "canonical": null,
+        "mirrors": []
+      }
+    },
+    {
+      "name": "reproduction/fingerprint-sparsity/environment.json",
+      "role": "environment",
+      "bytes": 376,
+      "sha256": "70602443fd0f74cef997c96913c761dfb0e5ca3e350b6bd73e6e89e7847fa002",
+      "locations": {
+        "canonical": null,
+        "mirrors": []
+      }
+    }
   ],
   "limitations": [
     "The bundled environment currently targets CPython 3.13 on macOS arm64.",
-    "The dataset origin is public, but its cataloged redistribution status remains unknown.",
+    "The dataset publisher authorized redistribution of the public aggregate on 2026-09-04; upstream licensing remains undetermined.",
     "The bundle reproduces the preserved 12-axis whole-window aggregate, not the unavailable 19-axis or per-epoch columns.",
     "Public bootstrap remains incomplete until every blob has a canonical HTTPS location and an independent mirror."
   ]

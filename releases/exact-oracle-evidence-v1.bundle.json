@@ -1,14 +1,19 @@
 {
   "schema_version": 1,
   "id": "exact-oracle-evidence-v1",
-  "capabilities": ["verify_outputs", "reproduce_runs"],
-  "runs": ["exact-oracle-audit-v1"],
+  "capabilities": [
+    "verify_outputs",
+    "reproduce_runs"
+  ],
+  "runs": [
+    "exact-oracle-audit-v1"
+  ],
   "blobs": [
     {
       "name": "catalog/runs/exact-oracle-audit-v1.json",
       "role": "run_manifest",
-      "bytes": 2697,
-      "sha256": "7bbdc8d2111707961889ff6795bb67f51b96614f1d1bed877c146f1e876455e4",
+      "bytes": 2735,
+      "sha256": "0ed6bc5c665fbe40e824a8fd94c8c2923475b736269796ea9755423a51da105e",
       "locations": {
         "canonical": null,
         "mirrors": []
@@ -35,10 +40,10 @@
       }
     },
     {
-      "name": "sources/decluster-94b4ece-runtime.tar",
+      "name": "sources/decluster-39ac38f-runtime.tar",
       "role": "source",
-      "bytes": 788480,
-      "sha256": "fcacd71666c520cd99f7783f5288efd1445cc32bb4a692e804670595ca567edf",
+      "bytes": 2027520,
+      "sha256": "c7b16b0c77e40a8c98bb24f4348b6c4fdf9a4d53bfb5f63c5767f4b480f40436",
       "locations": {
         "canonical": null,
         "mirrors": []
@@ -68,7 +73,7 @@
       "name": "reproduction/exact-oracle/environment.json",
       "role": "environment",
       "bytes": 347,
-      "sha256": "c461397c919f4f393f84bdace9ad76302b4ae6107679df35b4d3fb6924082bf8",
+      "sha256": "6e08e105b4d2db4041c933e1f10512d6201a64e0030e0a798a6b341afcc3d3fb",
       "locations": {
         "canonical": null,
         "mirrors": []

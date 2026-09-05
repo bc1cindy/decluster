@@ -1,17 +1,94 @@
 {
   "schema_version": 1,
   "id": "amount-subset-sum-v1",
-  "capabilities": ["verify_outputs", "reproduce_runs"],
-  "runs": ["amount-subset-sum-v1"],
+  "capabilities": [
+    "verify_outputs",
+    "reproduce_runs"
+  ],
+  "runs": [
+    "amount-subset-sum-v1"
+  ],
   "blobs": [
-    {"name": "catalog/runs/amount-subset-sum-v1.json", "role": "run_manifest", "bytes": 2959, "sha256": "b8c1f89a46e0953ae460d9d3149e22b45a18f0532d9ebc7f8c6f48881ba23410", "locations": {"canonical": null, "mirrors": []}},
-    {"name": "data/amount-channel-812695-812831-v1.json", "role": "dataset", "bytes": 8028513, "sha256": "83b4391f78d07a2fa85a67218d5ae4420d8965da3c95af577592e9ec1850104d", "locations": {"canonical": null, "mirrors": []}},
-    {"name": "results/artifacts/amount-subset-sum-v1.json", "role": "result", "bytes": 666, "sha256": "240592b5af814fbcd28b06221805b934424170119da5e62e9da0281944377a9d", "locations": {"canonical": null, "mirrors": []}},
-    {"name": "results/generated/amount-subset-sum-v1.md", "role": "result", "bytes": 385, "sha256": "3caca166d157fb1a1b7b8c995d126bf47ff653a6b7eb01b416b1cef7e254e02f", "locations": {"canonical": null, "mirrors": []}},
-    {"name": "sources/decluster-9fe7ba9-runtime.tar", "role": "source", "bytes": 1290240, "sha256": "d9ee588cee5775b6aac51079a8a43aeec8b6dcd0497b415de172c2186218dd1f", "locations": {"canonical": null, "mirrors": []}},
-    {"name": "dependencies/dss-0.1.0-cp313-cp313-macosx_11_0_arm64.whl", "role": "dependency", "bytes": 336582, "sha256": "91b81d7c6d211fbe59f2c14da9c5dd6fb6514d4c39cf3b57154b4e30f6a6604f", "locations": {"canonical": null, "mirrors": []}},
-    {"name": "reproduction/amount-subset-sum/requirements.lock", "role": "lockfile", "bytes": 90, "sha256": "c87b26aedbefac1731d03ced97dc197a86c0687c7376b3186f8752676f977fab", "locations": {"canonical": null, "mirrors": []}},
-    {"name": "reproduction/amount-subset-sum/environment.json", "role": "environment", "bytes": 352, "sha256": "e7dced6cec94bbb0cabe9c850f770795968d868c40191bee08aa92d756ddd8eb", "locations": {"canonical": null, "mirrors": []}}
+    {
+      "name": "catalog/runs/amount-subset-sum-v1.json",
+      "role": "run_manifest",
+      "bytes": 3205,
+      "sha256": "914eb1820772f7b9b35d02cd20bfab05442f39be842b85d70c1cfa37b0d39b54",
+      "locations": {
+        "canonical": null,
+        "mirrors": []
+      }
+    },
+    {
+      "name": "data/amount-channel-812695-812831-v1.json",
+      "role": "dataset",
+      "bytes": 8028513,
+      "sha256": "83b4391f78d07a2fa85a67218d5ae4420d8965da3c95af577592e9ec1850104d",
+      "locations": {
+        "canonical": null,
+        "mirrors": []
+      }
+    },
+    {
+      "name": "results/artifacts/amount-subset-sum-v1.json",
+      "role": "result",
+      "bytes": 666,
+      "sha256": "240592b5af814fbcd28b06221805b934424170119da5e62e9da0281944377a9d",
+      "locations": {
+        "canonical": null,
+        "mirrors": []
+      }
+    },
+    {
+      "name": "results/generated/amount-subset-sum-v1.md",
+      "role": "result",
+      "bytes": 385,
+      "sha256": "3caca166d157fb1a1b7b8c995d126bf47ff653a6b7eb01b416b1cef7e254e02f",
+      "locations": {
+        "canonical": null,
+        "mirrors": []
+      }
+    },
+    {
+      "name": "sources/decluster-39ac38f-runtime.tar",
+      "role": "source",
+      "bytes": 2027520,
+      "sha256": "c7b16b0c77e40a8c98bb24f4348b6c4fdf9a4d53bfb5f63c5767f4b480f40436",
+      "locations": {
+        "canonical": null,
+        "mirrors": []
+      }
+    },
+    {
+      "name": "dependencies/dss-0.1.0-cp313-cp313-macosx_11_0_arm64.whl",
+      "role": "dependency",
+      "bytes": 336582,
+      "sha256": "91b81d7c6d211fbe59f2c14da9c5dd6fb6514d4c39cf3b57154b4e30f6a6604f",
+      "locations": {
+        "canonical": null,
+        "mirrors": []
+      }
+    },
+    {
+      "name": "reproduction/amount-subset-sum/requirements.lock",
+      "role": "lockfile",
+      "bytes": 90,
+      "sha256": "c87b26aedbefac1731d03ced97dc197a86c0687c7376b3186f8752676f977fab",
+      "locations": {
+        "canonical": null,
+        "mirrors": []
+      }
+    },
+    {
+      "name": "reproduction/amount-subset-sum/environment.json",
+      "role": "environment",
+      "bytes": 352,
+      "sha256": "91d4e00cd6cce9986e7e44c8088f5c7b4cec71e7778bd38f2598c7168930f679",
+      "locations": {
+        "canonical": null,
+        "mirrors": []
+      }
+    }
   ],
   "limitations": [
     "The bundled environment currently targets CPython 3.13 on macOS arm64.",

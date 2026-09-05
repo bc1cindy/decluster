@@ -1,17 +1,94 @@
 {
   "schema_version": 1,
   "id": "amount-pairwise-family-v1",
-  "capabilities": ["verify_outputs", "reproduce_runs"],
-  "runs": ["amount-pairwise-family-v1"],
+  "capabilities": [
+    "verify_outputs",
+    "reproduce_runs"
+  ],
+  "runs": [
+    "amount-pairwise-family-v1"
+  ],
   "blobs": [
-    {"name": "catalog/runs/amount-pairwise-family-v1.json", "role": "run_manifest", "bytes": 3280, "sha256": "6a1bb983e48f269a4ec9d64a2ddd51d208e80304b4b6757249c9cc9602da2140", "locations": {"canonical": null, "mirrors": []}},
-    {"name": "data/amount-channel-812695-812831-v1.json", "role": "dataset", "bytes": 8028513, "sha256": "83b4391f78d07a2fa85a67218d5ae4420d8965da3c95af577592e9ec1850104d", "locations": {"canonical": null, "mirrors": []}},
-    {"name": "results/artifacts/amount-pairwise-family-v1.json", "role": "result", "bytes": 1027, "sha256": "83f6a9e8501ee4df45f08b8c8ffc2f7265d40bf9add6d3f5093d712657c9dbf5", "locations": {"canonical": null, "mirrors": []}},
-    {"name": "results/generated/amount-pairwise-family-v1.md", "role": "result", "bytes": 499, "sha256": "aeaabdc282b4aed6946c6054b95e8b5dd9c20e50eca467de49827e453d5353df", "locations": {"canonical": null, "mirrors": []}},
-    {"name": "sources/decluster-9758b84-runtime.tar", "role": "source", "bytes": 1331200, "sha256": "3390fd8a62b192a955c73a2cde436e88c46792c863a6080c644e4a700bcbba2b", "locations": {"canonical": null, "mirrors": []}},
-    {"name": "dependencies/dss-0.1.0-cp313-cp313-macosx_11_0_arm64.whl", "role": "dependency", "bytes": 336582, "sha256": "91b81d7c6d211fbe59f2c14da9c5dd6fb6514d4c39cf3b57154b4e30f6a6604f", "locations": {"canonical": null, "mirrors": []}},
-    {"name": "reproduction/amount-pairwise-family/requirements.lock", "role": "lockfile", "bytes": 90, "sha256": "c87b26aedbefac1731d03ced97dc197a86c0687c7376b3186f8752676f977fab", "locations": {"canonical": null, "mirrors": []}},
-    {"name": "reproduction/amount-pairwise-family/environment.json", "role": "environment", "bytes": 337, "sha256": "faf37c6592eb87988fca3642e89b2484721109c1a03495ccf244efb249c0fe82", "locations": {"canonical": null, "mirrors": []}}
+    {
+      "name": "catalog/runs/amount-pairwise-family-v1.json",
+      "role": "run_manifest",
+      "bytes": 3592,
+      "sha256": "78ea3081d78b9e830c0635139a389f124090c052e1ce6d3d6ccdf0fa5410e1fc",
+      "locations": {
+        "canonical": null,
+        "mirrors": []
+      }
+    },
+    {
+      "name": "data/amount-channel-812695-812831-v1.json",
+      "role": "dataset",
+      "bytes": 8028513,
+      "sha256": "83b4391f78d07a2fa85a67218d5ae4420d8965da3c95af577592e9ec1850104d",
+      "locations": {
+        "canonical": null,
+        "mirrors": []
+      }
+    },
+    {
+      "name": "results/artifacts/amount-pairwise-family-v1.json",
+      "role": "result",
+      "bytes": 1027,
+      "sha256": "83f6a9e8501ee4df45f08b8c8ffc2f7265d40bf9add6d3f5093d712657c9dbf5",
+      "locations": {
+        "canonical": null,
+        "mirrors": []
+      }
+    },
+    {
+      "name": "results/generated/amount-pairwise-family-v1.md",
+      "role": "result",
+      "bytes": 499,
+      "sha256": "aeaabdc282b4aed6946c6054b95e8b5dd9c20e50eca467de49827e453d5353df",
+      "locations": {
+        "canonical": null,
+        "mirrors": []
+      }
+    },
+    {
+      "name": "sources/decluster-39ac38f-runtime.tar",
+      "role": "source",
+      "bytes": 2027520,
+      "sha256": "c7b16b0c77e40a8c98bb24f4348b6c4fdf9a4d53bfb5f63c5767f4b480f40436",
+      "locations": {
+        "canonical": null,
+        "mirrors": []
+      }
+    },
+    {
+      "name": "dependencies/dss-0.1.0-cp313-cp313-macosx_11_0_arm64.whl",
+      "role": "dependency",
+      "bytes": 336582,
+      "sha256": "91b81d7c6d211fbe59f2c14da9c5dd6fb6514d4c39cf3b57154b4e30f6a6604f",
+      "locations": {
+        "canonical": null,
+        "mirrors": []
+      }
+    },
+    {
+      "name": "reproduction/amount-pairwise-family/requirements.lock",
+      "role": "lockfile",
+      "bytes": 90,
+      "sha256": "c87b26aedbefac1731d03ced97dc197a86c0687c7376b3186f8752676f977fab",
+      "locations": {
+        "canonical": null,
+        "mirrors": []
+      }
+    },
+    {
+      "name": "reproduction/amount-pairwise-family/environment.json",
+      "role": "environment",
+      "bytes": 357,
+      "sha256": "c134bb36f70a71866ec8f39b5a8eef4696f6b75cd907cedd851ab158c02bfe47",
+      "locations": {
+        "canonical": null,
+        "mirrors": []
+      }
+    }
   ],
   "limitations": [
     "The bundled environment currently targets CPython 3.13 on macOS arm64.",

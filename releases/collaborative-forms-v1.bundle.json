@@ -1,50 +1,73 @@
 {
   "schema_version": 1,
   "id": "collaborative-forms-v1",
-  "capabilities": ["verify_outputs", "reproduce_runs"],
-  "runs": ["collaborative-forms-v1"],
+  "capabilities": [
+    "verify_outputs",
+    "reproduce_runs"
+  ],
+  "runs": [
+    "collaborative-forms-v1"
+  ],
   "blobs": [
     {
       "name": "catalog/runs/collaborative-forms-v1.json",
       "role": "run_manifest",
-      "bytes": 2894,
-      "sha256": "52350e46e889f1609862e7ce30d5663c080020d9b190c591b6aa867de5771479",
-      "locations": {"canonical": null, "mirrors": []}
+      "bytes": 2998,
+      "sha256": "d73ed38aafc78cbe0bf7e3a386f4eccbef9a7b966c2d491d9a8b45d5c4599501",
+      "locations": {
+        "canonical": null,
+        "mirrors": []
+      }
     },
     {
       "name": "results/artifacts/collaborative-forms-v1.json",
       "role": "result",
       "bytes": 5574,
       "sha256": "2428a32ec1827bfa9b9a2f44756effc968c537413640927a009be00cee38b733",
-      "locations": {"canonical": null, "mirrors": []}
+      "locations": {
+        "canonical": null,
+        "mirrors": []
+      }
     },
     {
       "name": "results/generated/collaborative-forms-v1.md",
       "role": "result",
       "bytes": 2762,
       "sha256": "b696148f41f66df0756a3f7dbac1c1e53d0ad7d97c14bb194bcfadb4602c5c02",
-      "locations": {"canonical": null, "mirrors": []}
+      "locations": {
+        "canonical": null,
+        "mirrors": []
+      }
     },
     {
-      "name": "sources/decluster-8c760b0-runtime.tar",
+      "name": "sources/decluster-39ac38f-runtime.tar",
       "role": "source",
-      "bytes": 1515520,
-      "sha256": "2fc82531bc735513a7dc47516fc43a3f2357cdd78b05fbc58ab3cbd1b5067650",
-      "locations": {"canonical": null, "mirrors": []}
+      "bytes": 2027520,
+      "sha256": "c7b16b0c77e40a8c98bb24f4348b6c4fdf9a4d53bfb5f63c5767f4b480f40436",
+      "locations": {
+        "canonical": null,
+        "mirrors": []
+      }
     },
     {
       "name": "reproduction/collaborative-forms/requirements.lock",
       "role": "lockfile",
       "bytes": 30,
       "sha256": "e0d6a8cada5d383c0aca2bd2a37f28c15721392469c94084128d369c29c5544d",
-      "locations": {"canonical": null, "mirrors": []}
+      "locations": {
+        "canonical": null,
+        "mirrors": []
+      }
     },
     {
       "name": "reproduction/collaborative-forms/environment.json",
       "role": "environment",
       "bytes": 374,
-      "sha256": "1a105089b582983a4811bbc8b7df8daeffa307483d4e1b1efd2e657784c1c5cf",
-      "locations": {"canonical": null, "mirrors": []}
+      "sha256": "49efcea9ad889e67a0d4d32cfcf660e59faf970ff4e2f44bbcdb81fd6f2baed2",
+      "locations": {
+        "canonical": null,
+        "mirrors": []
+      }
     }
   ],
   "limitations": [

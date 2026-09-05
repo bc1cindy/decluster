@@ -1,20 +1,88 @@
 {
   "schema_version": 1,
   "id": "fingerprint-catalog-axes-v1",
-  "capabilities": ["verify_outputs", "reproduce_runs"],
-  "runs": ["fingerprint-catalog-axes-v1"],
+  "capabilities": [
+    "verify_outputs",
+    "reproduce_runs"
+  ],
+  "runs": [
+    "fingerprint-catalog-axes-v1"
+  ],
   "blobs": [
-    {"name": "catalog/runs/fingerprint-catalog-axes-v1.json", "role": "run_manifest", "bytes": 2871, "sha256": "d39d7cf2244a21443b1ea6ae84c3adad8dbc38d9b41f635be524fadb19196a42", "locations": {"canonical": null, "mirrors": []}},
-    {"name": "tests/fixtures/fingerprint_blkcache_sample.json", "role": "dataset", "bytes": 1701974, "sha256": "406ce2d7d0a04f7c73281bce6b6a781012a8765e079693f010a0154e926c6a6c", "locations": {"canonical": "https://github.com/bc1cindy/decluster/raw/2f1bbae5ac4923ff7b799b25be0dd66b4ec3f692/tests/fixtures/fingerprint_blkcache_sample.json", "mirrors": []}},
-    {"name": "results/artifacts/fingerprint-catalog-axes-v1.json", "role": "result", "bytes": 1883, "sha256": "f103911399f995ac300dcca04af29eab65cb3962d436915c9cb3f931b81f9e4a", "locations": {"canonical": null, "mirrors": []}},
-    {"name": "results/generated/fingerprint-catalog-axes-v1.md", "role": "result", "bytes": 802, "sha256": "773bd7f24736da999200cd9e3ef18b99875ed1f62801496bf8add9f96ff11149", "locations": {"canonical": null, "mirrors": []}},
-    {"name": "sources/decluster-2b4b4ef-runtime.tar", "role": "source", "bytes": 1249280, "sha256": "ec255c276a2e1c445ecab0a75c2bce50aa8ffc60a3df1885651625cf0d24a8fd", "locations": {"canonical": null, "mirrors": []}},
-    {"name": "reproduction/fingerprint-catalog-axes/requirements.lock", "role": "lockfile", "bytes": 0, "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855", "locations": {"canonical": null, "mirrors": []}},
-    {"name": "reproduction/fingerprint-catalog-axes/environment.json", "role": "environment", "bytes": 384, "sha256": "c3261963673c30aa3614ed118977feab1152fb592f7fa80882ba1a57e659ee7f", "locations": {"canonical": null, "mirrors": []}}
+    {
+      "name": "catalog/runs/fingerprint-catalog-axes-v1.json",
+      "role": "run_manifest",
+      "bytes": 3295,
+      "sha256": "d800e961db063c2055b1f20a8ea85a72755b86684c1c4be554a4e2ffa7505815",
+      "locations": {
+        "canonical": null,
+        "mirrors": []
+      }
+    },
+    {
+      "name": "tests/fixtures/fingerprint_blkcache_sample.json",
+      "role": "dataset",
+      "bytes": 1701974,
+      "sha256": "406ce2d7d0a04f7c73281bce6b6a781012a8765e079693f010a0154e926c6a6c",
+      "locations": {
+        "canonical": "https://github.com/bc1cindy/decluster/raw/2f1bbae5ac4923ff7b799b25be0dd66b4ec3f692/tests/fixtures/fingerprint_blkcache_sample.json",
+        "mirrors": []
+      }
+    },
+    {
+      "name": "results/artifacts/fingerprint-catalog-axes-v1.json",
+      "role": "result",
+      "bytes": 1883,
+      "sha256": "f103911399f995ac300dcca04af29eab65cb3962d436915c9cb3f931b81f9e4a",
+      "locations": {
+        "canonical": null,
+        "mirrors": []
+      }
+    },
+    {
+      "name": "results/generated/fingerprint-catalog-axes-v1.md",
+      "role": "result",
+      "bytes": 802,
+      "sha256": "773bd7f24736da999200cd9e3ef18b99875ed1f62801496bf8add9f96ff11149",
+      "locations": {
+        "canonical": null,
+        "mirrors": []
+      }
+    },
+    {
+      "name": "sources/decluster-39ac38f-runtime.tar",
+      "role": "source",
+      "bytes": 2027520,
+      "sha256": "c7b16b0c77e40a8c98bb24f4348b6c4fdf9a4d53bfb5f63c5767f4b480f40436",
+      "locations": {
+        "canonical": null,
+        "mirrors": []
+      }
+    },
+    {
+      "name": "reproduction/fingerprint-catalog-axes/requirements.lock",
+      "role": "lockfile",
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "locations": {
+        "canonical": null,
+        "mirrors": []
+      }
+    },
+    {
+      "name": "reproduction/fingerprint-catalog-axes/environment.json",
+      "role": "environment",
+      "bytes": 384,
+      "sha256": "77ca46267d77a1e27df87cbd7ef23e6f54f0b071c0895f67898ced54e5a94019",
+      "locations": {
+        "canonical": null,
+        "mirrors": []
+      }
+    }
   ],
   "limitations": [
     "The bundled environment currently targets CPython 3.13 on macOS arm64.",
-    "The dataset origin is public, but its cataloged redistribution status remains unknown.",
+    "The dataset publisher authorized redistribution of the public fixture on 2026-09-04; upstream licensing remains undetermined.",
     "The historical 166k and 180k cache snapshots are unavailable and are not reproduced.",
     "Public bootstrap remains incomplete until every blob has a canonical HTTPS location and an independent mirror."
   ]

@@ -1,20 +1,88 @@
 {
   "schema_version": 1,
   "id": "reid-v1",
-  "capabilities": ["verify_outputs", "reproduce_runs"],
-  "runs": ["reid-v1"],
+  "capabilities": [
+    "verify_outputs",
+    "reproduce_runs"
+  ],
+  "runs": [
+    "reid-v1"
+  ],
   "blobs": [
-    {"name": "catalog/runs/reid-v1.json", "role": "run_manifest", "bytes": 2518, "sha256": "0d9d5c4aed587c9d28220e4946ed934aae81f8c5107c0c8abb0f7c646965da9f", "locations": {"canonical": null, "mirrors": []}},
-    {"name": "tests/fixtures/reid_sigs.json.gz", "role": "dataset", "bytes": 2051632, "sha256": "dbc4214fb499a96327326c4ea31341a76878c1867bfa3ccc57df88d850cdaa6a", "locations": {"canonical": "https://github.com/bc1cindy/decluster/raw/495874b5063bd83fc24e32eec1ebeb933471f6b9/tests/fixtures/reid_sigs.json.gz", "mirrors": []}},
-    {"name": "results/artifacts/reid-v1.json", "role": "result", "bytes": 1481, "sha256": "b997d2e21d2418ee2720d94ce002e1145e6623f378c95ff19427b0fd1a2d0c83", "locations": {"canonical": null, "mirrors": []}},
-    {"name": "results/generated/reid-v1.md", "role": "result", "bytes": 795, "sha256": "685acc5dc71a32295f04409c3e11b310934dbba6b44d4bd709255767f6b47c20", "locations": {"canonical": null, "mirrors": []}},
-    {"name": "sources/decluster-dc1c2c8-runtime.tar", "role": "source", "bytes": 1167360, "sha256": "ae17af8c4768f0ef32eb4540736f5e35740afd243c41d04ea911e4f4e063f138", "locations": {"canonical": null, "mirrors": []}},
-    {"name": "reproduction/reid/requirements.lock", "role": "lockfile", "bytes": 0, "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855", "locations": {"canonical": null, "mirrors": []}},
-    {"name": "reproduction/reid/environment.json", "role": "environment", "bytes": 344, "sha256": "3277df49d5432ef11c8f352b7a9ea732502de0e3b3922aeb0586964e90a17fc8", "locations": {"canonical": null, "mirrors": []}}
+    {
+      "name": "catalog/runs/reid-v1.json",
+      "role": "run_manifest",
+      "bytes": 2962,
+      "sha256": "a8066f13496f1666f7bfe9072cf1f5719c52f32437ea9dd2299fc50890ac23da",
+      "locations": {
+        "canonical": null,
+        "mirrors": []
+      }
+    },
+    {
+      "name": "tests/fixtures/reid_sigs.json.gz",
+      "role": "dataset",
+      "bytes": 2051632,
+      "sha256": "dbc4214fb499a96327326c4ea31341a76878c1867bfa3ccc57df88d850cdaa6a",
+      "locations": {
+        "canonical": "https://github.com/bc1cindy/decluster/raw/495874b5063bd83fc24e32eec1ebeb933471f6b9/tests/fixtures/reid_sigs.json.gz",
+        "mirrors": []
+      }
+    },
+    {
+      "name": "results/artifacts/reid-v1.json",
+      "role": "result",
+      "bytes": 1517,
+      "sha256": "2c63a3d460c19e8c49926eef1203d9d42036dda1da8e4836b70f90d8a38f2f59",
+      "locations": {
+        "canonical": null,
+        "mirrors": []
+      }
+    },
+    {
+      "name": "results/generated/reid-v1.md",
+      "role": "result",
+      "bytes": 795,
+      "sha256": "685acc5dc71a32295f04409c3e11b310934dbba6b44d4bd709255767f6b47c20",
+      "locations": {
+        "canonical": null,
+        "mirrors": []
+      }
+    },
+    {
+      "name": "sources/decluster-39ac38f-runtime.tar",
+      "role": "source",
+      "bytes": 2027520,
+      "sha256": "c7b16b0c77e40a8c98bb24f4348b6c4fdf9a4d53bfb5f63c5767f4b480f40436",
+      "locations": {
+        "canonical": null,
+        "mirrors": []
+      }
+    },
+    {
+      "name": "reproduction/reid/requirements.lock",
+      "role": "lockfile",
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "locations": {
+        "canonical": null,
+        "mirrors": []
+      }
+    },
+    {
+      "name": "reproduction/reid/environment.json",
+      "role": "environment",
+      "bytes": 344,
+      "sha256": "17120e774c4806ccf5b828a9a7bb3ec949c2e49d058c6a44f590869f11deafbf",
+      "locations": {
+        "canonical": null,
+        "mirrors": []
+      }
+    }
   ],
   "limitations": [
     "The bundled environment currently targets CPython 3.13 on macOS arm64.",
-    "The dataset origin is public, but its cataloged redistribution status remains unknown.",
+    "The dataset publisher authorized redistribution of the public fixture on 2026-09-04; upstream licensing remains undetermined.",
     "Public bootstrap remains incomplete until every blob has a canonical HTTPS location and an independent mirror."
   ]
 }
