@@ -1,0 +1,36 @@
+{
+  "schema_version": 1,
+  "id": "radix-notebook-v1",
+  "title": "Small Hamming Weight Denominations for CoinJoins",
+  "canonical_url": "https://colab.research.google.com/drive/1We_FvfX_Ob9BapFW3X_By9vTtxUrt3pm",
+  "retrieval_url": "https://drive.google.com/uc?export=download&id=1We_FvfX_Ob9BapFW3X_By9vTtxUrt3pm",
+  "retrieved_at": "2026-09-05T01:54:48Z",
+  "format": "application/x-ipynb+json; nbformat=4.0",
+  "content": {
+    "bytes": 589558,
+    "sha256": "afaee22d223b442774eeaa50f3da00c97b1fba5c7c300b5d3cde56ddc57ff48f"
+  },
+  "structure": {
+    "cells": 41,
+    "code_cells": 24,
+    "markdown_cells": 17,
+    "display_data_outputs": 9,
+    "execute_result_outputs": 1
+  },
+  "normalization": {
+    "algorithm": "jq-cS-strip-runtime-v1",
+    "tool": "jq 1.8.1",
+    "removed": [
+      ".cells[].outputs",
+      ".cells[].execution_count",
+      ".metadata.colab.authorship_tag",
+      ".metadata.colab.provenance"
+    ],
+    "serialization": "jq -cS with one trailing LF; not RFC 8785 JCS",
+    "source_only_sha256": "a8a9c3d6f70f42c928490ba5974569d6846ff0906cb87481993a3dc6ed2d83f9"
+  },
+  "license": "no explicit license found in the exported notebook",
+  "redistribution": "unknown",
+  "availability": "current remote version only; no immutable mirror; repository redistribution is blocked pending permission",
+  "interpretation": "constructive denomination and sumset diagnostic; not an attack oracle, CoinScore, privacy proof, or universal mapping-count bound"
+}
