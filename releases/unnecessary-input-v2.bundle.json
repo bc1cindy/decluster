@@ -1,0 +1,55 @@
+{
+  "schema_version": 1,
+  "id": "unnecessary-input-v2",
+  "capabilities": ["verify_outputs", "reproduce_runs"],
+  "runs": ["unnecessary-input-v2"],
+  "blobs": [
+    {
+      "name": "catalog/runs/unnecessary-input-v2.json",
+      "role": "run_manifest",
+      "bytes": 3342,
+      "sha256": "5b3e89556b7dba4baca415dfc465a1bf5ed8f3086a2656fad290e47e3cb1f077",
+      "locations": {"canonical": null, "mirrors": []}
+    },
+    {
+      "name": "results/artifacts/unnecessary-input-v2.json",
+      "role": "result",
+      "bytes": 2387,
+      "sha256": "a8e17f91020b0cbdc12bc2cb2652e2ffa63b5b5dcc70af6dfc3d4a73925278e0",
+      "locations": {"canonical": null, "mirrors": []}
+    },
+    {
+      "name": "results/generated/unnecessary-input-v2.md",
+      "role": "result",
+      "bytes": 1071,
+      "sha256": "52cb79757b649e63cd24161b0f416eeebde8c871133f6cb338db7252786d525a",
+      "locations": {"canonical": null, "mirrors": []}
+    },
+    {
+      "name": "sources/decluster-9b77fe8-runtime.tar",
+      "role": "source",
+      "bytes": 1454080,
+      "sha256": "d49971b722d020c4beac6ff105468da2b8a957fb4d1a80b90aeae63569574db9",
+      "locations": {"canonical": null, "mirrors": []}
+    },
+    {
+      "name": "reproduction/unnecessary-input/requirements.lock",
+      "role": "lockfile",
+      "bytes": 30,
+      "sha256": "e0d6a8cada5d383c0aca2bd2a37f28c15721392469c94084128d369c29c5544d",
+      "locations": {"canonical": null, "mirrors": []}
+    },
+    {
+      "name": "reproduction/unnecessary-input/environment.json",
+      "role": "environment",
+      "bytes": 370,
+      "sha256": "85f38389c64cc285c4ab0248aedbf702b450e0ed3b92191433af4e7621309e1a",
+      "locations": {"canonical": null, "mirrors": []}
+    }
+  ],
+  "limitations": [
+    "The bundled environment currently targets CPython 3.13 on macOS arm64.",
+    "The deterministic fixtures need no external dataset or network access.",
+    "Public bootstrap remains unavailable until every blob has a canonical HTTPS location and an independent mirror."
+  ]
+}
