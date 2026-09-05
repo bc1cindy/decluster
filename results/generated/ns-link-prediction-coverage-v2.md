@@ -6,9 +6,9 @@ Generated from the canonical experiment artifact. Do not edit manually.
 |---|---|---|
 | `algorithm1_similarity` | `implemented` | — |
 | `algorithm2_positive_weights` | `implemented` | — |
-| `algorithm2_dummy_weights` | `mathematically_undefined` | dummy incident weights are zero but the published ratio divides by weights |
+| `algorithm2_dummy_weights` | `implemented` | a dummy-incident node term is fixed at zero; the paper states this in prose, not in the printed formula |
 | `annealing` | `partial` | iteration budget, RNG and best-state return are explicit local controls |
-| `two_stage_mapping` | `implemented` | — |
+| `two_stage_mapping` | `implemented` | the paper picks an arbitrary unmapped node and stage 1 feeds back, so the ``repr`` order this driver imposes is a result-bearing local choice; injectivity comes from Algorithm 3's 1-1 mapping, not from the propagation section |
 | `confidence_pruning` | `not_reproduced` | an implementation-complete pruning policy is not available |
 | `accepted_mapping_correction` | `not_reproduced` | schedule and conflict resolution are not specified sufficiently |
 | `algorithm3_cascade` | `implemented` | — |

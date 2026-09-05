@@ -24,7 +24,7 @@ COMPONENTS = {
     "per_coin": (
         "results/artifacts/amount-per-coin-v1.json",
         "amount-per-coin-v1",
-        "7be46858e221d0c942e7fa3ccc93b5eba28cf3a494fd00f07c2d50f2caa473df",
+        "2e75b1330181e7cbf8539a357e2bd3ad650c4d2d207c7a47ec687e991e24a622",
     ),
     "mapping_family": (
         "results/artifacts/amount-mapping-family-v1.json",

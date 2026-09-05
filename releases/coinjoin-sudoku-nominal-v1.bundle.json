@@ -13,7 +13,7 @@
       "name": "catalog/runs/coinjoin-sudoku-nominal-v1.json",
       "role": "run_manifest",
       "bytes": 2843,
-      "sha256": "64af8b8d644276768caeb66f7e44c255952f460e224dd408478ea59a7e42bbc3",
+      "sha256": "eca4a77ddb365cb36819e157a240ec28bc236bbc0d34f1010b934a297466d8d9",
       "locations": {
         "canonical": null,
         "mirrors": []
@@ -22,8 +22,8 @@
     {
       "name": "results/artifacts/coinjoin-sudoku-nominal-v1.json",
       "role": "result",
-      "bytes": 2089,
-      "sha256": "fa95328ff08a5da00dfbe3bbe7060cba5bde50e1923ea62a00f4a7d05a338d1d",
+      "bytes": 2351,
+      "sha256": "4d9b3871ab258304c97c371f9ff870763abe9ec28df040bd47e085646582c5b2",
       "locations": {
         "canonical": null,
         "mirrors": []

@@ -5,7 +5,7 @@
     "ctp.amount.subtransaction_ambiguity"
   ],
   "code": {
-    "revision": "39ac38f0ca12ef2e7c5737e34000c52795f1dfe6",
+    "revision": "92ba62c714cea1bbf2c34a3e2af62a1fabc3d4bf",
     "dirty": false
   },
   "command": {
@@ -41,13 +41,13 @@
   "outputs": [
     {
       "path": "results/artifacts/counting-methods-v1.json",
-      "bytes": 3000,
-      "sha256": "550b78a29abf23ebfdf73308a9287452336e2769e7d2aa1e5472a1121fd8f8bc"
+      "bytes": 3003,
+      "sha256": "81d48cf4f7b71eb62354cfd589a40fdfc6171a54b0c9b7a768bd45198e7a1312"
     },
     {
       "path": "results/generated/counting-methods-v1.md",
-      "bytes": 796,
-      "sha256": "1862919ac1ccca47ad99572e3e3d94fd10098d0d259a487f86a3c9a0b9c6043f"
+      "bytes": 795,
+      "sha256": "7783ece95b71bd11cacf9b6f350b7d22c87c54a46ca7e75b3c5dbeb62e5d091d"
     }
   ],
   "reproducibility": {

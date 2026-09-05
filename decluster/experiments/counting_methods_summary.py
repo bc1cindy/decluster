@@ -14,7 +14,7 @@ COMPONENTS = {
     "router": (
         "results/artifacts/counting-router-v1.json",
         "counting-router-v1",
-        "731164f77a75776fc91a9c5bc8bce16700e6084e44c75d7e83510ac8afec1ce5",
+        "7c0764b7f39ad8795b4e349cff0903f68b7edcbc3f0d75cc6691a138813239b7",
     ),
     "fee_sensitivity": (
         "results/artifacts/counting-fee-sensitivity-v1.json",

@@ -22,15 +22,20 @@ def test_report_preserves_published_per_coin_outcomes():
         "candidates": {"input": 60, "output": 258, "total": 318},
     }
     assert report["transaction_gated"] == {
-        "resolved_transactions": 95,
-        "candidate_transactions": 63,
-        "candidates": {"input": 18, "output": 84, "total": 102},
+        "resolved_transactions": 82,
+        "candidate_transactions": 62,
+        "candidates": {"input": 18, "output": 83, "total": 101},
         "candidates_with_exact_transaction_count": {
-            "input": 3,
-            "output": 63,
-            "total": 66,
+            "input": 0,
+            "output": 61,
+            "total": 61,
         },
     }
+    # The gate resolves fewer transactions than the diagnostic enumerates, and no
+    # candidate carries an exact transaction count: the radix tier is a diagnostic.
+    assert report["transaction_gated"]["resolved_transactions"] < (
+        report["ungated_diagnostic"]["candidate_transactions"]
+    )
 
 
 def test_artifact_keeps_diagnostic_and_gate_semantics_distinct(monkeypatch):

@@ -15,4 +15,4 @@ Generated from the canonical experiment artifact. Do not edit manually.
 
 Link-matrix bound direction: `neither`.
 
-DSS: `0.1.0` at revision `30fc21ee521016061532008f8dfea31f953d7e6d`.
+DSS: `0.1.0` at revision `474dee22bb60b9d46e7ad1e4c78957ad819c9550`.

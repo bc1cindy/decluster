@@ -5,7 +5,7 @@
     "ctp.social_graph.link_prediction"
   ],
   "code": {
-    "revision": "39ac38f0ca12ef2e7c5737e34000c52795f1dfe6",
+    "revision": "92ba62c714cea1bbf2c34a3e2af62a1fabc3d4bf",
     "dirty": false
   },
   "command": {
@@ -44,13 +44,13 @@
   "outputs": [
     {
       "path": "results/artifacts/ns-link-prediction-coverage-v2.json",
-      "bytes": 2340,
-      "sha256": "d2c2ef87f4ac07558d5fa0b33edbc73fc2755384093a288c753326ee94a99dd1"
+      "bytes": 2500,
+      "sha256": "1223ce1528c4136d78fb727cc9bc81043af15d47562b7d215973a37b386fbaf4"
     },
     {
       "path": "results/generated/ns-link-prediction-coverage-v2.md",
-      "bytes": 1284,
-      "sha256": "8bdb158d3ded13e21020fe0739f134c9e4b8839d5448d96af8ff0018aed3122c"
+      "bytes": 1522,
+      "sha256": "009538122a9c35006d6ac47a1129317d504fd15ac6861dffaa3c115cc3edc872"
     }
   ],
   "reproducibility": {

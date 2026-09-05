@@ -5,7 +5,7 @@
     "ctp.amount.subtransaction_ambiguity"
   ],
   "code": {
-    "revision": "39ac38f0ca12ef2e7c5737e34000c52795f1dfe6",
+    "revision": "92ba62c714cea1bbf2c34a3e2af62a1fabc3d4bf",
     "dirty": false
   },
   "command": {
@@ -42,8 +42,8 @@
   "outputs": [
     {
       "path": "results/artifacts/coinjoin-sudoku-nominal-v1.json",
-      "bytes": 2089,
-      "sha256": "fa95328ff08a5da00dfbe3bbe7060cba5bde50e1923ea62a00f4a7d05a338d1d"
+      "bytes": 2351,
+      "sha256": "4d9b3871ab258304c97c371f9ff870763abe9ec28df040bd47e085646582c5b2"
     },
     {
       "path": "results/generated/coinjoin-sudoku-nominal-v1.md",

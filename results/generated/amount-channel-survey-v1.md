@@ -12,7 +12,7 @@ CoinJoin shape fires 28 times and de-mix resolves 0. Unnecessary-input fires 485
 
 Transaction W(E) returns 1,303 exact and 125 unknown outcomes; 80 expose a usable conservative nonzero log W.
 
-Per-coin density yields 318 raw candidates. After the transaction gate, 102 remain in 63 transactions.
+Per-coin density yields 318 raw candidates. After the transaction gate, 101 remain in 62 transactions.
 
 ## Restricted DSS mapping family
 

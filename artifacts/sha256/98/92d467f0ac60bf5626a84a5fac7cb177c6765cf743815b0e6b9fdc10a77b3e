@@ -5,7 +5,7 @@
     "ctp.amount.subtransaction_ambiguity"
   ],
   "code": {
-    "revision": "39ac38f0ca12ef2e7c5737e34000c52795f1dfe6",
+    "revision": "92ba62c714cea1bbf2c34a3e2af62a1fabc3d4bf",
     "dirty": false
   },
   "command": {
@@ -60,13 +60,13 @@
   "outputs": [
     {
       "path": "results/artifacts/counting-router-v1.json",
-      "bytes": 894,
-      "sha256": "731164f77a75776fc91a9c5bc8bce16700e6084e44c75d7e83510ac8afec1ce5"
+      "bytes": 897,
+      "sha256": "7c0764b7f39ad8795b4e349cff0903f68b7edcbc3f0d75cc6691a138813239b7"
     },
     {
       "path": "results/generated/counting-router-v1.md",
-      "bytes": 508,
-      "sha256": "f95ad5c12ea0ed2119771ee6c300361d8c6fbbe48950510a071a4c8772f35a37"
+      "bytes": 505,
+      "sha256": "a002dd84d74d51b0106a6bccd4c625300d838becbfc1edff36b7cfd46eda682f"
     }
   ],
   "reproducibility": {
