@@ -7,9 +7,11 @@ successive observations the surviving set shrinks, and it can shrink to one.
 
 The paper's Algorithm 2 is implemented below over injected graph and clustering callbacks.  Its
 2015--2017 JoinMarket dataset and empirical rates are NOT reproduced, so no measured rate in this
-repository is attributed to Goldfeder et al.  In particular this module states no shrink law.  The reading that each observation cuts
-the candidate set by a constant factor is Danezis and Serjantov's statistical-disclosure result, not
-Goldfeder's: the intersection paper demonstrates the attack and states no such law.
+repository is attributed to Goldfeder et al.  In particular this module states no shrink law.  The
+reading that each observation cuts the candidate set by a constant factor is not Goldfeder's: the
+intersection paper demonstrates the attack and states no such law.  It is not sourced elsewhere
+here either -- the statistical-disclosure line of work bounds the observations an adversary needs
+by a signal-to-noise condition and a confidence interval, not by a constant factor per observation.
 ``decluster/intersect.py`` carries the same distinction and this module does not weaken it.
 
 The scope is deliberately narrow.  This module takes candidate sets; it does not compute them.

@@ -1,4 +1,18 @@
-"""Profile-weighted perfect-matching disclosure for one threshold-mix round."""
+"""Profile-weighted perfect-matching disclosure for one threshold-mix round.
+
+Sent and received messages are carried as `SubjectKind.MAPPING`. There is no message kind in
+the vocabulary and none is added for a synthetic fixture; the reuse is notation.
+
+One deliberate divergence from the paper. Its equation 4 linearizes the joint probability by
+edge weights `log(P)`, and it defines `log(0) = -inf` expressly so the assignment algorithm
+still returns a matching -- the paper notes that the substitution "solely prevents numerical
+errors and has no influence on the output M". Here a permutation containing a zero-probability
+pair is dropped instead, and a round in which every permutation contains one abstains rather
+than returning a matching the profiles say is impossible. That is the repository's refuse-only
+posture, not the paper's behaviour, and it changes the output where the paper's does not.
+Weights are natural logs; base is immaterial to the argmax but the reported log-likelihood is
+not on the paper's base-10 scale.
+"""
 
 from dataclasses import dataclass
 from itertools import permutations
@@ -120,6 +134,8 @@ def evaluate(scenario: PerfectMatchingScenario) -> AttackReport:
         limitations=(
             "sender profiles are supplied rather than estimated from a longitudinal trace",
             "enumeration is a small-fixture oracle, not the scalable assignment algorithm",
+            "zero-probability pairs abstain here; under the paper's log(0) = -inf convention the"
+            " assignment algorithm still returns a matching",
         ),
     )
     if analysis.log_likelihood is None:

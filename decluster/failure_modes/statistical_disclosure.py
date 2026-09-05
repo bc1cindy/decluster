@@ -1,4 +1,9 @@
-"""Longitudinal statistical disclosure in the threshold-mix model."""
+"""Longitudinal statistical disclosure in the threshold-mix model.
+
+Mix senders and recipients are carried as `SubjectKind.CLUSTER`. There is no mix-participant
+kind in the vocabulary and none is added for a synthetic fixture; the reuse is notation, and
+nothing here reads a Bitcoin wallet cluster out of it.
+"""
 
 from dataclasses import dataclass
 from math import isfinite
@@ -114,7 +119,7 @@ def estimate(scenario: StatisticalDisclosureScenario) -> CorrespondentDistributi
         adversary="global passive observer who knows the target-active rounds",
         observables=("recipient multiset per round", "batch size", "background distribution"),
         hypothesis="the target has a persistent correspondent distribution distinct from background",
-        algorithm="Danezis threshold-mix statistical disclosure estimator, equation 9.2",
+        algorithm="Danezis threshold-mix statistical disclosure estimator, equation 2",
         dataset="deterministic synthetic threshold-mix fixture",
         limitations=(
             "target activity and the background distribution are supplied",
@@ -149,5 +154,10 @@ def evaluate(scenario: StatisticalDisclosureScenario) -> AttackReport:
             "the model assumes one target message and batch_size minus one background messages per round",
             "the result ranks persistent correspondents and does not attribute Bitcoin ownership",
             "the fixture does not estimate real-world attack frequency or confidence",
+            "the estimator is implemented; the paper's applicability and efficiency section is not"
+            " — neither the signal-to-noise condition that decides whether the attack is possible"
+            " at all, nor the bound on observations needed for a stated confidence. Those are the"
+            " part of the source that speaks to a rate, so no claim about how fast certainty is"
+            " gained is covered here",
         ),
     )

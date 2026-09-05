@@ -1,8 +1,15 @@
 """Ledger-to-graph transformations from Kelen and Seres, Section 3.
 
-The account transform requires explicit opening balances. This avoids deriving
-private pre-window state from the observed transfers and mirrors the paper's
-auxiliary-source treatment of initial balance.
+Section 2.2 sets no restrictions on a node's incoming and outgoing amounts, and the
+auxiliary source of Section 2.4 absorbs whatever a node spends without having received.
+So the paper's model does not need opening balances, and `stationary_account_graph`
+does not ask for them.
+
+`temporal_account_graph` does, and the reason is local to that transform rather than
+inherited from the paper: splitting an account into per-receipt snapshots makes each
+snapshot hold a balance, and the carry edge into the next snapshot is only defined when
+the spend does not exceed it. Requiring the balances up front also keeps pre-window state
+from being back-derived out of the observed transfers.
 """
 
 from collections import defaultdict
@@ -117,6 +124,10 @@ def temporal_account_graph(transfers: Iterable[Transfer], *, opening_balances):
     the destination's preceding non-zero balance is carried to that snapshot.
     Consequently a reverse walk from an earlier payment cannot cross into a
     receipt that happened later.
+
+    `opening_balances` is required, and a snapshot spending more than it holds raises:
+    the carry edge needs a non-negative remainder. This is a condition of the temporal
+    split, not of the paper's graph model.
     """
 
     transfers = _validated(transfers)

@@ -5,12 +5,13 @@ it does not enumerate edge-disjoint paths or enforce plausible-flow capacity.
 
 The origin distribution is weighted by link probability alone. Subset-sum multiplicity is NOT a
 factor: `cost.py` declares the amount channel refuse-only — it may cut a coin from the graph, never
-weight one — and multiplicity entering as a weight is what that forbids. Measured on a synthetic
-two-origin DAG, the term moved min-entropy from 1.0 bit to 0.137; the direction is beside the point,
-the objection is that an ambiguity signal was a weight at all. The combinatorial sub-transaction
-literature reads a low mapping count as low privacy, so under that reading the weighting was the
-correct ambiguity signal; the refuse-only contract overrides it, and this module does not pretend
-the two agree.
+weight one — and multiplicity entering as a weight is what that forbids. Historical record: measured
+on a synthetic two-origin DAG the term moved min-entropy from 1.0 bit to 0.137, but that DAG is not
+in this checkout and no artifact preserves it, so the pair is not recomputable from here. The
+direction is beside the point anyway; the objection is that an ambiguity signal was a weight at all.
+The combinatorial sub-transaction literature reads a low mapping count as low privacy, so under that
+reading the weighting was the correct ambiguity signal; the refuse-only contract overrides it, and
+this module does not pretend the two agree.
 
 Multiplicity, not redundancy: many routes may share the same coins, so this says nothing about how
 few of them a cut would sever. Measuring that needs disjoint paths, which this repository does not

@@ -101,6 +101,12 @@ def collapse_bits(smallest, n_shared):
     `ancestry_entropy`. A raw difference of origins is not comparable across
     branches of different sizes; bits are.
 
+    Unnormalized bits, after Serjantov and Danezis. Diaz et al.'s degree of anonymity
+    `d = H/H_M` is deliberately not adopted: `H_M = log2(N)` needs a fixed population `N`
+    of candidate origins, and a coin's candidate set has no such `N` — the walk's reach,
+    the clustering and the truncation bound all move it. Dividing by a quantity that moves
+    with the measurement would report method changes as privacy changes.
+
     `None` when there is nothing to measure: no signature at all, or an empty
     intersection. An empty intersection is a refusal — the branches share no
     origin — not an unbounded narrowing, and reporting it as infinite bits would
@@ -116,11 +122,14 @@ def accumulate_intersections(observations, rarity=None, cluster_of=None, univers
     """Cross-event accumulation. Each observation is a list of branch signatures (one co-spend /
     linkage event); intersecting the surviving origin set across successive linked observations is
     where the compounding comes from — the writeup's "O(log n) observations, each cutting the
-    candidate set by a constant factor" (Robust connectivity). The rate is Danezis and Serjantov's
-    statistical-disclosure result, not Goldfeder's: the intersection paper demonstrates the attack
-    but states no shrink law. `universe_size`, when known, includes the first observation's
-    narrowing in `total_bits`; without it the returned bits are explicitly relative to the first
-    observed candidate set. Returns (survivors, total_bits)."""
+    candidate set by a constant factor" (Robust connectivity). Nothing cited here states that rate.
+    It is not Goldfeder's: the intersection paper demonstrates the attack and states no shrink law.
+    Nor is it the statistical-disclosure literature's, which bounds the observations an adversary
+    needs by a signal-to-noise condition and a confidence interval, not by a constant factor per
+    observation. The bits below are measured off the observations supplied, never assumed from a
+    rate. `universe_size`, when known, includes the first observation's narrowing in `total_bits`;
+    without it the returned bits are explicitly relative to the first observed candidate set.
+    Returns (survivors, total_bits)."""
     surviving = None
     total = 0.0
     for sigs in observations:
@@ -278,6 +287,12 @@ def evaluate(candidate, signature_of, rarity=None, truncation_of=None,
     Under `ancestry.value_flow_link_oracle` — which refuses only on zero total input value — the
     oracle-refusal half is practically always zero, so a default-oracle walk that comes back blind
     was blinded by `max_nodes`, and now says so rather than leaving the reader to infer it.
+
+    `blind` mixes units when `cluster_of` is given: `truncated` counts coins the walk never
+    reached, `sizes` counts the wallets those coins lift to, and lifting is many-to-one, so
+    `t >= n` fires earlier than a like-for-like comparison would. The error is one-directional —
+    it over-reports blindness and therefore refuses more — but it is an over-report, not a
+    measurement. Only the coin-level path (`cluster_of` unset) compares like with like.
 
     `cluster_of` lifts each origin to its owning wallet before intersecting, which is what the
     writeup asks for: the candidate origins are clusters, not coins, so two branches can overlap

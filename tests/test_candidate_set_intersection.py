@@ -118,7 +118,7 @@ def test_the_module_scopes_what_is_and_is_not_reproduced():
     doc = " ".join(csi.__doc__.split())
     assert "Algorithm 2 is implemented" in doc
     assert "empirical rates are NOT reproduced" in doc
-    assert "Danezis and Serjantov" in doc and "not Goldfeder's" in doc
+    assert "no shrink law" in doc and "not Goldfeder's" in doc
 
 
 def test_goldfeder_algorithm_two_uses_only_join_paths_and_identifies_unique_cluster():
