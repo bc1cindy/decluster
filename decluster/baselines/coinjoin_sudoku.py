@@ -2,8 +2,8 @@
 
 The historical analyzer was not published in the cited repository. This module
 therefore implements only the mechanism stated in the advisory: partition both
-transaction sides into non-empty groups and retain equal-sum pairings. Selection and
-weighting of those groupings are separate, explicitly local adaptations. This module
+transaction sides into non-empty groups and retain equal-sum pairings. Selection,
+weighting and the fee model are separate, explicitly local adaptations. This module
 does not reproduce the digit-skipping optimization or historical SharedCoin result.
 """
 
@@ -50,10 +50,13 @@ def _fee_outputs(inputs, outputs, fee_unit, max_outputs):
 def equal_sum_groupings(inputs, outputs, *, fee_unit=None, max_coins=12):
     """Enumerate every indexed equal-sum grouping described by the advisory.
 
-    ``fee_unit`` represents the advisory implementation's SharedCoin convention of
-    splitting the transaction fee into equal pseudo-outputs. The unavailable analyzer
-    leaves its grouping deduplication semantics unspecified, so equal-valued coins and
-    fee units remain distinct by index here.
+    ``fee_unit`` is a LOCAL fee model, not a published rule. The advisory states only that the
+    fee is a multiple of a constant (currently 0.0001 BTC) and shows it as a single amount beside
+    the outputs; splitting it into that many equal pseudo-outputs so groups can balance is this
+    module's choice, and it decides the result — the same transaction read with one pseudo-output
+    of the whole fee admits only the trivial grouping. The unavailable analyzer leaves its grouping
+    deduplication semantics unspecified, so equal-valued coins and fee units remain distinct by
+    index here.
     """
     inputs, outputs = tuple(inputs), tuple(outputs)
     if not inputs or not outputs:
