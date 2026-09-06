@@ -12,8 +12,8 @@
     {
       "name": "catalog/runs/slice-channels-v1.json",
       "role": "run_manifest",
-      "bytes": 3065,
-      "sha256": "97ca9455036bc2543fda66052b17e94a937d7c3e6e533ffd08f0a386d1e79673",
+      "bytes": 3163,
+      "sha256": "4383ca76fe7d813f2cd2ed73d002a28f5ea5417c7d545894d2d5250af1daa90b",
       "locations": {
         "canonical": null,
         "mirrors": []
@@ -32,8 +32,8 @@
     {
       "name": "results/artifacts/slice-channels-v1.json",
       "role": "result",
-      "bytes": 1305,
-      "sha256": "cdc6fdc150bbea565df185648d60cdb3a08404814f2a024de6bce310befa8eed",
+      "bytes": 1564,
+      "sha256": "588992cc86b2689ea0d409e8d228e3cfb83fc15246731b57f21ad8bf63d1dc64",
       "locations": {
         "canonical": null,
         "mirrors": []
@@ -42,8 +42,8 @@
     {
       "name": "results/generated/slice-channels-v1.md",
       "role": "result",
-      "bytes": 673,
-      "sha256": "ab9301b81682c916c84f2dd2e8d8be8937e310ae90e7dd3816c56f1fe81f2dff",
+      "bytes": 1043,
+      "sha256": "c01256072550fd633edd1fa113f1435e9be9323f4ef9a95a6452648464f4fd3d",
       "locations": {
         "canonical": null,
         "mirrors": []

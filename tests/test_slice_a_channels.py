@@ -43,14 +43,14 @@ def test_entity_attribute_space_is_dense_not_sparse():
     tops = def1_sparsity.nearest_similarities(g, query_n=1200, background_n=12000, min_degree=2, seed=0)
     surv = def1_sparsity.survival(tops, epsilons=(0.5, 0.9, 0.99))
     assert surv[0.5] >= 0.99                            # doc 1.000
-    assert surv[0.9] >= 0.95                            # doc 1.000 — dense: near-twin at eps 0.9
-    assert surv[0.99] >= 0.90                           # doc 0.990
+    assert surv[0.9] >= 0.95                            # doc 0.998 — dense: near-twin at eps 0.9
+    assert surv[0.99] >= 0.90                           # doc 0.983
 
     # Not an artefact of the one-transaction clusters that dominate the population: the
     # density holds, weakening only mildly, when the query set is restricted to the hubs.
     hubs = def1_sparsity.nearest_similarities(g, query_n=1200, background_n=12000,
                                               min_degree=20, seed=0)
-    assert def1_sparsity.survival(hubs, epsilons=(0.9,))[0.9] >= 0.85   # doc 0.921
+    assert def1_sparsity.survival(hubs, epsilons=(0.9,))[0.9] >= 0.85   # doc 0.876
 
 
 def test_contracted_graph_is_disassortative_not_social():

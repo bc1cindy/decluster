@@ -7,7 +7,7 @@ supervised Fellegi--Sunter baseline lives in :mod:`decluster.fellegi_sunter`.
 import math
 import warnings
 from collections import Counter
-from .extractors import x_nsequence, x_input_order, locktime_policy
+from .extractors import NA, x_nsequence, x_input_order, locktime_policy
 from .engine import sample_recent_txs
 
 # A fixed three-axis choice, not the output of a selection procedure. Checked afterwards rather
@@ -18,9 +18,11 @@ from .engine import sample_recent_txs
 AXES = {"nsequence": x_nsequence, "locktime": locktime_policy, "in_order": x_input_order}
 _LIB_AXIS = {"nsequence": "nsequence", "in_order": "input_order", "locktime": "locktime"}
 
-def _never(va, vb): return False
-def _in_order_abstain(va, vb): return bool({"single", "small_n"} & {va, vb})
-_ABSTAIN = {"nsequence": _never, "locktime": _never, "in_order": _in_order_abstain}
+def _absent(va, vb): return NA in (va, vb)
+def _in_order_abstain(va, vb): return _absent(va, vb) or bool({"single", "small_n"} & {va, vb})
+# Every axis abstains where the export does not say; `NA` is never a value two transactions can
+# agree on.
+_ABSTAIN = {"nsequence": _absent, "locktime": _absent, "in_order": _in_order_abstain}
 
 def rarity_score(axes, txA, txB, c, floor_n, explain=False):
     """Legacy rarity kernel over axes = [(name, fn, p, collision, abstain)]: agreement adds
