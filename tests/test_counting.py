@@ -27,6 +27,7 @@ def test_w_total_dense_coinjoin_is_exact_not_unknown():
 def test_w_total_swallows_panic_from_dss(monkeypatch):
     # w_total delegates to dss.w_count; if that ever raises (e.g. a Rust panic surfaced as a
     # BaseException), w_total degrades to unknown rather than crashing the caller.
+    pytest.importorskip("dss")
     import dss
 
     class _Panic(BaseException):
@@ -41,6 +42,7 @@ def test_a_wide_transaction_is_refused_rather_than_attempted():
     returning, and a hang inside Rust is caught by neither the panic guard nor a Python alarm. The
     only bound is declining to make the call, which reads as `unknown` — multiplicity 1, the safe
     direction for a refuse-only channel."""
+    pytest.importorskip("dss")
     from decluster import counting
     wide = counting.w_total(list(range(1, 40)), [100, 200])
     assert wide == {"kind": "unknown", "count": None, "log_w": None}
