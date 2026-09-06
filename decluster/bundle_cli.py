@@ -7,6 +7,7 @@ import json
 from pathlib import Path
 import sys
 
+from .bundle_sync import synchronise, unresolved
 from .data_manifest import ManifestError
 from .evidence_bundle import (
     BlobStatus,
@@ -23,13 +24,16 @@ from .evidence_bundle import (
 
 def _parser():
     parser = argparse.ArgumentParser(prog="decluster-bundle")
-    parser.add_argument("--index", type=Path, required=True)
+    parser.add_argument("--index", type=Path)
     parser.add_argument("--store", type=Path, default=Path("artifacts"))
     parser.add_argument("--root", type=Path, default=Path.cwd())
     parser.add_argument("--replace", action="store_true")
     parser.add_argument("--json", action="store_true", dest="as_json")
     parser.add_argument("--work", type=Path)
-    parser.add_argument("command", choices=("verify", "bootstrap", "readiness", "reproduce"))
+    parser.add_argument("--check", action="store_true",
+                        help="sync: report what is out of step without writing")
+    parser.add_argument("command",
+                        choices=("verify", "bootstrap", "readiness", "reproduce", "sync"))
     return parser
 
 
@@ -82,6 +86,15 @@ def _readiness_record(bundle, store, root):
 
 def main(argv=None):
     args = _parser().parse_args(argv)
+    if args.command == "sync":
+        changes = synchronise(args.root, write=not args.check)
+        _print([{"name": c.name, "status": f"{c.kind}: {c.detail}"} for c in changes],
+               args.as_json)
+        if unresolved(changes):
+            return 1
+        return 1 if (args.check and changes) else 0
+    if args.index is None:
+        _parser().error("--index is required for this command")
     try:
         bundle = load_bundle(args.index)
         readiness = None
