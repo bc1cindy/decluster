@@ -63,7 +63,7 @@ this run is the first real-data measurement of that effect.
   (peel-chain-ish) provenance, and the population is skewed toward simpler coins.
 - **The ceiling is the oracle, not the data.** Full-population §04 validation (including coinjoins,
   where the subjective demix signal is strongest) is blocked until the subset-sum oracle handles dense
-  coinjoins — the "Radics special case" (see `docs/superpowers/specs/2026-08-08-dss-radics-fast-path-design.md`).
+  coinjoins — the "Radics special case".
 - **Conservative-lower-bound discipline.** Every entropy here is a lower bound / weight-of-evidence,
   not a privacy score. Same-owner labels (not "ground truth") drive the address-reuse signal.
 - **Single live run.** Network variability means the exact target set and numbers are not bit-for-bit
@@ -74,8 +74,7 @@ this run is the first real-data measurement of that effect.
 
 The numbers above predate the dss fix. The `dss` crate now recognizes dense coinjoins structurally
 (≥2 output denominations each repeated ≥3×, covering ≥half the outputs — the transcript's "Radix"
-case) and returns a **uniform link matrix** for them instead of timing out (see
-`docs/superpowers/specs/2026-08-08-dss-radix-matrix-and-expose-design.md`). Measured effect:
+case) and returns a **uniform link matrix** for them instead of timing out. Measured effect:
 
 - **Mechanism (direct `dss.pairwise_link_prob`):** real 100- and 200-input coinjoins now return a
   uniform matrix in **0.00 s** (before: hung > 8 s → the harness's bounded oracle killed it → `None`

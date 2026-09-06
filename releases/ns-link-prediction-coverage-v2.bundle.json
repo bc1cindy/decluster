@@ -12,8 +12,8 @@
     {
       "name": "catalog/runs/ns-link-prediction-coverage-v2.json",
       "role": "run_manifest",
-      "bytes": 2812,
-      "sha256": "452c52eda6e4e3608970c6cedf533f4b91889eda96e9120fa478ac2f6ed6e0a8",
+      "bytes": 2837,
+      "sha256": "3ba384c53d629343e8a7449d6566ff5699fa51b6fad338114beb9153b4f8cb0e",
       "locations": {
         "canonical": null,
         "mirrors": []

@@ -75,7 +75,7 @@ Run the query, commit the small output as a fixture, and the number becomes band
   unnecessary-input axis, conservation and the conspicuousness ranking all need prevout **values**
   and **script types**. The graph-scale exports (`epoch_2016_*`, the committed graph fixtures)
   carry addresses only. They are measurable today on `sample.ndjson` (5,491 txs, blocks
-  812,695-812,831, complete) and `.blkcache/` (22,371 txs, complete, but block-sampled rather than
+  812,695-812,831, complete) and `.blkcache/` (22,571 txs, of which 22,112 are not coinbase; complete, but block-sampled rather than
   contiguous); what is missing is a *graph-scale* contiguous export carrying them, which is a
   re-collection of the existing query with two more columns rather than new method.
 
@@ -145,8 +145,7 @@ Filed, not fixed. The 2026-09 attack-faithfulness wave changed the provenance wa
 oracle from the subset-sum link matrix (`ancestry.dss_link_oracle`, `dss.pairwise_link_prob`) to the
 nominal-value transition rule (`ancestry.value_flow_link_oracle`), and measured the subset-sum
 oracle against an exact one (`RESULTS-exact-oracle-audit.md`). Prose alignment across `PAPER.md` and
-`README.md` is a later phase's work
-(`docs/superpowers/plans/2026-09-02-phase-1-contracts-and-instrument.md`). Until then, this is the
+`README.md` is a later phase's work. Until then, this is the
 list of what the tree disagrees with, so no reader has to discover it by running something.
 
 **The default oracle moved; these still describe the old one.**

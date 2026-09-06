@@ -87,7 +87,7 @@
     "coverage contract rather than a performance experiment",
     "the Flickr/Kaggle corpus and published metrics are not reproduced",
     "annealing uses local reproducibility controls",
-    "dummy-node zero ratios remain undefined without an additional convention",
+    "the zero convention for dummy-incident terms is read from the paper's prose, not from its formula",
     "confidence pruning, accepted-mapping correction and the learned 25-feature model are not reproduced"
   ]
 }
