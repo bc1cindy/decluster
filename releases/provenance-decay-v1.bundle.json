@@ -13,7 +13,7 @@
       "name": "catalog/runs/provenance-decay-v1.json",
       "role": "run_manifest",
       "bytes": 2473,
-      "sha256": "7ed82d4eb9a03e25f5b760b1b3dc6e6814d21e0a34ce928234113a011ceffd5f",
+      "sha256": "fb72a10a39464d8425b00f3ee8d24902b1b2d5822efdba4238850134ef8a2f1c",
       "locations": {
         "canonical": null,
         "mirrors": []

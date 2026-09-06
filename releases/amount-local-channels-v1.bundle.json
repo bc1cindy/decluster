@@ -13,7 +13,7 @@
       "name": "catalog/runs/amount-local-channels-v1.json",
       "role": "run_manifest",
       "bytes": 3064,
-      "sha256": "d721d15999aefefcd41bb197f4649abf1d69c7dfd673a6c4e058167fabd23926",
+      "sha256": "c879a51887102ad35a1709170e223506c2ad9c9ee8c384e59737b983bd653212",
       "locations": {
         "canonical": null,
         "mirrors": []

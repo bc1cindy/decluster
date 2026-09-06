@@ -13,7 +13,7 @@
       "name": "catalog/runs/amount-per-coin-v1.json",
       "role": "run_manifest",
       "bytes": 3472,
-      "sha256": "62093b8bcbd415399d39f463c38129d3061f78c84a27c1ba797e821db29bb140",
+      "sha256": "81bd73d7e55c955af365290e7e04eeab19f7155177b3964854334a7a35b8c964",
       "locations": {
         "canonical": null,
         "mirrors": []

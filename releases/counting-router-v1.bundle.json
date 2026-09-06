@@ -13,7 +13,7 @@
       "name": "catalog/runs/counting-router-v1.json",
       "role": "run_manifest",
       "bytes": 3217,
-      "sha256": "47e45bcea2d9ed468a5dc4d3a5618a0156d6c2cac3079917b360e8b613524001",
+      "sha256": "a6a55dc3151051cd072bbd4b5e6b361e2a7a3cdd255a3f55f6c44737949ed49c",
       "locations": {
         "canonical": null,
         "mirrors": []

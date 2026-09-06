@@ -13,7 +13,7 @@
       "name": "catalog/runs/amount-mapping-family-v1.json",
       "role": "run_manifest",
       "bytes": 3529,
-      "sha256": "34c701677a80a815ee4a44b0adf853322e565d7c3a4f8e7e9baa88afe7d7f936",
+      "sha256": "ec4815ac49963819edd9d3170991b194e61f6f9106503b2aea40d1d0cc84cc48",
       "locations": {
         "canonical": null,
         "mirrors": []

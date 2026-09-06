@@ -13,7 +13,7 @@
       "name": "catalog/runs/ns-bitcoin-v1.json",
       "role": "run_manifest",
       "bytes": 3351,
-      "sha256": "3e7095732579de3cda3c1d19e6c0c86590559ebad360e225e7993c62fc21fd9a",
+      "sha256": "606ebfe5862961e02f21d72a3f2ada1040ac76070b2f5526d8eadd0ebd833b9a",
       "locations": {
         "canonical": null,
         "mirrors": []
