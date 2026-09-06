@@ -28,14 +28,14 @@
   },
   "environment": {
     "python": "3.13.7",
-    "lock_digest": "c7d402576511073ed4fcf076c77ffa6b3be124e0a2ef996d2da1cd3b02fbe541",
+    "lock_digest": "2a9fcd78f7c608fc9f27251c2d8d0190404961b2340514c8a3acae599342932a",
     "platform": "macOS-26.6.2-arm64-arm-64bit-Mach-O",
     "dependencies": [
       {
         "name": "dss",
         "version": "0.1.0",
         "source": "https://github.com/bc1cindy/dense-subset-sum",
-        "revision": "30fc21ee521016061532008f8dfea31f953d7e6d",
+        "revision": "474dee22bb60b9d46e7ad1e4c78957ad819c9550",
         "lock_sha256": "f17a02f09da28dcc603901580d695466c44e1d1a0063e110d3faa375ae6066ca",
         "license": "MIT",
         "redistribution": "allowed",
