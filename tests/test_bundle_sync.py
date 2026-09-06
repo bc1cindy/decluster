@@ -12,6 +12,8 @@ import pytest
 
 from decluster.bundle_sync import Change, synchronise, unresolved
 
+ROOT = Path(__file__).resolve().parents[1]
+
 
 def digest(data):
     return hashlib.sha256(data).hexdigest()
@@ -123,3 +125,12 @@ def test_check_mode_reports_without_touching_anything(repo):
     assert {p.parent.name + p.name for p in (repo / "artifacts" / "sha256").glob("*/*")} == {
         digest(b"{}")
     }
+
+
+def test_the_committed_tree_is_already_in_step():
+    drift = synchronise(ROOT, write=False)
+    assert not drift, (
+        "releases/, artifacts/sha256/ and the tree disagree:\n  "
+        + "\n  ".join(f"{c.kind}\t{c.name}\t{c.detail}" for c in drift)
+        + "\nRun `decluster-bundle --root . sync` and commit the result."
+    )
