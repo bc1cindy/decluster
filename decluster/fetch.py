@@ -1,7 +1,18 @@
+"""Cached reads of the chain.
+
+`.blkcache` is the published block slice, the one `data/fs-blkcache-*.tar.gz` ships and two result
+manifests fingerprint file-for-file. Nothing here writes to it. A block a live run has to go and
+fetch lands in `.blkcache-live` instead, so running the suite cannot move a source that published
+numbers were measured on. Growing the published slice is then a deliberate act — fold
+`.blkcache-live` into `.blkcache` and re-record the manifests — rather than something a test does
+to you.
+"""
 import os, json, urllib.request, time
 CACHE = os.path.join(os.path.dirname(__file__), "..", ".cache")
 BLK   = os.path.join(os.path.dirname(__file__), "..", ".blkcache")
+BLK_LIVE = os.path.join(os.path.dirname(__file__), "..", ".blkcache-live")
 os.makedirs(CACHE, exist_ok=True); os.makedirs(BLK, exist_ok=True)
+os.makedirs(BLK_LIVE, exist_ok=True)
 API = "https://mempool.space/api"
 
 _LAST = [0.0]          # last request timestamp (min interval throttle)
@@ -57,7 +68,11 @@ def fetch_outspends(txid):
     return _cached_json(os.path.join(CACHE, txid + ".outspends.json"), f"{API}/tx/{txid}/outspends")
 
 def fetch_block_txs(block_id, index):
-    return _cached_json(os.path.join(BLK, f"{block_id}_{index}.json"), f"{API}/block/{block_id}/txs/{index}")
+    name = f"{block_id}_{index}.json"
+    published = os.path.join(BLK, name)
+    if os.path.exists(published):
+        return json.load(open(published))
+    return _cached_json(os.path.join(BLK_LIVE, name), f"{API}/block/{block_id}/txs/{index}")
 
 def recent_blocks():
     return _get(f"{API}/v1/blocks")
