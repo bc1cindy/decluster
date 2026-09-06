@@ -1,5 +1,6 @@
 """Robust oracle layer: dss_link_oracle panic-safety, and the in-process default /
 opt-in subprocess oracles built on top of it."""
+import pytest
 import decluster.oracle as oracle
 import examples.anonymity_set as anonymity_set_example
 from decluster import ancestry
@@ -22,6 +23,7 @@ def test_dss_link_oracle_survives_base_exception_panic(monkeypatch):
 
 
 def test_bounded_link_oracle_is_callable_and_tolerant():
+    pytest.importorskip("dss")
     for budget_ms in (500, 6000):
         link = oracle.bounded_link_oracle(budget_ms)
         assert callable(link)

@@ -64,7 +64,6 @@ from itertools import combinations, combinations_with_replacement
 from .boltzmann import exact_link_analysis, exact_per_coin_link_evidence
 from .maurer import (
     exact_subtransaction_mappings,
-    mapping_refines,
     non_derived_mappings,
 )
 
@@ -280,11 +279,6 @@ def exact_link_matrix(inputs, outputs):
 
 def exact_deterministic_links(inputs, outputs):
     return set(exact_link_analysis(inputs, outputs).deterministic_links)
-
-
-def _refines(finer, coarser):
-    """Whether every block of `finer` sits inside a block of `coarser`, on both sides."""
-    return mapping_refines(finer, coarser)
 
 
 def finest_mappings(mappings):

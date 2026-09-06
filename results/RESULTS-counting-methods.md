@@ -105,7 +105,7 @@ pre/post-output reading; that was too strong.
 ## Scope
 
 One slice, 137 blocks, 2023. The L comparison is on synthetic instances drawn from a known L, which
-is the only way to have a ground truth; real transaction values are not drawn uniformly from any
+is the only way to know the answer being estimated; real transaction values are not drawn uniformly from any
 range, so the estimator question there is a modelling choice rather than an estimation one.
 
 ## Reproducibility / provenance

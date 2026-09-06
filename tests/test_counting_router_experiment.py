@@ -4,6 +4,7 @@ from decluster.experiments import counting_router as experiment
 
 
 def test_report_preserves_current_router_outcomes():
+    pytest.importorskip("dss")
     report = experiment.build_report()
 
     assert report["population"] == {"multi_input_transactions": 1428}

@@ -19,7 +19,7 @@ jobs:
     strategy:
       fail-fast: false
       matrix:
-        python-version: ["3.9", "3.13"]
+        python-version: ["3.10", "3.13"]
     steps:
       - name: Check out source
         uses: actions/checkout@08c6903cd8c0fde910a37f88322edcfb5dd907a8 # v5.0.0
@@ -43,7 +43,7 @@ jobs:
         uses: actions/checkout@08c6903cd8c0fde910a37f88322edcfb5dd907a8 # v5.0.0
         with:
           repository: bc1cindy/dense-subset-sum
-          ref: 30fc21ee521016061532008f8dfea31f953d7e6d
+          ref: 474dee22bb60b9d46e7ad1e4c78957ad819c9550
           path: .ci/dense-subset-sum
       - name: Set up Python
         uses: actions/setup-python@a309ff8b426b58ec0e2a45f0f869d46889d02405 # v6.2.0
@@ -59,6 +59,6 @@ jobs:
           python -m pip install --disable-pip-version-check ".[test,data]"
           python -m pip install --disable-pip-version-check .ci/dense-subset-sum
       - name: Verify DSS revision
-        run: python -c 'import dss; assert dss.__rev__ == "30fc21ee521016061532008f8dfea31f953d7e6d"'
+        run: python -c 'import dss; assert dss.__rev__ == "474dee22bb60b9d46e7ad1e4c78957ad819c9550"'
       - name: Run offline gate with DSS
         run: python -m pytest -m "not live and not reproduction"

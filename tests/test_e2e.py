@@ -42,6 +42,7 @@ def _fixture():
 
 
 def test_e2e_offline_pipeline_holds_invariants():
+    pytest.importorskip("dss")
     txs = _fixture()
     fetch = lambda txid: txs[txid]
     uniform = lambda ins, outs: [[1.0] * len(outs) for _ in ins]

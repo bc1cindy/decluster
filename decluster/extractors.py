@@ -1,9 +1,23 @@
-"""Layer 1 — pure extractors: tx -> categorical fingerprint value."""
-def locktime_policy(tx): return "zero" if tx.get("locktime", 0) == 0 else "height"
+"""Layer 1 — pure extractors: tx -> categorical fingerprint value.
 
-def seqs(tx): return [v["sequence"] for v in tx["vin"]]
+`NA` is the one value that means "this export does not say", and it is never evidence. An
+address-only export has no version, locktime or sequence, and every committed graph fixture is
+one; reading absence as a value made every transaction in such a slice agree on those axes and
+the scorer credited the agreement. So an extractor that cannot see what it needs returns `NA`,
+and every consumer that scores or counts skips it.
+"""
+NA = "na"
+
+def locktime_policy(tx):
+    locktime = tx.get("locktime")
+    if locktime is None: return NA
+    return "zero" if locktime == 0 else "height"
+
+def seqs(tx): return [v["sequence"] for v in tx.get("vin", ())]
 
 def x_nsequence(tx):
+    vin = tx.get("vin") or ()
+    if not vin or any("sequence" not in v for v in vin): return NA
     s = seqs(tx)
     if len(s) >= 2 and s[0] == 0x01 and all(v == 0xFFFFFFFF for v in s[1:]):
         return "cake_group_c"          # [0x01, MAX, ...]: Cake-specific signature
@@ -19,26 +33,36 @@ def _txid_internal(t):                                  # BIP-69 orders by the p
     except ValueError: return t.encode()                # non-hex synthetic ids (test fixtures): fall back to raw order
 
 def x_input_order(tx):
-    o = [(_txid_internal(v["txid"]), v["vout"]) for v in tx["vin"]]
+    vin = tx.get("vin") or ()
+    if not vin or any("txid" not in v or "vout" not in v for v in vin): return NA
+    o = [(_txid_internal(v["txid"]), v["vout"]) for v in vin]
     n = len(o)
     if n == 1: return "single"
     if o != sorted(o): return "shuffle"                # not sorted -> not BIP-69 (reliable at any n)
     return "bip69" if n >= 4 else "small_n"            # sorted: brands BIP-69 only when accidental sort (1/n!) is small; n<=3 is coincidental (1/2, 1/6)
 
-def x_io_shape(tx): return f"{len(tx['vin'])}in-{len(tx['vout'])}out"
+def x_io_shape(tx):
+    if "vin" not in tx or "vout" not in tx: return NA
+    return f"{len(tx['vin'])}in-{len(tx['vout'])}out"
 
-def x_version(tx): return f"v{tx.get('version')}"
+def x_version(tx):
+    version = tx.get("version")
+    return NA if version is None else f"v{version}"
 
 def x_output_order(tx):
+    vout = tx.get("vout") or ()
+    if not vout or any("value" not in v for v in vout): return NA
     o = [(v["value"], bytes.fromhex(v["scriptpubkey"]) if v.get("scriptpubkey") else b"")  # BIP-69: value ascending, then scriptPubKey byte order (breaks equal-value ties); falls back to value-only where raw spk is absent (e.g. the BigQuery export)
-         for v in tx["vout"]]
+         for v in vout]
     n = len(o)
     if n == 1: return "single"
     if o != sorted(o): return "unsorted"                # not sorted -> reliable at any n
     return "sorted_value" if n >= 4 else "small_n"       # sorted: only brands at n>=4; n<=3 is coincidental (1/n!)
 
 def x_change_spk_type(tx):
-    types = {o["scriptpubkey_type"] for o in tx["vout"]}
+    vout = tx.get("vout") or ()
+    if not vout or any("scriptpubkey_type" not in o for o in vout): return NA
+    types = {o["scriptpubkey_type"] for o in vout}
     return f"uniform_{next(iter(types))}" if len(types) == 1 else "mixed"
 
 def x_uih(tx):
@@ -48,11 +72,11 @@ def x_uih(tx):
     # Amounts arrive as strings in some exports; comparing those lexicographically silently
     # reverses the predicate ("330" > "1000"), so a non-integer amount is refused rather than
     # ranked. Callers that hold string amounts must coerce before asking.
-    in_vals = [iv for v in tx["vin"]
+    in_vals = [iv for v in tx.get("vin", ())
                if (iv := (v.get("prevout") or {}).get("value", v.get("value"))) is not None]
-    out_vals = [o["value"] for o in tx["vout"]]
+    out_vals = [o["value"] for o in tx.get("vout", ()) if "value" in o]
     if len(in_vals) < 2 or not out_vals: return "none"
-    if any(type(value) is not int for value in in_vals + out_vals): return "na"
+    if any(type(value) is not int for value in in_vals + out_vals): return NA
     return "uih2" if max(in_vals) >= max(out_vals) else "none"
 
 def x_uih_fee_aware(tx):
@@ -70,29 +94,29 @@ _SH = {"01": "all", "02": "none", "03": "single",
 
 def x_low_r(tx):
     lens = []
-    for v in tx["vin"]:
+    for v in tx.get("vin", ()):
         s = _witness_sig(v)
         if not s: continue
         n = len(s) // 2
         if 68 <= n <= 73: lens.append(n)   # ECDSA DER incl. sighash byte
-    if not lens: return "na"
+    if not lens: return NA
     return "low_r" if all(n <= 71 for n in lens) else "not_low_r"
 
 def x_sighash(tx):
     cls = set()
-    for v in tx["vin"]:
+    for v in tx.get("vin", ()):
         s = _witness_sig(v)
         if not s: continue
         n = len(s) // 2
         if n == 64: cls.add("taproot_default")
         elif n == 65: cls.add("taproot_explicit")
         elif 68 <= n <= 73: cls.add(_SH.get(s[-2:].lower(), "sh_" + s[-2:].lower()))
-    if not cls: return "na"
+    if not cls: return NA
     return next(iter(cls)) if len(cls) == 1 else "mixed"
 
 def x_fee_rate(tx):
     fee, w = tx.get("fee"), tx.get("weight")
-    if not fee or not w: return "na"
+    if not fee or not w: return NA
     r = fee / (w / 4)                         # sat/vB
     nearest = round(r)
     if nearest >= 1 and abs(r - nearest) < 0.01:
@@ -100,13 +124,15 @@ def x_fee_rate(tx):
     return "precise"                          # estimator fractional
 
 def x_input_script_type(tx):
-    types = {(v.get("prevout") or {}).get("scriptpubkey_type") for v in tx["vin"]}
+    types = {(v.get("prevout") or {}).get("scriptpubkey_type") for v in tx.get("vin", ())}
     types.discard(None)
-    if not types: return "na"
+    if not types: return NA
     return f"uniform_{next(iter(types))}" if len(types) == 1 else "mixed"
 
 def x_op_return(tx):
-    return "has_op_return" if any(o.get("scriptpubkey_type") == "op_return" for o in tx["vout"]) else "none"
+    vout = tx.get("vout") or ()
+    if not vout or any("scriptpubkey_type" not in o for o in vout): return NA
+    return "has_op_return" if any(o["scriptpubkey_type"] == "op_return" for o in vout) else "none"
 
 _ENC = {"p2pkh": "base58", "p2sh": "base58", "v0_p2wpkh": "bech32",
         "v0_p2wsh": "bech32", "v1_p2tr": "bech32m"}
@@ -115,7 +141,7 @@ def x_output_encoding(tx):
     encs = {_ENC.get(o.get("scriptpubkey_type")) for o in tx["vout"]
             if o.get("scriptpubkey_type") != "op_return"}
     encs.discard(None)
-    if not encs: return "na"
+    if not encs: return NA
     return next(iter(encs)) if len(encs) == 1 else "mixed"
 
 def x_input_types_present(tx):
@@ -138,7 +164,7 @@ def x_pubkey_compression(tx):
         pk = w[-1]; n = len(pk) // 2
         if n == 33 and pk[:2].lower() in ("02", "03"): kinds.add("compressed")
         elif n == 65 and pk[:2].lower() == "04": kinds.add("uncompressed")
-    if not kinds: return "na"
+    if not kinds: return NA
     return next(iter(kinds)) if len(kinds) == 1 else "mixed"
 
 def x_multisig(tx):
@@ -167,19 +193,19 @@ def _change_index(tx):
 
 def x_change_index(tx):
     ci = _change_index(tx)
-    if ci is None: return "na"
+    if ci is None: return NA
     return "first" if ci == 0 else "last"   # 2-out: change is idx 0 or 1
 
 def x_change_type_match(tx):
     ci = _change_index(tx)
-    if ci is None: return "na"
+    if ci is None: return NA
     ct = tx["vout"][ci].get("scriptpubkey_type")
     itypes = {(v.get("prevout") or {}).get("scriptpubkey_type") for v in tx["vin"]}
     return "match_input" if ct in itypes else "mismatch_input"
 
 def x_change_matches_output(tx):
     ci = _change_index(tx)
-    if ci is None: return "na"
+    if ci is None: return NA
     ot = tx["vout"][1 - ci].get("scriptpubkey_type")
     ct = tx["vout"][ci].get("scriptpubkey_type")
     return "match_output" if ct == ot else "mismatch_output"
@@ -203,6 +229,6 @@ def x_locktime_vs_broadcast(tx):
     st = tx.get("status") or {}
     n = st.get("block_height")
     if bc is None or n is None:
-        return "na"
+        return NA
     win = broadcast_window(tx_feerate(tx), bc["prev_min"], bc["prev_time"], bc["incl_time"])
     return locktime_vs_broadcast(tx.get("locktime", 0), n, win)

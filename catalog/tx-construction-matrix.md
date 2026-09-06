@@ -1,8 +1,7 @@
 # Tx-construction fingerprint matrix (issue #1597)
 
 Companion to `research-docs/fingerprints/merged transaction.md` and to the network-level
-harness seed (`docs/superpowers/specs/2026-05-27-fingerprint-verification-harness-design.md`,
-#1586). This is the **chain-level** analog: it audits each integration's
+harness seed (#1586). This is the **chain-level** analog: it audits each integration's
 *standard* transaction builder — the code that produces the **prior transactions**
 feeding a merged transaction — across 10 observable fingerprint axes, and groups the seven
 integrations per axis (the way the issue grouped nSequence into A/B/C).

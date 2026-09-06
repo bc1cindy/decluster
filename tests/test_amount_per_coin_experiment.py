@@ -4,6 +4,7 @@ from decluster.experiments import amount_per_coin as experiment
 
 
 def test_report_preserves_published_per_coin_outcomes():
+    pytest.importorskip("dss")
     report = experiment.build_report()
 
     assert report["population"] == {

@@ -1,6 +1,7 @@
 """Deep-feature matching: two coins are linked by the OVERLAP of their provenance signatures (the
 sparse ancestral-boundary distribution), a Narayanan-Shmatikov quasi-identifier. A shared *rare*
 ancestor is strong same-origin evidence; a shared hub (a coinbase everyone descends from) is weak."""
+import pytest
 import sys, os, math
 sys.path.insert(0, os.path.dirname(os.path.dirname(__file__)))
 from decluster.ancestry import (ancestry_signature, provenance_link,
@@ -29,6 +30,7 @@ def _fetch(txs):
 
 def test_ancestry_signature_is_absorber_distribution():
     # C.vout0 = 3 sats comes from input P:0 (also 3); its provenance signature is the atom {P:0: 1.0}
+    pytest.importorskip("dss")
     txs = {
         "C": {"vin": [{"is_coinbase": False, "txid": "P", "vout": 0, "prevout": {"value": 3}},
                       {"is_coinbase": False, "txid": "R", "vout": 0, "prevout": {"value": 5}}],

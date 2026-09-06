@@ -1,4 +1,11 @@
-"""Reproduce stable attribute-density and graph-shape observations on a frozen slice."""
+"""Reproduce stable attribute-density and graph-shape observations on a frozen slice.
+
+The snapshot is an address-only export: it carries no version, locktime, sequence or fee, so all
+four contraction axes abstain on every transaction and the vertex feature vectors are structural
+alone. The run reports the per-axis skip counts rather than leaving that to be inferred, because an
+earlier revision read the missing fields as values — every vertex then agreed on `version` and
+`locktime` for free, and the similarity those constants added is what the density figures carried.
+"""
 
 from __future__ import annotations
 
@@ -65,6 +72,10 @@ def build_artifact(dataset=DEFAULT_DATASET):
             "transactions": len(sample),
             "clustered_addresses": len(lookup),
             "clusters": len(set(lookup.values())),
+            "axis_values_recorded": {axis: sum(counts.values())
+                                     for axis, counts in sorted(graph.base_rates.items())},
+            "axis_transactions_skipped": {axis: graph.skipped.get(axis, 0)
+                                          for axis in sorted(graph.base_rates)},
             "density_min_degree_2": _density(graph, 2, (0.5, 0.9, 0.99)),
             "density_min_degree_20": _density(graph, 20, (0.9,)),
             "graph_shape": shape,
@@ -77,6 +88,7 @@ def build_artifact(dataset=DEFAULT_DATASET):
             "similarity": "cosine over normalized feature vectors",
         },
         "limitations": [
+            "the snapshot carries none of the four axes, so the similarity measured here is structural",
             "the snapshot contains six 2016 blocks and is not a chain-wide sample",
             "the run does not reproduce historical measurements on larger unpreserved slices",
             "dense attributes do not prove resistance to other linkage channels",
@@ -128,9 +140,15 @@ def render_markdown(artifact):
         "",
         f"Degree assortativity: {shape['assortativity']:.6f}.",
         "",
-        "The attribute vectors are dense within this selected fixture, including among its "
-        "higher-degree vertices, and its contracted graph is disassortative. These observations "
-        "do not reproduce the historical larger slices or establish graph-matching performance.",
+        f"This export carries none of the four axes — every one of the {measured['transactions']} "
+        "transactions abstains on version, input order, locktime and fee rate — so the vectors "
+        "compared here are structural: degree, transaction count, self-transfers and the "
+        "neighbour-degree histogram. On those alone the space is dense, and markedly less so among "
+        f"the higher-degree vertices ({hubs['survival']['0.9']:.3f} against "
+        f"{ordinary['survival']['0.9']:.3f} at the same threshold), which is where a matcher would "
+        "start. The contracted graph is disassortative. These observations do not reproduce the "
+        "historical larger slices, do not measure attribute density, and do not establish "
+        "graph-matching performance.",
         "",
     ])
 

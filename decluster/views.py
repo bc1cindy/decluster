@@ -24,7 +24,7 @@ be read relative to its own view before it crosses the boundary.
 from collections import Counter, defaultdict
 
 from .coinjoin_demix import coinjoin_demix
-from .extractors import locktime_policy, x_fee_rate, x_input_order, x_uih, x_version
+from .extractors import NA, locktime_policy, x_fee_rate, x_input_order, x_uih, x_version
 from .monitor import is_coinjoin
 from .unionfind import UF
 from .change_gt import union_input_addrs
@@ -766,6 +766,9 @@ def contract(sample, indices=None, lookup=None, min_value=0, axes=True, keep=Non
                 except Exception:                   # a malformed or partial tx, not a bug
                     g.skipped[axis] += 1            # counted, never silent: an axis that
                     continue                        # dies on every tx must be visible
+                if value == NA:                     # the export does not say. Recording it as a
+                    g.skipped[axis] += 1            # value made every vertex in an address-only
+                    continue                        # slice agree on the axis for free
                 g.base_rates[axis][value] += 1
                 sig.append(value)
                 for s in srcs:

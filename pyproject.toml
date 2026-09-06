@@ -6,7 +6,11 @@ build-backend = "setuptools.build_meta"
 name = "decluster"
 version = "0.1.0"
 description = "Evidence-weighted de-anonymization of Bitcoin transactions"
-requires-python = ">=3.9"
+requires-python = ">=3.10"
+# PEP 639: the expression and `license-files` replace the license classifier, and setuptools
+# refuses the pair.
+license = "MIT"
+license-files = ["LICENSE"]
 
 [project.scripts]
 decluster-data = "decluster.data_cli:main"
@@ -16,6 +20,12 @@ decluster-source = "decluster.source_snapshot:main"
 [project.optional-dependencies]
 data = ["zstandard>=0.23"]
 test = ["pytest>=8"]
+# The exact subset-sum counter. It is a Rust extension built from a pinned revision rather than a
+# release on an index, so it is named by that revision: the same one `catalog/runs` declares and
+# the evidence bundles ship a wheel of. Absent it, the tests that need it skip.
+exact = ["dss @ git+https://github.com/bc1cindy/dense-subset-sum@474dee22bb60b9d46e7ad1e4c78957ad819c9550"]
+# Imported lazily by scale_cluster, fs_ablation and ancestry; nothing outside those paths needs it.
+scale = ["numpy>=1.24"]
 
 [tool.setuptools.packages.find]
 include = ["decluster", "decluster.*"]

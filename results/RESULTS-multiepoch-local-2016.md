@@ -69,7 +69,7 @@ neighbourhood recurring in the other view is.
 
 ## Matching result
 
-Complete views, ground-truth highest-degree seeds:
+Complete views, highest-degree seeds taken from the same-owner labels:
 
 | seed share | matcher | new guesses | correct | precision |
 |---:|---|---:|---:|---:|
@@ -122,7 +122,7 @@ The ratio is stable across a 4.8× change in graph size: straddler relationships
 
 **92% of cluster-to-cluster relationships in this graph fire exactly once.** The pseudonym graph is
 overwhelmingly transactional in the most literal sense: most edges are a single payment that never
-recurs, which is what the disassortativity (−0.11) has been saying structurally all along.
+recurs, which is what the disassortativity (−0.076 adjacent, −0.085 three weeks apart) has been saying structurally all along.
 
 That number is not new to the repository, and its independence is worth stating:
 `RESULTS-contraction-2026.md` measured 7.2% and 7.0% on a 2026 slice and concluded "most cluster

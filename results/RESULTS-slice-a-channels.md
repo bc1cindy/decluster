@@ -43,6 +43,8 @@ neighbour-degree histogram: as a raw count that one component carried almost the
 high degree, so the cosine read degree similarity. Re-measured on the committed fixture with the
 corrected vector, the density is *higher* than recorded, and it holds across the degree range:
 
+**Superseded by the correction of 6 Sep 2026 below.**
+
 | min_degree | eligible vertices | delta(0.5) | delta(0.9) | delta(0.99) | median top-sim |
 |---:|---:|---:|---:|---:|---:|
 | 2 | 8,398 | 1.000 | 1.000 | 0.990 | 1.000 |
@@ -51,8 +53,28 @@ corrected vector, the density is *higher* than recorded, and it holds across the
 | 10 | 231 | 1.000 | 0.965 | 0.922 | 0.999 |
 | 20 | 89 | 1.000 | 0.921 | 0.854 | 0.999 |
 
-Density falls with degree but never approaches sparsity: even the 89 best-connected entities almost
-all have a near-twin at epsilon 0.9. Pinned as a band in `tests/test_slice_a_channels.py`.
+**Correction, 6 Sep 2026.** This is not an attribute measurement, and the table above was inflated
+by reading absent fields as values. The committed fixture is an address-only export: it carries no
+version, locktime, sequence or fee. `locktime_policy` returned `zero` for a missing locktime and
+`x_version` returned `vNone`, so all 12,000 transactions agreed on two axes for free and every
+feature vector carried the same two components. With the extractors abstaining instead, all four
+axes are skipped on all 12,000 transactions — the canonical artifact now reports those counts — and
+what remains is the structural vector alone: degree, transaction count, self-transfers and the
+neighbour-degree histogram.
+
+| min_degree | eligible vertices | delta(0.5) | delta(0.9) | delta(0.99) | median top-sim |
+|---:|---:|---:|---:|---:|---:|
+| 2 | 8,398 | 1.000 | 0.998 | 0.983 | 1.000 |
+| 3 | 4,423 | 1.000 | 0.995 | 0.977 | 1.000 |
+| 5 | 641 | 1.000 | 0.977 | 0.894 | 1.000 |
+| 10 | 231 | 1.000 | 0.952 | 0.874 | 0.999 |
+| 20 | 89 | 1.000 | 0.876 | 0.798 | 0.999 |
+
+Density still falls with degree and still never approaches sparsity, but the fall is steeper than
+recorded: at min_degree 20 the epsilon-0.99 figure moves 0.854 to 0.798. The conclusion this section
+draws is unchanged and its basis is narrower — structural similarity on a slice that carries no
+attributes, not the entity-attribute channel the heading promises. Pinned as a band in
+`tests/test_slice_a_channels.py`.
 
 ## 2. The pseudonym graph is transactional, not social
 

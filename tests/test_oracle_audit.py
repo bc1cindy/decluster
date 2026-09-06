@@ -253,6 +253,7 @@ def _flags(report, name):
 def test_audit_detects_a_counter_that_overcounts_by_one(reduced):
     """The detection test the deliverable turns on: an approximation off by +1 must be flagged as
     exceeding the oracle, on every case, with the offending cases named."""
+    pytest.importorskip("dss")
     report = oa.audit(
         reduced, include_cases=False,
         approximations={"mapping_count": lambda i, o: oa.exact_mapping_count(i, o) + 1})
@@ -268,6 +269,7 @@ def test_audit_detects_a_counter_that_overcounts_by_one(reduced):
 
 
 def test_audit_detects_a_counter_that_undercounts(reduced):
+    pytest.importorskip("dss")
     report = oa.audit(reduced, include_cases=False,
                       approximations={"mapping_count": lambda i, o: 0})
     stats = report["comparisons"]["mapping_count"]
@@ -278,6 +280,7 @@ def test_audit_detects_a_counter_that_undercounts(reduced):
 
 
 def test_audit_detects_a_counter_that_errs_in_both_directions(reduced):
+    pytest.importorskip("dss")
     def two_faced(inputs, outputs):
         exact = oa.exact_mapping_count(inputs, outputs)
         return exact + 1 if sum(inputs) % 2 else max(exact - 1, 0)
@@ -292,6 +295,7 @@ def test_audit_detects_a_counter_that_errs_in_both_directions(reduced):
 
 
 def test_audit_detects_a_matrix_of_ones_and_a_shape_mismatch(reduced):
+    pytest.importorskip("dss")
     report = oa.audit(
         reduced, include_cases=False,
         approximations={"link_matrix": lambda i, o: [[1.0] * len(o) for _ in i]})
@@ -308,6 +312,7 @@ def test_audit_detects_a_matrix_of_ones_and_a_shape_mismatch(reduced):
 
 
 def test_audit_detects_link_sets_that_claim_certainty_everywhere(reduced):
+    pytest.importorskip("dss")
     report = oa.audit(
         reduced, include_cases=False,
         approximations={"deterministic_links":
@@ -319,6 +324,7 @@ def test_audit_detects_link_sets_that_claim_certainty_everywhere(reduced):
 
 
 def test_audit_records_a_refusal_rather_than_scoring_it(reduced):
+    pytest.importorskip("dss")
     report = oa.audit(reduced, include_cases=False,
                       approximations={"mapping_count": lambda i, o: None})
     stats = report["comparisons"]["mapping_count"]
@@ -328,6 +334,7 @@ def test_audit_records_a_refusal_rather_than_scoring_it(reduced):
 
 
 def test_an_agreeing_approximation_raises_no_flag(reduced):
+    pytest.importorskip("dss")
     report = oa.audit(reduced, include_cases=False,
                       approximations={"mapping_count": oa.exact_mapping_count})
     stats = report["comparisons"]["mapping_count"]

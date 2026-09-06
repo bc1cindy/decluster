@@ -4,7 +4,7 @@ of expander decomposition) on a single slice, matched with the full matcher (NS'
 Unlike an epoch split, ambiguity-cut works within one slice: it removes the dense core and
 leaves relatively sparse components, so a cluster whose activity crossed the core appears in
 two components with different neighbourhoods. Re-linking those is the de-anonymization, and
-the ground truth is natural (same global cluster id present in two components) rather than an
+the same-owner labels are natural (one global cluster id present in two components) rather than an
 artificial split. Fits a small machine on a ~1M-transaction slice.
 
 usage: python3 examples/analyze_ambiguity.py <slice.ndjson[.gz]> [max_txs] [n_views] [core_frac]

@@ -30,6 +30,7 @@ def test_report_computes_amount_and_targets_without_pair():
 
 
 def test_report_skips_op_return_outputs():
+    pytest.importorskip("dss")
     txs = {
         "C": {"txid": "C", "vin": [vin("P", 0, 5)],
               "vout": [{"value": 5, "scriptpubkey_type": "v0_p2wpkh"},
@@ -44,6 +45,7 @@ def test_report_skips_op_return_outputs():
 
 
 def test_report_pairwise_terms_when_context_given():
+    pytest.importorskip("dss")
     txs = {"C": {"txid": "C", "vin": [vin("P", 0, 5)],
                  "vout": [{"value": 5, "scriptpubkey_type": "v0_p2wpkh"}]},
            "P": {"vin": cb_vin(), "vout": [{"value": 5}]}}
@@ -61,6 +63,7 @@ def test_report_pairwise_terms_when_context_given():
 
 
 def test_report_targets_arg_restricts_walk():
+    pytest.importorskip("dss")
     txs = {"C": {"txid": "C", "vin": [vin("P", 0, 5)],
                  "vout": [{"value": 5, "scriptpubkey_type": "v0_p2wpkh"},
                           {"value": 3, "scriptpubkey_type": "v0_p2wpkh"}]},
@@ -81,6 +84,7 @@ def _round(total_in, outs):
 def test_the_forced_term_is_absent_rather_than_assumed():
     """Conservation needs one participant's input, which the transaction alone
     does not give — so without it the term is None, like leak and topology."""
+    pytest.importorskip("dss")
     tx = _round(100, [20, 20, 20])
     rep = report.report(tx, fetch=lambda t: tx, oracle=lambda i, o: {"coins": []},
                         link_oracle=lambda i, o: [[1.0, 0.0, 0.0]])
@@ -89,6 +93,7 @@ def test_the_forced_term_is_absent_rather_than_assumed():
 
 def test_the_forced_term_reports_what_the_others_could_not_have_funded():
     """others hold 50, so they afford two of the three 20s; the third has no source."""
+    pytest.importorskip("dss")
     tx = _round(90, [20, 20, 20])
     rep = report.report(tx, fetch=lambda t: tx, oracle=lambda i, o: {"coins": []},
                         link_oracle=lambda i, o: [[1.0, 0.0, 0.0]], known_input=40)
@@ -97,6 +102,7 @@ def test_the_forced_term_reports_what_the_others_could_not_have_funded():
 
 def test_the_forced_term_is_empty_when_the_inequality_does_not_bite():
     """The common answer: a participant small relative to the round forces nothing."""
+    pytest.importorskip("dss")
     tx = _round(100, [20, 20, 20])
     rep = report.report(tx, fetch=lambda t: tx, oracle=lambda i, o: {"coins": []},
                         link_oracle=lambda i, o: [[1.0, 0.0, 0.0]], known_input=10)
@@ -121,6 +127,7 @@ def _uniform_link_oracle(ins, outs):
 
 
 def test_report_adds_fused_headline_and_is_conservative():
+    pytest.importorskip("dss")
     fetch = _subjective_fetch_factory()
     tx = fetch("t1")
     rep = report.report(tx, oracle=lambda i, o: {"coins": []}, link_oracle=_uniform_link_oracle,
@@ -135,6 +142,7 @@ def test_fused_headline_is_clamped_when_subjective_pin_favors_graph_minority():
     """Reproduces the widening bug: a same-owner pin (via address reuse) on the graph-MINORITY
     input boosts it enough that the raw fused distribution is more spread than graph-only — which
     would violate the 'never widen' claim. The fused headline must be clamped to graph-only."""
+    pytest.importorskip("dss")
     txs = {
         "t1": {"txid": "t1",
                "vin": [{"txid": "p0", "vout": 0, "prevout": {"value": 500}},
@@ -160,6 +168,7 @@ def test_fused_headline_is_clamped_when_subjective_pin_favors_graph_minority():
 
 
 def test_report_subjective_false_is_graph_only_backward_compatible():
+    pytest.importorskip("dss")
     fetch = _subjective_fetch_factory()
     tx = fetch("t1")
     rep = report.report(tx, oracle=lambda i, o: {"coins": []}, link_oracle=_uniform_link_oracle,
@@ -169,6 +178,7 @@ def test_report_subjective_false_is_graph_only_backward_compatible():
 
 
 def test_report_cluster_of_feeds_subjective_source():
+    pytest.importorskip("dss")
     fetch = _subjective_fetch_factory()
     tx = fetch("t1")
     # cluster that links input-0 addr "a" with output-0 addr "z" (from _subjective_fetch_factory's t1)

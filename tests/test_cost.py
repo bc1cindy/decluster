@@ -35,6 +35,7 @@ def test_amount_cuts_fires_only_on_low_w():
 
 
 def test_amount_cuts_dense_returns_none():
+    pytest.importorskip("dss")
     coins = [{"role": "mix", "index": i, "value": 100, "log_w": 12.0, "kappa_c": 0.9} for i in range(3)]
     assert cost.amount_cuts([1, 2, 3], [1, 1, 1], _fake_oracle(coins)) == []
 

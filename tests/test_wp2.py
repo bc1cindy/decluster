@@ -37,7 +37,9 @@ def test_locktime_policy_shared():
     from decluster.extractors import locktime_policy
     assert locktime_policy({"locktime": 0}) == "zero"
     assert locktime_policy({"locktime": 800000}) == "height"
-    assert locktime_policy({}) == "zero"          # .get default (missing key -> zero)
+    # An export that carries no locktime is not an export that carries locktime 0: reading the
+    # absence as "zero" made every transaction in an address-only slice agree on this axis.
+    assert locktime_policy({}) == "na"
 
 def test_norm_shared():
     from decluster.subtransaction import norm

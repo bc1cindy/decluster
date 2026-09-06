@@ -6,6 +6,7 @@ from decluster.experiments import amount_subset_sum as experiment
 
 
 def test_report_preserves_published_counting_outcomes():
+    pytest.importorskip("dss")
     report = experiment.build_report()
 
     assert report["population"] == {"multi_input": 1428, "maximum_inputs": 16}
