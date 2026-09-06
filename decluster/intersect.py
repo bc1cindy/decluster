@@ -166,7 +166,7 @@ def score_candidate(candidate, cluster_fn, funder_of, signatures=None):
     `refused` — that is, the engine fused the co-spend prior with fingerprint,
     amount and topology and still kept them together. False means the engine
     refused a merge the co-spend alone would have made, which is the case the
-    whole partition-refinement design exists for.
+    whole refuse-before-merging design exists for.
 
     This is the step that separates an intersection attack from the common-input
     heuristic: the co-spend is an input to the decision, not the decision.

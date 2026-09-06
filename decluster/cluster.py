@@ -235,7 +235,10 @@ def cluster_refined(nodes, combiner, cospend_prior=COSPEND_PRIOR, link_above=4.0
                     provenance=False, signatures=None, rarity=None, prov_refuse_bits=-3.0,
                     link_eps=1e-9, _decision_log=None):
     """The engine (the only fingerprint-aware clusterer; `cluster_naive` is the merge-only BlockSci
-    baseline). Order-independent partition refinement that fuses multiple refuse channels:
+    baseline). This pass ASCENDS: it starts from the discrete partition and declines a merge rather
+    than undoing one, so it owns every block it builds and can never cut a block it inherited.
+    Cutting an inherited partition is the other direction and lives in `declustering.decluster`.
+    Order-independent, fusing multiple refuse channels:
     co-spend prior, fingerprint, amount (roundness + denomination de-mix), cluster-level topology,
     and provenance-disjointness (disjoint ancestry + divergent fingerprint → refuse). Signatures
     supplied precomputed by caller; entity-level realization of same signal in propagate.py
