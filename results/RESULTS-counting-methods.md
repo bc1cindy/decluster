@@ -166,7 +166,8 @@ Unguarded, the path answers on 64 of 1,428 real multi-input transactions — and
 (79.7%) carry no repeated output value at all**. It is now gated on the precondition, which is the
 same three-fold floor the de-mix uses to call a value a mix denomination.
 
-Those two figures were 533 and 510 (95.7%) before the mapping count itself was corrected. The
+Those two figures were 533 and 514 (96.4%) before the mapping count itself was corrected
+(`115b4e55:results/artifacts/counting-router-v1.json`). The
 collapse from 533 to 64 is the same defect seen from the other side: almost every "answer" the
 ungated path returned was a permutation of a denomination the transaction does not contain, so it
 was counting a multiplicity that was not there rather than counting it without a licence. Current
