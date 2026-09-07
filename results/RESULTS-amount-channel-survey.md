@@ -19,7 +19,7 @@
 ## Verdict
 
 Run against real transactions for the first time, the channel had three defects and one arm that
-never speaks. The worst: `cost.amount_cuts` was cutting **every coin it could not measure**, because
+never speaks. The worst: `cost.amount_cuts` was cutting every coin it could not measure, because
 the per-coin oracle spells "unreachable" as negative infinity while the guard tested for `None`.
 That is 98.2% of input coins. With the sentinel handled, the channel cuts 1.35% of coins on 6.65% of
 transactions, which is what a refuse-only channel should look like.
@@ -112,7 +112,7 @@ Wired as a per-coin oracle and measured over 300 transactions (3,384 input coins
 | density, exact-hit | 348 | 10.28% |
 | **link matrix** | **947** | **27.98%** |
 
-Of the 947, **369 rows admit exactly one output** — a deterministic link, the amounts settling the
+Of the 947, 369 rows admit exactly one output — a deterministic link, the amounts settling the
 assignment on their own, which is the refuse signal the channel exists to emit.
 
 Two costs come with it. The matrix enumeration is exponential and its budget is cooperative: a

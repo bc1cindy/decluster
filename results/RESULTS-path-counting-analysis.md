@@ -25,14 +25,14 @@ not integrated.**
 there are *"two apparent paths … one of them is noise"* — Alice's genuine transaction history and
 counterfactual paths through unrelated coins. The object to build is *"a sufficiently robust
 anonymity set whose constituent objects are these paths."* It marks the formalization TODO
-(*"the intersections of the walks create symmetries…"*). It does **not** itself specify subset-sum
+(*"the intersections of the walks create symmetries…"*). It does not itself specify subset-sum
 counting — that connection is inferred below, and it is the same combinatorial enumeration §03
 attributes to the Boltzmann/Maurer frameworks (*"combinatorial enumeration of possible transaction
 partitions with entropy quantification"*).
 
 ## What the dss count-paths actually compute (verified)
 
-Each operates on a **single transaction's** input/output values:
+Each operates on a single transaction's input/output values:
 
 | call | output | meaning |
 |---|---|---|
@@ -42,7 +42,7 @@ Each operates on a **single transaction's** input/output values:
 | `radix_mappings(ins, outs, max_size)` | radix-structured mapping enumeration | the dense-coinjoin structural count |
 | `per_coin_density(ins, outs)` | `{kappa, coins:[{role,index,value,log_w,kappa_c}]}` | per-coin `log_w` magnitude + the κ vs κ_c phase (the privacy-magnitude engine) |
 
-So the count-paths are exactly a **per-transaction mapping-multiplicity `W(E)`** engine — the local
+So the count-paths are exactly a per-transaction mapping-multiplicity `W(E)` engine — the local
 factor a path count is built from — including a *polynomial* approximation (`w_sasamoto`) that is the
 tractable alternative to explicit enumeration.
 

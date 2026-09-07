@@ -24,7 +24,7 @@ house addresses (a small fixed set, one per bet ratio, heavily reused).
 | k=2 | 0.71 |
 | k=3 | 0.73 |
 
-Mean shared neighbours **7.95** between same-SatoshiDice pairs. Structure re-links the house addresses
+Mean shared neighbours 7.95 between same-SatoshiDice pairs. Structure re-links the house addresses
 beyond co-spend, robustly across depth — the strong N-S claim, demonstrated on real data with an
 independent label. The mechanism is exactly the recurring-counterparty economics of a gambling
 service: the same bettors play across several house addresses, so those addresses share a large
@@ -41,13 +41,13 @@ common-neighbour population that common-neighbours link prediction recovers.
 | PAYMENT-only (strong N-S), k=1 | 0.502 |
 | PAYMENT-only, k=2 / k=3 | 0.500 / 0.514 |
 
-Mean shared neighbours ~0.007; **zero** of ~3.5M pairs directly co-spent in-window. No signal at any
+Mean shared neighbours ~0.007; zero of ~3.5M pairs directly co-spent in-window. No signal at any
 depth.
 
 ## What separates them — the boundary condition for the strong claim
 
 Independent entity labels are *necessary* but not *sufficient*: the entity must sit in an
-**economic graph with recurring peers**.
+economic graph with recurring peers.
 - SatoshiDice is such a graph — a fixed set of house addresses transacting with a *returning*
   bettor population → dense shared neighbourhoods → recoverable (0.72).
 - BitMEX is a hub-and-spoke star — each deposit address links only to its own distinct

@@ -44,7 +44,7 @@ argument needs and the aggregate figure hides.
 because the framework's use for these links is to feed other clustering heuristics, where
 a small number of reliable links is worth more than many unreliable ones.
 
-**Translated into the weight such a channel would carry**, a link at precision 0.727 is
+Translated into the weight such a channel would carry, a link at precision 0.727 is
 worth about 1.4 bits of evidence for common ownership, and one at 0.9 about 3.2 bits. Those
 are the same order as the fingerprint channel's per-axis contributions, so the output is
 usable as a channel rather than merely suggestive. That is the concrete case for wiring the

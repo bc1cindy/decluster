@@ -1,6 +1,6 @@
 # §04 provenance anonymity set at scale — live-fetch resolved subsample
 
-`examples/anonymity_set_scale.py` walks real targets with **live ancestry fetch** (mempool.space,
+`examples/anonymity_set_scale.py` walks real targets with live ancestry fetch (mempool.space,
 not the shallow cache-only walk), keeps the ones whose graph-only walk actually branches, and on that
 non-coinjoin subsample measures the §04 subjective-fusion sharpening and the `value_weighted` (Gap C)
 ablation. Live network run; the walk uses the hard-bounded subset-sum oracle (a killed subprocess
@@ -38,7 +38,7 @@ returns `None` = the truncation boundary, not a fabricated link). Numbers below 
 ## The Gap-C result — `value_weighted` walk sharpens sharply (the strong finding)
 
 The satoshi-flow-weighted walk (`value_weighted=True`, the deferred §04 flow rung) reduced entropy
-**substantially on most resolved targets**, independent of the subjective signal's coverage:
+substantially on most resolved targets, independent of the subjective signal's coverage:
 
 | target | graph bits | value_weighted bits |
 |---|---|---|
@@ -74,7 +74,7 @@ this run is the first real-data measurement of that effect.
 
 The numbers above predate the dss fix. The `dss` crate now recognizes dense coinjoins structurally
 (≥2 output denominations each repeated ≥3×, covering ≥half the outputs — the transcript's "Radix"
-case) and returns a **uniform link matrix** for them instead of timing out. Measured effect:
+case) and returns a uniform link matrix for them instead of timing out. Measured effect:
 
 - **Mechanism (direct `dss.pairwise_link_prob`):** real 100- and 200-input coinjoins now return a
   uniform matrix in **0.00 s** (before: hung > 8 s → the harness's bounded oracle killed it → `None`

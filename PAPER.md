@@ -184,7 +184,7 @@ input/output ordering, change script type, tx version, coin-selection/UIH, low-R
 SIGHASH type, fee-rate, input script type), grouping seven reference
 integrations per axis (`catalog/tx-construction-matrix.md`). Each axis carries an
 extractor, measured bits, and a chain-proven example (`decluster/library.py`);
-the library carries **23 catalogued axes / 22 active on stored data** (the base set plus the granular
+the library carries 23 catalogued axes / 22 active on stored data (the base set plus the granular
 additions in §7 — input-type presence, nested segwit, pubkey compression, multisig, OP_RETURN, output
 encoding, the change relations, and a block-feerate broadcast-time axis): the 16 structural
 axes calibrated on the whole-chain BigQuery sample, and 7 on mempool samples (5 witness + OP_RETURN +
@@ -201,7 +201,7 @@ a **22-axis** number; we keep the axis catalogued because it scores under live a
 (§7, `results/RESULTS-broadcast.md`). Where this paper says "23-axis" for a scored figure, read
 "23 catalogued, 22 scored".
 
-Bits are estimated from an **unbiased** mainnet sample (§5). Representative
+Bits are estimated from an unbiased mainnet sample (§5). Representative
 values (bits per matching value; higher = rarer = stronger link):
 
 | Axis | value | bits/match |
@@ -221,7 +221,7 @@ values (bits per matching value; higher = rarer = stronger link):
 Cake-style `seq_0x01_other` nSequence at 8.9 bits and mixed input types at 6.0 bits.)
 
 Ordering tells (input/output) are n-conditional: a sorted set arises by chance with
-probability `1/n!` (½ at n=2, ⅙ at n=3), so the engine brands `bip69` only at **n≥4** and
+probability `1/n!` (½ at n=2, ⅙ at n=3), so the engine brands `bip69` only at n≥4 and
 abstains (`small_n`, no link) at n≤3 — the `3.00` above is the software-rarity link weight for
 the reliable n≥4 case, not a per-tx claim at small n. (As a *change* predictor rather than a link,
 this ordering axis validates as real but low-coverage — it resolves fewer cases than the
@@ -396,7 +396,7 @@ Whole-chain calibration notes:
   directly. (The five-era structural sweep of §6 is a *different* dataset — contiguous BigQuery
   block ranges, `bigquery/graph.sql` — and is unaffected by this.)
 
-This is a **large representative sample (~105,000 txs)**, not literally every tx; exhaustive
+This is a large representative sample (~105,000 txs), not literally every tx; exhaustive
 per-tx measurement would still want the whole chain, but for calibrating fingerprint
 frequencies this is publication-grade (rare values become estimable).
 
@@ -417,7 +417,7 @@ argument below needs a headline attribution number, it is the 0.9244 cache figur
 fixture figure, named as such.
 
 Two scope limits on the preserved cache follow from its contents rather than from the method.
-It spans **heights 800,000–965,220 — the Taproot era only**, so it cannot support a multi-era claim
+It spans heights 800,000–965,220 — the Taproot era only, so it cannot support a multi-era claim
 (see the era-drift note above, which is a historical record over a cache snapshot no longer on
 disk). And the pair draws are sampled with replacement, so the effective support is narrower than
 4,000 (see the results file). Subject to those limits the measured fingerprint model separates
@@ -571,7 +571,7 @@ privacy). On the real
 | union-find (BlockSci) | 13.8 | 16% |
 | fingerprint-aware | **3.7** | 53% |
 
-The naive common-input view over-reports the anonymity-set size by **~3.7×**; the amount +
+The naive common-input view over-reports the anonymity-set size by ~3.7×; the amount +
 fingerprint evidence collapses 15 clusters to 6 and forms a supercluster (53%). This is
 the thesis quantified at the graph level — still a modest real graph (19 coins), not a
 chain-scale measurement (which needs the whole connected chain, §10).
@@ -693,7 +693,7 @@ two weight sources, not three, and they disagree:
 With out-of-sample library weights the N-S form trails the combiner at picking the true owner from
 199 candidates (0.680 vs 0.730) and the within-class mean gap sits under `propagate.py`'s θ ≈ 0.5
 reference — the conditioner signature. With weights measured on the snapshot itself the N-S form
-**beats** the combiner (0.785 vs 0.730) and the gap rises above θ. `results/RESULTS-fingerprint-regime.md`
+beats the combiner (0.785 vs 0.730) and the gap rises above θ. `results/RESULTS-fingerprint-regime.md`
 says so in its own header: it *falsifies* the historical claim that the conditioner reading is stable
 across weight sources. Those snapshot weights are fitted and evaluated on the same 600-transaction
 selection, so this is evidence of sensitivity to the weighting, not evidence that construction
@@ -735,7 +735,7 @@ construction axis as a change predictor: change = the output whose onward-spendi
 | output order | 0.436 | 0.048 | 0.484 | 0.90 |
 | input order | 0.320 | 0.066 | 0.386 | 0.83 |
 
-Reading *the ordering*: it is a **real but low-coverage** change predictor. `input_order`
+Reading *the ordering*: it is a real but low-coverage change predictor. `input_order`
 fires on only 39% of labels (vs 57% for the round-number baseline, 78% for version) and, when it
 fires, its precision (0.83) is about the baseline's (0.86); `output_order` fires on 48% at
 precision 0.90. So ordering resolves *fewer* cases, not less accurately — the low recall is
@@ -772,7 +772,7 @@ window is revealed) over one-day clusters. A multi-epoch replication is future w
 
 The fingerprint cells are pinned to the versions this research read (Cake Wallet
 `@dc1b369`, 2026-06-10). Several of the Cake divergences the tracking-issue review
-surfaced have since been merged upstream, which **bounds** — but does not erase —
+surfaced have since been merged upstream, which bounds — but does not erase —
 the corresponding backward-channel signal: a fix only stops *new* txs from leaking;
 every already-confirmed tx built by a pre-fix version still carries the tell, so the
 demonstration txs (§6, and Ex.3 `8fb80573…`) remain re-partitionable. Merged fixes,
@@ -868,7 +868,7 @@ re-identification (`holdout_reid`: hide a fraction of seed labels, re-derive the
 is evaluated on a synthetic fixture and a preliminary cache-bounded real run
 (`results/RESULTS-ns-propagation.md`); the real run mostly truncates at the cache boundary — most
 signatures collapse to a single ancestral atom, the whole-graph limit above — so it exercises the
-mechanism on real data but does **not yet establish its strength**; proper chain-scale evaluation pending (§10). The split channel is not only a standalone module: it is now
+mechanism on real data but does not yet establish its strength; proper chain-scale evaluation pending (§10). The split channel is not only a standalone module: it is now
 wired into the live engine as `cluster_refined`'s provenance-disjoint refuse term
 (`decluster/cluster.py`, `provenance=`) — a co-spent pair is refused when provenance is disjoint
 and the fingerprint already disagrees (`fp < 0`), the same fp-gating discipline as the amount
@@ -1055,7 +1055,7 @@ withheld correspondence the run is graded against. And the export carries addres
 values, no script types — so the amount and fingerprint channels are absent by construction.
 
 Set this beside the AUC 0.95 of §6. Those are not two readings of one thing. The 0.95 is a
-**pairwise link-prediction score under weak co-spend labels** — evidence that the graph carries
+pairwise link-prediction score under weak co-spend labels — evidence that the graph carries
 same-owner structure, which is the *premise* the attack needs; the ~1% is the attack, run to
 completion, on real chain, and told to name a specific counterpart. The paper already says §6 is the
 premise and not the attack (§7, and the `structural_linkage` claim); what was missing was the second
@@ -1165,7 +1165,7 @@ result, and the gap between them is where the remaining work is.
 
 The reason this measurement matters is constructive: every bit this paper reads as a link
 is, inverted, a bit a wallet must avoid emitting. The offensive engine is the calibration
-instrument for a defensive **cost function** — the bridge to collaborative multi-party
+instrument for a defensive cost function — the bridge to collaborative multi-party
 transactions where privacy can be *quantified and designed for* rather than hoped for.
 
 **Two halves, one boundary.** This repository is the *measurement* half — a research instrument
@@ -1205,7 +1205,7 @@ how often two coins share a block, validated below the enumeration guard against
 dense round the marginal comes out near-uniform — amount-privacy turned from a verdict into the entropy
 of the link distribution, in the same bits as every channel here.
 
-Second, cluster-level **topology over the whole connected graph** needs richer features (community
+Second, cluster-level topology over the whole connected graph needs richer features (community
 detection, embeddings) beyond the delivered rarity-threshold FP-control (§9). Third, the
 construction-side cost function itself — the defensive counterpart, a project in its own right. And
 generalizing the amount channel (§2) beyond the delivered de-mix (§1/§6): it already carries two

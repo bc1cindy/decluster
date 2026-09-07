@@ -5,7 +5,7 @@ Reproduce: `python3 tests/test_topology.py`. Term in `decluster/cluster.py`
 
 ## The gap this addresses
 
-Fingerprints separate only *different* wallet software. If Alice and Bob use the **same**
+Fingerprints separate only *different* wallet software. If Alice and Bob use the same
 wallet (identical fingerprints) and payjoin together, the co-spend heuristic plus the
 matching fingerprints threaten to collapse their clusters — a false positive the fingerprint
 channel cannot refuse (paper §9). The robust control is graph topology (Narayanan–Shmatikov):
@@ -16,7 +16,7 @@ Alice's counterparties differ from Bob's.
 Each counterparty is weighted by its rarity, `−log2(share of nodes touching it)`
 (`counterparty_bits`): a hub (an exchange everyone touches) earns ~0 bits, a private address
 many. On a connected real slice (`sample.ndjson`, 5 491 txs, 27 281 addresses, 889 co-spend
-entities) counterparty bits range **4.1 (hub) to 14.7 (unique)**, and a shared-counterparty
+entities) counterparty bits range 4.1 (hub) to 14.7 (unique), and a shared-counterparty
 score separates held-out same-owner pairs from cross-owner pairs:
 
 | topology score | mean same-owner | mean cross-owner | AUC |
@@ -24,13 +24,13 @@ score separates held-out same-owner pairs from cross-owner pairs:
 | raw common-neighbour count | 0.68 | 0.00 | 0.839 |
 | **rarity-calibrated bits** | **+3.57 bits** | 0.01 | 0.838 |
 
-So a shared **rare** counterparty is real, calibrated same-owner evidence, summable with
+So a shared rare counterparty is real, calibrated same-owner evidence, summable with
 the fingerprint bits. This is a delivered corroboration signal (it links same-owner coins
 the co-spend missed).
 
 ## Per-pair mismatch is weak — the refusal needs accumulation
 
-Calibrating the *disjoint* side **per pair** is the sobering part:
+Calibrating the *disjoint* side per pair is the sobering part:
 
 - **P(disjoint | same owner) = 0.32**, **P(disjoint | different owner) = 1.00** → FS mismatch
   weight `log2(0.32/1.00) ≈ −1.65 bits`.
@@ -49,7 +49,7 @@ and calibrate the *aggregate*-disjoint on the same slice:
 - FS weight = `log2(0.004 / 0.997) ≈ −8 bits` (Laplace-smoothed)
 
 Same-owner clusters *never* have disjoint aggregate neighbourhoods (they reuse counterparties);
-different owners almost always do. So an aggregate-disjoint is **~−8 calibrated bits** — strong
+different owners almost always do. So an aggregate-disjoint is ~−8 calibrated bits — strong
 enough to refuse.
 
 End-to-end proof (`tests/test_topology.py::test_cluster_topology_refuses_same_software_payjoin`):
@@ -93,7 +93,7 @@ for same-owner cluster pairs (split-half) vs different-owner pairs.
 
 The two populations are cleanly separated: same-owner clusters share distinctive counterparties
 (11.7 bits), different owners essentially never do. Any `topo_tau` in `[0.5, 3.0]` keeps 100% of
-same-owner and refuses 100% of different-owner on this slice; the default is **`topo_tau = 1.0`**
+same-owner and refuses 100% of different-owner on this slice; the default is `topo_tau = 1.0`
 (the shared counterparty must be worth ≥ 1 bit, i.e. touched by ≤ half the nodes), with margin.
 End-to-end proof in `test_engine_refuses_hub_only_partial_overlap` (hub-only Alice/Bob
 overlap refused; their own distinctive coins kept).

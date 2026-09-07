@@ -145,7 +145,7 @@ remaining state-2 and state-5 results are migrated, each should carry
 `results/manifests/<doc>.json`, recording the source's identity (files, bytes, digest) and the
 population invariants the claim depends on — the facts a byte digest cannot see.
 `tests/test_results_manifests.py` checks every manifest that exists against its live source and
-**skips with a message** when the source is absent, or when the manifest's invariants were not
+skips with a message when the source is absent, or when the manifest's invariants were not
 recomputed; it also requires every `RESULTS-*.md` to either carry a manifest or be named in that
 test's `NOT_YET_MIGRATED` allowlist, so a document cannot silently fall outside both. For a number
 produced by the Rust crate, a manifest's identity is `dss.__version__` / `dss.__rev__`, its lock

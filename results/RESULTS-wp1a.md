@@ -11,7 +11,7 @@ The nLockTime `zero` share moved with sampling method:
 
 Direction confirmed; the full ~95% (#1676) is **not reachable via the mempool.space
 API** at low request cost — it needs uniform-over-ALL-txs sampling, which is exactly
-what the **WP1b dense emitter** provides (every tx, no per-block API cap). Also
+what the WP1b dense emitter provides (every tx, no per-block API cap). Also
 `floor=200000` excludes pre-anti-fee-sniping blocks (almost all `locktime=0`), which
 holds the number below 95%. This is a documented limitation, not a silent gap.
 

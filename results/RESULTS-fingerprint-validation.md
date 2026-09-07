@@ -79,6 +79,6 @@ signal holds; the model is no longer measured through a buggy, unmaintained para
 
 The chain-scale AUC (~0.93 over the full `.blkcache`) is a population statistic and is a data-run,
 not a unit-asserted value. The load-bearing claim — the library scorer separates same-owner from
-random pairs with strong AUC and a shuffle control at chance — is pinned as a **band** on a committed
+random pairs with strong AUC and a shuffle control at chance — is pinned as a band on a committed
 600-tx witness-bearing sample: `tests/fixtures/fingerprint_blkcache_sample.json`,
 `tests/test_fingerprint_auc.py` (asserts AUC ≥ 0.88, shuffle ∈ [0.40, 0.60]).

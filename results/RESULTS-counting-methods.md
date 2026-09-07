@@ -9,7 +9,7 @@
 
 The whole-transaction cascade was picking the one method that adds nothing and handing the next one
 an unbounded subset size, which is why it stopped returning past twenty inputs. Bounding the
-convolution by the crate's own knee takes a 25-input call from **246.8s to 0.0032s**. The
+convolution by the crate's own knee takes a 25-input call from 246.8s to 0.0032s. The
 saddle-point estimator is not a missing tier here: it answers a pre-output question and this is a
 post-output analyzer. And on the regime gate that decides when it applies, only one of the seven L
 candidates recovers the truth — `max(A)`, at 18 of 18 against instances whose L is known.
@@ -75,7 +75,7 @@ candidate cannot win by always answering the same way:
 three quadratic candidates never return dense at all, and MAX_MONEY/N is undefined on three of the
 sparse cases.
 
-This matters because the regime gate reads dense only when κ < κ_c at the **worst-case** L
+This matters because the regime gate reads dense only when κ < κ_c at the worst-case L
 (MAX_MONEY/N) and calls everything between best and worst transitional. With a candidate that is
 wrong two thirds of the time and biased toward sparse, dense becomes close to unreachable —
 measured, the estimator declines on every transaction in the slice and on synthetic instances at
@@ -208,7 +208,7 @@ decluster had all three, wired in parallel rather than in sequence:
 | 3. score per coin | `cost.amount_cuts` | ran independently of step 2 |
 
 Step three running independently is measurable. Over the slice, the per-coin oracle produced cuts for
-95 transactions and the transaction-level reading resolved for 82 — but they agree on only **62**.
+95 transactions and the transaction-level reading resolved for 82 — but they agree on only 62.
 Thirty-three transactions were being cut on a per-coin reading that the transaction-level evaluation
 had found nothing to support, and twenty that did resolve got no cut because the truncation could
 not reach their coins.

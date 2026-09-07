@@ -63,7 +63,7 @@ width most relationships do not recur.
 
 ## What this does and does not establish
 
-It establishes that on **one-day views** of the 2026 transaction graph, seeded propagation
+It establishes that on one-day views of the 2026 transaction graph, seeded propagation
 recovers a real but small correspondence and never becomes self-sustaining, and it
 identifies why.
 

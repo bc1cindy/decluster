@@ -112,7 +112,7 @@ to 50 MB, and it is committed as `data/partition-cuts-300k-2016.ndjson.gz`.
 for `epoch` and `collapse` and none for `decore`.
 
 Two things the canonical run states that this document did not. A seed share that returns no guess
-reports **no precision**, not zero: three of the six seed/scheme cells make no guess at all, and
+reports no precision, not zero: three of the six seed/scheme cells make no guess at all, and
 printing 0.000 there would read as a measured tie between schemes rather than as an absence of
 measurement. And `epoch` and `decore` had been ignoring `n_views` — they halved the height range
 whatever was asked, so the framework's n > 2 generalisation silently applied to one scheme of three.

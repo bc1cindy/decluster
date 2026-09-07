@@ -3,15 +3,15 @@
 Slice: `bigquery/slice.sql`, 1 day = 2024-06-01 (blocks 845982–846122, 739,889 txs).
 Same-owner change labels: the change output revealed by multi-input cluster membership (M&N),
 then filtered by M&N §2.2 (`build_gt_slice_mn`) — fresh change (change address appears as an
-output only in T, an in-slice reuse proxy for M&N's "change already known at creation") and the
-**>10% two-change cluster** exclusion.
+output only in T, an in-slice reuse proxy for M&N's "change already known at creation") and the >10% two-change cluster
+exclusion.
 
 **Raw labels: 1045 → n = 578** (467 dropped as in-slice reused-change; 0 by the two-change rule).
 `M&N supercluster / tag-collapse removal (Mt.Gox) needs whole-chain tags and is NOT applied.`
 
 ## The valid result: per-axis change prediction (M&N Table 4 style; bootstrap B=2000)
 
-Each axis votes "change = the output whose onward-spending tx **agrees with T on that axis**" — a
+Each axis votes "change = the output whose onward-spending tx agrees with T on that axis" — a
 construction-fingerprint agreement between T and its output's spender, disjoint from the
 address-graph label. `coverage` = fraction of labels where the axis fires (else it abstains);
 `prec.` = precision when it fires (TPR / coverage).
@@ -24,7 +24,7 @@ address-graph label. `coverage` = fraction of labels where the axis fires (else 
 | version | 0.779 [0.744, 0.811] | 0.000 | 0.779 | 1.00 |
 | change_index (round-number baseline) | 0.486 [0.446, 0.524] | 0.080 | 0.566 | 0.86 |
 
-Combined tx-level pre↔post **AUC = 0.759 [0.716, 0.802]** vs shuffle-null ≈ 0.50 [0.44, 0.56] — the
+Combined tx-level pre↔post AUC = 0.759 [0.716, 0.802] vs shuffle-null ≈ 0.50 [0.44, 0.56] — the
 change's onward-spend shares T's construction fingerprint more than the payment's does (a genuine,
 label-disjoint signal; the shuffle control randomizes the pos/neg direction and collapses to ~0.5).
 

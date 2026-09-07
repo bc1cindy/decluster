@@ -24,7 +24,7 @@ survive `payment > 0`:
 | **in1 (Cake 5750) → out1 (6750)** | **1000** | **3** ✓ |
 | in0 (sender 2000) → out1 (6750) | 4750 | 1 |
 
-`ambiguity_bits = log2(2) = 1.0`. Roundness picks **payment = 1000** → the most-likely
+`ambiguity_bits = log2(2) = 1.0`. Roundness picks payment = 1000 → the most-likely
 partition:
 
 - **REFUSE** `91106666` (sender) ↔ `0a568e3a` (Cake): the amount says the two inputs are
@@ -33,7 +33,7 @@ partition:
 
 This is exactly the amount move: subtract the receiver's contributed input from its
 output → a low-hanging round payment (1000). The "number of plausible partitions is a lot
-lower than we think": here it is **1 bit**, and roundness resolves it.
+lower than we think": here it is 1 bit, and roundness resolves it.
 
 ## Two independent signals agree
 | signal | verdict on sender↔Cake |

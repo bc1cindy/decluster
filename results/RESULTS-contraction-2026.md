@@ -13,7 +13,7 @@ footnote.
 
 ## Result
 
-Global clustering over the whole slice: **633 933 addresses in 55 850 clusters** of two or
+Global clustering over the whole slice: 633 933 addresses in 55 850 clusters of two or
 more, largest 30 304 addresses.
 
 | | view A | view B |

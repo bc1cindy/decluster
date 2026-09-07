@@ -37,7 +37,7 @@ construction**; we report coverage and calibrate the axis bits, and claim nothin
 | na_loose | 0.28% | **0 (abstain)** |
 | backdated | 0.14% | 9.48 |
 
-`na_loose` is an abstention, so its stored weight in `library.py` is **0**, not the raw
+`na_loose` is an abstention, so its stored weight in `library.py` is 0, not the raw
 −log2(share)=8.48 the calibrator prints from rarity. Rarity is not owner-linkage: "both txs
 waited during congestion" is a market-wide condition, so scoring co-abstention as 8.48 bits
 would forge a false same-owner link if the axis were fed to the combiner.
@@ -51,7 +51,7 @@ wallet would encode is ~N−1 — one block inside the ±100 `matches` tolerance
 
 The value over the plain `locktime` axis (which compares locktime to the *inclusion* height)
 is shown by `tests/test_broadcast.py::test_deconfounds_plain_locktime`. A tx with
-`locktime=700` included 200 blocks later at height 900, on a **loose** bound (it waited):
+`locktime=700` included 200 blocks later at height 900, on a loose bound (it waited):
 
 | axis | verdict |
 |---|---|

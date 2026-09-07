@@ -69,7 +69,7 @@ much genuine mixing is present.
 
 *The arm is structurally inert on address-only exports.* `equal_output_group` reads output
 values, and the graph-scale exports do not carry them. Over `_span6m.ndjson` — 960,717
-transactions, none of them carrying a single output value — it fires **zero** times, while the
+transactions, none of them carrying a single output value — it fires zero times, while the
 size rule fires 1,140 times. Any refusal figure measured on an `epoch_2016_*`-shaped export,
 here or in a sibling document, is therefore still the many-in/many-out rule alone and should be
 read as such.

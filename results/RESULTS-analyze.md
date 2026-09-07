@@ -57,7 +57,7 @@ Reading it:
 ## (b) Depth-5 over **coinjoin** ancestry is computationally intractable (§03), and that is the point
 
 Running `analyze()` at `depth=5` over real Wasabi-scale coinjoin round targets
-(`analyze_live`, 8 targets, `budget_ms=6000`) did **not** complete in a 25-minute wall cap — it did
+(`analyze_live`, 8 targets, `budget_ms=6000`) did not complete in a 25-minute wall cap — it did
 not crash, it did not finish. Even `depth=2` on a single wide coinjoin exceeds minutes. Root cause is
 inherent, not a bug: the ancestry graph fans out exponentially (each coinjoin ≈ 10 parents, each a
 coinjoin → thousands of bounded-oracle calls). This is exactly the refs' §03 caveat —
@@ -79,7 +79,7 @@ narrows the anonymity set on real transactions.
 
 Deep (ancestral) fusion — sharpening from a same-owner link found back in the ancestry rather than
 in the target's own tx — is rare: a depth-sweep over 11 real targets with no own-tx reuse produced
-**0** cases of deep fusion emerging or growing with depth. This is consistent with §06/robustness
+0 cases of deep fusion emerging or growing with depth. This is consistent with §06/robustness
 (*"the combinatorial explosion of graph based features … rendered mostly inert"*): a single ancestral
 same-owner link narrows only the mass routed through that one ancestor, rarely enough to move the
 worst-case min-entropy. Reported as theory alignment, not a fusion failure — the fusion *mechanism* is

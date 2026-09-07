@@ -23,7 +23,7 @@ over `decluster/ancestry.py` signatures.
 
 ## Result
 
-Signatures: median **4 797 dimensions** (max 11 511) — high-dimensional, as the attack
+Signatures: median 4 797 dimensions (max 11 511) — high-dimensional, as the attack
 requires.
 
 | epsilon | ancestry (deep features) | statistical (fingerprints) |

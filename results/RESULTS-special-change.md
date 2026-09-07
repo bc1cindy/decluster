@@ -1,6 +1,6 @@
 # Special-case labels — an independent value-based cross-check of the ordering (Phase 1)
 
-Change identification validated against a **value-based** special-case label (optimal-change / UIH,
+Change identification validated against a value-based special-case label (optimal-change / UIH,
 à la Ron & Shamir) that is disjoint from co-spend clustering *and* from the construction fingerprints
 it validates — so this cross-check is not circular. Complements `results/RESULTS-change-id.md`
 (which used a co-spend label). Code: `decluster/change_special.py`, `examples/special_change_validation.py`.
@@ -43,7 +43,7 @@ Against the co-spend label (a single 2024-06-01 day; `RESULTS-change-id.md`), `n
 0.99 precision and `version` 1.00, and the ordering axes looked distinctly weaker. Against the
 value label, that collapses — **all four onward-spend axes fall to ~0.60–0.74 precision, and
 nSequence/version no longer dominate the ordering axes.** So the "nSequence/version are the strong
-tells, ordering is weak" ranking is **label- and population-dependent, not a robust result.**
+tells, ordering is weak" ranking is label- and population-dependent, not a robust result.
 
 The divergence is confounded — four plausible causes, none isolable here:
 
@@ -57,7 +57,7 @@ The divergence is confounded — four plausible causes, none isolable here:
 4. **Optimal-change label error.** The "no unnecessary inputs" assumption fails for some txs.
 
 Cause 3 is a real methodological inflation in the co-spend result; causes 1–2 also lower the value
-result. So this does **not** retract the co-spend numbers — it shows they are not robust, and the
+result. So this does not retract the co-spend numbers — it shows they are not robust, and the
 per-axis onward-spend signal is weaker and more label-dependent than the single-day co-spend table
 suggested.
 

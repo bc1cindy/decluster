@@ -1,6 +1,6 @@
 # Anchoring the ">100 bits": a real cluster's identifying structure, measured
 
-§1 argues a merge's ~1.6 bits of ambiguity cannot survive the **>100 bits** an established
+§1 argues a merge's ~1.6 bits of ambiguity cannot survive the >100 bits an established
 cluster carries — an order-of-magnitude figure inherited from Narayanan–Shmatikov, previously
 *not measured*. This measures it directly, instantiating the N-S accumulation that
 `cluster.topology_weight`'s docstring names.

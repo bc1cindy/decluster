@@ -11,7 +11,7 @@
 > (nominal-value transitions, no dss) instead; the subset-sum walk measured here is opt-in.
 
 `examples/path_count_live.py` exercises the two shipped capabilities on real data: the bounded walk
-(`max_nodes`, makes deep coinjoin `analyze()` tractable) and the **§07 path-count** object (weighted by
+(`max_nodes`, makes deep coinjoin `analyze()` tractable) and the §07 path-count object (weighted by
 link probability alone — see "Multiplicity has left the bound", below). Numbers below, with the
 nuances the runs surfaced.
 
@@ -27,7 +27,7 @@ nuances the runs surfaced.
 | min-entropy | **3.0 bits** |
 | truncated (unexpanded frontier + oracle refusals) | 70 |
 
-Contrast: the unbounded depth-5 walk over the same coinjoin **did not finish in a 25-minute cap**
+Contrast: the unbounded depth-5 walk over the same coinjoin did not finish in a 25-minute cap
 (`RESULTS-analyze.md` (b)) — the ancestral fan-out explodes. `max_nodes` caps the expanded coins, so
 the walk returns a truncated lower bound (67 origins, 3.0 bits) in bounded time. Two independent
 knobs govern this and BOTH matter: `max_nodes` bounds the graph fan-out (number of hops); `budget_ms`
@@ -69,7 +69,7 @@ terms means, not a working number.
 
 ## (c) The W(E) count gate — a real bug found and fixed (Sasamoto is NOT the bug)
 
-Investigating why §07 collapsed to §04 on coinjoins surfaced a bug — in **our method selection**, not
+Investigating why §07 collapsed to §04 on coinjoins surfaced a bug — in our method selection, not
 in Sasamoto:
 
 - **Sasamoto is correct.** Cross-referenced against the paper (`sasamoto.md`, cond-mat/0106125)
@@ -88,7 +88,7 @@ in Sasamoto:
   exact counts (asserted by `tests/test_counting.py::test_w_total_dense_coinjoin_is_exact_not_unknown`),
   independent of whether §07 currently spends that count on anything.
 
-Radix (dense repeated-denomination recognition) is a **separate, independent** dss path and is not part
+Radix (dense repeated-denomination recognition) is a separate, independent dss path and is not part
 of this cascade.
 
 ## Limits

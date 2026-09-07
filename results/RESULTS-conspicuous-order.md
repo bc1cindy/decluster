@@ -3,7 +3,7 @@
 ## Verdict
 
 No. On a contiguous 137-block slice with complete transaction data, ordering the merges by how
-little each argues against itself produces a **partition identical** to block order. What does
+little each argues against itself produces a partition identical to block order. What does
 change the partition is the state-dependent gate the ordering was supposed to feed: declining a
 doubted merge that would fuse two already-established clusters takes the slice from 868 to 1,117
 clusters. The ordering is inert; the gate is not.

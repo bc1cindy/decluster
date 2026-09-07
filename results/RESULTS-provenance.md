@@ -17,7 +17,7 @@ fraction of the child's inputs spending an output of the parent.
 | 90th percentile | 0.0508 |
 | maximum | 0.2019 |
 
-The first row is the finding that matters for the premise: coinjoin-to-coinjoin overlap is **common**,
+The first row is the finding that matters for the premise: coinjoin-to-coinjoin overlap is common,
 not exceptional. In a remixing population, rounds routinely consume each other's outputs, so a
 nonzero share is not by itself evidence of anything.
 

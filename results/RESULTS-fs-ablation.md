@@ -25,7 +25,7 @@ Unconditional correlation between two comparison fields is expected even under a
 FS model: matches and non-matches differ systematically on every predictive axis, so pooling the
 two classes induces spurious association between any two fields that are each individually
 predictive (a Simpson's-paradox-style confound by class). The FS assumption is about association
-*within* each class, so that is what is measured: the **phi coefficient** (the Pearson correlation
+*within* each class, so that is what is measured: the phi coefficient (the Pearson correlation
 of two binary agree/disagree indicators; `phi = (n11*n00 - n10*n01) / sqrt((n11+n10)(n01+n00)(n11+n01)(n10+n00))`,
 `decluster.fs_ablation.phi_coefficient`), computed separately within the match class and within the
 non-match class, over comparison vectors built by `fs_temporal.fingerprint_fields()` on 8,000

@@ -2,7 +2,7 @@
 
 ## Verdict
 
-The cross-view attack runs locally on an 8 GB M2 over complete weekly views. It does **not** ignite:
+The cross-view attack runs locally on an 8 GB M2 over complete weekly views. It does not ignite:
 one correct rejoin out of 15,688 candidate pairs at a 10% seed, with every shuffled-seed control at
 zero. But the precondition it needs is far closer than the first pass reported — 46.5% of rejoinable
 pseudonyms now share at least one recurring cross-view neighbour, against 7.7% before. The barrier is
@@ -95,7 +95,7 @@ The first and last January chunks give a three-week gap (982,021 and 1,170,182 t
 
 The first pass measured recurring support rising from 0.244 to 0.340 with the wider gap and read that
 as a positive trend in the precondition, nominating longer separation as the next experiment. On the
-corrected path the ordering **reverses**: the adjacent pair is better on every precondition figure,
+corrected path the ordering reverses: the adjacent pair is better on every precondition figure,
 and the wider gap also loses a third of the rejoinable population. Both matched at zero, all arms.
 
 Widening the temporal gap is therefore not the way forward. Economic relationships that recur within
@@ -130,12 +130,12 @@ relationships in a single day are one-shot". 7.78% here, on a different era, a d
 and a different code path, reproduces it. The one-off character of the pseudonym graph appears to be
 stable across a decade of chain history rather than an artefact of either sample.
 
-But the straddlers are **five times more recurrent** than the graph they sit in. That is partly
+But the straddlers are five times more recurrent than the graph they sit in. That is partly
 selection — a cluster that straddles two windows was active in both — and it is the encouraging half
 of the measurement: among the pseudonyms the attack actually targets, more than a third of the
 relationships do repeat, over a mean span of three days.
 
-So the negative is now located precisely. It is **not** that these entities have no repeating
+So the negative is now located precisely. It is not that these entities have no repeating
 relationships; they do, inside a view. It is that the *same neighbourhood* does not survive the
 boundary: mean cross-view support 1.516, with only 2.67% reaching the four mapped common neighbours
 the high-confidence stage requires. Recurrence exists and does not transfer.
@@ -167,7 +167,7 @@ buys 26, almost all of that from a handful of very wide transactions.
 
 The reason is that the clustering *is* common-input ownership: every input of a merged transaction
 is in one cluster by construction, so a transaction can only present several sources when the
-clusterer **declined** to merge them — which is to say, in exactly the coinjoins where which
+clusterer declined to merge them — which is to say, in exactly the coinjoins where which
 participant paid which output is unobservable. The bound and the refusal are the same decision seen
 twice, and the bound is nearly free because the refusal already did the work.
 
@@ -178,7 +178,7 @@ work and the trade deserves its own measurement.
 ## The amount channel is absent from this data, and from every graph fixture
 
 Worth stating plainly because it bounds what the refusal in this pipeline can be. The multi-epoch
-export carries only `height`, `txid` and the input/output **addresses** — no output values. So does
+export carries only `height`, `txid` and the input/output addresses — no output values. So does
 every committed graph fixture (`slice_a_channels_2016`, `graph_deanon_2016`,
 `entity_satoshidice_2013`): 0 of 36,562 transactions across the three carry a value.
 

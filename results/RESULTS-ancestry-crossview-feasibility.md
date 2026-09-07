@@ -14,7 +14,7 @@ feature rather than the graph.
 An ancestry signature walks backward through funding transactions; its power comes from
 reaching depth 6 or so, where the set of origin coins becomes a sparse quasi-identifier. On
 `slice_2026.ndjson`, of 2 190 883 non-coinbase inputs, **53.6 % have their funder inside the
-slice**, which caps the average backward walk at **~2.2 hops** before it truncates on a
+slice, which caps the average backward walk at ~2.2 hops** before it truncates on a
 missing funder. At that depth the signature is mostly truncation absorbers, not the sparse
 high-dimensional vector the attack needs. The ancestry channel is blocked on the same
 one-hop-back-and-deeper export the fingerprint channel needs (`RESULTS-refusing-clusterer.md`),
@@ -24,7 +24,7 @@ only more so, since it wants many hops rather than one.
 
 The proposal conflated two of the three cited N-S papers. **Cit. 24 (social graph
 de-anonymization)** matches two graphs by neighbourhood — the cross-view matcher this session
-built. **Cit. 19–20 (sparse dataset / Netflix)** matches records by sparse feature-vector
+built. Cit. 19–20 (sparse dataset / Netflix) matches records by sparse feature-vector
 overlap — which is exactly what ancestry signatures are, and what `decluster/propagate.py`
 already implements via `provenance_link`, measured in `RESULTS-ns-propagation.md`
 (re-identification rate 0.154 on a bounded real cache sample, 1.0 on the synthetic fixture).

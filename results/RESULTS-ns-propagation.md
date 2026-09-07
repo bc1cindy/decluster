@@ -24,7 +24,7 @@ wiring-level regression check it still serves.
 
 `examples/ns_propagation_cache_run.py` (offline, no `decluster/propagate.py` or `decluster/cluster.py`
 changes) draws a bounded real sample from `.cache/`, computes real `ancestry_signature`s via a
-**cache-only fetch** (`cache_fetch_tx`: reads `.cache/{txid}.json`; a MISS returns a coinbase-shaped
+cache-only fetch (`cache_fetch_tx`: reads `.cache/{txid}.json`; a MISS returns a coinbase-shaped
 boundary marker, which `ancestry.build_extended_graph`'s existing `_is_coinbase` check already treats
 as an absorber — no core-code change needed, and the walk never touches the network), and runs both
 N-S channels plus the deferred union-find baseline.
@@ -41,7 +41,7 @@ correctly —
   22 clusters (20 pairs, 2 triples), 46 member coins → feeds `seed_labels` for
   `propagate`/`holdout_reid`.
 
-Total sample: **150 coins** (nodes), capped so the run finishes in under 20s.
+Total sample: 150 coins (nodes), capped so the run finishes in under 20s.
 
 ### Ancestry: mostly boundary, not mostly resolved — but not a total collapse either
 
@@ -56,7 +56,7 @@ Total sample: **150 coins** (nodes), capped so the run finishes in under 20s.
 
 Unlike the prior contiguous-slice attempt in `results/RESULTS-ancestry.md` (§7 of `PAPER.md`: "every
 signature collapses to a single boundary atom... a tractable-width slice cannot contain
-multi-hop ancestry"), this sample does **not** collapse universally — 43% of coins resolve real
+multi-hop ancestry"), this sample does not collapse universally — 43% of coins resolve real
 branching within the cache, because the sample was deliberately built from co-spend/address-reuse
 *linked* subgraphs rather than a random contiguous block range, so a meaningful fraction of nodes'
 immediate parents (or grandparents) happen to already be cached too. But the majority (57%) still
@@ -193,7 +193,7 @@ target). 10 nodes total, `theta=0.5`, `min_score=0.1`, `refuse_below=-2.0` (driv
 
 Not computed *on this synthetic fixture* — `cluster.cluster_naive(nodes)` clusters by
 common-input-ownership and needs `fetch_tx` over real txids; it has no meaningful reading over
-synthetic node labels like `A1`/`u1`. **Now computed for real** in the "Real cache-bounded run"
+synthetic node labels like `A1`/`u1`. Now computed for real in the "Real cache-bounded run"
 section above (100 clusters / 6.517 bits vs. the refined partition's 107 / 6.620).
 
 ## Chain-data reproduction — done (cache-bounded); network run still open
@@ -201,7 +201,7 @@ section above (100 clusters / 6.517 bits vs. the refined partition's 107 / 6.620
 The "Real cache-bounded run" above supersedes the original plan here: it ran the full pipeline
 (real `ancestry_signature`, `build_rarity`, `NSPropagator.propagate`/`.refine`, `holdout_reid`,
 and the `cluster.cluster_naive` baseline) against this checkout's `.cache/`, entirely offline. The
-one thing it does *not* give is a **network** run with unbounded ancestry depth — a real fetch
+one thing it does *not* give is a network run with unbounded ancestry depth — a real fetch
 over `mempool.space` was previously abandoned mid-task as too slow (a single depth-2 walk from a
 19-input coin took ~24s in that environment, rate-limited to ~5 req/s with backoff) and remains a
 possible follow-up if a much larger multi-hop-connected cache (or a live, budgeted network session)
