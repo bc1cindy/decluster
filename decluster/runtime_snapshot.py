@@ -6,12 +6,18 @@ verify a revision nobody ships.
 
 Entries carry a zero timestamp and no ownership, so the same revision always produces the same
 bytes and the digest a bundle pins is a function of content alone.
+
+`--repoint` does the rest of the move: every `reproduction/*/environment.json`, every run manifest's
+`code.revision` and every bundle's source blob name follow the new archive, and the superseded one
+is removed. Done by hand it is four steps in a required order, and skipping any of them leaves a
+record describing a runtime nobody ships. `decluster-bundle sync` then refreshes the identities.
 """
 
 from __future__ import annotations
 
 import argparse
 import io
+import json
 import subprocess
 import tarfile
 from pathlib import Path
@@ -96,14 +102,56 @@ def build(revision="HEAD", root=".", out_dir="sources"):
     return destination, full, len(paths)
 
 
+def repoint(root, archive, revision, out_dir="sources"):
+    """Point every record at `archive`, then drop the archives it supersedes."""
+    root = Path(root)
+    name = f"{out_dir}/{archive.name}"
+    moved = []
+    for environment in sorted(root.glob("reproduction/*/environment.json")):
+        record = json.loads(environment.read_text())
+        if record.get("source_archive") == name:
+            continue
+        record["source_archive"] = name
+        environment.write_text(json.dumps(record, indent=2) + "\n")
+        moved.append(str(environment.relative_to(root)))
+    for manifest in sorted(root.glob("catalog/runs/*.json")):
+        record = json.loads(manifest.read_text())
+        if record["code"]["revision"] == revision:
+            continue
+        manifest.write_text(manifest.read_text().replace(
+            f'"revision": "{record["code"]["revision"]}"', f'"revision": "{revision}"', 1))
+        moved.append(str(manifest.relative_to(root)))
+    for index in sorted(root.glob("releases/*.bundle.json")):
+        record = json.loads(index.read_text())
+        touched = False
+        for blob in record["blobs"]:
+            if blob["role"] == "source" and blob["name"] != name:
+                blob["name"] = name
+                touched = True
+        if touched:
+            index.write_text(json.dumps(record, indent=2) + "\n")
+            moved.append(str(index.relative_to(root)))
+    superseded = [p for p in Path(root, out_dir).glob(f"{PREFIX}-*-runtime.tar")
+                  if p.name != archive.name]
+    for stale in superseded:
+        stale.unlink()
+    return moved, [p.name for p in superseded]
+
+
 def main(argv=None):
     parser = argparse.ArgumentParser(description=__doc__.splitlines()[0])
     parser.add_argument("--revision", default="HEAD")
     parser.add_argument("--root", default=".")
     parser.add_argument("--out-dir", default="sources")
+    parser.add_argument("--repoint", action="store_true",
+                        help="point every environment, run manifest and bundle at the new archive")
     arguments = parser.parse_args(argv)
     path, revision, count = build(arguments.revision, arguments.root, arguments.out_dir)
     print(f"{path}  {revision[:7]}  {count} files")
+    if arguments.repoint:
+        moved, superseded = repoint(arguments.root, path, revision, arguments.out_dir)
+        print(f"repointed {len(moved)} records; removed {len(superseded)} superseded archive(s)")
+        print("run `decluster-bundle sync` to refresh the identities")
     return 0
 
 

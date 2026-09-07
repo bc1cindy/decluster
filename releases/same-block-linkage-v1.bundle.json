@@ -1,0 +1,88 @@
+{
+  "schema_version": 1,
+  "id": "same-block-linkage-v1",
+  "capabilities": [
+    "verify_outputs",
+    "reproduce_runs"
+  ],
+  "runs": [
+    "same-block-linkage-v1"
+  ],
+  "blobs": [
+    {
+      "name": "catalog/runs/same-block-linkage-v1.json",
+      "role": "run_manifest",
+      "bytes": 3021,
+      "sha256": "62f724ad4d8c52587442a5edea15f969b9fa2986c46f8cce0f926a93bbd1e643",
+      "locations": {
+        "canonical": null,
+        "mirrors": []
+      }
+    },
+    {
+      "name": "data/boltzmann-fee-audit-v1.json",
+      "role": "dataset",
+      "bytes": 309025,
+      "sha256": "17ee62e307d34660be2c4f50382a63ba044d0ad67f0674873e304d0b8203dc1c",
+      "locations": {
+        "canonical": null,
+        "mirrors": []
+      }
+    },
+    {
+      "name": "results/artifacts/same-block-linkage-v1.json",
+      "role": "result",
+      "bytes": 1166,
+      "sha256": "8f569aa3f08e4644bcba4f3cbfd48d4b2d52cafa9ecb4f455d730307700ad30e",
+      "locations": {
+        "canonical": null,
+        "mirrors": []
+      }
+    },
+    {
+      "name": "results/generated/same-block-linkage-v1.md",
+      "role": "result",
+      "bytes": 1438,
+      "sha256": "7fa983fd3330dcf3c4c8d1d90b7284ae587cbb10f312683d18696e82096fa450",
+      "locations": {
+        "canonical": null,
+        "mirrors": []
+      }
+    },
+    {
+      "name": "sources/decluster-4fa950c-runtime.tar",
+      "role": "source",
+      "bytes": 2191360,
+      "sha256": "18d49e55bb80973cb9d45b209e307d7384cbdbe236fda2ce2b4d0a1032e7a5d8",
+      "locations": {
+        "canonical": null,
+        "mirrors": []
+      }
+    },
+    {
+      "name": "reproduction/same-block-linkage/requirements.lock",
+      "role": "lockfile",
+      "bytes": 30,
+      "sha256": "e0d6a8cada5d383c0aca2bd2a37f28c15721392469c94084128d369c29c5544d",
+      "locations": {
+        "canonical": null,
+        "mirrors": []
+      }
+    },
+    {
+      "name": "reproduction/same-block-linkage/environment.json",
+      "role": "environment",
+      "bytes": 372,
+      "sha256": "d702d733d59f0389213aee5c489ff1c77e11da8fe7bf7867f1b42422c8aa4067",
+      "locations": {
+        "canonical": null,
+        "mirrors": []
+      }
+    }
+  ],
+  "limitations": [
+    "The bundled environment currently targets CPython 3.13 on macOS arm64.",
+    "Public bootstrap remains unavailable until every blob has a canonical HTTPS location and an independent mirror.",
+    "The bundle measures what the amounts settle inside the mapping family, not ownership."
+  ]
+}
