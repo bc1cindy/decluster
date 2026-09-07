@@ -238,6 +238,7 @@ def test_all_committed_dataset_manifests_match_their_files():
         "fs-blkcache-2026-09-04-v1",
         "graph-deanon-2016-v1",
         "lumen-explorer-data-v1",
+        "merged-anchor-931d6627-v1",
         "ns-bitcoin-left-2016-v1",
         "ns-bitcoin-right-2016-v1",
         "reid-signatures-v1",

@@ -12,8 +12,8 @@
     {
       "name": "catalog/runs/anchor-axis-families-v1.json",
       "role": "run_manifest",
-      "bytes": 0,
-      "sha256": "0000000000000000000000000000000000000000000000000000000000000000",
+      "bytes": 2915,
+      "sha256": "3ce48ea127c46fd3d044d225f873deca16f21ca808875521fd6d2c58cc69c817",
       "locations": {
         "canonical": null,
         "mirrors": []
@@ -22,8 +22,8 @@
     {
       "name": "tests/fixtures/merged_anchor_931d6627.json",
       "role": "dataset",
-      "bytes": 0,
-      "sha256": "0000000000000000000000000000000000000000000000000000000000000000",
+      "bytes": 5326,
+      "sha256": "e0e687d23f9417ace6364372fa8d72ea1bb4f83dabaf08d08d2523423e247911",
       "locations": {
         "canonical": null,
         "mirrors": []
@@ -32,8 +32,8 @@
     {
       "name": "results/artifacts/anchor-axis-families-v1.json",
       "role": "result",
-      "bytes": 0,
-      "sha256": "0000000000000000000000000000000000000000000000000000000000000000",
+      "bytes": 3152,
+      "sha256": "d465f3640860d0b51f20c6506ca7ae3715c89afb67e4e41b34a5dfc697276505",
       "locations": {
         "canonical": null,
         "mirrors": []
@@ -42,18 +42,18 @@
     {
       "name": "results/generated/anchor-axis-families-v1.md",
       "role": "result",
-      "bytes": 0,
-      "sha256": "0000000000000000000000000000000000000000000000000000000000000000",
+      "bytes": 1451,
+      "sha256": "4ce04704b838583333871b5d98883ceac02728ccfcea4c430b3ee7d49f708400",
       "locations": {
         "canonical": null,
         "mirrors": []
       }
     },
     {
-      "name": "sources/decluster-9fc6732-runtime.tar",
+      "name": "sources/decluster-6719151-runtime.tar",
       "role": "source",
-      "bytes": 0,
-      "sha256": "0000000000000000000000000000000000000000000000000000000000000000",
+      "bytes": 2252800,
+      "sha256": "90359e2c5e571ce6444831ffb15cbad62a7078fbe3b1c658e3d3edf6e4db5465",
       "locations": {
         "canonical": null,
         "mirrors": []
@@ -62,8 +62,8 @@
     {
       "name": "reproduction/anchor-axis-families/requirements.lock",
       "role": "lockfile",
-      "bytes": 0,
-      "sha256": "0000000000000000000000000000000000000000000000000000000000000000",
+      "bytes": 30,
+      "sha256": "e0d6a8cada5d383c0aca2bd2a37f28c15721392469c94084128d369c29c5544d",
       "locations": {
         "canonical": null,
         "mirrors": []
@@ -72,8 +72,8 @@
     {
       "name": "reproduction/anchor-axis-families/environment.json",
       "role": "environment",
-      "bytes": 0,
-      "sha256": "0000000000000000000000000000000000000000000000000000000000000000",
+      "bytes": 376,
+      "sha256": "cccc5345e8e100fafc875666e6700aaf4c56acba83b3563b59fb219650187347",
       "locations": {
         "canonical": null,
         "mirrors": []
