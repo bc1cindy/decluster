@@ -41,3 +41,18 @@ def test_inconsistent_template_volume_is_refused(tmp_path):
     path.write_text(json.dumps(corrupted), encoding="utf-8")
     with pytest.raises(experiment.VerificationError, match="reconstruct volume|inconsistent volume"):
         experiment.build_artifact(path)
+
+
+def test_the_stored_artifact_still_equals_a_fresh_execution():
+    """The named rows above pin what the numbers mean; this pins that nothing else moved.
+
+    Without it, a change to any field these tests do not name reaches the offline suite green and
+    is only caught by the reproduction gate twenty minutes later.
+    """
+    from pathlib import Path
+
+    root = Path(__file__).resolve().parents[1]
+    dataset = str(root / "tests" / "fixtures" / "lumen_explorer_data.json")
+    assert experiment.main(["--dataset", dataset, "verify",
+                            "--artifact", str(root / "results/artifacts/attribute-drift-v1.json"),
+                            "--markdown", str(root / "results/generated/attribute-drift-v1.md")]) == 0

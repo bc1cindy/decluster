@@ -362,3 +362,25 @@ def test_every_run_manifest_is_carried_by_a_bundle():
         carried.update(json.loads(index.read_text())["runs"])
     assert runs - carried == set(), f"runs no bundle carries: {sorted(runs - carried)}"
     assert carried - runs == set(), f"bundles naming absent runs: {sorted(carried - runs)}"
+
+
+def test_every_experiment_test_compares_against_a_fresh_execution():
+    """A test that only asserts named fields lets every other field drift past the offline suite.
+
+    Two files asserted published literals and never compared the whole artifact, so a change
+    anywhere else in them reached green here and was caught twenty minutes later by the
+    reproduction gate, if at all.
+    """
+    import re
+
+    fresh = re.compile(r"verify_artifact|\"verify\"|'verify'|artifact\s*==\s*stored"
+                       r"|stored\s*==\s*artifact|== *json\.loads|canonical_json_bytes")
+    builds = re.compile(r"build_artifact|verify_artifact")
+    without = [
+        path.name
+        for path in sorted((ROOT / "tests").glob("test_*.py"))
+        if builds.search(path.read_text()) and not fresh.search(path.read_text())
+    ]
+    assert not without, (
+        f"these build an artifact and never compare it to the stored one: {without}"
+    )
