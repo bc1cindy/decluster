@@ -12,8 +12,8 @@
     {
       "name": "catalog/runs/library-calibration-v1.json",
       "role": "run_manifest",
-      "bytes": 0,
-      "sha256": "0000000000000000000000000000000000000000000000000000000000000000",
+      "bytes": 3011,
+      "sha256": "7ecc846d81b9c147fd387298ef868897915baaaba8bbe38d95c53eb1b2ebeac4",
       "locations": {
         "canonical": null,
         "mirrors": []
@@ -22,8 +22,8 @@
     {
       "name": "data/fs-blkcache-2026-09-04.tar.gz",
       "role": "dataset",
-      "bytes": 0,
-      "sha256": "0000000000000000000000000000000000000000000000000000000000000000",
+      "bytes": 33352455,
+      "sha256": "5a69f6f446dbdfcce09dddc91c653e5d841124d14020b720fdea276315c775a6",
       "locations": {
         "canonical": null,
         "mirrors": []
@@ -32,8 +32,8 @@
     {
       "name": "results/artifacts/library-calibration-v1.json",
       "role": "result",
-      "bytes": 0,
-      "sha256": "0000000000000000000000000000000000000000000000000000000000000000",
+      "bytes": 17737,
+      "sha256": "5c807a848e9a04cd41065e096af472df0ea568a88792bdd9027bbad58c9064c5",
       "locations": {
         "canonical": null,
         "mirrors": []
@@ -42,18 +42,18 @@
     {
       "name": "results/generated/library-calibration-v1.md",
       "role": "result",
-      "bytes": 0,
-      "sha256": "0000000000000000000000000000000000000000000000000000000000000000",
+      "bytes": 2173,
+      "sha256": "949d2d9e890818c5ec890484b13750ed6855e6538c9a45c3c5c4b3daf2454a5b",
       "locations": {
         "canonical": null,
         "mirrors": []
       }
     },
     {
-      "name": "sources/decluster-eae109f-runtime.tar",
+      "name": "sources/decluster-9fc6732-runtime.tar",
       "role": "source",
-      "bytes": 0,
-      "sha256": "0000000000000000000000000000000000000000000000000000000000000000",
+      "bytes": 2242560,
+      "sha256": "19b95145aff04f38bbdfec1694da05391915538e2c8d85999ecc195e5d4058b7",
       "locations": {
         "canonical": null,
         "mirrors": []
@@ -62,8 +62,8 @@
     {
       "name": "reproduction/library-calibration/requirements.lock",
       "role": "lockfile",
-      "bytes": 0,
-      "sha256": "0000000000000000000000000000000000000000000000000000000000000000",
+      "bytes": 30,
+      "sha256": "e0d6a8cada5d383c0aca2bd2a37f28c15721392469c94084128d369c29c5544d",
       "locations": {
         "canonical": null,
         "mirrors": []
@@ -72,8 +72,8 @@
     {
       "name": "reproduction/library-calibration/environment.json",
       "role": "environment",
-      "bytes": 0,
-      "sha256": "0000000000000000000000000000000000000000000000000000000000000000",
+      "bytes": 374,
+      "sha256": "0e62ccac02bde0adb4b795019888c3eb05aab11d4b2afaaa32da91d140c5fdf9",
       "locations": {
         "canonical": null,
         "mirrors": []
