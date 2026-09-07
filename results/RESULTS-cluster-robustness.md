@@ -35,7 +35,7 @@ holds in this controlled scenario.
 
 Reproduce: `python3 examples/cluster_robustness.py`.
 
-## Honest limits
+## Limits
 
 - **Constructed scenario, not chain scale.** Like the paper's `931d6627` existence demos, this isolates
   the mechanism on a graph we build; it is not a whole-chain rate. Real-data confirmation on the

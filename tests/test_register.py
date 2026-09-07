@@ -20,6 +20,17 @@ import pytest
 ROOT = Path(__file__).resolve().parents[1]
 PHRASE = re.compile(r"ground[\s-]truth", re.IGNORECASE)
 
+# The corpus uses "honest" only for a protocol's honest party — honest nodes, honest users, an
+# honest chain — and its own review text uses the word zero times in 1,500 lines. This repository
+# had 33 of the other kind: "the honest ceiling", "the honest answer", "Reading it honestly", a
+# section titled "Limitations (honest)". A writer telling the reader that the writer is being
+# honest is the one register move the corpus never makes, and it says nothing a limit does not.
+SELF_ASSESSMENT = re.compile(
+    r"\bhonest(ly)?\b(?!\s+(node|nodes|user|users|party|parties|participant|participants|"
+    r"chain|sender|senders|majority|jondo|jondos|people))",
+    re.IGNORECASE,
+)
+
 # The store keeps byte-identical copies of tracked files and the archive is a tar of them; both
 # follow whatever the text says.
 SKIP = ("artifacts/sha256/", "sources/")
@@ -48,6 +59,21 @@ def tracked_text():
             yield relative, path
 
 
+def _offenders(pattern, suffixes=None):
+    found = []
+    for relative, path in tracked_text():
+        if suffixes and Path(relative).suffix not in suffixes:
+            continue
+        try:
+            text = path.read_text(encoding="utf-8")
+        except (OSError, UnicodeDecodeError):
+            continue
+        for number, line in enumerate(text.splitlines(), start=1):
+            if pattern.search(line):
+                found.append(f"{relative}:{number}: {line.strip()[:90]}")
+    return found
+
+
 def test_the_phrase_the_corpus_never_uses_appears_nowhere():
     offenders = []
     for relative, path in tracked_text():
@@ -66,3 +92,11 @@ def test_the_phrase_the_corpus_never_uses_appears_nowhere():
 
 def test_the_ban_is_checked_over_the_tree_and_not_a_handful_of_files():
     assert sum(1 for _ in tracked_text()) > 300
+
+
+def test_the_prose_does_not_assess_its_own_honesty():
+    offenders = _offenders(SELF_ASSESSMENT, suffixes={".md"})
+    assert not offenders, (
+        "state the limit; the reader decides whether it was honestly stated:\n  "
+        + "\n  ".join(offenders)
+    )

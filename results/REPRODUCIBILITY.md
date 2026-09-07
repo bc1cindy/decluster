@@ -95,7 +95,7 @@ from the same belief as the claim cannot refute it, so the assertion held while 
 
 **Being asserted is not the same as being tested.** For a direction claim, state 1 counts only if
 the fixture could have shown the opposite — the claim has to be falsifiable by the data it is pinned
-on, not merely consistent with data chosen to display it. Where no such fixture exists, the honest
+on, not merely consistent with data chosen to display it. Where no such fixture exists, the
 filing is state 5: report the value, decline the direction.
 
 A direction filed under state 2 is worse still, since by policy nothing there is asserted at all.

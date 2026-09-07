@@ -209,7 +209,7 @@ not. Two axes are robust in sign but not uniformly in certification: `--holdout`
 gives +0.265, +0.147, +0.078, +0.037 at 5/5, 5/5, 4/5, 5/5, and `--groups` 4/8/16 gives +0.187,
 +0.147, +0.128 at 3/5, 5/5, 4/5.
 
-So the honest reading of the headline table is not "de-anonymization beats structure-only
+So the reading of the headline table is not "de-anonymization beats structure-only
 prediction" but "**at 90% view overlap and 25% handed-over seeds** it does, on this fixture" —
 and both of those are generous settings chosen before the sweep, not found by it. Real views are
 nowhere near either: `RESULTS-ns-bitcoin.md` measures 46.7% edge overlap and **zero** obtainable

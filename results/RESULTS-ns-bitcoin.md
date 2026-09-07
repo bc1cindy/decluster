@@ -174,7 +174,7 @@ says otherwise, and the split matters:
   Again: this subgroup is chosen using the withheld correspondence, so 20.4% is a statement about
   where the signal lives, not a precision the attacker can operate at.
 
-So the honest statement of the mechanism is: on real Bitcoin views the eccentricity test does carry
+So the statement of the mechanism is: on real Bitcoin views the eccentricity test does carry
 some real signal about *which* vertex a straddling pseudonym is, and carries essentially none about
 *whether* a pseudonym straddles at all. Overall precision is dominated by the second.
 

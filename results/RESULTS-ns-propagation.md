@@ -62,7 +62,7 @@ branching within the cache, because the sample was deliberately built from co-sp
 immediate parents (or grandparents) happen to already be cached too. But the majority (57%) still
 hit the cache boundary within 0–1 hops, exactly the mechanism `PAPER.md` §7 describes: a bounded
 cache is a bounded graph window, and most coins' ancestry reaches outside it almost immediately.
-**Honest reading: the cache-bounded ancestry signal is real but weak and partial, not the
+**Reading: the cache-bounded ancestry signal is real but weak and partial, not the
 near-deterministic quasi-identifier `RESULTS-ancestry.md` found with live network access at small
 scale — a bounded, offline slice recovers some of the effect, not most of it.**
 
@@ -75,7 +75,7 @@ scale — a bounded, offline slice recovers some of the effect, not most of it.*
 | partition_bits_after (merge propagation; 57 coins labeled) | 4.368 |
 | n_refined_groups (split channel, over 40 cospend clusters) | 46 |
 
-- **reid_rate = 0.154**, versus **1.0** on the synthetic fixture below — the honest gap between a
+- **reid_rate = 0.154**, versus **1.0** on the synthetic fixture below — the gap between a
   clean hand-built signal and a real, cache-truncated one. `holdout_reid` hid 13 of the 46
   address-reuse-labeled coins and re-derived their label from provenance overlap with the rest;
   only 2 recovered. Consistent with the ancestry finding above: 57% of signatures are
@@ -113,7 +113,7 @@ from the engine's usual role (`cluster_refined` normally *reduces* overcount rel
 channel (`NSPropagator.refine`, the provenance-aware analogue) removed a few co-spend edges
 (6 of 40 clusters split), and — per the caveat above — a meaningful fraction of those removals rest
 on a provenance-disjointness signal that the cache boundary made spuriously easy to satisfy. Read
-honestly: on this small, cache-bounded, boundary-corrupted sample, the split channel is not shown to
+it: on this small, cache-bounded, boundary-corrupted sample, the split channel is not shown to
 improve on the union-find baseline; a live-network run (real multi-hop provenance, not a truncated
 cache) is needed before drawing a directional conclusion either way.
 

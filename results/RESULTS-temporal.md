@@ -66,7 +66,7 @@ individual, multi-address wallets. Same 30-day window, 20 000 entities: baseline
 0.760, **matched 0.522** — still chance. The null is *structural* (the metric plus concentration),
 not an artifact of picking service addresses.
 
-## Honest limits
+## Limits
 
 - **Not validated as an owner separator.** The mechanism (`active_hours`/`schedule_distance`) is
   well-defined and disjoint active hours are still weak evidence of *different* owners, but this

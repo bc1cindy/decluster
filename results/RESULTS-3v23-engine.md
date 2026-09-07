@@ -58,7 +58,7 @@ numerous and positively correlated, and summing them under the (false) Fellegi-S
 independence assumption overwhelms the three real discriminators, flipping the total from −3.16 to
 +11.67 bits — a **false LINK** that would re-merge the sender into the Cake cluster.
 
-## Honest limits
+## Limits
 
 - **One anchor, not a distribution.** Existence demonstration on the same real merged transaction as
   §6/WP4, not a swept statistic — consistent with `RESULTS-weight-sensitivity.md`'s broader finding that

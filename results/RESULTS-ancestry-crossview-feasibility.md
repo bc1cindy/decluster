@@ -43,7 +43,7 @@ signal that manufactures eccentricity and adds error — on top of being depth-s
 | cit. 24 social graph | cross-view neighbourhood matching | built (`view_match.py`), measured; precondition fails on this slice (`graph-shape`) |
 | cit. 25 link prediction | matching on incomplete graphs | built (`view_match.predict_link`, optional ML callback in the mixed-vote and no-candidate branches); unmeasured on this slice, where predicted edges would be absent rather than censored |
 
-## Honest recommendation
+## Recommendation
 
 Nothing cheap remains on this slice. Both open levers — a deeper contiguous export for the
 ancestry channel, and a wider-view export for the social-graph channel — need new data, and

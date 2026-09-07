@@ -43,7 +43,7 @@ sum — the N-S accumulation ("dozens of sparse attributes, each a few bits") on
   counterparties, not from summing hundreds of weak-but-correlated ones. So the naïve-independence
   caveat (Σ overstates unique-ID bits when counterparties correlate) does not inflate the median.
 
-## Honest limits
+## Limits
 
 - **Structural content, not proof of unique ID.** `Σ −log2(share)` is the identifying
   information *content*; correlated counterparties mean the effective unique-identification bits

@@ -96,7 +96,7 @@ paths, impose plausible-flow capacity or implement k-routes. The executable dist
 `catalog/runs/path-count-contract-v1.json`; the original motivating analysis remains historical in
 `results/RESULTS-path-counting-analysis.md`.
 
-## Honest limits
+## Limits
 
 - **In-process bounded oracle.** `analyze()`'s default `bounded_link_oracle` is panic-safe but
   cooperative (dss's own `budget_ms` check), not an OS-level wall kill — so a pathological ancestor

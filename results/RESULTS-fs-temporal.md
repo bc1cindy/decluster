@@ -149,7 +149,7 @@ it is not a lucky draw at seed 0.
 The delta stays positive and in a narrow 0.046-0.053 band across every cap and split tried; nothing
 here suggests it is an artifact of one particular sample size or cutoff choice.
 
-## Honest limits
+## Limits
 
 - **904 files, 22,112 transactions, one non-contiguous slice.** This is a small-sample measurement of
   one attack instance, not a population claim about Bitcoin traffic generally.

@@ -98,7 +98,7 @@ same-owner and refuses 100% of different-owner on this slice; the default is **`
 End-to-end proof in `test_engine_refuses_hub_only_partial_overlap` (hub-only Alice/Bob
 overlap refused; their own distinctive coins kept).
 
-**Honest limit.** This is the inherent counterparty-quasi-identifier limit, not removed by the
+**The limit.** This is the inherent counterparty-quasi-identifier limit, not removed by the
 threshold: two *different* owners who genuinely both transact with the same **rare** counterparty
 score above `topo_tau` and would merge — a shared rare quasi-identifier is treated as same-owner
 evidence by the FS model itself. The threshold only removes the *hub* false positive; it cannot

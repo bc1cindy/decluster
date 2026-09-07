@@ -120,7 +120,7 @@ Per-target (graph-only == fused for every one):
 | `372fd5cb…` | 24 | 3.000 | 5 |
 | `50447deb…` | 39 | 3.585 | 8 |
 
-Reading it honestly:
+Reading it:
 
 - **Coinjoin ancestry resolves on live data.** Given adequate oracle wall time, all six
   payment+partial-mix targets resolve to real anonymity sets of 24–45 ancestral origins (2.6–3.6
@@ -129,7 +129,7 @@ Reading it honestly:
   **strict** metric (zero truncations anywhere in the walk); every target still hits 1–8 deep
   coinjoin ancestors the bounded oracle refuses, so each set is a **lower bound** — more oracle time
   would only add origins, never remove them.
-- **Fusion did not sharpen here, and that is honest.** `fused == graph` for all six: no subjective
+- **Fusion did not sharpen here.** `fused == graph` for all six: no subjective
   same-owner link (address-reuse self-transfer or `cluster_pairs`) fell inside these particular
   coinjoin-ancestry walks, so the §04 fusion had nothing to narrow. The fusion **mechanism** is the
   thing under test, and it is demonstrated separately by the Tier-1 controlled fixture (a
@@ -148,7 +148,7 @@ Reading it honestly:
   input prevout addresses; the offline e2e test now asserts the cluster source actually fires, as a
   regression guard.)
 
-## Honest limits
+## Limits
 
 - **Bounded slice.** Both tiers cap the slice size (`cap_total`, `M3_MAX_SUPERNODES=5`,
   `max_targets`) — this validates the pipeline's plumbing and mechanism on a real but small slice,

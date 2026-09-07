@@ -25,7 +25,7 @@ Blocks 400000–400004 (2016), full slice:
 | Graph used for structure | AUC | Reading |
 |---|---:|---|
 | **FULL** (co-spend + payment edges) | **0.992** | structure aligns with entity boundaries |
-| **PAYMENT-ONLY** (co-spend edges removed) | **0.950** | ← the honest test: structure de-anonymizes *independently* of the clustering heuristic |
+| **PAYMENT-ONLY** (co-spend edges removed) | **0.950** | ← the test that removes the circularity: structure de-anonymizes *independently* of the clustering heuristic |
 | **SHUFFLE** (entity labels randomized) | **0.500** | control: the signal is not a sampling artifact |
 
 The confound: the FULL graph shares its co-spend edges with the heuristic that *defines*
@@ -89,13 +89,13 @@ Narayanan–Shmatikov claim: structure de-anonymizes across every era tested.
 Why deeper reach does not collapse to chance (the usual small-world objection): hub
 counterparties (degree > 100, i.e. services/exchanges that connect everyone) are excluded
 as intermediates, so k-hop follows only *personal* edges and the graph stays fragmented
-into per-owner regions. **Honest caveat:** as k grows, that hub-excluded reachability
+into per-owner regions. **Caveat:** as k grows, that hub-excluded reachability
 approaches "same non-hub-connected region," a coarser statement than fine link
 prediction — legitimate entity recovery without co-spend, but at k=4 it is closer to
 component membership than to a pairwise structural tell. (2023's 1.00 also rests on only
 111 pairs.)
 
-## Honest limits
+## Limits
 
 - **One slice, one era.** 5 blocks of 2016. A multi-era / larger connected graph would
   strengthen (and possibly weaken, for modern low-reuse txs) the number. This is a

@@ -31,7 +31,7 @@ checkout's real `.cache/` — no fabricated or hand-picked figures. Full run log
 | slice build time | 67.6s |
 
 Small and heavily class-imbalanced (2 positive pairs out of 21 labeled). **Illustrative, not
-conclusive** — see honest limits below. The label pairs come from address-reuse groups that
+conclusive** — see the limits below. The label pairs come from address-reuse groups that
 survived the `max_supernodes` truncation (which prioritizes labeled singles first, so this is
 already the best label coverage obtainable at this slice size from the current cache).
 
@@ -57,12 +57,12 @@ uncertainty-reduction that channel is responsible for):
 | categorical (fingerprint axes) | **9.590 bits** |
 | provenance (N-S link factor, beta=1.0, depth=1, bounded slice) | **0.000 bits** |
 
-**Honest reading:** on this slice, the categorical fingerprint channel carries essentially all of
+**Reading:** on this slice, the categorical fingerprint channel carries essentially all of
 the entropy-reducing evidence — dropping it collapses the posterior from near-certainty about the
 partition (0.86 bits, effectively locked at K=5) to a nearly uninformative spread over K=2..9
 (10.45 bits). The provenance channel contributed **zero** marginal bits here: `drop_provenance`
 is bit-for-bit identical to the full run. This is a real, not a rounding-noise, null result for
-this slice — see honest limits for why (depth=1 + the bounded-dimension link oracle sharply limits
+this slice — see the limits for why (depth=1 + the bounded-dimension link oracle sharply limits
 how much real provenance signal reaches the evidence at this scale).
 
 ## Beta sweep (`beta_sweep`, betas = 0.0, 0.5, 1.0, 2.0)
@@ -129,7 +129,7 @@ the same sampler settings (single chain, 1500/500):
 | real evidence | 0.7362 |
 | shuffled evidence (null) | 0.7622 |
 
-**Honest reading: the separation is real but weak (0.736 vs 0.762, ~0.03 bits) on this tiny
+**Reading: the separation is real but weak (0.736 vs 0.762, ~0.03 bits) on this tiny
 15-super-node slice** — not the sharp "collapses to the prior" separation the design spec
 anticipates for a slice with more signal. Two contributing factors, both consistent with the rest
 of this run: (1) the categorical channel — which the ablation above shows carries essentially all
@@ -139,7 +139,7 @@ chance leave a few super-nodes closely matched, especially with only 15 elements
 sharpen this separation either. This shuffle-null is not strong evidence of a well-separated
 signal at this scale; it is weak-but-directionally-correct evidence, reported as such.
 
-## Honest limits
+## Limits
 
 1. **The N-S provenance channel is a pseudo-likelihood, not a probability.** `beta * link(i,j)`
    scales a rarity-weighted overlap score into the log-posterior; it is weight-of-evidence, a
@@ -153,7 +153,7 @@ signal at this scale; it is weak-but-directionally-correct evidence, reported as
    tx in this slice is CoinJoin-scale (vin=277, vout=325); the exact subset-sum solver's own
    documented range is 54ms-69s per call (see `ancestry.dss_link_oracle`'s docstring), and its
    `budget_ms` argument is advisory, not a hard preemptive cap. To keep this harness offline and
-   tractable, `examples.partition_posterior._bounded_link_oracle` refuses (same honest
+   tractable, `examples.partition_posterior._bounded_link_oracle` refuses (the same
    oracle-None truncation semantics `build_extended_graph` already uses) on any tx with more than
    24 inputs or outputs, and the walk depth is capped at 1 hop. This is very likely why the
    provenance channel measured **zero** marginal bits above: a depth-1, dimension-bounded walk

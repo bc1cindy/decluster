@@ -40,7 +40,7 @@ coverage axes (version/nSequence) — another face of the fast-wallet skew. The 
   only 39% of labels (vs 57% baseline, 78% version) and, when it fires, its precision (0.83) is
   about the round-number baseline (0.86). `output_order` fires on 48% at precision 0.90. So ordering
   resolves **fewer** cases, not less accurately — its low TPR is mostly low coverage, not low
-  precision. This is the honest answer to "validating the ordering": as a change predictor it is
+  precision. This is the answer to "validating the ordering": as a change predictor it is
   real but low-coverage and no better than the round-number baseline in precision.
 - **`nsequence` / `version` are the strong single tells here** — near-perfect precision at high
   coverage on this slice: same-owner onward-spends reuse the wallet's sequence/version ~77–78%.

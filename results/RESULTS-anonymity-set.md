@@ -87,7 +87,7 @@ For each of the 2 resolved targets, three hypotheses are folded in via `decay`, 
 Both traces are monotone non-increasing end to end, and both end in an **exact 0-bit point mass**
 — (b) and (c) both hold on real data.
 
-**Honest reading of step 1 (flat in both cases):** the `provenance_overlap` hypothesis contributed
+**Reading of step 1 (flat in both cases):** the `provenance_overlap` hypothesis contributed
 *zero* narrowing for either target — not because the mechanism is broken, but because each
 reference coin's own bounded-depth signature had already collapsed to a **single** boundary atom
 (1 and 4 absorbers respectively — checked: `reference_n_absorbers` = 1 and 4), and that atom did
@@ -101,7 +101,7 @@ signal is real but weak and partial") — here it shows up directly in a subject
 built from that signal. Steps 2–3 do not depend on the reference at all (they narrow around
 whatever step 1 leaves as the leading candidate), so they demonstrate (b)/(c) cleanly regardless.
 
-## Honest limits
+## Limits
 
 - **Bounded slice.** All 34 pairs and both resolved walks are over this checkout's `.cache/`
   (~1,900 tx JSON files) at depth 2 — not a chain-scale claim. 94% collapse here; a live,
@@ -198,9 +198,9 @@ boundary atom under the graph-only walk (0 bits) — a single-parent chain with 
 sharpen: boosting the one live link column by 9x is a no-op when that column already has exactly
 one nonzero entry.
 
-### Honest reading
+### Reading
 
-- **Real numbers, not fabricated — and the honest result on this slice is null.** 0/34 targets show
+- **The result on this slice is null.** 0/34 targets show
   measurable §04 sharpening from this concrete signal, and the signal itself fires on only 1 of 34
   targets' own reachable interior txs. This is not a contradiction of the mechanism test above (which
   proves the sharpening happens whenever the oracle fires on a branching walk) — it is a coverage/

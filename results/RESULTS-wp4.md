@@ -28,11 +28,11 @@ Net: the fingerprint-aware clusters are `{sender}`, `{Cake, Cake-lineage}`, and 
 The scores are driven by **real measured mainnet bits** from WP2's `library.py`
 (`Combiner.from_library()`), not a biased top-of-block sample. The biased-sample
 version scored the refusal at −3.4 bits; with real unbiased bits it is **−3.1** —
-recorded honestly. The +10.2 Cake-lineage link uses the unseen-value floor
+recorded as such. The +10.2 Cake-lineage link uses the unseen-value floor
 (`seq_0x01` was not in the measured `nsequence` table), which only strengthens a rare
 match.
 
-## Honest caveats
+## Caveats
 - **Existence demonstration, not a statistical result.** One merged transaction, 7 coins. It
   shows the backward-channel breaks merged transaction privacy on a real tx; it does not measure
   a rate across the chain (that needs a mainnet dense index — WP1b, deferred).

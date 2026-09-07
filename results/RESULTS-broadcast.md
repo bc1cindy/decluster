@@ -66,7 +66,7 @@ it. This is shown as a unit case; in the 712-tx live sample the de-confounding i
 exercised (2 `na_loose`, 1 `backdated`), so the effect is demonstrated, not yet measured at
 population scale.
 
-## Honest limits
+## Limits
 - No known broadcast time; only the bound is guaranteed.
 - Loose for low-feerate txs during congestion (they wait many blocks) → `na_loose`.
 - The cluster temporal fingerprint built on this estimate (activity schedule / timezone) was

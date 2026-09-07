@@ -52,10 +52,10 @@ cache grows — the signal, not the third decimal, is the result.)
 now-removed `rust_bridge` mirror whose low-R and BIP-69 extractors were defective (a high-R signature
 was misclassified as low-R; a coincidental small-n input sort was branded BIP-69) — both of which could
 inflate the separation. Recomputed on the canonical path — with the correct length-based `x_low_r`, the
-`n>=4`-gated `x_input_order`, and `x_uih` reading `prevout.value` — the honest figure is **0.933**. The
+`n>=4`-gated `x_input_order`, and `x_uih` reading `prevout.value` — the figure that survives is **0.933**. The
 signal holds; the model is no longer measured through a buggy, unmaintained parallel implementation.
 
-## Honest limits
+## Limits
 
 - **Labels are address reuse.** Two txs spending the same address are the same wallet, but they also
   share that address's script type — so the `input_script_type` / `low_r` / type axes match partly by

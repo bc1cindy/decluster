@@ -29,7 +29,7 @@ supercluster, the usual exchange/service signature).
 | 0.75 | 100,254 | 264,201 | 83,943 | 0.318 |
 | 1.00 | 133,672 | 318,433 | 99,957 | 0.314 |
 
-**Honest reading:** the entities/funder ratio does **not** fall monotonically as the corpus grows — it
+**Reading:** the entities/funder ratio does **not** fall monotonically as the corpus grows — it
 rises from ~0.20 to ~0.31. On a scattered value-sample, each added chunk introduces more *new,
 not-yet-co-spent* funders than it does new merges, so per-funder collapse dilutes rather than
 compounds. On a **contiguous** corpus (a block window, or the eventual whole-chain source) the curve

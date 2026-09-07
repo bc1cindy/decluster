@@ -619,7 +619,7 @@ non-hub component membership, a coarser tell than fine link prediction.) The str
 ## 7. Coverage of the chain-observable fingerprint surface
 
 The chain-observable fingerprint surface enumerates **~35 granular fingerprints**. We do **not** cover
-all of them; "coverage" here is an honest per-item claim (**✅** = extractor + measured
+all of them; "coverage" here is a per-item claim (**✅** = extractor + measured
 bits; **◐** = captured coarsely, not as the granular tell; **❌** = not built).
 
 **Status against the fingerprint checklist:**
@@ -657,11 +657,11 @@ bits; **◐** = captured coarsely, not as the granular tell; **❌** = not built
 (the ordering axis validates as a real but low-coverage change signal); a cluster-membership
 `findNext` reaches higher raw accuracy but is circular against those labels (§7) and is not used.
 
-**Honest tally: ~30 of ~35 covered (measured bits), ~3 partial, ~3 not built** — the
+**Tally: ~30 of ~35 covered (measured bits), ~3 partial, ~3 not built** — the
 library carries **23 catalogued axes** (incl. the block-feerate broadcast-time axis, below, which is
 inert on stored records — 22 are active there, §3),
 the structural ones on a whole-chain BigQuery sample (§5). The primary structural signal — the amount / receiver-contribution
-subtransaction re-partition — is covered (§2/§6). **The honest ceiling is
+subtransaction re-partition — is covered (§2/§6). **The ceiling is
 ~32/35, not 35/35:** the two remaining items are not clean single-transaction chain
 fingerprints — **Coin Control** is a UX behavior no single tx uniquely reveals, and
 **spend-unconfirmed** requires the transaction's ancestry (parent block heights), not the
@@ -697,7 +697,7 @@ reference — the conditioner signature. With weights measured on the snapshot i
 says so in its own header: it *falsifies* the historical claim that the conditioner reading is stable
 across weight sources. Those snapshot weights are fitted and evaluated on the same 600-transaction
 selection, so this is evidence of **sensitivity to the weighting**, not evidence that construction
-fingerprints are universally sparse identifiers. The honest statement is the conditional one: **the
+fingerprints are universally sparse identifiers. The supportable statement is the conditional one: **the
 conditioner verdict survives only under out-of-sample weights.** Given that, the sparse
 quasi-identifier regime that *does* pick one coin out of the crowd is placed on the ancestry channel
 of §8 rather than on the low-dimensional axes — a placement this run supports at the library weights
@@ -735,7 +735,7 @@ construction axis as a change predictor: change = the output whose onward-spendi
 | output order | 0.436 | 0.048 | 0.484 | 0.90 |
 | input order | 0.320 | 0.066 | 0.386 | 0.83 |
 
-Reading *the ordering* honestly: it is a **real but low-coverage** change predictor. `input_order`
+Reading *the ordering*: it is a **real but low-coverage** change predictor. `input_order`
 fires on only 39% of labels (vs 57% for the round-number baseline, 78% for version) and, when it
 fires, its precision (0.83) is about the baseline's (0.86); `output_order` fires on 48% at
 precision 0.90. So ordering resolves *fewer* cases, not less accurately — the low recall is
@@ -895,7 +895,7 @@ robustness argument predicts: intertwined deep structure resists de-anonymizatio
 **The node bound.** Deep coinjoin ancestry is exponential in depth (§03: intractable for larger
 transactions; the explosion is, in effect, the privacy). A node cap bounds the walk to O(N) fetch/oracle
 calls, returning a truncated lower bound in bounded time — ≈5 min on a real 9-in/17-out coinjoin
-(`results/RESULTS-path-count.md`) — where the unbounded walk does not terminate. The bound is honest: it
+(`results/RESULTS-path-count.md`) — where the unbounded walk does not terminate. The bound is stated rather than assumed: it
 can only omit origins, never invent them; exact deep resolution is not possible.
 
 **Provenance route accumulation (§07 diagnostic).**
@@ -944,7 +944,7 @@ the headline anonymity set, and on a real slice it agrees with the clustering en
 provenance anonymity set with optional path-count and node bound (`analyze`) → the partition-posterior
 check (`cluster_posterior`), over a panic-safe in-process or hang-proof subprocess link oracle. An external
 consumer imports the whole pipeline from the top-level namespace; a deterministic offline test suite
-backs the invariants and bounded live measurements report honest numbers under stated limits.
+backs the invariants and bounded live measurements report their numbers under stated limits.
 
 Every reading here is a lower bound / weight-of-evidence under no auxiliary information, never a privacy
 score — the same discipline as the clustering half. Read as a penalty rather than a link, the min-entropy
@@ -982,7 +982,7 @@ difference is entirely in *how often it declares at all*. That is a **~16× sepa
 the separation is **consistent with** Theorem 2 rather than predicted by it: Theorem 2 states a
 de-anonymization condition under sparsity, not a ratio between strata, and no ratio should be
 attributed to it. (`results/RESULTS-reid.md`, band-pinned on committed
-`tests/fixtures/reid_sigs.json.gz`.) Honest
+`tests/fixtures/reid_sigs.json.gz`.) The
 scope: this is the demonstrated *link* between sparsity and de-anonymization on those signatures, not
 a chain-wide rate — the fixture is a depth-bounded, non-representative sample; the representative rate
 needs a uniform deep collection (§10).
@@ -992,12 +992,12 @@ needs a uniform deep collection (§10).
 The contracted pseudonym graph is, per the framework, a social network (cit 24): two time-separated
 views of it should be matchable from a small seed. Contracting two views, seeding a mining-pool /
 high-degree correspondence, and propagating (`view_match`) tests the framework's own "*if* the social
-network structure is recoverable" premise. On one-day views a week apart the result is honestly
+network structure is recoverable" premise. On one-day views a week apart the result is
 **modest and negative**: the cascade does not ignite, attribute conditioners hurt rather than help,
 and the ambiguity-cut partition does not decompose the graph — all against degree-baseline and
 shuffle controls (`results/RESULTS-view-match-2026.md`, `results/RESULTS-graph-shape.md`,
 `results/RESULTS-attribute-conditioning.md`, `results/RESULTS-partition-schemes.md`). A larger slice reads the same under the
-honest harness: splitting each cluster along the view boundary into two pseudonyms (`split_clusters_by_view`,
+harness that does not hand the matcher its answer: splitting each cluster along the view boundary into two pseudonyms (`split_clusters_by_view`,
 the incomplete-clustering premise) and asking the matcher to rejoin them from structure. Earlier
 revisions cited "none of 5077 split pairs" from `results/RESULTS-slice-a-channels.md`; that file
 declares itself superseded — its view split leaked, tagging an address by where it was *first* seen,
@@ -1059,10 +1059,10 @@ Set this beside the AUC 0.95 of §6. Those are not two readings of one thing. Th
 same-owner structure, which is the *premise* the attack needs; the ~1% is the **attack**, run to
 completion, on real chain, and told to name a specific counterpart. The paper already says §6 is the
 premise and not the attack (§7, and the `structural_linkage` claim); what was missing was the second
-number. A premise that holds at 0.95 and an attack that lands at 1% is the honest shape of this
+number. A premise that holds at 0.95 and an attack that lands at 1% is the shape of this
 result, and the gap between them is where the remaining work is.
 
-## 9. Limitations (honest)
+## 9. Limitations
 
 - **Scope, not scale.** The fingerprint model is validated at mainnet scale (attribution AUC ≈0.93,
   §5, at the 0.9244 cache level / 0.9459 fixture level; the 0.933 of earlier revisions rests on a
