@@ -16,7 +16,7 @@ import gzip
 import random
 
 sys.path.insert(0, os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
-from decluster import views, graph_shape
+from decluster import contraction, graph_shape, view_partition, views
 from decluster.view_match import ViewMatcher
 
 
@@ -33,10 +33,10 @@ def load(path, cap):
 
 
 def active_graph(sample, indices, lookup):
-    full = views.contract(sample, indices=indices, lookup=lookup, axes=False)
+    full = contraction.contract(sample, indices=indices, lookup=lookup, axes=False)
     keep = {v for v in full.vertices if full.degree(v) >= 2}
     del full
-    return views.contract(sample, indices=indices, lookup=lookup, axes=False, keep=keep)
+    return contraction.contract(sample, indices=indices, lookup=lookup, axes=False, keep=keep)
 
 
 def main(path, cap=1_000_000, n_views=2, core_frac=0.01):
@@ -49,7 +49,7 @@ def main(path, cap=1_000_000, n_views=2, core_frac=0.01):
     print(f"  {len(set(lookup.values()))} clusters over {len(lookup)} addresses", flush=True)
 
     print(f"ambiguity-cut partition (core_frac={core_frac}, n_views={n_views})...", flush=True)
-    parts = views.partition_coins(sample, scheme="ambiguity_cut", n_views=n_views, core_frac=core_frac)
+    parts = view_partition.partition_coins(sample, scheme="ambiguity_cut", n_views=n_views, core_frac=core_frac)
     print(f"  {len(parts)} components, sizes {[len(p) for p in parts]}", flush=True)
 
     graphs = []

@@ -10,7 +10,7 @@ import sys
 from collections import Counter
 
 from decluster.unionfind import UF
-from decluster.views import AXES, contract
+from decluster.contraction import AXES, contract
 from decluster.change_gt import union_input_addrs
 
 

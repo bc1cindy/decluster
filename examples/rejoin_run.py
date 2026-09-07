@@ -24,9 +24,9 @@ import sys
 sys.path.insert(0, os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
 
 from decluster.view_match import ViewMatcher
-from decluster.views import (cluster_addresses, contract, split_clusters,
-                            split_clusters_by_view, view_lookup)
-from decluster.views import _in_addrs, _out_addrs
+from decluster.contraction import contract
+from decluster.views import cluster_addresses, split_clusters, split_clusters_by_view, view_lookup
+from decluster.tx_addrs import in_addrs, out_addrs
 from examples.view_match_run import pseudonymise, stream
 
 ECC = 5.0

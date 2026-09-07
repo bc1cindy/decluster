@@ -21,7 +21,7 @@ import json
 from collections import Counter
 from pathlib import Path
 
-from .. import views
+from .. import tx_addrs, views
 from ..declustering import MAX_BLOCK, decluster
 from ..monitor import is_coinjoin
 from ..partition import Partition
@@ -68,7 +68,7 @@ def pair_evidence(sample):
     """
     signals = Counter()
     for transaction, _ in sample:
-        addresses = views._in_addrs(transaction)
+        addresses = tx_addrs.in_addrs(transaction)
         distinct = list(dict.fromkeys(addresses))
         if len(distinct) < 2:
             continue

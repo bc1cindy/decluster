@@ -36,7 +36,7 @@ from decluster import reproducibility
 from decluster.baselines import link_prediction as lp
 from decluster.baselines.narayanan_shmatikov import evaluate
 from decluster.ns_bitcoin import SEED_SAMPLED
-from decluster.views import PseudonymGraph
+from decluster.contraction import PseudonymGraph
 
 ROOT = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 MANIFEST_DOC = "RESULTS-link-prediction.md"

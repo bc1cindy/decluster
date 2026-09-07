@@ -74,8 +74,8 @@
     "vertices": 80
   },
   "source": {
-    "bytes": 14146,
-    "digest": "d7b4624a3c4dfde60d23b45c299731dcf3a38c69f7d79c6dae4f67a696c6bb62",
+    "bytes": 14152,
+    "digest": "271cc6591f1b9ca08d5cfe1f6edc6b3b724fe65a9c7630e7ce6bdeb6a11fe8e5",
     "files": 1,
     "pattern": "examples/link_prediction_run.py"
   }

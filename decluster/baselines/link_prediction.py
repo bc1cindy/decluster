@@ -24,7 +24,7 @@ with the provenance string that says where they came from, since a mapping propa
 seeds drawn out of a withheld correspondence measures something different from one propagated
 from independently observed labels, and the difference is not visible in the scores.
 
-The graph interface is the structural subset :class:`views.PseudonymGraph` exposes —
+The graph interface is the structural subset :class:`contraction.PseudonymGraph` exposes —
 ``vertices``, ``_in`` and ``_out`` — the same subset the propagation consumes.
 """
 

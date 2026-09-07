@@ -10,7 +10,7 @@ from ..domain import (
     Subject,
     SubjectKind,
 )
-from ..views import contract
+from ..contraction import contract
 
 
 def _cluster(identifier) -> Subject:
@@ -50,7 +50,7 @@ def contract_evidence(sample, lookup) -> PseudonymGraphEvidence:
             adversary="observer with a partial clustering of Bitcoin addresses",
             observables=("directed transactions", "partial address-to-cluster lookup"),
             hypothesis="partial contraction yields an attributed pseudonym graph, not a complete user network",
-            algorithm="decluster.views.contract with structure-only attributes",
+            algorithm="decluster.contraction.contract with structure-only attributes",
             dataset="deterministic synthetic contraction fixture",
             limitations=(
                 "the supplied lookup is a clustering hypothesis",

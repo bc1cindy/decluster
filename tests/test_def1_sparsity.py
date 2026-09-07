@@ -2,7 +2,7 @@ import sys, os, random
 sys.path.insert(0, os.path.dirname(os.path.dirname(__file__)))
 from decluster.def1_sparsity import (cosine, feature_vector, nearest_similarities,
                                      survival)
-from decluster.views import PseudonymGraph
+from decluster.contraction import PseudonymGraph
 
 
 def test_cosine_basic():

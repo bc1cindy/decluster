@@ -19,7 +19,8 @@ from collections import Counter
 sys.path.insert(0, os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
 
 from decluster.view_match import ViewMatcher
-from decluster.views import cluster_addresses, contract
+from decluster.contraction import contract
+from decluster.views import cluster_addresses
 from examples.view_match_run import pseudonymise, stream
 
 ECC = 5.0

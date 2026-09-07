@@ -74,7 +74,7 @@ coinjoin shape and the de-mix both read the spending transaction alone.
 Change-link eligibility asks whether a transaction's inputs *already* stood in one cluster when it
 was reached, which is a property of the partition-so-far and therefore of the order. It is inert
 here for a different reason than the refusal rules are: `_merge_pass` takes that eligibility in
-sample order under both settings (`views.py:204-210`), so staging changes which merges are judged
+sample order under both settings (`views.py:171-177`), so staging changes which merges are judged
 against which context and nothing else. The independence holds by construction, not because no
 order-sensitive decision exists — read the other way, this section would be claiming something the
 function does not support.

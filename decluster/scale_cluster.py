@@ -45,7 +45,7 @@ def _in_addr_hashes(tx):
 class ScaleClustering:
     """Union-find over address hashes. `cid(address)` returns the cluster root (an int) for a
     union-participating address, or the address itself for a singleton, matching the semantics
-    `views.contract` expects from a partial `lookup` (`lookup.get(a, a)`)."""
+    `contraction.contract` expects from a partial `lookup` (`lookup.get(a, a)`)."""
 
     def __init__(self, parent):
         self._parent = parent
@@ -166,7 +166,7 @@ def cluster_scale_np_stream(txs, refuse=True, coinjoin_min=COINJOIN_MIN_PARTICIP
 
 class NpClustering:
     """`get(address)` -> a stable cluster id (the root's dense index) for a union-participating
-    address, else `default`. Same `views.contract` semantics as `ScaleClustering`, backed by a
+    address, else `default`. Same `contraction.contract` semantics as `ScaleClustering`, backed by a
     sorted-hash array instead of a dict."""
 
     def __init__(self, uniq, root):

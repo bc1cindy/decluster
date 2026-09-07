@@ -2,7 +2,7 @@ import sys, os
 from collections import Counter
 sys.path.insert(0, os.path.dirname(os.path.dirname(__file__)))
 from decluster.view_match import ViewMatcher, candidate_scores
-from decluster.views import PseudonymGraph
+from decluster.contraction import PseudonymGraph
 
 
 def graph(edges):
@@ -160,7 +160,7 @@ def test_the_conditioner_is_bounded_and_neutral_at_half_agreement():
 def test_edge_signature_agreement_reorders_candidates():
     """Two candidates equally supported by structure; the one whose edge to the matched
     neighbour looks like the reference edge must win."""
-    from decluster.views import contract
+    from decluster.contraction import contract
 
     def tx(a, b, version=2, txid="t"):
         return {"txid": txid, "height": 1, "version": version, "locktime": 0,

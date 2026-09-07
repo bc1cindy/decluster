@@ -12,7 +12,7 @@ from decluster.baselines.narayanan_shmatikov import (
     match_scores,
     propagate,
 )
-from decluster.views import PseudonymGraph
+from decluster.contraction import PseudonymGraph
 
 
 def graph(vertices, edges):

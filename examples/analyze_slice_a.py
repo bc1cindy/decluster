@@ -19,7 +19,7 @@ import json
 import random
 
 sys.path.insert(0, os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
-from decluster import views, def1_sparsity, graph_shape
+from decluster import contraction, def1_sparsity, graph_shape, view_partition, views
 from decluster.view_match import ViewMatcher
 
 
@@ -60,7 +60,7 @@ def main(path, cap=None):
 
     # ---- 1. entity-level (epsilon, delta)-sparsity ----
     print("\n== Def 1: entity-level sparsity ==", flush=True)
-    g_full = views.contract(sample, lookup=lookup, axes=True)
+    g_full = contraction.contract(sample, lookup=lookup, axes=True)
     print(f"  contracted: {len(list(g_full.vertices))} vertices", flush=True)
     print(shape_line(g_full, "full"), flush=True)
     tops = def1_sparsity.nearest_similarities(g_full, query_n=2000, background_n=20000, min_degree=1, seed=0)
@@ -71,9 +71,9 @@ def main(path, cap=None):
 
     # ---- 2. cross-view re-identification ----
     print("\n== Social graph: cross-view re-identification (epoch split) ==", flush=True)
-    parts = views.partition_coins(sample, scheme="epoch")
-    ga = views.contract(sample, indices=parts[0], lookup=lookup, axes=True)
-    gb = views.contract(sample, indices=parts[1], lookup=lookup, axes=True)
+    parts = view_partition.partition_coins(sample, scheme="epoch")
+    ga = contraction.contract(sample, indices=parts[0], lookup=lookup, axes=True)
+    gb = contraction.contract(sample, indices=parts[1], lookup=lookup, axes=True)
     va, vb = set(ga.vertices), set(gb.vertices)
     overlap = sorted(va & vb)
     print(f"  view A={len(va)} vtx  view B={len(vb)} vtx  overlap={len(overlap)} entities", flush=True)

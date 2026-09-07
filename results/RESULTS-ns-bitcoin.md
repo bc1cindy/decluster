@@ -216,7 +216,7 @@ some real signal about *which* vertex a straddling pseudonym is, and carries ess
   could arrange.
 - **Address-only export.** No coinbase tags (so no mining-pool labels), no values, no script types.
   The absent independent-seed path is a property of this export as much as of the chain.
-- **No fix to `decluster/views.py` or `decluster/baselines/narayanan_shmatikov.py` was needed.**
+- **No fix to `decluster/contraction.py` or `decluster/baselines/narayanan_shmatikov.py` was needed.**
   Both ran against real data unmodified; nothing in this run exposed a bug in either.
 
 ## Reproducibility / provenance

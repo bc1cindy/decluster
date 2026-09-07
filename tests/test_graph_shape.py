@@ -2,7 +2,7 @@ import sys, os, random
 sys.path.insert(0, os.path.dirname(os.path.dirname(__file__)))
 from decluster.graph_shape import (assortativity, configuration_transitivity, degrees,
                                    moments, summary, tail_exponent, transitivity)
-from decluster.views import PseudonymGraph
+from decluster.contraction import PseudonymGraph
 
 
 def graph(edges):

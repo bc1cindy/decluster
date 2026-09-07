@@ -22,7 +22,7 @@ evaluation set. The rejoinable population was undercounted by a factor of 2.3. E
 contracted under its own lookup (`views.view_lookup`), which is also the framework's own
 construction — each epoch clustered separately.
 
-**The active-vertex filter invented edges.** `views.contract` intersected the source set with `keep`
+**The active-vertex filter invented edges.** `contraction.contract` intersected the source set with `keep`
 *before* testing it against `max_sources`, so a multi-source transaction the contraction had refused
 to attribute emitted an edge as soon as the filter left it a single source — and the survivor is
 systematically the hub. The `max_sources` bound is now evaluated on the transaction's own sources.
@@ -148,7 +148,7 @@ windows raises straddler density but shrinks the population faster.
 
 ## The `max_sources=1` bound costs almost nothing here, and the reason is structural
 
-`views.contract` refuses to attribute a transaction funded by more than one source pseudonym, on
+`contraction.contract` refuses to attribute a transaction funded by more than one source pseudonym, on
 the grounds that asserting every source-destination pair invents relationships. A reasonable
 objection is that this discards most of the graph — Reid and Harrigan's user-network edge is an
 input-output pair of a single transaction, so a bound of one drops every multi-source transfer.
@@ -212,7 +212,7 @@ about 20–24%, for about 24–33% more runtime.
 
 Whole-pipeline peak is dominated by contraction, not union-find. Two optimisations were taken:
 `PseudonymGraph` no longer allocates the per-axis counters when `axes=False` (they were the vertex
-record's bulk, 681 B against 191 B), and `views.contract_degrees` replaces the throwaway first
+record's bulk, 681 B against 191 B), and `contraction.contract_degrees` replaces the throwaway first
 contraction whose only product was the unfiltered degrees. On the complete adjacent pair:
 
 | stage | before | after |

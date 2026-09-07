@@ -36,7 +36,7 @@ from dataclasses import asdict
 
 sys.path.insert(0, os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
 
-from decluster import ns_bitcoin, reproducibility, views
+from decluster import contraction, ns_bitcoin, reproducibility, tx_addrs, views
 from decluster.entities import detect_bitmex, detect_mining_pool, detect_satoshidice
 from decluster.scale_cluster import cluster_scale_stream
 
@@ -116,8 +116,8 @@ def build_views(left_window, right_window, min_degree, split_frac, rng):
     for window in (left_window, right_window):
         seen = set()
         for tx in window:
-            seen.update(views._in_addrs(tx))
-            seen.update(a for a, _ in views._out_addrs(tx))
+            seen.update(tx_addrs.in_addrs(tx))
+            seen.update(a for a, _ in tx_addrs.out_addrs(tx))
         addresses.append(seen)
     lookup = clustering.map_many(addresses[0] | addresses[1])
     split_cids, origin = views.split_clusters_by_view(lookup, addresses[0],
@@ -125,10 +125,10 @@ def build_views(left_window, right_window, min_degree, split_frac, rng):
     graphs, view_lookups = [], []
     for window, suffix in ((left_window, "#a"), (right_window, "#b")):
         per_view = views.view_lookup(lookup, split_cids, suffix)
-        degrees = views.contract_degrees(((tx, 0) for tx in window), lookup=per_view)
+        degrees = contraction.contract_degrees(((tx, 0) for tx in window), lookup=per_view)
         keep = {v for v, d in degrees.items() if d >= min_degree}
         del degrees
-        graphs.append(views.contract(((tx, 0) for tx in window), lookup=per_view,
+        graphs.append(contraction.contract(((tx, 0) for tx in window), lookup=per_view,
                                      axes=False, keep=keep))
         view_lookups.append(per_view)
     left, right = graphs

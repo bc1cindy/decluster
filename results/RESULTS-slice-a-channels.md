@@ -19,7 +19,7 @@ addresses), exported at address level via `bigquery/graph.sql` and collected wit
 `examples/bq_chunk_download.py` (chunked, no billing). Numbers below are the 150k-transaction working
 slice (blocks 400000-~400100) unless the full 947k slice is named. Addresses are clustered with the
 engine's refuse-guarded common-input clustering (`views.cluster_addresses`) and each cluster
-contracted into a pseudonym vertex (`views.contract`).
+contracted into a pseudonym vertex (`contraction.contract`).
 
 ## 1. Entity attributes are dense
 

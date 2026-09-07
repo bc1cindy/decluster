@@ -20,7 +20,7 @@ import json
 import random
 from pathlib import Path
 
-from .. import views
+from .. import contraction, tx_addrs, view_partition, views
 from ..result_artifacts import canonical_json_bytes, write_canonical_json
 from ..view_match import ViewMatcher
 
@@ -59,9 +59,9 @@ def _load(path):
 
 
 def _active(sample, indices, lookup):
-    degrees = views.contract_degrees(sample, indices=indices, lookup=lookup)
+    degrees = contraction.contract_degrees(sample, indices=indices, lookup=lookup)
     keep = {vertex for vertex, degree in degrees.items() if degree >= 2}
-    graph = views.contract(sample, indices=indices, lookup=lookup, axes=False, keep=keep)
+    graph = contraction.contract(sample, indices=indices, lookup=lookup, axes=False, keep=keep)
     return graph, {vertex: degrees[vertex] for vertex in keep}
 
 
@@ -69,8 +69,8 @@ def _straddlers(sample, lookup, parts):
     addresses = set()
     for index in parts[0]:
         transaction = sample[index][0]
-        addresses.update(views._in_addrs(transaction))
-        addresses.update(address for address, _ in views._out_addrs(transaction))
+        addresses.update(tx_addrs.in_addrs(transaction))
+        addresses.update(address for address, _ in tx_addrs.out_addrs(transaction))
     split, origin = views.split_clusters_by_view(
         lookup, addresses, frac=1.0, rng=random.Random(SEED)
     )
@@ -86,7 +86,7 @@ def _straddlers(sample, lookup, parts):
 
 
 def _scheme(sample, lookup, scheme):
-    parts = views.partition_coins(sample, scheme=scheme, core_frac=CORE_FRACTION,
+    parts = view_partition.partition_coins(sample, scheme=scheme, core_frac=CORE_FRACTION,
                                   n_views=2, min_side=MIN_SIDE)
     boundary = len(sample) - sum(len(part) for part in parts)
     left, right, stat_left, stat_right, truth = _straddlers(sample, lookup, parts[:2])
@@ -132,7 +132,7 @@ def build_artifact(dataset=DEFAULT_DATASET):
     rows = [_scheme(sample, lookup, scheme) for scheme in SCHEMES]
     generalisation = {
         scheme: {
-            str(count): [len(part) for part in views.partition_coins(
+            str(count): [len(part) for part in view_partition.partition_coins(
                 sample, scheme=scheme, core_frac=CORE_FRACTION, n_views=count, min_side=MIN_SIDE)]
             for count in VIEW_COUNTS
         }

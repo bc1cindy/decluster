@@ -1,9 +1,10 @@
 import sys, os
 sys.path.insert(0, os.path.dirname(os.path.dirname(__file__)))
 import pytest
-from decluster.views import (AXES, PseudonymGraph, cluster_addresses, contract,
-                             height_bands, partition_coins)
-from decluster.views import contract_degrees as views_contract_degrees
+from decluster.contraction import AXES, PseudonymGraph, contract
+from decluster.view_partition import height_bands, partition_coins
+from decluster.views import cluster_addresses
+from decluster.contraction import contract_degrees as views_contract_degrees
 
 
 def tx(ins, outs, height=100, version=2, locktime=0, seq=0xFFFFFFFF):
@@ -55,7 +56,7 @@ def test_a_cut_removes_the_boundary_and_keeps_the_rest():
 def test_ambiguity_cut_removes_the_dense_core_and_returns_the_components_it_leaves():
     """Two otherwise separate neighbourhoods joined only through a busy hub. Cutting the hub
     is what lets them come out as two views; keeping it would leave one component."""
-    from decluster.views import ambiguity_partition
+    from decluster.view_partition import ambiguity_partition
     left = [tx(["l1"], [("l2", 1)]), tx(["l2"], [("l3", 1)])]
     right = [tx(["r1"], [("r2", 1)]), tx(["r2"], [("r3", 1)])]
     via_hub = [tx(["l3"], [("hub", 1)]), tx(["hub"], [("r1", 1)]),
@@ -69,7 +70,7 @@ def test_ambiguity_cut_removes_the_dense_core_and_returns_the_components_it_leav
 
 
 def test_ambiguity_cut_on_an_empty_sample_returns_empty_views():
-    from decluster.views import ambiguity_partition
+    from decluster.view_partition import ambiguity_partition
     assert ambiguity_partition(iter([]), iter([])) == [[], []]
 
 
@@ -194,7 +195,7 @@ def test_an_axis_that_cannot_be_read_is_counted_not_swallowed():
 def test_transfer_counts_bound_the_degree():
     """Distinct degree is at most the transfer count, which is what makes the cheap count
     safe as a pre-filter: it never drops a vertex that degree would have kept."""
-    from decluster.views import transfer_counts
+    from decluster.contraction import transfer_counts
     s = S(tx(["a"], [("x", 100), ("x", 200), ("y", 300)]))
     counts = transfer_counts(s)
     g = contract(s, [0], {})
@@ -213,7 +214,7 @@ def test_filtering_leaves_does_not_change_what_the_matcher_finds():
     """The pre-filter is only legitimate if it is invisible to the result: a vertex below
     degree two can neither be matched (no neighbourhood to discriminate on) nor bridge two
     others, and contributes nothing to scoring while unmatched."""
-    from decluster.views import transfer_counts
+    from decluster.contraction import transfer_counts
     from decluster.view_match import ViewMatcher
     core = [("c1", "c2"), ("c2", "c3"), ("c3", "c4"), ("c4", "c1"), ("c1", "c3")]
     leaves = [("c1", "l1"), ("c2", "l2"), ("c3", "l3")]
@@ -396,7 +397,8 @@ def test_decore_partition_yields_overlapping_views_unlike_ambiguity_cut():
     """The reformulated ambiguity-cut: de-core then split on an orthogonal axis (height), so an
     entity active on both sides appears in BOTH views. Contrast with ambiguity_partition, whose
     connected components are vertex-disjoint."""
-    from decluster.views import decore_partition, ambiguity_partition, _in_addrs, _out_addrs
+    from decluster.tx_addrs import in_addrs, out_addrs
+    from decluster.view_partition import ambiguity_partition, decore_partition
     # HUB is the busiest address -> the dense core; a1 is active in both height windows
     s = ([_tx(["HUB"], [f"h{i}"], height=i) for i in range(20)]
          + [_tx(["a1"], ["x1"], height=1), _tx(["a1"], ["x2"], height=100),
@@ -406,7 +408,7 @@ def test_decore_partition_yields_overlapping_views_unlike_ambiguity_cut():
     def addrs(idxs):
         out = set()
         for i in idxs:
-            out |= set(_in_addrs(s[i][0])) | {a for a, _ in _out_addrs(s[i][0])}
+            out |= set(in_addrs(s[i][0])) | {a for a, _ in out_addrs(s[i][0])}
         return out
 
     views = decore_partition(s, core_frac=0.02, scheme="epoch")
@@ -422,7 +424,7 @@ def test_decore_partition_yields_overlapping_views_unlike_ambiguity_cut():
 
 def test_transfer_counts_skips_multi_source_without_raising():
     """Regression: a multi-source tx must not raise NameError (the old `g.unattributed` bug)."""
-    from decluster.views import transfer_counts
+    from decluster.contraction import transfer_counts
     s = [_tx(["p", "q"], ["out"])]           # 2 distinct source pseudonyms, max_sources=1
     counts = transfer_counts(s, lookup={}, max_sources=1)   # must not raise
     assert counts == {} or isinstance(counts, dict)
@@ -463,7 +465,7 @@ def test_collapse_boundary_cuts_the_merge_of_two_substantial_clusters():
     """The cut the framework asks for is the cluster-collapse event, not the busiest address. A
     merge that grows one cluster by a fresh address is not a collapse; a merge that joins two
     established clusters is."""
-    from decluster.views import collapse_boundary
+    from decluster.view_partition import collapse_boundary
     s = S(tx(["a1", "a2"], [("x", 1)]),      # builds cluster A  (not a collapse: both fresh)
           tx(["b1", "b2"], [("y", 1)]),      # builds cluster B  (not a collapse)
           tx(["a1", "a3"], [("z", 1)]),      # extends A by a fresh address -> not a collapse
@@ -475,7 +477,7 @@ def test_collapse_boundary_cuts_the_merge_of_two_substantial_clusters():
 
 
 def test_a_fresh_address_joining_one_cluster_is_never_a_collapse():
-    from decluster.views import collapse_boundary
+    from decluster.view_partition import collapse_boundary
     s = S(tx(["a1", "a2"], [("x", 1)]), tx(["a1", "a2", "a3", "a4"], [("y", 1)]))
     assert collapse_boundary(s, min_side=2)[0] == []
 
@@ -483,7 +485,7 @@ def test_a_fresh_address_joining_one_cluster_is_never_a_collapse():
 def test_collapse_partition_removes_the_boundary_and_splits_the_rest_by_height():
     """Cut for ambiguity, split for overlap: taking the components the cut leaves would give
     views that share no entity, so the survivors are split on an orthogonal axis."""
-    from decluster.views import collapse_partition
+    from decluster.view_partition import collapse_partition
     s = S(tx(["a1", "a2"], [("x", 1)], height=10),
           tx(["b1", "b2"], [("y", 1)], height=20),
           tx(["a1", "b1"], [("w", 1)], height=30),      # collapse -> in no view
@@ -496,7 +498,7 @@ def test_collapse_partition_removes_the_boundary_and_splits_the_rest_by_height()
 
 
 def test_collapse_partition_generalises_beyond_two_views():
-    from decluster.views import collapse_partition
+    from decluster.view_partition import collapse_partition
     s = S(*[tx([f"u{i}"], [(f"o{i}", 1)], height=10 * i) for i in range(1, 10)])
     parts = collapse_partition(s, n_views=3)
     assert len(parts) == 3
