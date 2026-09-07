@@ -13,7 +13,7 @@
       "name": "catalog/runs/statistical-disclosure-v1.json",
       "role": "run_manifest",
       "bytes": 2671,
-      "sha256": "6850574660c4137a466a98417c06e4008dbf446b6ed4fcc8d68deac529454bb0",
+      "sha256": "9e9d8fabe35ecaa39597b06d20c6bc11dc01f00e0933a34ddaef8d42f90f5cf3",
       "locations": {
         "canonical": null,
         "mirrors": []
@@ -40,10 +40,10 @@
       }
     },
     {
-      "name": "sources/decluster-cd93ceb-runtime.tar",
+      "name": "sources/decluster-446ddbb-runtime.tar",
       "role": "source",
-      "bytes": 2129920,
-      "sha256": "a3666243c8189e1806365129538b426d091173b9cc6777214b663dc9a82a7d58",
+      "bytes": 2150400,
+      "sha256": "dc19942bcf154df552fcdde78be2eabc3a9c6ef5eeb9922e034f80a5b9b399fa",
       "locations": {
         "canonical": null,
         "mirrors": []
@@ -63,7 +63,7 @@
       "name": "reproduction/statistical-disclosure/environment.json",
       "role": "environment",
       "bytes": 380,
-      "sha256": "794d81df0e8dc42a2b4e2556b688987d62e08d9b2696885331bc4de856ae68fe",
+      "sha256": "3ab6752c0fe3bb04a3fe6810633a7aed670005d89b6f9379d5bc314e03369b6f",
       "locations": {
         "canonical": null,
         "mirrors": []
