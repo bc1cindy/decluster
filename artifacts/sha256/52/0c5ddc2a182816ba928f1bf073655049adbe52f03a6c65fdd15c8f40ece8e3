@@ -1,6 +1,6 @@
 {
   "schema_version": 1,
-  "id": "amount-subset-sum-v1",
+  "id": "counting-router-v1",
   "claim_ids": [
     "ctp.amount.subtransaction_ambiguity"
   ],
@@ -12,14 +12,14 @@
     "argv": [
       "python",
       "-m",
-      "decluster.experiments.amount_subset_sum",
+      "decluster.experiments.counting_router",
       "--dataset",
       "data/amount-channel-812695-812831-v1.json",
       "reproduce",
       "--artifact",
-      "results/artifacts/amount-subset-sum-v1.json",
+      "results/artifacts/counting-router-v1.json",
       "--markdown",
-      "results/generated/amount-subset-sum-v1.md"
+      "results/generated/counting-router-v1.md"
     ]
   },
   "environment": {
@@ -31,7 +31,7 @@
         "name": "dss",
         "version": "0.1.0",
         "source": "https://github.com/bc1cindy/dense-subset-sum",
-        "revision": "474dee22bb60b9d46e7ad1e4c78957ad819c9550",
+        "revision": "d8099bc540c9de7d0f3c9f095e8b2aad8f9d8c8d",
         "lock_sha256": "f17a02f09da28dcc603901580d695466c44e1d1a0063e110d3faa375ae6066ca",
         "license": "MIT",
         "redistribution": "allowed",
@@ -46,7 +46,12 @@
     }
   ],
   "parameters": {
-    "maximum_inputs": 16
+    "knee": 5,
+    "route": [
+      "radix",
+      "sparse",
+      "none"
+    ]
   },
   "rng": {
     "algorithm": null,
@@ -54,14 +59,14 @@
   },
   "outputs": [
     {
-      "path": "results/artifacts/amount-subset-sum-v1.json",
-      "bytes": 666,
-      "sha256": "240592b5af814fbcd28b06221805b934424170119da5e62e9da0281944377a9d"
+      "path": "results/artifacts/counting-router-v1.json",
+      "bytes": 897,
+      "sha256": "7c0764b7f39ad8795b4e349cff0903f68b7edcbc3f0d75cc6691a138813239b7"
     },
     {
-      "path": "results/generated/amount-subset-sum-v1.md",
-      "bytes": 385,
-      "sha256": "3caca166d157fb1a1b7b8c995d126bf47ff653a6b7eb01b416b1cef7e254e02f"
+      "path": "results/generated/counting-router-v1.md",
+      "bytes": 505,
+      "sha256": "a002dd84d74d51b0106a6bccd4c625300d838becbfc1edff36b7cfd46eda682f"
     }
   ],
   "reproducibility": {
@@ -73,34 +78,34 @@
     "argv": [
       "python",
       "-m",
-      "decluster.experiments.amount_subset_sum",
+      "decluster.experiments.counting_router",
       "--dataset",
       "data/amount-channel-812695-812831-v1.json",
       "verify",
       "--artifact",
-      "results/artifacts/amount-subset-sum-v1.json",
+      "results/artifacts/counting-router-v1.json",
       "--markdown",
-      "results/generated/amount-subset-sum-v1.md"
+      "results/generated/counting-router-v1.md"
     ],
     "tests": [
-      "tests/test_amount_subset_sum_experiment.py",
+      "tests/test_counting_router_experiment.py",
       "tests/test_counting.py"
     ],
     "properties": [
-      "exact, lower-bound, and unknown tiers remain distinct",
-      "exact zero is not counted as ambiguity evidence",
-      "only guaranteed nonzero log W is reported as a conservative lower bound",
-      "W(E) is not presented as a mapping count, link oracle, entropy, or CoinScore",
+      "router outcomes preserve method and guarantee kind",
+      "radix is measured both with and without its required precondition",
+      "zero and unknown outcomes do not count as ambiguity evidence",
+      "Sasamoto remains outside the router",
       "the generated Markdown equals the canonical rendering"
     ],
     "tolerance": null
   },
   "limitations": [
-    "W(E) is a per-target subset count, not a Maurer mapping count",
-    "the whole-transaction count is fee-blind",
-    "exact zero means no exact subset hit and supplies no ambiguity evidence",
-    "transactions above sixteen inputs are reported as unknown",
-    "only exact and lower-bound tiers can support a conservative lower bound",
-    "this run does not compute pairwise links, entropy, or CoinScore"
+    "W(E) is a transaction-level subset-sum diagnostic, not a mapping count",
+    "raw radix output is audited only to test its required precondition",
+    "zero-count and unknown outcomes provide no ambiguity evidence",
+    "Sasamoto remains an explicit estimator and is not a router tier",
+    "timings and synthetic L-estimator comparisons are outside this run",
+    "this diagnostic is not a privacy score or CoinScore"
   ]
 }

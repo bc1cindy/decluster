@@ -135,3 +135,41 @@ def _recorded_revisions(value):
         for item in value:
             found |= _recorded_revisions(item)
     return found
+
+
+def test_every_declared_dependency_revision_is_the_same_one():
+    """Seven manifests pinned a dependency revision and a wheel; moving one moved none of the rest.
+
+    Amending the dependency's commit renamed it, and the pins sat in nine places across the CI, the
+    packaging metadata, seven run manifests and an artifact. `test_a_declared_dependency_revision_
+    matches_what_its_artifact_recorded` did not catch it, because a manifest and its artifact can
+    agree on a revision that no longer exists.
+    """
+    declared = set()
+    for path in sorted((ROOT / "catalog" / "runs").glob("*.json")):
+        manifest = json.loads(path.read_text())
+        for dependency in manifest["environment"].get("dependencies", ()):
+            if dependency.get("revision"):
+                declared.add((dependency.get("name", "?"), dependency["revision"]))
+    by_name = {}
+    for name, revision in declared:
+        by_name.setdefault(name, set()).add(revision)
+    split = {name: sorted(revs) for name, revs in by_name.items() if len(revs) > 1}
+    assert not split, f"one dependency, more than one declared revision: {split}"
+
+
+@requires_history
+def test_the_packaging_and_the_ci_pin_what_the_manifests_declare():
+    """The extra, the CI checkout, the CI assertion and the manifests are four copies of one fact."""
+    declared = {
+        dependency["revision"]
+        for path in (ROOT / "catalog" / "runs").glob("*.json")
+        for dependency in json.loads(path.read_text())["environment"].get("dependencies", ())
+        if dependency.get("revision")
+    }
+    if not declared:
+        pytest.skip("no run manifest declares a dependency revision")
+    for relative in ("pyproject.toml", ".github/workflows/ci.yml"):
+        text = (ROOT / relative).read_text()
+        for revision in declared:
+            assert revision in text, f"{relative} does not pin {revision[:12]}"

@@ -13,7 +13,7 @@
       "name": "catalog/runs/amount-subset-sum-v1.json",
       "role": "run_manifest",
       "bytes": 3205,
-      "sha256": "737fcc1f3edbb4ed890875c1d68778ccb524489fe6a2af45caaa4af6b88c6c5f",
+      "sha256": "b944e82b61c6e9a5eb9dbfaf29ff591ecf76acfd5b2a9ff867d371d512e16830",
       "locations": {
         "canonical": null,
         "mirrors": []
@@ -62,8 +62,8 @@
     {
       "name": "dependencies/dss-0.1.0-cp313-cp313-macosx_11_0_arm64.whl",
       "role": "dependency",
-      "bytes": 337056,
-      "sha256": "6890f73dd03ddc37382a0039fdce01f585c910277daf451bb29160c5bc47f2de",
+      "bytes": 327985,
+      "sha256": "371e5cc5e6b3fd5de038e2fc75f7454a5cc59ce0a42c8189685921b9dc7acd43",
       "locations": {
         "canonical": null,
         "mirrors": []

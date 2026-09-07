@@ -31,7 +31,7 @@
         "name": "dss",
         "version": "0.1.0",
         "source": "https://github.com/bc1cindy/dense-subset-sum",
-        "revision": "474dee22bb60b9d46e7ad1e4c78957ad819c9550",
+        "revision": "d8099bc540c9de7d0f3c9f095e8b2aad8f9d8c8d",
         "lock_sha256": "f17a02f09da28dcc603901580d695466c44e1d1a0063e110d3faa375ae6066ca",
         "license": "MIT",
         "redistribution": "allowed",
