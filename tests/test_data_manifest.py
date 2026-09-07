@@ -346,3 +346,18 @@ def test_no_other_result_json_sits_outside_the_canonical_directories():
         for path in (ROOT / "results").glob("*.json")
     }
     assert loose - set(HISTORICAL_BASELINES) == {"results/scale_output.json"}
+
+
+def test_every_run_manifest_is_carried_by_a_bundle():
+    """A run nothing bundles is a result the reproduction gate never executes.
+
+    `descent-vs-ascent-v1` — the run this repository's central comparison rests on — sat outside
+    every bundle for a day, verifying its own outputs and never being reproduced from a pinned
+    runtime by anyone.
+    """
+    runs = {path.stem for path in (ROOT / "catalog" / "runs").glob("*.json")}
+    carried = set()
+    for index in (ROOT / "releases").glob("*.bundle.json"):
+        carried.update(json.loads(index.read_text())["runs"])
+    assert runs - carried == set(), f"runs no bundle carries: {sorted(runs - carried)}"
+    assert carried - runs == set(), f"bundles naming absent runs: {sorted(carried - runs)}"

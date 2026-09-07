@@ -1,0 +1,88 @@
+{
+  "schema_version": 1,
+  "id": "descent-vs-ascent-v1",
+  "capabilities": [
+    "verify_outputs",
+    "reproduce_runs"
+  ],
+  "runs": [
+    "descent-vs-ascent-v1"
+  ],
+  "blobs": [
+    {
+      "name": "catalog/runs/descent-vs-ascent-v1.json",
+      "role": "run_manifest",
+      "bytes": 3408,
+      "sha256": "76c84faabc2c02afe9595a2ea3fc827cbfc5e31ae592c929bcc99df2c525653b",
+      "locations": {
+        "canonical": null,
+        "mirrors": []
+      }
+    },
+    {
+      "name": "tests/fixtures/slice_a_channels_2016.ndjson.gz",
+      "role": "dataset",
+      "bytes": 1837504,
+      "sha256": "66104889f8b79f2938edb6666f16dfa19a74c68cd8016832b4f2a5e03b11865f",
+      "locations": {
+        "canonical": null,
+        "mirrors": []
+      }
+    },
+    {
+      "name": "results/artifacts/descent-vs-ascent-v1.json",
+      "role": "result",
+      "bytes": 2448,
+      "sha256": "3542b1199c220f49bd923306dcd1493ed5e7e677ff6fdabd1816256eb7021934",
+      "locations": {
+        "canonical": null,
+        "mirrors": []
+      }
+    },
+    {
+      "name": "results/generated/descent-vs-ascent-v1.md",
+      "role": "result",
+      "bytes": 2504,
+      "sha256": "97ecbaa0035044c51f4d5717148ae6f2671d8b1d33ad4c6950801a651bc0db53",
+      "locations": {
+        "canonical": null,
+        "mirrors": []
+      }
+    },
+    {
+      "name": "sources/decluster-a2c0b71-runtime.tar",
+      "role": "source",
+      "bytes": 2252800,
+      "sha256": "de3bb05475e3b278c70dba6de1f26c74bd1a1af22e4a8bbdaa4d153f0502500b",
+      "locations": {
+        "canonical": null,
+        "mirrors": []
+      }
+    },
+    {
+      "name": "reproduction/descent-vs-ascent/requirements.lock",
+      "role": "lockfile",
+      "bytes": 30,
+      "sha256": "e0d6a8cada5d383c0aca2bd2a37f28c15721392469c94084128d369c29c5544d",
+      "locations": {
+        "canonical": null,
+        "mirrors": []
+      }
+    },
+    {
+      "name": "reproduction/descent-vs-ascent/environment.json",
+      "role": "environment",
+      "bytes": 370,
+      "sha256": "42f0273ce6985fa63f39373808506ad4291e59c11000d94765bee66a391276fe",
+      "locations": {
+        "canonical": null,
+        "mirrors": []
+      }
+    }
+  ],
+  "limitations": [
+    "The bundled environment currently targets CPython 3.13 on macOS arm64.",
+    "The dataset publisher authorized redistribution of the public fixture on 2026-09-04; upstream licensing remains undetermined.",
+    "The bundle compares an ascending and a descending pass as partitions on one slice; it measures neither against same-owner labels."
+  ]
+}
