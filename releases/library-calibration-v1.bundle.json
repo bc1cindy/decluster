@@ -1,0 +1,88 @@
+{
+  "schema_version": 1,
+  "id": "library-calibration-v1",
+  "capabilities": [
+    "verify_outputs",
+    "reproduce_runs"
+  ],
+  "runs": [
+    "library-calibration-v1"
+  ],
+  "blobs": [
+    {
+      "name": "catalog/runs/library-calibration-v1.json",
+      "role": "run_manifest",
+      "bytes": 3011,
+      "sha256": "59c026e0d07ef1102e86d559c080625408e73fbc3fcc1315551fd9b87b7c5325",
+      "locations": {
+        "canonical": null,
+        "mirrors": []
+      }
+    },
+    {
+      "name": "data/fs-blkcache-2026-09-04.tar.gz",
+      "role": "dataset",
+      "bytes": 33352455,
+      "sha256": "5a69f6f446dbdfcce09dddc91c653e5d841124d14020b720fdea276315c775a6",
+      "locations": {
+        "canonical": null,
+        "mirrors": []
+      }
+    },
+    {
+      "name": "results/artifacts/library-calibration-v1.json",
+      "role": "result",
+      "bytes": 17737,
+      "sha256": "5c807a848e9a04cd41065e096af472df0ea568a88792bdd9027bbad58c9064c5",
+      "locations": {
+        "canonical": null,
+        "mirrors": []
+      }
+    },
+    {
+      "name": "results/generated/library-calibration-v1.md",
+      "role": "result",
+      "bytes": 2173,
+      "sha256": "949d2d9e890818c5ec890484b13750ed6855e6538c9a45c3c5c4b3daf2454a5b",
+      "locations": {
+        "canonical": null,
+        "mirrors": []
+      }
+    },
+    {
+      "name": "sources/decluster-a2c0b71-runtime.tar",
+      "role": "source",
+      "bytes": 2252800,
+      "sha256": "de3bb05475e3b278c70dba6de1f26c74bd1a1af22e4a8bbdaa4d153f0502500b",
+      "locations": {
+        "canonical": null,
+        "mirrors": []
+      }
+    },
+    {
+      "name": "reproduction/library-calibration/requirements.lock",
+      "role": "lockfile",
+      "bytes": 30,
+      "sha256": "e0d6a8cada5d383c0aca2bd2a37f28c15721392469c94084128d369c29c5544d",
+      "locations": {
+        "canonical": null,
+        "mirrors": []
+      }
+    },
+    {
+      "name": "reproduction/library-calibration/environment.json",
+      "role": "environment",
+      "bytes": 374,
+      "sha256": "a97f016f4cb1efe7dd7375d2ee4ff26d56c120c0aff47d60ad19ab32b7614f1b",
+      "locations": {
+        "canonical": null,
+        "mirrors": []
+      }
+    }
+  ],
+  "limitations": [
+    "The bundled environment currently targets CPython 3.13 on macOS arm64.",
+    "The public on-chain snapshot is redistributed with provider authorization.",
+    "The bundle measures the distance between the shipped calibration and the committed cache; it does not restore the population the shipped table was measured on."
+  ]
+}

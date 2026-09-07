@@ -25,7 +25,8 @@ the certification disappears below roughly 90% overlap or 15% seeding.
 > correspondence at 25%, declared 779 correspondences at 1.28% precision
 > (`results/RESULTS-ns-bitcoin.md`). The seeds here are likewise drawn from the withheld
 > correspondence — every attack row is stamped `seed_provenance:
-> "withheld-correspondence-sample"` in `results/link-prediction.json` — so this measures what
+> "withheld-correspondence-sample"` in `results/artifacts/link-prediction-v1.json` (held against the
+> frozen `results/link-prediction.json` by a test) — so this measures what
 > the mechanism does with an identity it was *handed*, on a fixture built to be tractable.
 
 ## What runs
@@ -241,7 +242,7 @@ gap between 0.52 and 0.95 recall.
 ## Reproducing
 
 ```
-python3 examples/link_prediction_run.py --out results/link-prediction.json     # the table above
+python3 examples/link_prediction_run.py --out link-prediction.json            # the table above
 python3 examples/link_prediction_run.py --cutoff 1                             # the cutoff sweep
 python3 examples/link_prediction_run.py --scorer open                          # the ablation
 python3 examples/link_prediction_run.py --keep 0.8                             # a sensitivity row

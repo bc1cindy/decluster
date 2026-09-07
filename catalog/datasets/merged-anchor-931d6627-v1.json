@@ -1,0 +1,39 @@
+{
+  "schema_version": 1,
+  "id": "merged-anchor-931d6627-v1",
+  "title": "The merged anchor's two funding transactions",
+  "kind": "git_fixture",
+  "schema": "esplora-transaction-pair-v1",
+  "format": "json",
+  "content": {
+    "bytes": 5326,
+    "sha256": "e0e687d23f9417ace6364372fa8d72ea1bb4f83dabaf08d08d2523423e247911"
+  },
+  "locations": {
+    "local_path": "tests/fixtures/merged_anchor_931d6627.json",
+    "canonical": null,
+    "mirrors": []
+  },
+  "source": {
+    "provider": "mempool.space transaction records",
+    "snapshot_time": null,
+    "recipe": "the two transactions PAPER.md names on this anchor, as fetched",
+    "recipe_sha256": null
+  },
+  "determinism": {
+    "ordering": "the two records sorted by key as fetched",
+    "rng_algorithm": null,
+    "rng_seed": null
+  },
+  "license": {
+    "data": "public on-chain transaction records; no upstream licence attaches",
+    "recipe": null
+  },
+  "normalization": {
+    "code_revision": "67191517916bec3fc02d4bb5702dc3a92fa869ff",
+    "parameters": {},
+    "parents": []
+  },
+  "redistribution": "allowed",
+  "sensitivity": "public_on_chain"
+}

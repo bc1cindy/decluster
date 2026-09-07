@@ -22,7 +22,7 @@ Five arms per fixture seed, all scored on identical held-out links:
 `--scorer open` ablates the closed-neighbourhood term from *both* arms, which is the sensitivity
 the result turns on.
 
-usage: python3 examples/link_prediction_run.py [--out results/link-prediction.json] [--manifest]
+usage: python3 examples/link_prediction_run.py [--out PATH] [--manifest]
 """
 import argparse
 import json

@@ -2,7 +2,7 @@
 
 > **This is a seed-assisted experiment, not an independent attack.** The seeds below were drawn
 > from the withheld correspondence — the same map the run is graded against. Every row is stamped
-> `seed_provenance: "withheld-correspondence-sample"` in `results/ns-bitcoin.json`. It measures how
+> `seed_provenance: "withheld-correspondence-sample"` in `results/artifacts/ns-bitcoin-v1.json`. It measures how
 > far propagation carries an identity it was *handed*; it is not evidence that the identity could
 > have been found. The independent-label path was tried first and yielded zero usable seeds
 > (below), which is why the fallback is what is reported.
@@ -117,7 +117,7 @@ correspondence. The attacker cannot tell which of its 779 declarations are among
 threshold available to it reaches 20.4%; the column says where the signal is, not what the attack
 achieves. The attack's precision is the column to its left.
 
-`results/ns-bitcoin.json` carries the full accepted-per-round series for the attack **and** the
+`results/artifacts/ns-bitcoin-v1.json` carries the full accepted-per-round series for the attack **and** the
 shuffled control in every one of the six configurations; only the round *count* is tabulated here.
 
 Propagation does spread — 8 to 10 rounds, front-loaded (at 25%/0.5: 410 accepted in round one,
@@ -256,6 +256,7 @@ separable, and at 25% seeding it clears all three gates of `separable`.
 
 Reproduce: `.venv/bin/python examples/ns_bitcoin_views.py` (defaults are the canonical run:
 `--blocks 120 --min-degree 2 --split-frac 1.0 --fractions 0.05 0.10 0.25 --thetas 0.5 1.5
---seed 7`), which writes `results/ns-bitcoin.json` and the manifest. Single process, peak RSS
+--seed 7 --out results/ns-bitcoin.json`), which rewrites the frozen historical report a test holds
+the canonical run against. Single process, peak RSS
 about 1 GB; 283 s and 345 s on two runs of the identical command, which reproduced every number in
 this document exactly.

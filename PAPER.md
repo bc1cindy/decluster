@@ -269,7 +269,7 @@ this paper called it one until now. The two are not interchangeable in magnitude
 preserved cache the fitted F-S model's largest *agreement* weight is **+1.3047** bits (`nsequence`)
 and its largest disagreement weight **−11.13** (`locktime`), whereas the rarity weight reaches
 **13.88** bits on a single agreement (`cake_group_c`) — a ratio of ≈10.6× on the agreement side
-(`results/fs-temporal.json`). A fitted Fellegi–Sunter model *is* built and used in this repository —
+(`results/artifacts/fs-temporal-v1.json`). A fitted Fellegi–Sunter model *is* built and used in this repository —
 `decluster/fellegi_sunter.py`, driving the temporal split and the ablation
 (`results/RESULTS-fs-temporal.md`, `results/RESULTS-fs-ablation.md`) — but it is a different object
 from the headline scorer, whose implementation (`rarity_weight_baseline.rarity_score`,
@@ -306,7 +306,8 @@ conditional-independence double-counting §9 flags. Concretely, on the merged an
 merge (−3.16 bits) and recovers the correct partition, whereas scoring the same edge with the
 23-axis `LibraryScorer` *resurrects* the false link (**+11.67 bits**, well past the engine's
 `link_above=4.0` threshold) and would re-merge the sender into the Cake cluster
-(`results/RESULTS-3v23-engine.md`, `examples/three_vs_23_axes.py` — measured directly, not asserted).
+(`results/RESULTS-3v23-engine.md`; measured directly by `catalog/runs/anchor-axis-families-v1.json`,
+which scores this edge under all four axis sets on a committed fixture.)
 (One of the 23 axes, `locktime_vs_broadcast`, abstains here and everywhere on stored records; 22 are
 scored. See §3.) The per-axis breakdown shows why: the three genuinely discriminating axes still
 refuse (−10.8 bits combined), but 19 low-entropy policy axes that both coins' ordinary SegWit wallets
@@ -320,7 +321,7 @@ next paragraph measures exactly how much of that failure is redundancy rather th
 Dropping one representative per measured correlated cluster — 14 axes rather than 23,
 `fingerprint_validate.decorrelated_scorer()`, the clusters and representatives taken from
 `results/artifacts/fs-ablation-v1.json` — the same Cake↔sender edge scores **+3.59 bits** instead of
-+11.67. So **8.08 of the 11.67 bits (69%) are redundant copies of evidence already counted**, and the
++11.67. So **8.07 of the 11.67 bits (69%) are redundant copies of evidence already counted**, and the
 decorrelated wide model lands *below* the engine's `link_above=4.0` threshold: it no longer
 resurrects the false merge. The width was never the problem; the duplication was. The design
 choice above stands, and the reason given for it is now the measured one rather than the argued one.

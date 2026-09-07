@@ -1,0 +1,88 @@
+{
+  "schema_version": 1,
+  "id": "anchor-axis-families-v1",
+  "capabilities": [
+    "verify_outputs",
+    "reproduce_runs"
+  ],
+  "runs": [
+    "anchor-axis-families-v1"
+  ],
+  "blobs": [
+    {
+      "name": "catalog/runs/anchor-axis-families-v1.json",
+      "role": "run_manifest",
+      "bytes": 2915,
+      "sha256": "96ba7f04b14cad85754a1b112ee4e9b3717a79c8af89b42ff117400e2c91733d",
+      "locations": {
+        "canonical": null,
+        "mirrors": []
+      }
+    },
+    {
+      "name": "tests/fixtures/merged_anchor_931d6627.json",
+      "role": "dataset",
+      "bytes": 5326,
+      "sha256": "e0e687d23f9417ace6364372fa8d72ea1bb4f83dabaf08d08d2523423e247911",
+      "locations": {
+        "canonical": null,
+        "mirrors": []
+      }
+    },
+    {
+      "name": "results/artifacts/anchor-axis-families-v1.json",
+      "role": "result",
+      "bytes": 3152,
+      "sha256": "d465f3640860d0b51f20c6506ca7ae3715c89afb67e4e41b34a5dfc697276505",
+      "locations": {
+        "canonical": null,
+        "mirrors": []
+      }
+    },
+    {
+      "name": "results/generated/anchor-axis-families-v1.md",
+      "role": "result",
+      "bytes": 1451,
+      "sha256": "4ce04704b838583333871b5d98883ceac02728ccfcea4c430b3ee7d49f708400",
+      "locations": {
+        "canonical": null,
+        "mirrors": []
+      }
+    },
+    {
+      "name": "sources/decluster-a2c0b71-runtime.tar",
+      "role": "source",
+      "bytes": 2252800,
+      "sha256": "de3bb05475e3b278c70dba6de1f26c74bd1a1af22e4a8bbdaa4d153f0502500b",
+      "locations": {
+        "canonical": null,
+        "mirrors": []
+      }
+    },
+    {
+      "name": "reproduction/anchor-axis-families/requirements.lock",
+      "role": "lockfile",
+      "bytes": 30,
+      "sha256": "e0d6a8cada5d383c0aca2bd2a37f28c15721392469c94084128d369c29c5544d",
+      "locations": {
+        "canonical": null,
+        "mirrors": []
+      }
+    },
+    {
+      "name": "reproduction/anchor-axis-families/environment.json",
+      "role": "environment",
+      "bytes": 376,
+      "sha256": "a15b654b13ce3fde0b129c8e0a3433f083b5cd6c3c2076a10eb9560e69e3fb79",
+      "locations": {
+        "canonical": null,
+        "mirrors": []
+      }
+    }
+  ],
+  "limitations": [
+    "The bundled environment currently targets CPython 3.13 on macOS arm64.",
+    "Public bootstrap remains unavailable until every blob has a canonical HTTPS location and an independent mirror.",
+    "The bundle reproduces the scores on one named edge, which is what the design decision was argued on; it is not a population measurement."
+  ]
+}

@@ -13,7 +13,10 @@ headline (+0.0482 AUC over the rarity baseline); it asks a different question ab
 transactions). Same caveats apply: a block-sampled, non-contiguous slice; weak address-reuse
 labels, not independently verified same-owner labels.
 
-**Method.** `examples/fs_ablation.py .blkcache --seed 0` (saved to `results/fs-ablation.json`).
+**Method.** `examples/fs_ablation.py .blkcache --seed 0`; the canonical output is
+`results/artifacts/fs-ablation-v1.json`. `results/fs-ablation.json` stays beside it as the frozen
+historical report — `tests/test_fs_ablation_experiment.py` asserts the canonical run still
+reproduces it, which is a guard the canonical artifact cannot give itself.
 Implemented in `decluster/fs_ablation.py`, stdlib only.
 
 ## 1. Within-class association, not unconditional correlation
@@ -189,4 +192,5 @@ recomputes every one of those from `.blkcache` on each test run and asserts `che
 returns `ok`, not just `identity-only`. It skips cleanly, naming what went unrecomputed, on a
 checkout without `.blkcache`.
 
-Reproduce: `.venv/bin/python examples/fs_ablation.py .blkcache --seed 0 > results/fs-ablation.json`.
+Reproduce with the command in `catalog/runs/fs-ablation-v1.json`, which writes
+`results/artifacts/fs-ablation-v1.json`.

@@ -98,10 +98,11 @@ def test_require_verified_refuses_partial_catalog(tmp_path):
 
 
 def test_committed_catalog_is_fully_verified():
+    catalogued = len(list((ROOT / "catalog" / "datasets").glob("*.json")))
     checks = catalog_status(ROOT)
-    assert len(checks) == 14
+    assert len(checks) == catalogued
     assert all(check.status is DatasetStatus.VERIFIED for check in checks)
-    assert len(require_verified_datasets(ROOT)) == 14
+    assert len(require_verified_datasets(ROOT)) == catalogued
 
 
 def test_fetch_uses_mirror_after_identity_mismatch_and_is_then_cached(tmp_path):
