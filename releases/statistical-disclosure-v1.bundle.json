@@ -13,7 +13,7 @@
       "name": "catalog/runs/statistical-disclosure-v1.json",
       "role": "run_manifest",
       "bytes": 2671,
-      "sha256": "8fa6a17bab291060b0f307c2e48d4b048a935c962a7ef89c9c36841fb2ae8a99",
+      "sha256": "5060551a46f4ad307ae5f2ae1c3c936cb58e7f0b75441e6e4f16ee89deea6a04",
       "locations": {
         "canonical": null,
         "mirrors": []
@@ -40,10 +40,10 @@
       }
     },
     {
-      "name": "sources/decluster-4e2d32b-runtime.tar",
+      "name": "sources/decluster-6541e5c-runtime.tar",
       "role": "source",
-      "bytes": 2273280,
-      "sha256": "be2888570b904d3d3b26e7e22dc7a18eeef7e8a72d7561f39214f38d95005185",
+      "bytes": 2283520,
+      "sha256": "7b01965f5e3d0003df471886325cb0a9e19b90762879897bfb1250e5abc156cc",
       "locations": {
         "canonical": null,
         "mirrors": []
@@ -63,7 +63,7 @@
       "name": "reproduction/statistical-disclosure/environment.json",
       "role": "environment",
       "bytes": 380,
-      "sha256": "cc64e455c6c7a5f5440753d3e99e0e2fbcf7f1fb2ad32dd9c64c731829f91c6a",
+      "sha256": "5db62333f06b72e0b26b50a6793e061acc02b1522dab02d8f07509a9f95d2fb5",
       "locations": {
         "canonical": null,
         "mirrors": []

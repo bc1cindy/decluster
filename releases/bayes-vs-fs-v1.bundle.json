@@ -13,7 +13,7 @@
       "name": "catalog/runs/bayes-vs-fs-v1.json",
       "role": "run_manifest",
       "bytes": 3084,
-      "sha256": "61c9f81ef0a7e130725c5f199b71bd57ea47f83f2b94ce435394c60c9f87002e",
+      "sha256": "9fb18cadd1e97c85f74f426dd94345d303aeeed3f81454a119f0cab2370d7e2f",
       "locations": {
         "canonical": null,
         "mirrors": []
@@ -50,10 +50,10 @@
       }
     },
     {
-      "name": "sources/decluster-4e2d32b-runtime.tar",
+      "name": "sources/decluster-6541e5c-runtime.tar",
       "role": "source",
-      "bytes": 2273280,
-      "sha256": "be2888570b904d3d3b26e7e22dc7a18eeef7e8a72d7561f39214f38d95005185",
+      "bytes": 2283520,
+      "sha256": "7b01965f5e3d0003df471886325cb0a9e19b90762879897bfb1250e5abc156cc",
       "locations": {
         "canonical": null,
         "mirrors": []
@@ -73,7 +73,7 @@
       "name": "reproduction/bayes-vs-fs/environment.json",
       "role": "environment",
       "bytes": 358,
-      "sha256": "d385b6a303fa1a148dff97b50dbc616c5ceae7806da6e9b92fa1f24043152255",
+      "sha256": "329a1861d6454a2328682829d92debe9d5c74a9f57ad20e939109466e3d5556e",
       "locations": {
         "canonical": null,
         "mirrors": []
