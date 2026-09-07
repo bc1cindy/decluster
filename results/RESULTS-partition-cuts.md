@@ -103,6 +103,24 @@ and `collapse` are small enough that they should not be read as an ordering. The
 single sweep at one `min_side`. The export carries addresses but no output values, so the collapse
 detector sees only the shape rule and never the de-mix arm.
 
+**Addition, 7 Sep 2026 — what a reader can check.** The tables above come from
+`data/epochs_2016_weekly/`, 977 MB that this repository does not ship, so none of them could be
+verified by anyone else. `catalog/runs/partition-schemes-v1.json` now reproduces the part the
+committed slice can carry, and reproduces the ordering: on 12,000 transactions the collapse cut
+costs 41 transactions and leaves the straddler population and its internal connectivity where the
+temporal cut leaves them (78 against 77 entities, 28 against 27 edges among them), while `decore`
+halves both. That is the same conclusion at two orders of magnitude less data.
+
+What it does **not** reproduce is the precision and recall. At this scale the matcher makes no
+guess at all under any scheme — not zero correct out of some, zero guesses — because propagation
+needs edges among the straddlers and 27 of them is not enough. The precision table therefore stays
+backed only by the unshipped export, and the canonical run says so rather than reporting zeros that
+would read as a measured tie.
+
+The same round also found that `epoch` and `decore` ignored `n_views`: they halved the height range
+whatever was asked, so the framework's n > 2 generalisation silently applied to one scheme of three.
+All three now band the range into the number of views requested.
+
 ## Reproducibility / provenance
 
 Per `results/REPRODUCIBILITY.md`, state 2: **mechanism unit-tested, headline number is a data-run.**
