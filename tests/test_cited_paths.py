@@ -30,7 +30,8 @@ CITATION = re.compile(
 # a reader would look in.
 ROOTS = (
     "", "decluster/", "decluster/experiments/", "decluster/baselines/", "decluster/failure_modes/",
-    "results/", "catalog/", "tests/", "tests/fixtures/", "examples/",
+    "results/", "results/generated/", "results/artifacts/", "catalog/", "tests/",
+    "tests/fixtures/", "examples/",
 )
 
 UNAVAILABLE = {
