@@ -56,9 +56,9 @@ on, and pinning it down is what the re-run is for.
 | refuse + doubt gate, block order | 1,117 | 996 | 9,257 |
 | refuse + doubt gate, conspicuous-first | 1,117 | 996 | 9,257 |
 
-- Refusal changes the partition: **yes**
-- The doubt gate changes it: **yes** (868 → 1,117)
-- The **order** changes it: **no** — the two gated runs are identical, and so are the two ungated ones
+- Refusal changes the partition: yes
+- The doubt gate changes it: yes (868 → 1,117)
+- The order changes it: no — the two gated runs are identical, and so are the two ungated ones
 
 The largest cluster is 996 addresses in every configuration, including naive. Nothing here prevents
 it, which says it is assembled from transactions that raise no objection — a genuinely conspicuous

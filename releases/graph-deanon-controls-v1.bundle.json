@@ -13,7 +13,7 @@
       "name": "catalog/runs/graph-deanon-controls-v1.json",
       "role": "run_manifest",
       "bytes": 3021,
-      "sha256": "0e52816738a0b999e8a8bb8265404013f192f3ea8c9fa553afc376cbbf66ea32",
+      "sha256": "f0e6d635b3ce81df5b35f950ac8aed484c0ce95704ef716ea6587f20997c2b94",
       "locations": {
         "canonical": null,
         "mirrors": []
@@ -25,7 +25,7 @@
       "bytes": 1405865,
       "sha256": "68690ce8689378321e4187b111c7b4300f88e5bb405a25dcb67125cd0c739c5b",
       "locations": {
-        "canonical": null,
+        "canonical": "https://github.com/bc1cindy/decluster/raw/3f5176866c6fe9b021cb3af36f49293e95883446/tests/fixtures/graph_deanon_2016.ndjson.gz",
         "mirrors": []
       }
     },
@@ -50,10 +50,10 @@
       }
     },
     {
-      "name": "sources/decluster-6541e5c-runtime.tar",
+      "name": "sources/decluster-aaf8b39-runtime.tar",
       "role": "source",
       "bytes": 2283520,
-      "sha256": "7b01965f5e3d0003df471886325cb0a9e19b90762879897bfb1250e5abc156cc",
+      "sha256": "d7d678652c0cdeab6bb462489a37c3416d54ae5a2e38a775878fb851c07c1287",
       "locations": {
         "canonical": null,
         "mirrors": []
@@ -73,7 +73,7 @@
       "name": "reproduction/graph-deanon-controls/environment.json",
       "role": "environment",
       "bytes": 378,
-      "sha256": "1f08d4f350d3bec57debeb6dae85134ed16082d101522ee44b746a9fded341cc",
+      "sha256": "c1759288ee2a2129390e922b87c4faac3927308ee8d2173695819506a95d6a38",
       "locations": {
         "canonical": null,
         "mirrors": []

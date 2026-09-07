@@ -10,9 +10,9 @@
 > written. `path_count_anonymity()` and `analyze()` now default to `ancestry.value_flow_link_oracle`
 > (nominal-value transitions, no dss) instead; the subset-sum walk measured here is opt-in.
 
-`examples/path_count_live.py` exercises the two shipped capabilities on real data: the **bounded walk**
+`examples/path_count_live.py` exercises the two shipped capabilities on real data: the bounded walk
 (`max_nodes`, makes deep coinjoin `analyze()` tractable) and the **§07 path-count** object (weighted by
-link probability alone — see "Multiplicity has left the bound", below). Honest numbers below, with the
+link probability alone — see "Multiplicity has left the bound", below). Numbers below, with the
 nuances the runs surfaced.
 
 ## (a) Bounded walk — deep coinjoin now returns, instead of hanging
@@ -27,13 +27,13 @@ nuances the runs surfaced.
 | min-entropy | **3.0 bits** |
 | truncated (unexpanded frontier + oracle refusals) | 70 |
 
-Contrast: the **unbounded** depth-5 walk over the same coinjoin **did not finish in a 25-minute cap**
+Contrast: the unbounded depth-5 walk over the same coinjoin **did not finish in a 25-minute cap**
 (`RESULTS-analyze.md` (b)) — the ancestral fan-out explodes. `max_nodes` caps the expanded coins, so
-the walk returns a **truncated lower bound** (67 origins, 3.0 bits) in bounded time. Two independent
+the walk returns a truncated lower bound (67 origins, 3.0 bits) in bounded time. Two independent
 knobs govern this and BOTH matter: `max_nodes` bounds the graph fan-out (number of hops); `budget_ms`
 bounds each hop's oracle cost. With `budget_ms=2000` the same call returns in 6 s but the first
 coinjoin hop (~2.3 s of exact subset-sum) truncates → a point mass; `budget_ms=5000` resolves the hops
-at the cost of wall time. Bounded, honest, never exact — exact deep-coinjoin resolution is impossible
+at the cost of wall time. Bounded, never exact — exact deep-coinjoin resolution is impossible
 (the explosion is the privacy).
 
 ## Multiplicity has left the bound
@@ -58,7 +58,7 @@ reading, not two.
 
 **What this costs.** `path_count_anonymity` is the default target of the construction-side cost
 function, and multiplicity was the only thing distinguishing its output from the plain ancestry
-entropy. After this change that instrument measures **no structural property** of the graph.
+entropy. After this change that instrument measures no structural property of the graph.
 Measuring one would need edge-disjoint paths in a graph whose vertices are transactions and whose
 directed, amount-labelled edges are coins. It must also enforce plausible flow, since a traceable
 path is not necessarily capable of carrying the target value. This repository does not compute that
@@ -91,7 +91,7 @@ in Sasamoto:
 Radix (dense repeated-denomination recognition) is a **separate, independent** dss path and is not part
 of this cascade.
 
-## Honest limits
+## Limits
 
 - Bounded walk = truncated **lower bound**, never exact; deep-coinjoin exactness is impossible.
 - §07 path-count = weighted by link probability alone; identical in distribution to §04's set-size

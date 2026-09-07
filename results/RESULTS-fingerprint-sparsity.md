@@ -67,8 +67,8 @@ transaction — which is precisely why the channel buckets rather than identifie
 
 ## Scope
 
-This measures the **per-transaction** vector. It says nothing about the distinctiveness of
-a **cluster's feature distribution**: a cluster of fifty transactions carries a
+This measures the per-transaction vector. It says nothing about the distinctiveness of
+a cluster's feature distribution: a cluster of fifty transactions carries a
 distribution over vectors, which can be far more distinctive than any single vector, and
 measuring it requires a clustering rather than a survey. That quantity is the one the
 structural argument actually rests on, and it is measured separately.

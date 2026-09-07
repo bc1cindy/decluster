@@ -60,7 +60,7 @@ def build_artifact(dataset=DEFAULT_DATASET):
         "limitations": [
             "the 200-record snapshot is selected and is not a uniform chain sample",
             "the signature-generation recipe and original comparison population are unavailable",
-            "the target identifier is a record identity, not wallet ownership ground truth",
+            "the target identifier is a record identity, not wallet ownership",
             "the auxiliary origins are sampled from the target signature rather than observed independently",
             "this is an adaptation, not a reproduction of the published Netflix experiment",
             "the result does not establish a chain-wide deanonymization rate or privacy score",

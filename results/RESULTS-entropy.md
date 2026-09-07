@@ -3,7 +3,7 @@
 Reproduce: `python3 examples/metric_demo.py`. Diagnostic in `decluster/graph_metric.py`,
 guarded by `tests/test_metric.py`.
 
-This is a **relative** diagnostic — how much the naive co-spend clustering *overstates* the
+This is a relative diagnostic — how much the naive co-spend clustering *overstates* the
 attacker's residual uncertainty versus the fingerprint+amount clustering — **not** an absolute
 "bits of anonymity" of any transaction. The intrinsic anonymity of a payment (interpretations
 under no auxiliary information) is the separate §07 path-counting object, not this partition
@@ -30,7 +30,7 @@ cluster grows from 16% to 53% (a supercluster forming). This is the paper's thes
 at the graph level: the naive common-input view *overstates* the attacker's residual
 uncertainty once fingerprints and amount structure are accounted for.
 
-## Honest caveats
+## Caveats
 - **Not chain-scale.** 19 coins, one merged transaction's depth-6 ancestry (capped at 60,
   fetched via mempool.space). A statistically meaningful chain-wide measurement needs an
   archival Bitcoin Core node (Floresta cannot provide it — its Utreexo model keeps no

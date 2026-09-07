@@ -11,9 +11,9 @@ one user, and nothing measured so far had tested it.
 
 **Method.** Clusters are deliberately split before contraction, so the adversary's
 clustering is incomplete in the way the framework assumes, and the answer is known. Three
-outcomes: **identity** (a pseudonym matched to itself, correct but already known),
-**rejoin** (matched to the other half of its own cluster — the discovery, and the only
-outcome worth feeding back), and **error**. The seed is drawn only from *intact* pseudonyms:
+outcomes: identity (a pseudonym matched to itself, correct but already known),
+rejoin (matched to the other half of its own cluster — the discovery, and the only
+outcome worth feeding back), and error. The seed is drawn only from *intact* pseudonyms:
 seeding from a split cluster would hand the adversary the answer it is meant to find.
 
 ## Result

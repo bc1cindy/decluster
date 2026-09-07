@@ -11,15 +11,15 @@
 
 **Claim tested.** Does the per-tx fingerprint (`decluster/fingerprint_ns.py`: sparse
 `{(axis,value): bits}` signature, agreement-overlap link, `propagate.eccentricity` acceptance
-gap) behave as a **sparse quasi-identifier** — like ancestry — that can pick one individual out
-of a crowd, or as a **low-cardinality equivalence-class conditioner**: it groups same-construction
+gap) behave as a sparse quasi-identifier — like ancestry — that can pick one individual out
+of a crowd, or as a low-cardinality equivalence-class conditioner: it groups same-construction
 transactions together but cannot further resolve *within* a group? The tx-graph anonymity-set
 theory (posts 02/03 of the anonymity-set series) predicts the latter for construction-style
 fingerprints and reserves the sparse-quasi-identifier regime for the ancestry channel
 (`propagate.py`, post 03).
 
 **Data.** 8,864 transactions from the local block-tx cache (`.blkcache`; this cache grows over
-time, see Honest limits). Same-owner labels = address reuse (two txs spending the same input
+time, see Limits). Same-owner labels = address reuse (two txs spending the same input
 address). `build_labeled_nodes` turns every reuse group of size ≥2 into one `owner_id`, capped at
 200 nodes, assigning each tx to exactly one owner even when its inputs reuse more than one address
 (the first qualifying group in sorted-address order; every other group it also belongs to is
@@ -95,7 +95,7 @@ no surprise to chase here. The sparse N-S regime — where a signature *does* pi
 crowd — lives on the ancestry channel (`propagate.py`, see `results/RESULTS-ns-propagation.md`),
 not on construction-style fingerprints.
 
-## Honest limits
+## Limits
 
 - **The `.blkcache` is a growing local artifact, not a fixed dataset.** Absolute numbers here are
   specific to this checkout's cache at measurement time (8,864 txs; an earlier run against 8,129
@@ -110,7 +110,7 @@ not on construction-style fingerprints.
   not purely a property of the fingerprint model.
 - **`measured` is fit and evaluated on the same txs it's scored against** — its NS_AUC (0.935) is
   optimistic relative to an out-of-sample rarity fit; `library` (0.890, fit elsewhere) is the more
-  honest read of the conditioner effect's size.
+  read of the conditioner effect's size.
 - **θ≈0.5 is cited from `propagate.py`'s driver default for scale, not re-derived here** — the
   claim is the within-class gap sits at or under a threshold used elsewhere in this pipeline, not
   a formally re-fitted cutoff for this exact channel. The `measured` source's gap (0.366) is the

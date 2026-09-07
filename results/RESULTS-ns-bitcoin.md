@@ -16,7 +16,7 @@ refused, and the amount and fingerprint channels are absent by construction, not
 
 **Which algorithm.** `decluster/baselines/narayanan_shmatikov.py`: the 2009 topology-only
 propagation scoring kernel — direction-aware degree-normalised neighbour votes, eccentricity over the
-**unclaimed** candidate population including its implicit zeros, a mandatory reverse match, iterated
+unclaimed candidate population including its implicit zeros, a mandatory reverse match, iterated
 to convergence. The population is a genuine ambiguity in the source rather than a choice made
 against it: the paper's prose scores "each unmapped node in v2", while its pseudocode two pages
 later initialises one score per right vertex and leaves the claimed ones at zero. Both readings are
@@ -43,7 +43,7 @@ propagation and no second view.
 | vertices (degree >= 2) | 88,066 | 104,328 |
 | edges | 163,567 | 189,919 |
 
-Both windows are public chain, so *observation* is not what is partial here — the **clustering**
+Both windows are public chain, so *observation* is not what is partial here — the clustering
 is. The two windows are clustered together (one global common-input lookup over both, so a cluster
 keeps one identity across the boundary), and the 8,030 clusters whose addresses straddle the
 boundary are then contracted under a **separate pseudonym in each view**
@@ -59,7 +59,7 @@ view keeps the vertices whose degree **in its own view** is at least 2. The filt
 consults neither the other view nor the correspondence; degree below 2 is a vertex propagation can
 neither match nor bridge through.
 
-**Withheld correspondence** — it takes no part in view construction, in seeding the independent
+Withheld correspondence — it takes no part in view construction, in seeding the independent
 path, or in any score the algorithm computes. It is used for grading, for drawing the seed-assisted
 seeds below (which is why those rows are stamped as such), and for selecting the subgroup in the
 "had an image" diagnostic further down, which is why that diagnostic is not an operating point.
@@ -88,7 +88,7 @@ schema — they name a pattern, not an entity, so they cannot supply a one-to-on
 
 The mining-pool detector cannot fire at all: it reads the coinbase scriptSig tag, which this
 address-only export does not carry. Neither surviving detector names a single vertex per view — a
-service's deposit addresses land in many clusters — so **zero** independent seeds were admitted,
+service's deposit addresses land in many clusters — so zero independent seeds were admitted,
 and zero of them would have been gradeable. The seam refuses to pair an ambiguous label by degree,
 which is exactly what stops the grading map from leaking in through the back door. The independent
 attack is therefore **not identifiable on these views with the labels this export supports**, and
@@ -174,7 +174,7 @@ says otherwise, and the split matters:
   Again: this subgroup is chosen using the withheld correspondence, so 20.4% is a statement about
   where the signal lives, not a precision the attacker can operate at.
 
-So the honest statement of the mechanism is: on real Bitcoin views the eccentricity test does carry
+So the statement of the mechanism is: on real Bitcoin views the eccentricity test does carry
 some real signal about *which* vertex a straddling pseudonym is, and carries essentially none about
 *whether* a pseudonym straddles at all. Overall precision is dominated by the second.
 

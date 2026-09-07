@@ -1,7 +1,7 @@
 # N-S seed-and-propagate driver
 
 > **Correction (2026-09-03) — which walk produced the signatures.**
-> Every provenance signature below came from the **subset-sum link oracle**
+> Every provenance signature below came from the subset-sum link oracle
 > (`ancestry.dss_link_oracle`): `examples/ns_propagation_cache_run.py` has always pinned it, and
 > `examples/ns_propagation.run` inherited it as `ancestry_signature`'s default. That default is now
 > `ancestry.value_flow_link_oracle` — the nominal-value transition rule, which never refuses on
@@ -15,9 +15,9 @@ NSPropagator, holdout_reid, partition_from_assignment) into a single `run_on_sig
 summary: seed-label re-identification rate, whole-partition bits (entropy) before vs. after
 merge propagation, and the split channel's refined-group count.
 
-This file now has two runs. The **real cache-bounded run** (below) replaces the previously-deferred
+This file now has two runs. The real cache-bounded run (below) replaces the previously-deferred
 chain-data measurement, computed entirely offline against this checkout's `.cache/` (~7,000 cached
-tx JSON files) — no network. The original **synthetic smoke run** is kept underneath it for the
+tx JSON files) — no network. The original synthetic smoke run is kept underneath it for the
 wiring-level regression check it still serves.
 
 ## Real cache-bounded run
@@ -55,14 +55,14 @@ Total sample: **150 coins** (nodes), capped so the run finishes in under 20s.
 | total cache-miss truncations (oracle-`None` refusals) across all 150 walks | 63 |
 
 Unlike the prior contiguous-slice attempt in `results/RESULTS-ancestry.md` (§7 of `PAPER.md`: "every
-signature collapses to a **single** boundary atom... a tractable-width slice cannot contain
+signature collapses to a single boundary atom... a tractable-width slice cannot contain
 multi-hop ancestry"), this sample does **not** collapse universally — 43% of coins resolve real
 branching within the cache, because the sample was deliberately built from co-spend/address-reuse
 *linked* subgraphs rather than a random contiguous block range, so a meaningful fraction of nodes'
 immediate parents (or grandparents) happen to already be cached too. But the majority (57%) still
 hit the cache boundary within 0–1 hops, exactly the mechanism `PAPER.md` §7 describes: a bounded
 cache is a bounded graph window, and most coins' ancestry reaches outside it almost immediately.
-**Honest reading: the cache-bounded ancestry signal is real but weak and partial, not the
+**Reading: the cache-bounded ancestry signal is real but weak and partial, not the
 near-deterministic quasi-identifier `RESULTS-ancestry.md` found with live network access at small
 scale — a bounded, offline slice recovers some of the effect, not most of it.**
 
@@ -75,7 +75,7 @@ scale — a bounded, offline slice recovers some of the effect, not most of it.*
 | partition_bits_after (merge propagation; 57 coins labeled) | 4.368 |
 | n_refined_groups (split channel, over 40 cospend clusters) | 46 |
 
-- **reid_rate = 0.154**, versus **1.0** on the synthetic fixture below — the honest gap between a
+- **reid_rate = 0.154**, versus **1.0** on the synthetic fixture below — the gap between a
   clean hand-built signal and a real, cache-truncated one. `holdout_reid` hid 13 of the 46
   address-reuse-labeled coins and re-derived their label from provenance overlap with the rest;
   only 2 recovered. Consistent with the ancestry finding above: 57% of signatures are
@@ -88,7 +88,7 @@ scale — a bounded, offline slice recovers some of the effect, not most of it.*
   weaker signal.
 
 **Caveat on the split channel (`n_refined_groups`, 40 → 46 groups, i.e. 6 splits):** `should_split`
-requires provenance-disjointness **and** fingerprint divergence together, so a split is not provenance
+requires provenance-disjointness and fingerprint divergence together, so a split is not provenance
 alone. But of the 58 within-cluster co-spend pairs checked, **24 (41%) have both members' signatures
 collapsed to a single (necessarily different) boundary atom** — meaning `provenance_link` reads them
 as "disjoint" not because their true provenance is known to differ, but because the cache boundary
@@ -106,14 +106,14 @@ evidence from this run should be read as weak/inflated, not trusted at face valu
 | **union-find** (`cluster.cluster_naive`, common-input-ownership only) | 100 | 6.517 |
 | **N-S refined** (split channel's 46 groups + 110 untouched coins as singletons, full 150-coin partition) | 107 | 6.620 |
 
-Over this sample, the refined partition has **more** clusters and **higher** entropy than the raw
+Over this sample, the refined partition has more clusters and higher entropy than the raw
 union-find baseline — i.e. it fragmented slightly further, not less. This is the opposite direction
 from the engine's usual role (`cluster_refined` normally *reduces* overcount relative to
 `cluster_naive`, see `RESULTS-cluster-scale.md`/`graph_metric.overcount_report`): here the split
 channel (`NSPropagator.refine`, the provenance-aware analogue) removed a few co-spend edges
 (6 of 40 clusters split), and — per the caveat above — a meaningful fraction of those removals rest
 on a provenance-disjointness signal that the cache boundary made spuriously easy to satisfy. Read
-honestly: on this small, cache-bounded, boundary-corrupted sample, the split channel is not shown to
+it: on this small, cache-bounded, boundary-corrupted sample, the split channel is not shown to
 improve on the union-find baseline; a live-network run (real multi-hop provenance, not a truncated
 cache) is needed before drawing a directional conclusion either way.
 

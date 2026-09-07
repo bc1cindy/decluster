@@ -1,7 +1,7 @@
 # Intersection: exercising the channel on a real co-spend
 
 > **Correction (2026-09-03) — which walk produced the origin sets.**
-> Every signature below came from the **subset-sum link oracle** (`ancestry.dss_link_oracle`), which
+> Every signature below came from the subset-sum link oracle (`ancestry.dss_link_oracle`), which
 > was `ancestry_signature_and_truncation`'s default when this was measured. That default is now
 > `ancestry.value_flow_link_oracle` — the nominal-value transition rule, which never refuses on
 > transaction width. `examples/intersection_pipeline.py` had silently inherited the new default; it
@@ -112,7 +112,7 @@ candidate 5cce9a7fa309eabd   shape (19, 20)   branches 4
 Two things change. The empty intersection is now a **result**: every branch contributes observed
 origins, so "no shared ancestor at depth 3" is what the walk found, not what it failed to see.
 
-And **the engine refused**. The co-spend is a +2.0-bit prior toward one owner; three of the four
+And the engine refused. The co-spend is a +2.0-bit prior toward one owner; three of the four
 funders agree at +6.82 bits of fingerprint while the fourth disagrees at −4.06 against each of them,
 and the fused score goes negative on exactly those three pairs. The partition comes out **4/1** — the
 odd funder split out of a transaction that spent its coin alongside the others.

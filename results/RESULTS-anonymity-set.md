@@ -87,9 +87,9 @@ For each of the 2 resolved targets, three hypotheses are folded in via `decay`, 
 Both traces are monotone non-increasing end to end, and both end in an **exact 0-bit point mass**
 — (b) and (c) both hold on real data.
 
-**Honest reading of step 1 (flat in both cases):** the `provenance_overlap` hypothesis contributed
+**Reading of step 1 (flat in both cases):** the `provenance_overlap` hypothesis contributed
 *zero* narrowing for either target — not because the mechanism is broken, but because each
-reference coin's own bounded-depth signature had already collapsed to a **single** boundary atom
+reference coin's own bounded-depth signature had already collapsed to a single boundary atom
 (1 and 4 absorbers respectively — checked: `reference_n_absorbers` = 1 and 4), and that atom did
 not coincide with any of the target's own absorbers within depth 2
 (`h1_kept_graph_argmax=False` for both — the graph's own top candidate wasn't even in the
@@ -101,7 +101,7 @@ signal is real but weak and partial") — here it shows up directly in a subject
 built from that signal. Steps 2–3 do not depend on the reference at all (they narrow around
 whatever step 1 leaves as the leading candidate), so they demonstrate (b)/(c) cleanly regardless.
 
-## Honest limits
+## Limits
 
 - **Bounded slice.** All 34 pairs and both resolved walks are over this checkout's `.cache/`
   (~1,900 tx JSON files) at depth 2 — not a chain-scale claim. 94% collapse here; a live,
@@ -128,7 +128,8 @@ whatever step 1 leaves as the leading candidate), so they demonstrate (b)/(c) cl
   what a confidence-1 hypothesis structurally does to the distribution (the F-S special case), not
   a claim that either coin's origin is actually known with certainty.
 - Same-owner labels throughout are the address-reuse heuristic already validated (independent of
-  co-spend) in `RESULTS-ns-propagation.md` — "same-owner labels," not ground truth.
+  co-spend) in `RESULTS-ns-propagation.md` — same-owner labels, which are an address-reuse
+  heuristic rather than ownership.
 
 ## §04-faithful fusion: link-level (pre-solve) vs the post-solve `reweight` baseline
 
@@ -197,9 +198,9 @@ boundary atom under the graph-only walk (0 bits) — a single-parent chain with 
 sharpen: boosting the one live link column by 9x is a no-op when that column already has exactly
 one nonzero entry.
 
-### Honest reading
+### Reading
 
-- **Real numbers, not fabricated — and the honest result on this slice is null.** 0/34 targets show
+- **The result on this slice is null.** 0/34 targets show
   measurable §04 sharpening from this concrete signal, and the signal itself fires on only 1 of 34
   targets' own reachable interior txs. This is not a contradiction of the mechanism test above (which
   proves the sharpening happens whenever the oracle fires on a branching walk) — it is a coverage/
@@ -220,4 +221,5 @@ one nonzero entry.
   `coinjoin_demix` pairs, when they cleanly yield input↔output links) would very likely surface real
   sharpening that this particular slice's `_change_index`-only signal did not.
 - Same-owner labels throughout are the address-reuse heuristic already validated (independent of
-  co-spend) in `RESULTS-ns-propagation.md` — "same-owner labels," not ground truth.
+  co-spend) in `RESULTS-ns-propagation.md` — same-owner labels, which are an address-reuse
+  heuristic rather than ownership.

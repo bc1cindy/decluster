@@ -1,7 +1,7 @@
 # Clustering weight-robustness: does graph topology stabilise the partition against weight changes?
 
-**Claim tested.** The collaborator's part-3 conjecture is robustness "with enough fingerprints **and graph
-structure**." The fingerprint leg is shown in `RESULTS-weight-sensitivity.md` / `RESULTS-em-m.md`. This
+**Claim tested.** The collaborator's part-3 conjecture is robustness "with enough fingerprints and graph
+structure." The fingerprint leg is shown in `RESULTS-weight-sensitivity.md` / `RESULTS-em-m.md`. This
 tests the graph leg at the clustering level: does fusing the topology term (`cluster_refined(neigh=…)`,
 calibrated in `RESULTS-topology.md`) make the owner-*partition* stable under a fingerprint-weight (`c`)
 sweep, where a fingerprint-only clustering moves?
@@ -35,7 +35,7 @@ holds in this controlled scenario.
 
 Reproduce: `python3 examples/cluster_robustness.py`.
 
-## Honest limits
+## Limits
 
 - **Constructed scenario, not chain scale.** Like the paper's `931d6627` existence demos, this isolates
   the mechanism on a graph we build; it is not a whole-chain rate. Real-data confirmation on the

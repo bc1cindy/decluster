@@ -15,7 +15,7 @@ aggregation: 3.7 GB scanned, 23 s. `bigquery/persistence_curve.sql`.
 **Metric.** For each address with degree ≥ 3 in view A and any activity in view B, the
 share of its A-neighbours that are also active in B. This is address-level (union-find does
 not fit in SQL) and uses the looser test *present in B* rather than *present and linked in
-both*, so the absolute level is not comparable with the 14 % above. The **trend** across
+both*, so the absolute level is not comparable with the 14 % above. The trend across
 widths is the quantity of interest and is measured consistently.
 
 ## Result
@@ -31,7 +31,7 @@ widths is the quantity of interest and is measured consistently.
 ## Reading
 
 **Widening helps, but it is not a phase change.** Per-vertex persistence rises from 31 % to
-38 % and **saturates by day three**. Past that, a wider window adds relationships without
+38 % and saturates by day three. Past that, a wider window adds relationships without
 adding persistent ones. Whatever makes a counterparty a one-off is not fixed by watching
 longer.
 

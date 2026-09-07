@@ -153,10 +153,10 @@ Not every cluster tells the same story. For `input_order`/`io_shape`/`output_ord
 cost a small positive amount (remove-group > keep-rep, same direction, smaller margin). For
 `change_spk`/`output_encoding`, *both* deltas are negative: this correlated pair is net noise on
 this population, and dropping it entirely beats dropping all-but-one. A blanket rule ("always keep
-one representative per cluster") would be wrong here; the honest summary is that correlated
+one representative per cluster") would be wrong here; the summary that survives is that correlated
 clusters are redundant with each other, not that every correlated field is individually valuable.
 
-## Honest limits
+## Limits
 
 - **Does not change the fs-temporal headline.** `RESULTS-fs-temporal.md`'s +0.0482 AUC delta over
   the rarity baseline is measured with all 22 fields present, as published; nothing here

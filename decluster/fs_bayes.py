@@ -2,7 +2,7 @@
 Fellegi-Sunter form with m_j given a Beta prior and u_j fixed at the measured collision. F-S is the
 plug-in (point-m) special case. Offline, deterministic. Consumes the fs_em.agree_matrix (A, mask, u)
 shape; see results/RESULTS-bayes-vs-fs.md. NOTE: this is the axis-level F-S, not the value-specific
-combiner.rarity_score (whose deprecated alias `combiner.fs_score` names a rarity baseline, not a
+combiner.rarity_score (a rarity baseline, not a
 fitted Fellegi-Sunter model; the fitted model is `decluster/fellegi_sunter.py`)."""
 import math
 import random

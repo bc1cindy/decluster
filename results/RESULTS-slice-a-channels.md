@@ -79,7 +79,7 @@ attributes, not the entity-attribute channel the heading promises. Pinned as a b
 ## 2. The pseudonym graph is transactional, not social
 
 The cross-view attack (cit 24) re-links a user whose activity a partial clustering left as separate
-pseudonyms across two time views. The honest form of the test splits each cluster along the view
+pseudonyms across two time views. The form of the test that does not hand over the answer splits each cluster along the view
 boundary (`split_clusters_by_view`): the cluster becomes one pseudonym in view A and another in view
 B, and the matcher must rejoin the two from graph structure alone. Each view is contracted under its
 own lookup — tagging an address by where it is first seen instead leaves an address used in *both*

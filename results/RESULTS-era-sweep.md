@@ -4,7 +4,7 @@
 network — clustering far below chance, disassortative — which explains the social-graph
 attack's failure. But that could be a property of the 2026 chain (segwit, taproot, privacy
 tooling, little address reuse) rather than of Bitcoin graphs generally. The framework's claim
-is about "today's transaction graph"; the honest test is whether the precondition ever held.
+is about "today's transaction graph"; the test that decides it is whether the precondition ever held.
 2016 is the sharp case: heavy address reuse, and the era where `RESULTS-graph-deanon.md`
 measured structural same-owner prediction at AUC 0.95.
 

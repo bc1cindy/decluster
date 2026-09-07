@@ -30,7 +30,7 @@ returns `None` = the truncation boundary, not a fabricated link). Numbers below 
    `7787e8b6` (2 inputs, 15 absorbers): **graph 3.096 → fused 2.268 bits (−0.83)**. This confirms the
    §04 mechanism (Task-2 fixture, 1.0→0.304) on real branching walks, not just a synthetic fixture.
 
-3. **Coverage is thin (3/15) — the honest limit.** The self-contained subjective signal
+3. **Coverage is thin (3/15), and that is the limit.** The self-contained subjective signal
    (address-reuse self-transfer) fires on few non-coinjoin txs. The *strong* per-tx same-owner signal
    is coinjoin **demix** — which lives on exactly the coinjoin txs the oracle truncates. So full §04
    coverage is gated by the oracle, not by the signal design.
@@ -55,7 +55,7 @@ walk concentrates the origin distribution markedly**, more than the subjective f
 sample. It was implemented opt-in (default off) precisely because it changes the numbers this much;
 this run is the first real-data measurement of that effect.
 
-## Honest limits
+## Limits
 
 - **Non-coinjoin subsample bias.** The resolved set excludes coinjoin-heavy coins — their ancestry
   truncates because the exact subset-sum oracle can't evaluate dense mixes. A live probe found ~7/8
@@ -65,7 +65,7 @@ this run is the first real-data measurement of that effect.
   where the subjective demix signal is strongest) is blocked until the subset-sum oracle handles dense
   coinjoins — the "Radics special case".
 - **Conservative-lower-bound discipline.** Every entropy here is a lower bound / weight-of-evidence,
-  not a privacy score. Same-owner labels (not "ground truth") drive the address-reuse signal.
+  not a privacy score. Same-owner labels drive the address-reuse signal.
 - **Single live run.** Network variability means the exact target set and numbers are not bit-for-bit
   reproducible; the qualitative findings (deep walks resolve, §04 sharpens when covered, value_weighted
   sharpens strongly) are robust.
@@ -84,12 +84,12 @@ case) and returns a **uniform link matrix** for them instead of timing out. Meas
   collapsed to a point mass before the fix); `372fd5cb…` → 8 absorbers / 3.0 bits. This is the win:
   the coinjoin-ancestry truncation that dominated the earlier collapse is gone.
 - **What still collapses is different and correct:** the remaining collapsed targets are
-  **consolidations** (many inputs → few / distinct outputs, e.g. 203-in / few-out), not coinjoins. The
+  consolidations (many inputs → few / distinct outputs, e.g. 203-in / few-out), not coinjoins. The
   recognizer correctly does **not** fire on them (no repeated denominations); their subset-sum is
-  genuinely hard, so truncation there is the honest answer, not a bug.
+  genuinely hard, so truncation there is the answer, not a bug.
 
 **Caveat narrowed:** the "ceiling is the oracle" limit above no longer applies to coinjoins — those
-now resolve. It narrows to **consolidation-style** (many-in / few-distinct-out) transactions, whose
+now resolve. It narrows to consolidation-style (many-in / few-distinct-out) transactions, whose
 exact subset-sum remains intractable and is out of scope for the Radix fast path. The dense matrix is
-still the crude **uniform** approximation (max ambiguity); the exact radix-structured per-(i,o) matrix
+still the crude uniform approximation (max ambiguity); the exact radix-structured per-(i,o) matrix
 is a deferred refinement.

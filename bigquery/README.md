@@ -26,7 +26,7 @@ re-implementing the fingerprint logic in SQL.
 5. Send the output back — the `library.py` bits, `RESULTS-wp1a.md`, and `PAPER.md` §5 get
    updated to the large-scale numbers.
 
-## What scales here vs what doesn't (honest)
+## What scales here vs what doesn't
 
 - **Scales (BigQuery, ~500k+):** nSequence, nLockTime, version, fee-rate, input/output
   order, change script type, input script type + presence, output encoding, OP_RETURN,
@@ -80,7 +80,7 @@ just produces wrong numbers.
 
 Verified while building it: values are satoshis; 17 of 22 axes fire correctly on the
 export. Of the five that do not, `low_r`, `sighash` and `pubkey_compression` abstain
-honestly as `na`, but **`multisig` and `nested_segwit` report `none`**, a false negative
+as `na`, but **`multisig` and `nested_segwit` report `none`**, a false negative
 rather than a missing value. Exclude those two rather than trusting them.
 
 ### Scale of the result

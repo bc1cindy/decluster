@@ -8,11 +8,11 @@ cluster carries — an order-of-magnitude figure inherited from Narayanan–Shma
 ## Method
 
 On a real connected slice, each cluster (co-spend-linked addresses) carries, as its structural
-quasi-identifier, its set of distinct **external payment-graph counterparties** (co-spend
+quasi-identifier, its set of distinct external payment-graph counterparties (co-spend
 edges excluded — non-circular; and the cluster's own members excluded — an intra-cluster edge
 is not a quasi-identifier to an outsider). Each counterparty contributes
 `−log2(share of nodes touching it)` bits (`counterparty_bits`): a hub everyone touches ≈ 0
-bits, a rare private address many. The cluster's **structural information content** is their
+bits, a rare private address many. The cluster's structural information content is their
 sum — the N-S accumulation ("dozens of sparse attributes, each a few bits") on real Bitcoin
 (`examples/cluster_bits.py`).
 
@@ -36,14 +36,14 @@ sum — the N-S accumulation ("dozens of sparse attributes, each a few bits") on
   every cluster supplies an order of magnitude more.
 - **The ">100" is reached, even truncated.** 11.5% of clusters already exceed 100 bits on a
   *150k-tx subset*. A subset sees only a fraction of each cluster's true counterparties, so this
-  **undercounts** the whole-chain figure — the real per-cluster bits are higher, and the
+  undercounts the whole-chain figure — the real per-cluster bits are higher, and the
   order-of-magnitude ">100" is the whole-chain expectation (§9).
 - **Not an independence artifact.** The median top-5-counterparty sum equals the median total
   (32.7), i.e. the median cluster has ≤ 5 counterparties: its bits come from a handful of *rare*
   counterparties, not from summing hundreds of weak-but-correlated ones. So the naïve-independence
   caveat (Σ overstates unique-ID bits when counterparties correlate) does not inflate the median.
 
-## Honest limits
+## Limits
 
 - **Structural content, not proof of unique ID.** `Σ −log2(share)` is the identifying
   information *content*; correlated counterparties mean the effective unique-identification bits

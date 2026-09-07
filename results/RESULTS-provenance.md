@@ -46,9 +46,9 @@ first is not one of them.
 ## Complementary to conservation, not redundant
 
 The two channels peak at opposite ends of the same chain. Conservation forces outputs where a
-participant is large by **value**: it bites on rounds 1–3, where they hold 69%, 75% and 52% of the
+participant is large by value: it bites on rounds 1–3, where they hold 69%, 75% and 52% of the
 round's input, and forces nothing at 2.2%, 0.2% and 0.0% (`RESULTS-conservation.md`). Provenance
-overlap ranks by how many **coins** flow forward, and peaks at hops 3→4 and 4→5 — exactly where the
+overlap ranks by how many coins flow forward, and peaks at hops 3→4 and 4→5 — exactly where the
 participant's value share has collapsed but their coin count has not.
 
 Neither is a substitute for the other, and the chain is only covered because they fail in different

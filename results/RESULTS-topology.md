@@ -37,7 +37,7 @@ Calibrating the *disjoint* side **per pair** is the sobering part:
 
 `−1.65` does **not** overcome a same-wallet fingerprint match (`+2.78`): a *single* disjoint
 pair is not refused. This is exactly the collaborator's *"if **enough** such distinguishing
-relationships exist"* — the strength has to come from **accumulation**, not one pair.
+relationships exist"* — the strength has to come from accumulation, not one pair.
 
 ## Cluster-level accumulation — this is what refuses (proven)
 
@@ -52,11 +52,11 @@ Same-owner clusters *never* have disjoint aggregate neighbourhoods (they reuse c
 different owners almost always do. So an aggregate-disjoint is **~−8 calibrated bits** — strong
 enough to refuse.
 
-**End-to-end proof** (`tests/test_topology.py::test_cluster_topology_refuses_same_software_payjoin`):
+End-to-end proof (`tests/test_topology.py::test_cluster_topology_refuses_same_software_payjoin`):
 Alice (`A1,A2`) and Bob (`B1,B2`) use the same wallet; each consolidates their own coins, then
 a payjoin co-spends `A1,B1`. Merges are evaluated confident-first (Alice and Bob cluster
 internally via their shared counterparties), so the payjoin edge is judged against the two
-formed clusters: `fp +2.78 + aggregate-disjoint −8 = −5.2 < −2` → **refused**. Without topology
+formed clusters: `fp +2.78 + aggregate-disjoint −8 = −5.2 < −2` → refused. Without topology
 the co-spend collapses them. Alice's cluster is separated from Bob's — the transaction is
 interpreted correctly as a payjoin.
 
@@ -73,7 +73,7 @@ common hub is ~0 bits and a private address is many. `cluster_topology_weight` s
 bits of the shared counterparties and compares to a threshold `topo_tau` (bits): an overlap
 **below `topo_tau`** — disjoint, or sharing only non-distinctive hubs — is treated as disjoint
 (`−8.1`) and the merge is refused; **≥ `topo_tau`** corroborates same owner. Because rarity is
-computed over the *whole graph*, this is **field-independent**: a universal hub (0 bits) is always
+computed over the *whole graph*, this is field-independent: a universal hub (0 bits) is always
 below threshold and refused, with no dependence on which clusters sit in any sample. (An earlier
 design judged distinctiveness by a windowed N-S *eccentricity* `(max−max2)/σ` over a small
 candidate set; that was field-dependent — a genuinely common hub could be missed if the window
@@ -82,7 +82,7 @@ quasi-identifier weighting `wt = 1/log|supp|`.)
 
 **Discriminative calibration on a real slice** (`sample.ndjson`, `calibrate_topo_tau`). Unlike a
 same-owner-only pass-rate, this measures the actual discrimination: rarity-weighted overlap bits
-for **same-owner** cluster pairs (split-half) vs **different-owner** pairs.
+for same-owner cluster pairs (split-half) vs different-owner pairs.
 
 | overlap bits | value |
 |---|---:|
@@ -98,8 +98,8 @@ same-owner and refuses 100% of different-owner on this slice; the default is **`
 End-to-end proof in `test_engine_refuses_hub_only_partial_overlap` (hub-only Alice/Bob
 overlap refused; their own distinctive coins kept).
 
-**Honest limit.** This is the inherent counterparty-quasi-identifier limit, not removed by the
-threshold: two *different* owners who genuinely both transact with the same **rare** counterparty
+**The limit.** This is the inherent counterparty-quasi-identifier limit, not removed by the
+threshold: two *different* owners who genuinely both transact with the same rare counterparty
 score above `topo_tau` and would merge — a shared rare quasi-identifier is treated as same-owner
 evidence by the FS model itself. The threshold only removes the *hub* false positive; it cannot
 tell a shared rare merchant from shared ownership. The AUC ≈1.00 (0.9997) is on one connected slice

@@ -57,7 +57,7 @@ identical composition against a real slice:
   txids drawn from local tx history — reusing that module's seed/slice approach, not a new one); tx
   dicts and `cluster_refined`'s fetch dependency both bind to the real `decluster.fetch.fetch_tx`
   (mempool.space, on-disk cached to `.cache/`). The seed targets here turn out to be
-  **payment+partial-mix** transactions (e.g. 9-in / 17-out with one denomination repeated ~9× beside
+  payment+partial-mix transactions (e.g. 9-in / 17-out with one denomination repeated ~9× beside
   a large payment output), not fully-dense equal-value coinjoins.
 - **Bounded oracle.** The link oracle is `examples.anonymity_set.hard_bounded_link_oracle` — the dss
   subset-sum call run in a throwaway subprocess and killed on a wall-clock deadline (`wall_ms`), so a
@@ -66,8 +66,8 @@ identical composition against a real slice:
   below and were both verified during this run:
   - **The exact subset-sum path needs adequate wall time.** A payment+partial-mix tx of the shape
     above resolves to a real (non-uniform) link matrix in **~2.3 s** of dss compute; the historical
-    `wall_ms=1500` default killed it at ~1.8 s → `None` → the target collapsed to a **point mass**
-    (`n_absorbers=1`). Raising `wall_ms` to 6000 lets these resolve. (The dss **radix** fast path is a
+    `wall_ms=1500` default killed it at ~1.8 s → `None` → the target collapsed to a point mass
+    (`n_absorbers=1`). Raising `wall_ms` to 6000 lets these resolve. (The dss radix fast path is a
     separate, O(n) short-circuit that returns a *uniform* matrix in ~0 s — but only for
     *fully*-dense coinjoins with ≥2 denominations each repeated ≥3× over ≥half the outputs; the seed
     targets here do not meet that structural test, so they take the exact path, not radix.)
@@ -79,8 +79,8 @@ identical composition against a real slice:
   `max_targets` caps how many of that slice's txs get a full `report()` walk (the wall-clock cost
   driver); `depth` caps the ancestry walk (with a ~9× coinjoin fan-out, `depth=2` keeps a full sweep
   to minutes under the bounded oracle).
-- **Collects**, beyond `run_offline`'s keys: `n_targets_attempted` / `n_targets_resolved` (the
-  strict resolution count — targets whose graph-only walk finished with **zero** oracle-refusal
+- Collects, beyond `run_offline`'s keys: `n_targets_attempted` / `n_targets_resolved` (the
+  strict resolution count — targets whose graph-only walk finished with zero oracle-refusal
   truncations), and `m3_coassignment_agreement` (fraction of M3 super-node pairs where the split-merge
   sampler's posterior P(same partition) `> 0.5` agrees with whether `cluster_refined` placed their
   representative addresses in the same cluster — a cross-check between the exact-Bayesian partition
@@ -120,18 +120,18 @@ Per-target (graph-only == fused for every one):
 | `372fd5cb…` | 24 | 3.000 | 5 |
 | `50447deb…` | 39 | 3.585 | 8 |
 
-Reading it honestly:
+Reading it:
 
 - **Coinjoin ancestry resolves on live data.** Given adequate oracle wall time, all six
   payment+partial-mix targets resolve to real anonymity sets of 24–45 ancestral origins (2.6–3.6
   bits of min-entropy) — where an under-budgeted oracle collapses each to a single point
   (`n_absorbers=1`, 0 bits). This is the §04 anonymity set, live. `n_targets_resolved=0` is the
-  **strict** metric (zero truncations anywhere in the walk); every target still hits 1–8 deep
-  coinjoin ancestors the bounded oracle refuses, so each set is a **lower bound** — more oracle time
+  strict metric (zero truncations anywhere in the walk); every target still hits 1–8 deep
+  coinjoin ancestors the bounded oracle refuses, so each set is a lower bound — more oracle time
   would only add origins, never remove them.
-- **Fusion did not sharpen here, and that is honest.** `fused == graph` for all six: no subjective
+- **Fusion did not sharpen here.** `fused == graph` for all six: no subjective
   same-owner link (address-reuse self-transfer or `cluster_pairs`) fell inside these particular
-  coinjoin-ancestry walks, so the §04 fusion had nothing to narrow. The fusion **mechanism** is the
+  coinjoin-ancestry walks, so the §04 fusion had nothing to narrow. The fusion mechanism is the
   thing under test, and it is demonstrated separately by the Tier-1 controlled fixture (a
   concentrating same-owner oracle lowers provenance min-entropy 1.0 → 0.304 bits) and asserted by the
   conservative-clamp invariant; the live slice simply lacks a subjective-covered target. Coverage of
@@ -148,7 +148,7 @@ Reading it honestly:
   input prevout addresses; the offline e2e test now asserts the cluster source actually fires, as a
   regression guard.)
 
-## Honest limits
+## Limits
 
 - **Bounded slice.** Both tiers cap the slice size (`cap_total`, `M3_MAX_SUPERNODES=5`,
   `max_targets`) — this validates the pipeline's plumbing and mechanism on a real but small slice,

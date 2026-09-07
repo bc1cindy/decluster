@@ -10,7 +10,7 @@
 **Why this reconciles the whole session.** The social-graph matching attack did not cascade
 (`RESULTS-view-match-2026.md`) and the pseudonym graph turned out not to be a social network
 (`RESULTS-graph-shape.md`). But the framework's claim is specific: "cluster features, both
-statistical and **more importantly structural**, are very likely to be unique." Structural
+statistical and more importantly structural, are very likely to be unique." Structural
 here means ancestry / deep features. This measures whether *that* space — not the graph
 topology, not the statistical fingerprints — is sparse in the sparse-dataset attack's own
 sense, which is the precondition the authors define as decisive.
@@ -44,12 +44,12 @@ when neighbours from the original comparison population are removed.
 **This reconciles the social-graph negative rather than contradicting it.** There are two
 distinct N-S attacks, and this data separates them cleanly:
 
-- the **social-graph** attack (cit. 24) matches two graphs by neighbourhood topology. Its
+- the social-graph attack (cit. 24) matches two graphs by neighbourhood topology. Its
   strong form needs the pseudonym graph to be a social network, and it is not
   (`RESULTS-graph-shape.md`), so the cascade does not ignite across 2013–2026; its modest
   form — a few high-confidence links that feed clustering — does fire, which is what the
   framework claims for it.
-- the **sparse-dataset** attack (cit. 19–20) matches records by sparse feature-vector
+- the sparse-dataset attack (cit. 19–20) matches records by sparse feature-vector
   overlap. Its precondition is (epsilon, delta)-sparsity of the feature space, and the
   ancestry space *has* it. This attack is the one `propagate.py` already runs
   (re-identification 0.154 on a bounded cache sample).

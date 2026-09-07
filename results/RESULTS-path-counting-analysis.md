@@ -23,7 +23,7 @@ not integrated.**
 
 §07 is a sparse, mostly-TODO sketch. It defines the anonymity set's constituents as *paths*: for a coin
 there are *"two apparent paths … one of them is noise"* — Alice's genuine transaction history and
-**counterfactual paths** through unrelated coins. The object to build is *"a sufficiently robust
+counterfactual paths through unrelated coins. The object to build is *"a sufficiently robust
 anonymity set whose constituent objects are these paths."* It marks the formalization TODO
 (*"the intersections of the walks create symmetries…"*). It does **not** itself specify subset-sum
 counting — that connection is inferred below, and it is the same combinatorial enumeration §03
@@ -53,7 +53,7 @@ tractable alternative to explicit enumeration.
   The multiplicity of assignments at each transaction is precisely `W(E)`; the count of counterfactual
   paths is the graph-level combination of these per-tx multiplicities. dss delivers the **per-tx
   `W(E)`** exactly (`w_brute`/`w_sparse`), structurally (`radix_mappings`), and — crucially for
-  tractability — **approximately in polynomial time** (`w_sasamoto`). This is the right and necessary
+  tractability — approximately in polynomial time (`w_sasamoto`). This is the right and necessary
   counting engine, and its approximation is exactly what could make a deep count tractable where the
   §04 walk explodes (see `RESULTS-analyze.md` (b)).
 - **What dss does NOT provide:** the graph-level aggregation — walking the ancestry and combining the
@@ -64,10 +64,10 @@ tractable alternative to explicit enumeration.
 
 - **Exposed in dss (Python):** YES — `w_brute`, `w_sparse`, `w_sasamoto`, `radix_mappings`,
   `per_coin_density` are all callable and return the shapes above.
-- **Integrated into decluster:** only the **density** path. `decluster/cost.py::dss_oracle` wraps
+- **Integrated into decluster:** only the density path. `decluster/cost.py::dss_oracle` wraps
   `dss.per_coin_density` and feeds `amount_cuts` (refuse-only amount-channel cut candidates, using each
-  coin's `log_w` as a knee-truncated lower bound). The four `W(E)` **count**-paths
-  (`w_brute`/`w_sparse`/`w_sasamoto`/`radix_mappings`) are **called nowhere** in decluster or examples
+  coin's `log_w` as a knee-truncated lower bound). The four `W(E)` count-paths
+  (`w_brute`/`w_sparse`/`w_sasamoto`/`radix_mappings`) are called nowhere in decluster or examples
   (`grep` clean). No decluster object aggregates per-tx `W(E)` across the graph.
 - **The code already names this gap, twice:**
   - `cost.py::amount_cuts`: *"A rigorous cut needs an exact count and is deferred."* (it uses the

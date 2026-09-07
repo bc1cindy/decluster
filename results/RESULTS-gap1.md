@@ -38,15 +38,15 @@ lower than we think": here it is **1 bit**, and roundness resolves it.
 ## Two independent signals agree
 | signal | verdict on sender↔Cake |
 |---|---|
-| **amount** (this result) | REFUSE, payment 1000, 1 bit ambiguity |
-| **fingerprint** (WP4, `results/RESULTS-wp4.md`) | REFUSE, −3.1 bits (`max_ffffffff` vs `seq_0x01`) |
+| amount (this result) | REFUSE, payment 1000, 1 bit ambiguity |
+| fingerprint (WP4, `results/RESULTS-wp4.md`) | REFUSE, −3.1 bits (`max_ffffffff` vs `seq_0x01`) |
 
 The amount is the primary structure (the cake); the fingerprint confirms (the cherry).
 On this merged transaction they agree on the same re-partition.
 
-## Honest caveats
+## Caveats
 - **Roundness is a prior, not proof.** A market-price payment can be non-round; the score
-  is a likelihood weight, and `ambiguity_bits` reports honestly when amount does not
+  is a likelihood weight, and `ambiguity_bits` reports when amount does not
   disambiguate (here it is 1 bit, not 0).
 - **2-in/2-out only.** General n-party subtransaction matching is deferred; other shapes
   return a scope guard (no silent wrong answer).

@@ -37,7 +37,7 @@ construction**; we report coverage and calibrate the axis bits, and claim nothin
 | na_loose | 0.28% | **0 (abstain)** |
 | backdated | 0.14% | 9.48 |
 
-`na_loose` is an **abstention**, so its stored weight in `library.py` is **0**, not the raw
+`na_loose` is an abstention, so its stored weight in `library.py` is **0**, not the raw
 −log2(share)=8.48 the calibrator prints from rarity. Rarity is not owner-linkage: "both txs
 waited during congestion" is a market-wide condition, so scoring co-abstention as 8.48 bits
 would forge a false same-owner link if the axis were fed to the combiner.
@@ -66,7 +66,7 @@ it. This is shown as a unit case; in the 712-tx live sample the de-confounding i
 exercised (2 `na_loose`, 1 `backdated`), so the effect is demonstrated, not yet measured at
 population scale.
 
-## Honest limits
+## Limits
 - No known broadcast time; only the bound is guaranteed.
 - Loose for low-feerate txs during congestion (they wait many blocks) → `na_loose`.
 - The cluster temporal fingerprint built on this estimate (activity schedule / timezone) was

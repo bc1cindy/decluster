@@ -13,7 +13,7 @@
       "name": "catalog/runs/slice-channels-v1.json",
       "role": "run_manifest",
       "bytes": 3163,
-      "sha256": "4d900c0e4a873c3d9224faf9174aa7fb086afae7745b3ba4e4727c940cff5777",
+      "sha256": "cebd169357deb4e959b772a56515605b8db08761ab7f2efdae23db95013dfec8",
       "locations": {
         "canonical": null,
         "mirrors": []
@@ -25,7 +25,7 @@
       "bytes": 1837504,
       "sha256": "66104889f8b79f2938edb6666f16dfa19a74c68cd8016832b4f2a5e03b11865f",
       "locations": {
-        "canonical": "https://github.com/bc1cindy/decluster/raw/43d3faaab07f6703361c300fb6d01a916bb063f0/tests/fixtures/slice_a_channels_2016.ndjson.gz",
+        "canonical": null,
         "mirrors": []
       }
     },
@@ -50,10 +50,10 @@
       }
     },
     {
-      "name": "sources/decluster-6541e5c-runtime.tar",
+      "name": "sources/decluster-aaf8b39-runtime.tar",
       "role": "source",
       "bytes": 2283520,
-      "sha256": "7b01965f5e3d0003df471886325cb0a9e19b90762879897bfb1250e5abc156cc",
+      "sha256": "d7d678652c0cdeab6bb462489a37c3416d54ae5a2e38a775878fb851c07c1287",
       "locations": {
         "canonical": null,
         "mirrors": []
@@ -73,7 +73,7 @@
       "name": "reproduction/slice-channels/environment.json",
       "role": "environment",
       "bytes": 364,
-      "sha256": "ec1c358f23d37d5217bb79595ce20bf856c5bf52abb93c1311cd1cbbcb82a71a",
+      "sha256": "d48fd82a3a08d37513c9973d5695b68e73010a9b12ff71483571a91b74f3c58e",
       "locations": {
         "canonical": null,
         "mirrors": []
