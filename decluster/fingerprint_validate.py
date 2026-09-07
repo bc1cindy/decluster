@@ -112,6 +112,29 @@ def construction_only_scorer(consistency=0.95, floor_n=1000):
     return LibraryScorer(consistency, floor_n, drop=ADDRESS_DETERMINED_AXES)
 
 
+def axis_families(txs, consistency=0.95, cap=4000, seed=0):
+    """The three scorers over one pair sample: catalogued, construction-only, decorrelated.
+
+    Same population, same seed, same consistency — only the axis set moves. That is what makes the
+    magnitudes comparable: a drop between families is redundancy or label leakage in the wide
+    model, not a different measurement.
+    """
+    scorers = (
+        ("catalogued", LibraryScorer(consistency, drop=frozenset()), REDUNDANT_AXES | ADDRESS_DETERMINED_AXES),
+        ("construction_only", construction_only_scorer(consistency), ADDRESS_DETERMINED_AXES),
+        ("decorrelated", decorrelated_scorer(consistency), REDUNDANT_AXES),
+    )
+    rows = []
+    for name, scorer, dropped in scorers:
+        rows.append({
+            "family": name,
+            "axes": len(scorer.axes),
+            "dropped": sorted(dropped) if name != "catalogued" else [],
+            **evaluate(txs, scorer, cap=cap, seed=seed),
+        })
+    return rows
+
+
 def load_blkcache(path=".blkcache"):
     """Witness-bearing txs from the local mempool block-tx cache. Dedup by txid; skip non-tx entries.
     Offline (reads local JSON files)."""

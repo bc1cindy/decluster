@@ -1,0 +1,89 @@
+{
+  "schema_version": 1,
+  "id": "scorer-families-v1",
+  "capabilities": [
+    "verify_outputs",
+    "reproduce_runs"
+  ],
+  "runs": [
+    "scorer-families-v1"
+  ],
+  "blobs": [
+    {
+      "name": "catalog/runs/scorer-families-v1.json",
+      "role": "run_manifest",
+      "bytes": 0,
+      "sha256": "0000000000000000000000000000000000000000000000000000000000000000",
+      "locations": {
+        "canonical": null,
+        "mirrors": []
+      }
+    },
+    {
+      "name": "results/artifacts/scorer-families-v1.json",
+      "role": "result",
+      "bytes": 0,
+      "sha256": "0000000000000000000000000000000000000000000000000000000000000000",
+      "locations": {
+        "canonical": null,
+        "mirrors": []
+      }
+    },
+    {
+      "name": "results/generated/scorer-families-v1.md",
+      "role": "result",
+      "bytes": 0,
+      "sha256": "0000000000000000000000000000000000000000000000000000000000000000",
+      "locations": {
+        "canonical": null,
+        "mirrors": []
+      }
+    },
+    {
+      "name": "data/fs-blkcache-2026-09-04.tar.gz",
+      "role": "dataset",
+      "bytes": 0,
+      "sha256": "0000000000000000000000000000000000000000000000000000000000000000",
+      "locations": {
+        "canonical": null,
+        "mirrors": []
+      }
+    },
+    {
+      "name": "sources/decluster-446ddbb-runtime.tar",
+      "role": "source",
+      "bytes": 0,
+      "sha256": "0000000000000000000000000000000000000000000000000000000000000000",
+      "locations": {
+        "canonical": null,
+        "mirrors": []
+      }
+    },
+    {
+      "name": "reproduction/scorer-families/requirements.lock",
+      "role": "lockfile",
+      "bytes": 0,
+      "sha256": "0000000000000000000000000000000000000000000000000000000000000000",
+      "locations": {
+        "canonical": null,
+        "mirrors": []
+      }
+    },
+    {
+      "name": "reproduction/scorer-families/environment.json",
+      "role": "environment",
+      "bytes": 0,
+      "sha256": "0000000000000000000000000000000000000000000000000000000000000000",
+      "locations": {
+        "canonical": null,
+        "mirrors": []
+      }
+    }
+  ],
+  "limitations": [
+    "The bundled environment currently targets CPython 3.13 on macOS arm64.",
+    "The public on-chain snapshot is redistributed with provider authorization.",
+    "The historical 165,832-transaction cache is unavailable and is not reproduced.",
+    "Public bootstrap remains incomplete until every blob has a canonical HTTPS location and an independent mirror."
+  ]
+}
