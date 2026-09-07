@@ -1,0 +1,88 @@
+{
+  "schema_version": 1,
+  "id": "graph-deanon-controls-v1",
+  "capabilities": [
+    "verify_outputs",
+    "reproduce_runs"
+  ],
+  "runs": [
+    "graph-deanon-controls-v1"
+  ],
+  "blobs": [
+    {
+      "name": "catalog/runs/graph-deanon-controls-v1.json",
+      "role": "run_manifest",
+      "bytes": 3021,
+      "sha256": "f47465c42b9839f07f858814ccbe677818bac2634374faea21aa876d19cdd87f",
+      "locations": {
+        "canonical": null,
+        "mirrors": []
+      }
+    },
+    {
+      "name": "tests/fixtures/graph_deanon_2016.ndjson.gz",
+      "role": "dataset",
+      "bytes": 1405865,
+      "sha256": "68690ce8689378321e4187b111c7b4300f88e5bb405a25dcb67125cd0c739c5b",
+      "locations": {
+        "canonical": null,
+        "mirrors": []
+      }
+    },
+    {
+      "name": "results/artifacts/graph-deanon-controls-v1.json",
+      "role": "result",
+      "bytes": 1308,
+      "sha256": "0ed138db94e84b2ec2b4d07c7831a20d4fb3be59ae6b5d52685983df92a6cc02",
+      "locations": {
+        "canonical": null,
+        "mirrors": []
+      }
+    },
+    {
+      "name": "results/generated/graph-deanon-controls-v1.md",
+      "role": "result",
+      "bytes": 1200,
+      "sha256": "fea0440206848a1f12d87c01960840eaf5dd933559a4ddf30bc70ca8505e5774",
+      "locations": {
+        "canonical": null,
+        "mirrors": []
+      }
+    },
+    {
+      "name": "sources/decluster-4de0107-runtime.tar",
+      "role": "source",
+      "bytes": 2170880,
+      "sha256": "1f05c5d37a16840f7385a82610d70a916b3f7704075c5b71764a6389c3ba3f71",
+      "locations": {
+        "canonical": null,
+        "mirrors": []
+      }
+    },
+    {
+      "name": "reproduction/graph-deanon-controls/requirements.lock",
+      "role": "lockfile",
+      "bytes": 30,
+      "sha256": "e0d6a8cada5d383c0aca2bd2a37f28c15721392469c94084128d369c29c5544d",
+      "locations": {
+        "canonical": null,
+        "mirrors": []
+      }
+    },
+    {
+      "name": "reproduction/graph-deanon-controls/environment.json",
+      "role": "environment",
+      "bytes": 378,
+      "sha256": "47cb91e43c727afee3853a89732d00744144d1f9de43c502baffe9160a18d8f5",
+      "locations": {
+        "canonical": null,
+        "mirrors": []
+      }
+    }
+  ],
+  "limitations": [
+    "The bundled environment currently targets CPython 3.13 on macOS arm64.",
+    "The dataset publisher authorized redistribution of the public fixture on 2026-09-04; upstream licensing remains undetermined.",
+    "The bundle proves the structural AUC and its degree-matched control on one 2016 fixture, not a chain-wide re-identification rate."
+  ]
+}
