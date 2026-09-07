@@ -13,7 +13,7 @@
       "name": "catalog/runs/amount-per-coin-v1.json",
       "role": "run_manifest",
       "bytes": 3472,
-      "sha256": "027627ac11e67e765e63a5d50e445cae8b144a9d773381a7de68d3d88d47ad9d",
+      "sha256": "beed4656cfb6879baba6934f1f51498afdd9a0d8a3bbdc2303f38dc67757877e",
       "locations": {
         "canonical": null,
         "mirrors": []
@@ -50,10 +50,10 @@
       }
     },
     {
-      "name": "sources/decluster-aaf8b39-runtime.tar",
+      "name": "sources/decluster-ebe9e7e-runtime.tar",
       "role": "source",
-      "bytes": 2283520,
-      "sha256": "d7d678652c0cdeab6bb462489a37c3416d54ae5a2e38a775878fb851c07c1287",
+      "bytes": 2293760,
+      "sha256": "9e04673976b5e6a0bd839a4d9a77b3a35257aba1c78eec00b4def7c19f19d554",
       "locations": {
         "canonical": null,
         "mirrors": []
@@ -62,8 +62,8 @@
     {
       "name": "dependencies/dss-0.1.0-cp313-cp313-macosx_11_0_arm64.whl",
       "role": "dependency",
-      "bytes": 337056,
-      "sha256": "6890f73dd03ddc37382a0039fdce01f585c910277daf451bb29160c5bc47f2de",
+      "bytes": 327985,
+      "sha256": "371e5cc5e6b3fd5de038e2fc75f7454a5cc59ce0a42c8189685921b9dc7acd43",
       "locations": {
         "canonical": null,
         "mirrors": []
@@ -73,7 +73,7 @@
       "name": "reproduction/amount-per-coin/requirements.lock",
       "role": "lockfile",
       "bytes": 90,
-      "sha256": "2a9fcd78f7c608fc9f27251c2d8d0190404961b2340514c8a3acae599342932a",
+      "sha256": "5ee1d70afd72fdb4ba3f01843e85e7ecd9a6d3e2a52abeb14c346a2143e3c186",
       "locations": {
         "canonical": null,
         "mirrors": []
@@ -83,7 +83,7 @@
       "name": "reproduction/amount-per-coin/environment.json",
       "role": "environment",
       "bytes": 350,
-      "sha256": "c2ed11a2429dbc8233c29d69d944e4f8b9724b88960f2dba0750b34c11de8473",
+      "sha256": "7f2157646dd9460d6e7cfbd37ab538789317b8ef5bfb2e111f4d8ad3e4ccfe55",
       "locations": {
         "canonical": null,
         "mirrors": []
