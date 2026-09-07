@@ -44,11 +44,11 @@ query. `slice_2026.ndjson`, refusing clusterer, one view. `decluster/def1_sparsi
 | 0.95 | 0.929 | 0.896 |
 | 0.99 | 0.889 | 0.731 |
 
-Median nearest-neighbour similarity: **1.000**.
+Median nearest-neighbour similarity: 1.000.
 
 The Netflix Figure-1 baseline the method comes from: the vast majority of records had no
 peer above similarity 0.5. Here every cluster has a peer above 0.5, and ~89 % have a near
-identical twin above 0.99. The space is maximally **non-sparse**.
+identical twin above 0.99. The space is maximally non-sparse.
 
 ## Reading
 
@@ -91,4 +91,4 @@ space and does not speak to the high-dimensional one.
 The sparsity mechanism (cosine similarity, nearest-neighbour survival curve, its
 monotonicity) is unit-tested in `tests/test_def1_sparsity.py`. The specific (epsilon, delta)
 survival table here is a data-run over the feature vectors built from unversioned local
-data, and is **not** pinned as asserted values in a unit test.
+data, and is not pinned as asserted values in a unit test.

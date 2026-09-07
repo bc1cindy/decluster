@@ -70,3 +70,7 @@ slice, a single month, one partition scheme, and a clustering whose refusal chan
 separately measured to be inert on this data. The result bounds what this method achieves in
 this regime; it does not establish that no regime works, and the persistence curve says
 which lever remains untested.
+
+## Reproducibility / provenance
+
+State 2 in `results/REPRODUCIBILITY.md`: the mechanism is pinned; the reported numbers come from a data-run over the two-day slice, which is not committed, and are not asserted.

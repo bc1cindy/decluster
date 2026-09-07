@@ -65,7 +65,7 @@ below is *re-derived in Python* rather than read off a docstring.
 ### The matrix, the count and the certain links are one enumeration
 
 An earlier draft of this document called the count a "restriction" and the matrix "the same object".
-That cannot both be true, and it is falsified in one line. Checked on all **507/507** transactions
+That cannot both be true, and it is falsified in one line. Checked on all 507/507 transactions
 (`verify_dss_marginal_family`):
 
 - every entry of `dss.pairwise_link_prob` is an exact multiple of `1 / n_non_derived`;
@@ -82,13 +82,13 @@ The current DSS revision exposes refinement-maximal mappings. Its count agrees w
 oracle's refinement-maximal count on all 507 cases in this bounded family. This is a measured
 agreement, not a proof for every transaction.
 
-Equal-value permutations do **not** collapse in general: `[1,3,4,4] → [3,3,3,3]` answers 4, and
+Equal-value permutations do not collapse in general: `[1,3,4,4] → [3,3,3,3]` answers 4, and
 those four readings differ only in which equal-valued output stands alone. The refinement-maximal
 family is strictly smaller than the full oracle family on 491 of 507 cases. The matrix and its
 certain links therefore remain marginals over a restriction of the full family.
 
 `W(E)` was identified, not assumed: `dss.w_count` reproduces an independent Python re-derivation of
-that subset-sum count on **507/507** exact answers (0 mismatches). A set partition is a
+that subset-sum count on 507/507 exact answers (0 mismatches). A set partition is a
 simultaneous, disjoint, exhaustive choice of many such subsets, so `W(E)` and `|M|` count different
 things — they coincide by accident on 34 of the 507 cases. Ordering one against the other would say
 nothing about either, so this audit reports the object mismatch and **declines to score `w_count` as
@@ -123,7 +123,7 @@ fee-paying one.
 
 ### The link matrix errs in both directions
 
-Only **16 of 507** transactions agree on every entry.
+Only 16 of 507 transactions agree on every entry.
 
 | transaction | `\|M\|` (exact) | exact marginal | `dss.pairwise_link_prob` |
 |---|---|---|---|
@@ -133,7 +133,7 @@ Only **16 of 507** transactions agree on every entry.
 | `[1,4] → [1,1,1,1,1]` | 6 | 0.333 / 0.833 rows | 5 entries at 1.0, 5 at 0.0 |
 
 Both directions of error are present in a single case, which is why no monotone description survives.
-Of the two, the one that matters is the **overclaim**: an entry the approximation calls 1.0 where the
+Of the two, the one that matters is the overclaim: an entry the approximation calls 1.0 where the
 oracle says 0.4 asserts a link the amounts do not settle, and `counting.link_matrix`'s docstring
 hands exactly that reading to consumers. 945 such assertions of certainty stand across 328
 transactions, and there is no case in the family where the approximation *misses* a link the oracle

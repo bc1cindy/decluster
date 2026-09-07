@@ -14,7 +14,7 @@ import gzip
 import json
 from pathlib import Path
 
-from .. import def1_sparsity, graph_shape, views
+from .. import contraction, def1_sparsity, graph_shape, views
 from ..result_artifacts import canonical_json_bytes, write_canonical_json
 
 EXPERIMENT_ID = "slice-channels-v1"
@@ -63,7 +63,7 @@ def _density(graph, min_degree, epsilons):
 def build_artifact(dataset=DEFAULT_DATASET):
     sample = _load(dataset)
     lookup = views.cluster_addresses(sample, refuse=True)
-    graph = views.contract(sample, lookup=lookup, axes=True)
+    graph = contraction.contract(sample, lookup=lookup, axes=True)
     shape = graph_shape.summary(graph)
     return {
         "schema_version": 1,

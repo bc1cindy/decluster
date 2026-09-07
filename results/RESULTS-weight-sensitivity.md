@@ -16,7 +16,7 @@ full sweep.
 The historical monotonicity claim is not supported on the preserved data, and it is
 not falsified either. AUC peaks at 0.9245 for `c=0.95` and reads 0.9239 for
 `c=0.99` — a dip of 0.00055 against a standard error of 0.0031 at 4,000 pairs per
-class, which is **0.18 standard errors**. Over this band the AUC is flat within what
+class, which is 0.18 standard errors. Over this band the AUC is flat within what
 the sample resolves. Calling the dip a reversal would read noise as a finding, in the
 direction that happens to suit the argument. So this result supports local ranking
 stability and nothing about the ordering. Address reuse remains a weak label. This attacker-side sensitivity

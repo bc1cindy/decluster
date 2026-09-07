@@ -38,3 +38,8 @@ match.
   a rate across the chain (that needs a mainnet dense index — WP1b, deferred).
 - Thresholds (`refuse_below=-2.0`, `link_above=4.0`) are the prototype's; the sign of
   the refusal (−3.1) and the added links are what the regression test pins.
+
+## Reproducibility / provenance
+
+State 2 in `results/REPRODUCIBILITY.md`: the mechanism is pinned; the reported numbers come from a data-run over `.cache/`, which is not committed, and are not asserted.
+The result is regression-guarded by `tests/test_wp4.py::test_merge_money_shot`.

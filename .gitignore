@@ -23,3 +23,5 @@ decluster.egg-info/
 # épocas comprimidas da coleta multi-epoch (dados locais grandes)
 epoch_*.ndjson.gz
 data/epochs_*/
+# Planning notes and specs: working material, not part of the published record.
+docs/superpowers/

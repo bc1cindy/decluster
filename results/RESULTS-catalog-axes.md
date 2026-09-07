@@ -41,7 +41,7 @@ Bits = `−log2(share)` on the local `.blkcache` (~166k): output_count `{2: 0.51
 ## Result — measured on two cache snapshots
 
 Absolute AUCs are `.blkcache`-specific (the cache is a local, growing artifact — see
-`RESULTS-fingerprint-validation.md`); the **deltas** are the finding, and they are not even
+`RESULTS-fingerprint-validation.md`); the deltas are the finding, and they are not even
 stable across two cache sizes on the same seeded pairs:
 
 | adding to the 23-axis scorer | Δ AUC @ 166k cache | Δ AUC @ 180k cache |
@@ -79,7 +79,7 @@ moving, not the axes.)
 
 ## Conclusion
 
-The canonical 23-axis model **correctly excludes** both. `output_count` is subsumed by
+The canonical 23-axis model correctly excludes both. `output_count` is subsumed by
 `io_shape`; `segwit_serialization` by `input_script_type` + `nested_segwit`. Folding them in
 would violate the scorer's conditional-independence assumption and buy only a
 double-counting artifact whose contribution is not even sign-stable — so they stay out, and the library ships no

@@ -83,3 +83,8 @@ contracted graph before the seed strategy is settled.
 Address-level proxies for cluster-level quantities, chosen because union-find does not fit
 in SQL. Every number here is a bound on the contracted graph, not a measurement of it.
 Two single days; seasonal variation across the 158-epoch window is not covered.
+
+## Reproducibility / provenance
+
+State 1 in `results/REPRODUCIBILITY.md`: band-pinned on committed data — `tests/fixtures/slice_gate.json`, compared against the published table by
+`tests/test_state3_promotion.py`.

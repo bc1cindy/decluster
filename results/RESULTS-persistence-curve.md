@@ -56,3 +56,8 @@ constraint is not view width and the negative result is a good deal stronger.
 
 Width three is where the rate saturates; width seven is where the volume is. A run should
 use seven and report both.
+
+## Reproducibility / provenance
+
+State 1 in `results/REPRODUCIBILITY.md`: band-pinned on committed data — `tests/fixtures/persistence_curve.json`, compared against the published table by
+`tests/test_state3_promotion.py`.

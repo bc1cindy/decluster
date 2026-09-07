@@ -36,12 +36,12 @@ are wanted) and an auxiliary view of overlapping activity:
 
 1. `baselines.narayanan_shmatikov.propagate` maps target vertices to auxiliary vertices from a
    seed correspondence — the faithful 2009 algorithm, imported, not reimplemented.
-2. Every auxiliary edge whose **both** endpoints are images under that mapping is pulled back
+2. Every auxiliary edge whose both endpoints are images under that mapping is pulled back
    onto the target vertices it came from. An auxiliary vertex the mapping never claimed has no
    target identity, so its edges are dropped rather than guessed at.
 3. Candidate pairs are scored on the enlarged neighbourhoods and ranked.
 
-The comparison arm is the **same score on the target view alone**: common neighbours, which is
+The comparison arm is the same score on the target view alone: common neighbours, which is
 what `graph_deanon.structural_score` computes. The two arms differ in one thing — whether the
 de-anonymized auxiliary view is available — which is what makes the result a statement about
 de-anonymization rather than about two different predictors.
@@ -210,7 +210,7 @@ gives +0.265, +0.147, +0.078, +0.037 at 5/5, 5/5, 4/5, 5/5, and `--groups` 4/8/1
 +0.147, +0.128 at 3/5, 5/5, 4/5.
 
 So the reading of the headline table is not "de-anonymization beats structure-only
-prediction" but "**at 90% view overlap and 25% handed-over seeds** it does, on this fixture" —
+prediction" but "at 90% view overlap and 25% handed-over seeds it does, on this fixture" —
 and both of those are generous settings chosen before the sweep, not found by it. Real views are
 nowhere near either: `RESULTS-ns-bitcoin.md` measures 46.7% edge overlap and zero obtainable
 independent seeds.

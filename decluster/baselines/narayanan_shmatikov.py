@@ -5,7 +5,7 @@ particular, it does not use vertex attributes, edge attributes, hub filters, rar
 weights, or single-view labels.  ``left`` and ``right`` must be distinct directed graph
 views and ``seeds`` is a partial one-to-one correspondence between them.
 
-The graph interface is the small subset exposed by :class:`views.PseudonymGraph`:
+The graph interface is the small subset exposed by :class:`contraction.PseudonymGraph`:
 ``vertices``, ``_in`` and ``_out``.  Keeping that interface structural also makes the
 baseline usable by controlled synthetic tests without coupling it to Bitcoin records.
 

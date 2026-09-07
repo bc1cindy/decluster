@@ -3,7 +3,7 @@
 ## Verdict
 
 No. On a contiguous 137-block slice with complete transaction data, ordering the merges by how
-little each argues against itself produces a **partition identical** to block order. What does
+little each argues against itself produces a partition identical to block order. What does
 change the partition is the state-dependent gate the ordering was supposed to feed: declining a
 doubted merge that would fuse two already-established clusters takes the slice from 868 to 1,117
 clusters. The ordering is inert; the gate is not.
@@ -74,7 +74,7 @@ coinjoin shape and the de-mix both read the spending transaction alone.
 Change-link eligibility asks whether a transaction's inputs *already* stood in one cluster when it
 was reached, which is a property of the partition-so-far and therefore of the order. It is inert
 here for a different reason than the refusal rules are: `_merge_pass` takes that eligibility in
-sample order under both settings (`views.py:204-210`), so staging changes which merges are judged
+sample order under both settings (`views.py:171-177`), so staging changes which merges are judged
 against which context and nothing else. The independence holds by construction, not because no
 order-sensitive decision exists — read the other way, this section would be claiming something the
 function does not support.

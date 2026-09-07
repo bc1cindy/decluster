@@ -17,7 +17,7 @@ import gzip
 import json
 import os
 
-from decluster import views, def1_sparsity, graph_shape
+from decluster import contraction, def1_sparsity, graph_shape, views
 
 FIX = os.path.join(os.path.dirname(__file__), "fixtures", "slice_a_channels_2016.ndjson.gz")
 
@@ -29,7 +29,7 @@ def _sample():
 
 def _contracted(sample):
     lookup = views.cluster_addresses(sample, refuse=True)
-    return lookup, views.contract(sample, lookup=lookup, axes=True)
+    return lookup, contraction.contract(sample, lookup=lookup, axes=True)
 
 
 def test_entity_attribute_space_is_dense_not_sparse():

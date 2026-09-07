@@ -69,3 +69,7 @@ estimate (20 000 vertices). The window sizes differ in tx count across eras (cha
 the configuration-model null normalises for density, which is why the ratio is the comparable
 quantity. 2022 and 2025 would extend the curve; the four points already settle the
 qualitative question.
+
+## Reproducibility / provenance
+
+State 2 in `results/REPRODUCIBILITY.md`: the mechanism is pinned; the reported numbers come from a data-run over one contiguous ~2-day window per era, which is not committed, and are not asserted.

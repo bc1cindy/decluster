@@ -4,7 +4,7 @@ Reproduce: `python3 examples/metric_demo.py`. Diagnostic in `decluster/graph_met
 guarded by `tests/test_metric.py`.
 
 This is a relative diagnostic — how much the naive co-spend clustering *overstates* the
-attacker's residual uncertainty versus the fingerprint+amount clustering — **not** an absolute
+attacker's residual uncertainty versus the fingerprint+amount clustering — not an absolute
 "bits of anonymity" of any transaction. The intrinsic anonymity of a payment (interpretations
 under no auxiliary information) is the separate §07 path-counting object, not this partition
 entropy.
@@ -37,3 +37,8 @@ uncertainty once fingerprints and amount structure are accounted for.
   historical blocks). The metric is the contribution; the graph size is data-limited.
 - The fingerprint-aware clustering inherits the round-number change-id and the
   per-axis measured bits (the library-measured bits, decluster/library.py).
+
+## Reproducibility / provenance
+
+State 2 in `results/REPRODUCIBILITY.md`: the mechanism is pinned; the reported numbers come from a data-run over live data and `.cache/`, which is not committed, and are not asserted.
+The diagnostic itself is guarded by `tests/test_metric.py`.

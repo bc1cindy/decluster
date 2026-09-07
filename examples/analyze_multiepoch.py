@@ -21,7 +21,7 @@ def _open(path):
     return gzip.open(path, "rt") if path.endswith(".gz") else open(path)
 
 sys.path.insert(0, os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
-from decluster import views, graph_shape
+from decluster import contraction, graph_shape, tx_addrs, views
 from decluster.view_match import ViewMatcher, find_seeds
 from decluster.scale_cluster import cluster_scale_np_stream
 from decluster.monitor import COINJOIN_MIN_PARTICIPANTS
@@ -77,8 +77,8 @@ def cluster_windows(specs, coinjoin_min=COINJOIN_MIN_PARTICIPANTS):
 def addrs_of(spec):
     s = set()
     for tx, _ in stream_window(spec):
-        s.update(views._in_addrs(tx))
-        s.update(a for a, _v in views._out_addrs(tx))
+        s.update(tx_addrs.in_addrs(tx))
+        s.update(a for a, _v in tx_addrs.out_addrs(tx))
     return s
 
 
@@ -90,13 +90,13 @@ def stage(label, started):
 
 
 def _active_contract(spec, split):
-    degrees = views.contract_degrees(stream_window(spec), lookup=split)   # unfiltered, for the matcher
+    degrees = contraction.contract_degrees(stream_window(spec), lookup=split)   # unfiltered, for the matcher
     keep = {v for v, d in degrees.items() if d >= 2}
     # The matcher only ever asks about vertices that survived the filter, so the dropped
     # leaves' degrees are dead weight — on a complete weekly view, two thirds of the map.
     stat = {v: degrees[v] for v in keep}
     del degrees
-    return views.contract(stream_window(spec), lookup=split, axes=False, keep=keep), stat
+    return contraction.contract(stream_window(spec), lookup=split, axes=False, keep=keep), stat
 
 
 def independent_pool_labels(spec, lookup):

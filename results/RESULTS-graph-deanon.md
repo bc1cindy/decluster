@@ -30,7 +30,7 @@ Blocks 400000–400004 (2016), full slice:
 
 The confound: the FULL graph shares its co-spend edges with the heuristic that *defines*
 those labels, so its 0.992 is partly circular. Removing those edges — scoring pairs by
-payment relationships only — still yields **AUC 0.950**. The shuffle control lands at
+payment relationships only — still yields AUC 0.950. The shuffle control lands at
 0.500, confirming the effect is real structure, not the pair-sampling.
 
 **Addition, 7 Sep 2026 — the second control, and a determinism fix.** Two things were missing.
@@ -56,7 +56,7 @@ Both are published as `catalog/runs/graph-deanon-controls-v1.json`, which is als
 
 Payment-only AUC on five connected slices, swept over graph reach *k* (k-hop common
 neighbors, hub intermediates excluded — `decluster/graph_deanon.py --depth`).
-**share%** = fraction of same-owner pairs sharing a *direct* counterparty. Each slice is a
+share% = fraction of same-owner pairs sharing a *direct* counterparty. Each slice is a
 contiguous block range (partition-pruned by `block_timestamp_month`, `bigquery/graph.sql`):
 
 | Year | blocks | entities | held-out pairs | share% | k=1 | k=2 | k=3 | k=4 |
@@ -89,7 +89,7 @@ Narayanan–Shmatikov claim: structure de-anonymizes across every era tested.
 Why deeper reach does not collapse to chance (the usual small-world objection): hub
 counterparties (degree > 100, i.e. services/exchanges that connect everyone) are excluded
 as intermediates, so k-hop follows only *personal* edges and the graph stays fragmented
-into per-owner regions. **Caveat:** as k grows, that hub-excluded reachability
+into per-owner regions. Caveat: as k grows, that hub-excluded reachability
 approaches "same non-hub-connected region," a coarser statement than fine link
 prediction — legitimate entity recovery without co-spend, but at k=4 it is closer to
 component membership than to a pairwise structural tell. (2023's 1.00 also rests on only

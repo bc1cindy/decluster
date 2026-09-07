@@ -20,7 +20,7 @@ import gzip
 import random
 
 sys.path.insert(0, os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
-from decluster import views, graph_shape
+from decluster import contraction, graph_shape, tx_addrs, view_partition, views
 from decluster.view_match import ViewMatcher
 
 
@@ -39,11 +39,11 @@ def load(path, cap):
 def contract_with_stat(sample, indices, lookup):
     """Degrees first, then contract once keeping only the active (degree>=2) vertices.
     Returns (active_graph, {vertex: unfiltered_degree})."""
-    degrees = views.contract_degrees(sample, indices=indices, lookup=lookup)
+    degrees = contraction.contract_degrees(sample, indices=indices, lookup=lookup)
     keep = {v for v, d in degrees.items() if d >= 2}
     stat = {v: degrees[v] for v in keep}
     del degrees
-    return views.contract(sample, indices=indices, lookup=lookup, axes=False, keep=keep), stat
+    return contraction.contract(sample, indices=indices, lookup=lookup, axes=False, keep=keep), stat
 
 
 def main(path, cap=1_000_000, core_frac=0.01, scheme="collapse", n_views=2, min_side=2):
@@ -54,7 +54,7 @@ def main(path, cap=1_000_000, core_frac=0.01, scheme="collapse", n_views=2, min_
     lookup = views.cluster_addresses(sample, refuse=True)
     print(f"  {len(set(lookup.values()))} clusters over {len(lookup)} addresses", flush=True)
 
-    parts = views.partition_coins(sample, scheme=scheme, core_frac=core_frac,
+    parts = view_partition.partition_coins(sample, scheme=scheme, core_frac=core_frac,
                                   n_views=n_views, min_side=min_side)
     dropped = len(sample) - sum(len(p) for p in parts)
     print(f"  scheme={scheme}: views {[len(p) for p in parts]} txs, {dropped} at the boundary",
@@ -63,8 +63,8 @@ def main(path, cap=1_000_000, core_frac=0.01, scheme="collapse", n_views=2, min_
     aA = set()
     for i in parts[0]:
         tx = sample[i][0]
-        aA.update(views._in_addrs(tx))
-        aA.update(a for a, _ in views._out_addrs(tx))
+        aA.update(tx_addrs.in_addrs(tx))
+        aA.update(a for a, _ in tx_addrs.out_addrs(tx))
 
     rng = random.Random(0)
     split_cids, origin = views.split_clusters_by_view(lookup, aA, frac=1.0, rng=rng)

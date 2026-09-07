@@ -44,7 +44,7 @@ Both assert the same three invariants, on a synthetic and on a real-cache slice 
 3. **cluster_refined ran for real** — `>= 2` clustered nodes, `>= 1` cluster, and at least one group
    merges more than one node (not every node its own singleton).
 
-Full suite: `.venv/bin/pytest -q` → **454 passed** (Tier-2's live-only imports are deferred inside
+Full suite: `.venv/bin/pytest -q` → 454 passed (Tier-2's live-only imports are deferred inside
 `run_live`'s function body, so the offline import path and the rest of the suite never touch the
 network — see the docstring in `examples/e2e.py`).
 
@@ -166,3 +166,8 @@ Reading it:
   by design (same posture as `results/RESULTS-anonymity-set-scale.md`).
 - **Conservative-lower-bound footing.** Every entropy number here (Tier-1 or Tier-2) is an attacker
   lower bound / weight-of-evidence under no auxiliary information, not a privacy score.
+
+## Reproducibility / provenance
+
+State 2 in `results/REPRODUCIBILITY.md`: the mechanism is pinned; the reported numbers come from a data-run over `.cache`, which is not committed, and are not asserted.
+Tier-1 is asserted by `tests/test_e2e.py`; Tier-2 fetches live and is not.

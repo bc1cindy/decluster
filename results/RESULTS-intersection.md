@@ -109,12 +109,12 @@ candidate 5cce9a7fa309eabd   shape (19, 20)   branches 4
   engine               believed=False, 3 refusals
 ```
 
-Two things change. The empty intersection is now a **result**: every branch contributes observed
+Two things change. The empty intersection is now a result: every branch contributes observed
 origins, so "no shared ancestor at depth 3" is what the walk found, not what it failed to see.
 
 And the engine refused. The co-spend is a +2.0-bit prior toward one owner; three of the four
 funders agree at +6.82 bits of fingerprint while the fourth disagrees at −4.06 against each of them,
-and the fused score goes negative on exactly those three pairs. The partition comes out **4/1** — the
+and the fused score goes negative on exactly those three pairs. The partition comes out 4/1 — the
 odd funder split out of a transaction that spent its coin alongside the others.
 
 | pair | fingerprint | gate `fp < 0` |
@@ -134,7 +134,7 @@ empty intersection, and the 4/1 refusal — as data, so they are checked without
 ## What the origin sets are, and are not
 
 Every number above that involves a signature rests on `ancestry.ancestry_signature`, whose edge
-weighting is a **stated approximation** of the framework it implements. The theory's walk weights a
+weighting is a stated approximation of the framework it implements. The theory's walk weights a
 transition by coin value — each input satoshi equally likely to have become each output satoshi. This
 walk weights by subset-sum link probability, row-normalized, which `decluster/ancestry.py` flags as
 provisional and defers to the flow rung.
@@ -173,3 +173,8 @@ from examples.intersection_pipeline import run, default_signature_of, default_cl
 run(seeds=seeds, signature_of=default_signature_of(),
     cluster_fn=default_cluster_fn(), max_depth=0)
 ```
+
+## Reproducibility / provenance
+
+State 1 in `results/REPRODUCIBILITY.md`: band-pinned on committed data — the policy files this claim
+as "intersection attack narrows candidates", seeds in-test, asserted by `tests/test_intersection_real.py`.

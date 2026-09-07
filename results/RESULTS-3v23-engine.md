@@ -68,3 +68,7 @@ independence assumption overwhelms the three real discriminators, flipping the t
   identical `fs_score` kernel, so the sign of this single-edge score is exactly what `cluster_refined`
   would act on for this pair (a positive score here clears the engine's default `link_above` threshold
   used in `RESULTS-wp4.md`).
+
+## Reproducibility / provenance
+
+State 2 in `results/REPRODUCIBILITY.md`: the mechanism is pinned; the reported numbers come from a data-run over the `.cache/` coins `examples/three_vs_23_axes.py` reads, which is not committed, and are not asserted.

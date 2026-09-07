@@ -28,7 +28,7 @@ filter, no rarity weights.
 The repo's older cross-view numbers are not this attack's and none are reused here, but they come
 from two different places and were previously credited to one. `RESULTS-view-match-2026.md` — and
 the "one match in 15,688" figure, which is `RESULTS-multiepoch-local-2016.md`'s — come from
-`decluster/view_match.py`, a **different, experimental** matcher. `RESULTS-graph-deanon.md` comes
+`decluster/view_match.py`, a different, experimental matcher. `RESULTS-graph-deanon.md` comes
 from `decluster/graph_deanon.py`, which is not a matcher at all: it is common-neighbour link
 prediction scored pairwise on a single graph, with no seed set, no vertex correspondence, no
 propagation and no second view.
@@ -55,7 +55,7 @@ lookup, **no pseudonym string appears in both views**, so the trivial identity m
 exist and the only correspondence available is one propagation has to rediscover.
 
 Stated observation policy, because it sets the population: 613,448 addresses were clustered; each
-view keeps the vertices whose degree **in its own view** is at least 2. The filter is per-view and
+view keeps the vertices whose degree in its own view is at least 2. The filter is per-view and
 consults neither the other view nor the correspondence; degree below 2 is a vertex propagation can
 neither match nor bridge through.
 
@@ -70,7 +70,7 @@ presence: 97% of view A has no image in view B at all.
 
 ## The independent-seed path, tried first, yielded nothing
 
-`ns_bitcoin.unique_entity_seeds` admits a seed only when an independently detected **entity name**
+`ns_bitcoin.unique_entity_seeds` admits a seed only when an independently detected entity name
 resolves to exactly one vertex in each view. Three of `decluster/entities.py`'s name-emitting
 detectors were run over both windows (`detect_bitmex`, `detect_satoshidice`, `detect_mining_pool`).
 The other two cannot fire on this export at all, and that is a schema fact, not an omission:
@@ -91,7 +91,7 @@ address-only export does not carry. Neither surviving detector names a single ve
 service's deposit addresses land in many clusters — so zero independent seeds were admitted,
 and zero of them would have been gradeable. The seam refuses to pair an ambiguous label by degree,
 which is exactly what stops the grading map from leaking in through the back door. The independent
-attack is therefore **not identifiable on these views with the labels this export supports**, and
+attack is therefore not identifiable on these views with the labels this export supports, and
 everything below is seed-assisted. That qualifier is the whole claim: with coinbase scriptSig tags
 or a populated `catalog/entities.ndjson` the seed set might be non-empty, and this run says nothing
 about that case.
@@ -112,16 +112,16 @@ both cases whether or not anything propagated.
 | 25% | 650 | 0.5 | 10 | 779 | 49 | 10 | 1.28% | 20.4% | 1,949 | 0.513% |
 | 25% | 650 | 1.5 | 10 | 774 | 47 | 9 | 1.16% | 19.1% | 1,949 | 0.462% |
 
-† **Not an operating point.** That subgroup is selected by membership in the withheld
+† Not an operating point. That subgroup is selected by membership in the withheld
 correspondence. The attacker cannot tell which of its 779 declarations are among the 49, so no
 threshold available to it reaches 20.4%; the column says where the signal is, not what the attack
 achieves. The attack's precision is the column to its left.
 
-`results/artifacts/ns-bitcoin-v1.json` carries the full accepted-per-round series for the attack **and** the
+`results/artifacts/ns-bitcoin-v1.json` carries the full accepted-per-round series for the attack and the
 shuffled control in every one of the six configurations; only the round *count* is tabulated here.
 
 Propagation does spread — 8 to 10 rounds, front-loaded (at 25%/0.5: 410 accepted in round one,
-then 207, 91, 34, ...). The headline is therefore **not** "nothing propagated". It is that almost
+then 207, 91, 34, ...). The headline is therefore not "nothing propagated". It is that almost
 everything it propagated was wrong.
 
 ## Controls
@@ -143,7 +143,7 @@ count in disguise.
 
 The direction test is `decluster.reproducibility.separable` on the paired discordant counts, with
 the pre-registered effect `min_correct_gain = 1` — the direction under test is "the attack recovers
-at least one correspondence the shuffled-seed control does not", a **direction claim only**, which
+at least one correspondence the shuffled-seed control does not", a direction claim only, which
 says nothing about precision. At 5% and 10% seeding the sign favours the attack every time but the
 discordant counts (1-3) are too small for a two-sided sign test to clear 0.05: **measured, not
 separable** (state 5 of `results/REPRODUCIBILITY.md`). At 25% seeding it separates, p = 0.002 and
@@ -216,7 +216,7 @@ some real signal about *which* vertex a straddling pseudonym is, and carries ess
   could arrange.
 - **Address-only export.** No coinbase tags (so no mining-pool labels), no values, no script types.
   The absent independent-seed path is a property of this export as much as of the chain.
-- **No fix to `decluster/views.py` or `decluster/baselines/narayanan_shmatikov.py` was needed.**
+- **No fix to `decluster/contraction.py` or `decluster/baselines/narayanan_shmatikov.py` was needed.**
   Both ran against real data unmodified; nothing in this run exposed a bug in either.
 
 ## Reproducibility / provenance

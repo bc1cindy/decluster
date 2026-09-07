@@ -8,11 +8,11 @@ survives is the intersection of their sets.
 ## What this document does not claim
 
 The primary text is now available and Algorithm 2's graph-independent core is implemented. The
-paper's JoinMarket dataset, figures and empirical rates are **not reproduced**, and no measured
+paper's JoinMarket dataset, figures and empirical rates are not reproduced, and no measured
 rate on this page is attributed to Goldfeder et al. The kernel cell is closed; empirical parity is
 not.
 
-The baseline also states **no shrink law**. The reading that each observation cuts the candidate set
+The baseline also states no shrink law. The reading that each observation cuts the candidate set
 by a constant factor is not Goldfeder's — the intersection paper demonstrates the attack and states
 no such law — and it is not sourced anywhere else here either. It was previously credited on this
 page to "Danezis and Serjantov's statistical-disclosure result", which does not exist: statistical

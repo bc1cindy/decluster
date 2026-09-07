@@ -64,13 +64,13 @@ near-determined provenance or that real identifiability is at least this strong.
 
 ## Deep-feature matching — provenance as a linking quasi-identifier
 
-The entropy above is per-coin; the *matching* attack scores **pairs**. `ancestry_signature` exposes a
+The entropy above is per-coin; the *matching* attack scores pairs. `ancestry_signature` exposes a
 coin's provenance vector and `provenance_link` scores the Narayanan–Shmatikov overlap of two vectors —
 shared ancestral mass, optionally rarity-weighted (`wt = 1/log2(support)`, so a shared *rare* ancestor
 is strong same-origin evidence and a shared hub coinbase is weak). Mechanism validated in
 `tests/test_provenance_link.py`.
 
-On the **WP4 merged anchor** (`931d6627`, which fuses a Cake-receiver lineage and a distinct-sender
+On the WP4 merged anchor (`931d6627`, which fuses a Cake-receiver lineage and a distinct-sender
 lineage), the pairwise link matrix (depth 4):
 
 | | cake_in | sender_in |
@@ -78,7 +78,7 @@ lineage), the pairwise link matrix (depth 4):
 | **cake_in** | 1.000 | **0.000** |
 | **sender_in** | 0.000 | 1.000 |
 
-The two merged parties have **disjoint provenance** (link 0.000) — a *third* independent channel, after
+The two merged parties have disjoint provenance (link 0.000) — a *third* independent channel, after
 the fingerprints (§6, −3.1 bits) and the amounts (§6, round re-partition), that separates the owners
 the common-input merge tried to combine. (Same-tx sibling outputs `merged_o0/o1` link at 1.0, as
 expected — they share the full input ancestry. Cross-*generation* terms are not comparable here: two
@@ -105,7 +105,7 @@ We then tried the obvious fix — a contiguous value-bearing slice (2019, blocks
 64,744 txs; in-memory fetch with an out-of-slice boundary stub) at depth 5. It is *worse*, and the
 reason is the load-bearing finding: every signature collapses to a single boundary atom
 (mean support = 1.0), so pos and neg both ≈0 and AUC = 0.50. A tractable-width slice (~25 blocks ≈ 4
-hours) **cannot contain multi-hop ancestry** — a coin's parents are almost always older than the
+hours) cannot contain multi-hop ancestry — a coin's parents are almost always older than the
 window, so the first backward hop already exits the slice and truncates. Keeping depth-5 ancestry
 in-slice would need a slice spanning the ancestry timespan (weeks of blocks), i.e. essentially the
 whole connected graph.

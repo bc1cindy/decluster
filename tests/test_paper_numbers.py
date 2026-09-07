@@ -16,6 +16,7 @@ backed has to leave it.
 """
 import json
 import re
+from functools import cache
 from pathlib import Path
 
 import pytest
@@ -44,10 +45,6 @@ UNBACKED = {
     "0.768": "the change-predictor ordering table, measured on a slice that is not committed",
     "0.775": "the change-predictor ordering table, measured on a slice that is not committed",
     "0.779": "the change-predictor ordering table, measured on a slice that is not committed",
-    "0.128": "the seed-and-threshold sweep, measured on views this repository does not ship",
-    "0.462": "the seed-and-threshold sweep, measured on views this repository does not ship",
-    "0.513": "the seed-and-threshold sweep, measured on views this repository does not ship",
-    "1.16": "the seed-and-threshold sweep, measured on views this repository does not ship",
     "1.01": "witness bits by era, from an example script over the cache rather than a canonical run",
     "1.88": "witness bits by era, from an example script over the cache rather than a canonical run",
     "2.33": "witness bits by era, from an example script over the cache rather than a canonical run",
@@ -97,12 +94,27 @@ def cited():
     return sorted(set(MEASUREMENT.findall(_paper_body())))
 
 
+@cache
+def percent_tokens():
+    """The tokens the paper prints as a percentage.
+
+    An artifact stores a rate as a fraction, so the paper's `0.081%` is `0.00081` there and the
+    literal token never matches. Scaling only the tokens that carry a `%` keeps the tolerance tied
+    to the printed precision; scaling every token would let any of them match a value two orders of
+    magnitude away, which is the failure this gate exists to catch.
+    """
+    return {match.group(1) for match in re.finditer(MEASUREMENT.pattern + r"\s*%", _paper_body())}
+
+
 def resolves(token, pool):
     target = float(token.replace(",", "").replace("−", "-"))
     places = len(token.split(".")[1]) if "." in token else 0
     tolerance = 0.5 * 10 ** (-places) if places else 0.5
-    return any(abs(value - target) < tolerance or abs(value + target) < tolerance
-               for value in pool)
+    scales = [(target, tolerance)]
+    if token in percent_tokens():
+        scales.append((target / 100, tolerance / 100))
+    return any(abs(value - scaled) < allowed or abs(value + scaled) < allowed
+               for scaled, allowed in scales for value in pool)
 
 
 @pytest.fixture(scope="module")
@@ -144,4 +156,4 @@ def test_the_backed_share_is_reported_and_does_not_fall(pool):
     """A floor, not a target: the point is that it can only be raised deliberately."""
     tokens = cited()
     backed = sum(1 for token in tokens if resolves(token, pool))
-    assert backed >= 118, f"{backed}/{len(tokens)} resolve; this used to be 118"
+    assert backed >= 122, f"{backed}/{len(tokens)} resolve; this used to be 122"

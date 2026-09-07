@@ -80,7 +80,7 @@ slice, scaling it by `beta` has no measurable effect on the posterior, so ECE do
 `beta`. Not evidence that beta calibration is unnecessary in general — it is evidence that this
 particular bounded slice does not exercise the provenance channel enough to calibrate it.
 
-Headline run (full evidence, selected beta=0.0, 2 chains, 2000/600): ECE = **0.23884**
+Headline run (full evidence, selected beta=0.0, 2 chains, 2000/600): ECE = 0.23884
 (consistent with the sweep's single-chain 1500/500 estimate at beta=0.0, 0.23857 — small MC
 difference from the different chain/iteration count, not a discrepancy).
 
@@ -110,7 +110,7 @@ branch (`anonymity-set-s04-fusion`) and now exists: `anonymity_set.py` provides 
 absorbing solve — see `RESULTS-anonymity-set.md`'s "§04-faithful fusion" section for the real
 graph-only-vs-fused min-entropy numbers on this cache's same-owner pairs).
 
-The M1 row of the coarsening-hierarchy table above is still reported as **N/A** — not because the
+The M1 row of the coarsening-hierarchy table above is still reported as N/A — not because the
 module is missing, but because M1 reports a per-target min-entropy lower bound (a weight-of-evidence
 floor), not the kind of per-pair match-probability this table's ECE metric calibrates against
 same-owner labels. Computing an ECE-comparable number for M1 would need its own calibration
@@ -177,3 +177,7 @@ built from.
 `build_slice(cap_total=50, depth=1, max_supernodes=15)` then `channel_ablation`, `beta_sweep`,
 `shuffle_null`, and `fs_bayes_pair_marginal` as this run did (~8 minutes total, offline, no
 network). Deterministic under `seed=0`.
+
+## Reproducibility / provenance
+
+State 2 in `results/REPRODUCIBILITY.md`: the mechanism is pinned; the reported numbers come from a data-run over the bounded `.cache` slice `examples.partition_posterior.build_slice` builds, which is not committed, and are not asserted.

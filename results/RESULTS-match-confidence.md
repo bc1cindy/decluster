@@ -44,7 +44,7 @@ argument needs and the aggregate figure hides.
 because the framework's use for these links is to feed other clustering heuristics, where
 a small number of reliable links is worth more than many unreliable ones.
 
-**Translated into the weight such a channel would carry**, a link at precision 0.727 is
+Translated into the weight such a channel would carry, a link at precision 0.727 is
 worth about 1.4 bits of evidence for common ownership, and one at 0.9 about 3.2 bits. Those
 are the same order as the fingerprint channel's per-axis contributions, so the output is
 usable as a channel rather than merely suggestive. That is the concrete case for wiring the
@@ -61,3 +61,7 @@ slice or a partition scheme that yields more.
 correctly but judged against a stricter criterion than the source states, and this
 supersedes that emphasis: coverage does not ignite, and the links that *are* produced carry
 graded, usable confidence. Both are true and the second was missing.
+
+## Reproducibility / provenance
+
+State 2 in `results/REPRODUCIBILITY.md`: the mechanism is pinned; the reported numbers come from a data-run over `slice_2026.ndjson`, which is not committed, and are not asserted.

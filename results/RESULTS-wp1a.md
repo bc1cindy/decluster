@@ -11,7 +11,7 @@ The nLockTime `zero` share moved with sampling method:
 
 Direction confirmed; the full ~95% (#1676) is **not reachable via the mempool.space
 API** at low request cost — it needs uniform-over-ALL-txs sampling, which is exactly
-what the **WP1b dense emitter** provides (every tx, no per-block API cap). Also
+what the WP1b dense emitter provides (every tx, no per-block API cap). Also
 `floor=200000` excludes pre-anti-fee-sniping blocks (almost all `locktime=0`), which
 holds the number below 95%. This is a documented limitation, not a silent gap.
 
@@ -32,3 +32,7 @@ the specific, low-frequency fingerprints the combiner should weight most.
 
 Feeds WP2 (per-axis measured bits for the fingerprint library) and is superseded for
 the locktime distribution by WP1b once a mainnet dense index exists.
+
+## Reproducibility / provenance
+
+State 2 in `results/REPRODUCIBILITY.md`: the mechanism is pinned; the reported numbers come from a data-run over `.cache`/`.blkcache`, which is not committed, and are not asserted.

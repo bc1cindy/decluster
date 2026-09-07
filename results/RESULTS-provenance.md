@@ -17,7 +17,7 @@ fraction of the child's inputs spending an output of the parent.
 | 90th percentile | 0.0508 |
 | maximum | 0.2019 |
 
-The first row is the finding that matters for the premise: coinjoin-to-coinjoin overlap is **common**,
+The first row is the finding that matters for the premise: coinjoin-to-coinjoin overlap is common,
 not exceptional. In a remixing population, rounds routinely consume each other's outputs, so a
 nonzero share is not by itself evidence of anything.
 
@@ -67,3 +67,8 @@ the premise, and the reason the negative half of the result is the more trustwor
 from decluster.provenance import overlap_share   # over cached coinjoins, offline
 overlap_share(child_tx, {parent_txid})
 ```
+
+## Reproducibility / provenance
+
+State 2 in `results/REPRODUCIBILITY.md`: the mechanism is pinned; the reported numbers come from a data-run over the coinjoins in the local cache, which is not committed, and are not asserted.
+The channel is guarded by `tests/test_provenance*.py`.

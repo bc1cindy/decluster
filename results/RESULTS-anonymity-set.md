@@ -23,7 +23,7 @@ One case (a 27-input tx) hard-panicked the native code (`assertion failed: set.l
 `pyo3_runtime.PanicException`) rather than hanging or returning `None`.
 
 So `examples/anonymity_set.py`'s `hard_bounded_link_oracle` runs each link computation in a
-throwaway subprocess and kills it (`terminate`, then `kill`) on a **1.2s wall-clock deadline** —
+throwaway subprocess and kills it (`terminate`, then `kill`) on a 1.2s wall-clock deadline —
 an OS-level bound that works regardless of what the native code does internally, and also absorbs
 the panic case cleanly. A kill or a panic both return `None`, exactly `ancestry`'s own
 oracle-refusal boundary — `build_extended_graph` already truncates cleanly on `None`, so no
@@ -58,7 +58,7 @@ The 2 targets that *do* resolve real branching (both small, un-truncated, exact 
 | `4817b7a896…` (3-in tx) | 3 | **1.585 bits** |
 
 Both are a real 4-way / 3-way tie: the backward walk resolves the coin's provenance to several
-boundary coins with exactly equal mass (`0.25` each / `0.333` each) — this **is** the §04
+boundary coins with exactly equal mass (`0.25` each / `0.333` each) — this is the §04
 anonymity set for these two coins under no auxiliary information: an attacker constrained to the
 graph alone cannot do better than guessing uniformly among 4 (resp. 3) candidate origins.
 
@@ -84,7 +84,7 @@ For each of the 2 resolved targets, three hypotheses are folded in via `decay`, 
 | `796c742b14…` | 2.000 | 2.000 | **0.379** | **0.000** | yes |
 | `4817b7a896…` | 1.585 | 1.585 | **0.263** | **0.000** | yes |
 
-Both traces are monotone non-increasing end to end, and both end in an **exact 0-bit point mass**
+Both traces are monotone non-increasing end to end, and both end in an exact 0-bit point mass
 — (b) and (c) both hold on real data.
 
 **Reading of step 1 (flat in both cases):** the `provenance_overlap` hypothesis contributed
@@ -189,7 +189,7 @@ Same 34 targets as section (a). For each: graph-only min-entropy vs §04-fused m
 | — of which fired a real pin | 1 / 16 |
 
 The two targets that resolve real graph-only branching (section (a): `796c742b14…` at 2.000 bits,
-`4817b7a896…` at 1.585 bits) are **unchanged under fusion** — the fused walk visits exactly one
+`4817b7a896…` at 1.585 bits) are unchanged under fusion — the fused walk visits exactly one
 interior tx for each (the target's own top-level tx) before hitting its boundary, and neither is a
 clean 2-output tx, so `_change_index` abstains and no pin is ever available to route mass through.
 
@@ -223,3 +223,7 @@ one nonzero entry.
 - Same-owner labels throughout are the address-reuse heuristic already validated (independent of
   co-spend) in `RESULTS-ns-propagation.md` — same-owner labels, which are an address-reuse
   heuristic rather than ownership.
+
+## Reproducibility / provenance
+
+State 2 in `results/REPRODUCIBILITY.md`: the mechanism is pinned; the reported numbers come from a data-run over the `.cache/` slice `examples/anonymity_set.py` reads, which is not committed, and are not asserted.

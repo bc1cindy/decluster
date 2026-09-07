@@ -17,7 +17,7 @@ from decluster.change_gt import union_input_addrs
 from decluster.entities import detect_mining_pool
 from decluster.unionfind import UF
 from decluster.view_match import ViewMatcher
-from decluster.views import PseudonymGraph, contract
+from decluster.contraction import PseudonymGraph, contract
 
 
 def stream(path, lo=None, hi=None):

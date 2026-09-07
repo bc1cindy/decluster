@@ -49,3 +49,10 @@ Reproduce: `python3 examples/cluster_robustness.py`.
   *edges* in the payment graph), the intersection-attack intuition. What this shows is "a rare shared
   counterparty dominates the fingerprint weight," which is one concrete way graph structure swamps the
   per-axis uncertainty.
+
+## Reproducibility / provenance
+
+Not yet filed against `results/REPRODUCIBILITY.md`. The document demonstrates the mechanism on a
+graph it builds and says so — "it is not a whole-chain rate" — but no test was found that asserts
+the numbers below, so neither state 1 nor state 2 fits on the evidence available. Read them as
+unclassified until someone names the test.

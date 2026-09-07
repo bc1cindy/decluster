@@ -16,7 +16,7 @@ transactions** (a scattered multi-epoch sample, not a contiguous chain — this 
 | 318,433 | 99,957 | **68.6%** | 13.21 | 9,501 | 0.072 |
 
 The common-input-ownership heuristic collapses 318k coin-funders into ~100k entities in seconds,
-entirely offline — the machinery scales. The largest cluster already holds **7.2% of all funders** (a
+entirely offline — the machinery scales. The largest cluster already holds 7.2% of all funders (a
 supercluster, the usual exchange/service signature).
 
 ## Scale curve — entities per funder as the corpus grows
@@ -40,7 +40,7 @@ sample.
 ## Window-local vs whole-corpus — the branch's premise
 
 The point of `build_cospend_lookup` is to drop `cluster_naive`'s `if vin["txid"] in nodes` sample gate,
-so the baseline sees co-spends outside the evaluation window. On the **same 63,870 funders** that
+so the baseline sees co-spends outside the evaluation window. On the same 63,870 funders that
 appear in a 10%-window:
 
 | baseline | entities |
@@ -76,3 +76,7 @@ confirming the branch's premise directionally. The magnitude of the whole-chain 
 baseline-vs-fused comparison — is bounded here by the scattered, network-free sample; both grow on a
 contiguous / whole-chain source, which is the next data-layer step (local esplora), not a change to
 this method.
+
+## Reproducibility / provenance
+
+State 2 in `results/REPRODUCIBILITY.md`: the mechanism is pinned; the reported numbers come from a data-run over the loaded corpus, which is not committed, and are not asserted.

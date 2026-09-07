@@ -13,7 +13,7 @@ footnote.
 
 ## Result
 
-Global clustering over the whole slice: **633 933 addresses in 55 850 clusters** of two or
+Global clustering over the whole slice: 633 933 addresses in 55 850 clusters of two or
 more, largest 30 304 addresses.
 
 | | view A | view B |
@@ -69,3 +69,7 @@ Vertex attributes are stored as raw counts against each view's own base rates, n
 bare shares, because a median 54 % of an axis value's variance tracks epoch volume
 (`RESULTS-attribute-drift.md`). No matching is performed here; this builds and measures the
 object a matcher would run on.
+
+## Reproducibility / provenance
+
+State 2 in `results/REPRODUCIBILITY.md`: the mechanism is pinned; the reported numbers come from a data-run over `slice_2026.ndjson`, which is not committed, and are not asserted.

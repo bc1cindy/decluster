@@ -63,7 +63,7 @@ width most relationships do not recur.
 
 ## What this does and does not establish
 
-It establishes that on **one-day views** of the 2026 transaction graph, seeded propagation
+It establishes that on one-day views of the 2026 transaction graph, seeded propagation
 recovers a real but small correspondence and never becomes self-sustaining, and it
 identifies why.
 
@@ -87,3 +87,10 @@ The first run of this experiment returned one match and was invalid. The seed ha
 topped up with the highest-degree vertices, which are exactly the hubs the matcher refuses
 to route through, so 34 of 40 seeds were invisible to it. The seed selection now draws from
 the non-hub band. The failure was in the experiment, not in the graph.
+
+## Reproducibility / provenance
+
+State 2 in `results/REPRODUCIBILITY.md`: the mechanism is pinned; the reported numbers come from a data-run over `slice_2026.ndjson`, which is not committed, and are not asserted.
+
+The *direction* read off these numbers is not established: the policy flags "cross-view matcher
+precision vs baseline" as owing a migration to state 1 or state 5.

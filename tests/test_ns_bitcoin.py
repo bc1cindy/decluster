@@ -9,9 +9,8 @@ from decluster import reproducibility as rp
 from decluster.ns_bitcoin import (SEED_INDEPENDENT, SEED_SAMPLED, eligible_correspondence,
                                   graph_overlap, run_bitcoin_views, sampled_seeds,
                                   sweep_bitcoin_views, unique_entity_seeds)
-from decluster.views import PseudonymGraph
-from examples.ns_bitcoin_views import (build_parser, build_views, independent_entity_labels,
-                                       run_configuration, window_size)
+from decluster.contraction import PseudonymGraph
+from examples.ns_bitcoin_views import build_parser, build_views, independent_entity_labels, run_configuration, window_size
 
 ROOT = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 

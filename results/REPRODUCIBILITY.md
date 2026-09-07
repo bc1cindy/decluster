@@ -3,6 +3,12 @@
 Every claim in `results/` falls into one of five states. This is the single index; per-doc
 "Reproducibility / provenance" footers point back here.
 
+A document that has not been read and filed says so in its own footer — "Not yet filed against
+`results/REPRODUCIBILITY.md`" — rather than carrying a guessed state. That is not a sixth state; it
+is the absence of one, said out loud so a reader is never left to infer a level from silence.
+`tests/test_results_provenance_footer.py` requires every document to answer, and caps how many may
+answer this way.
+
 ## The rule
 
 A claim's **mechanism** (the algorithm) is proven by a unit test on small/synthetic input. A claim's
@@ -30,6 +36,8 @@ survives subsampling** can it be pinned as a **band** on a committed fixture.
 | known-entity de-anon (SatoshiDice positive + BitMEX null control) | `entity_satoshidice_2013.ndjson.gz`, `entity_bitmex_2019.ndjson.gz` | `test_entity_deanon_real.py` |
 | entity-attribute space is dense not sparse (Def-1 negative) + graph disassortative | `tests/fixtures/slice_a_channels_2016.ndjson.gz` | `test_slice_a_channels.py` |
 | Fellegi-Sunter beats the fixed-rarity baseline out-of-period (the direction `RESULTS-fs-temporal.md` publishes) | `tests/fixtures/fingerprint_blkcache_sample.json` | `test_fs_temporal.py::test_fellegi_sunter_beats_the_rarity_baseline_out_of_period` |
+| neighbourhood persistence against view width (`RESULTS-persistence-curve.md`) | `tests/fixtures/persistence_curve.json` | `test_state3_promotion.py` |
+| slice go/no-go: spanning material and seed supply (`RESULTS-slice-gate-2026.md`) | `tests/fixtures/slice_gate.json` | `test_state3_promotion.py` |
 | candidate-set intersection narrows, stalls or refuses (`RESULTS-candidate-set-intersection.md`) | none needed — the 3-scenario family is generated, not sampled | `test_candidate_set_intersection.py` |
 
 ## 2. Mechanism unit-tested, headline number is a data-run (proven algorithm, labelled number)
@@ -57,15 +65,24 @@ subsampled fixture would assert a different number.
 ## 3. Reproducible once a small BigQuery window is committed
 
 Run the query, commit the small output as a fixture, and the number becomes band-pinnable (state 1).
+`tests/test_state3_promotion.py` holds one slot per row below: each skips with the query to run and
+the path to write, so a promotion is one commit rather than a commit plus a test nobody wrote yet.
 
 | Claim | Query | Notes |
 |---|---|---|
-| slice-gate spanning material | `bigquery/slice_gate.sql` | aggregate, few rows |
-| persistence curve | `bigquery/persistence_curve.sql` | 5-row aggregate |
-| change-id validation | `bigquery/slice.sql` | 1-day labelled slice |
-| fingerprint frequency calibration | `bigquery/sample_small.sql` | already sized small |
+| fingerprint frequency calibration | `bigquery/sample_small.sql` | output is 15k rows, but the `TABLESAMPLE` carries no partition filter and scans the whole table |
+
+Two rows left this state on 2026-09-07, both promoted to state 1 above: the slice gate and the
+persistence curve. One row left it in the other direction. **Change-id validation is not a small
+window.** `bigquery/slice.sql` covers 2024-06-01, which is 739,889 non-coinbase transactions — the
+count `test_paper_numbers.py` already carries as unbacked. It cannot become a committed fixture as
+filed, so it belongs in state 4, below, and is recorded there.
 
 ## 4. Needs a new representative collection (no small fixture substitutes)
+
+- **change-id validation** — moved here from state 3 on 2026-09-07. The window `bigquery/slice.sql`
+  names holds 739,889 transactions; a smaller one reveals fewer change labels, so it measures
+  something else rather than the same claim more cheaply.
 
 - **ancestry (ε,δ)-sparsity** — needs deep contiguous ancestry connectivity; a small window has ~1%
   in-file parents. The definitive run is a deep contiguous export at dss-oracle depth.
@@ -110,6 +127,15 @@ discordant win counts, and the document files its 5% and 10% seeding rows as **s
 not separable — while its 25% row clears all three gates. That is the intended shape of the state:
 one run, two verdicts, each named. The cross-view matcher row flagged above still owes its migration.
 
+### A measurement whose data is gone
+
+The five states all assume the data still exists: state 1 re-asserts it, state 2 regenerates from it,
+states 3 and 4 collect it, state 5 has it and declines the direction. `RESULTS-witness-era-drift.md`
+fits none of them — the `.blkcache` it was measured on was not preserved, so the figures can be
+neither re-asserted nor regenerated. It says so on its own page and is counted as unfiled by
+`tests/test_results_provenance_footer.py`. Naming a sixth state is a decision, not a formality: it
+would have to say whether such a number may stay published at all.
+
 ### Manifests
 
 `results/manifests/` holds one file per migrated document, and that directory listing — not a count
@@ -119,7 +145,7 @@ remaining state-2 and state-5 results are migrated, each should carry
 `results/manifests/<doc>.json`, recording the source's identity (files, bytes, digest) and the
 population invariants the claim depends on — the facts a byte digest cannot see.
 `tests/test_results_manifests.py` checks every manifest that exists against its live source and
-**skips with a message** when the source is absent, or when the manifest's invariants were not
+skips with a message when the source is absent, or when the manifest's invariants were not
 recomputed; it also requires every `RESULTS-*.md` to either carry a manifest or be named in that
 test's `NOT_YET_MIGRATED` allowlist, so a document cannot silently fall outside both. For a number
 produced by the Rust crate, a manifest's identity is `dss.__version__` / `dss.__rev__`, its lock
