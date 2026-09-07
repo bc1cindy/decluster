@@ -13,7 +13,7 @@
       "name": "catalog/runs/coinjoin-sudoku-nominal-v1.json",
       "role": "run_manifest",
       "bytes": 2843,
-      "sha256": "7923ae2ce3fbc8f76185ed760c617cf4125e967716b7c8460e0a5e27fb9fbd90",
+      "sha256": "78bddd6cddccbdef795da3d8edbae5d24c9831d0730df4765e4fc44bbd51e225",
       "locations": {
         "canonical": null,
         "mirrors": []
@@ -40,10 +40,10 @@
       }
     },
     {
-      "name": "sources/decluster-4de0107-runtime.tar",
+      "name": "sources/decluster-4fa950c-runtime.tar",
       "role": "source",
-      "bytes": 2170880,
-      "sha256": "1f05c5d37a16840f7385a82610d70a916b3f7704075c5b71764a6389c3ba3f71",
+      "bytes": 2191360,
+      "sha256": "18d49e55bb80973cb9d45b209e307d7384cbdbe236fda2ce2b4d0a1032e7a5d8",
       "locations": {
         "canonical": null,
         "mirrors": []
@@ -63,7 +63,7 @@
       "name": "reproduction/coinjoin-sudoku-nominal/environment.json",
       "role": "environment",
       "bytes": 382,
-      "sha256": "7c6ab7aa5f5dedb429986e4883583383fafffedd04bcacb7e828422be968affe",
+      "sha256": "d3b914fad1e5a652f4517e6bcda4a178d31e90164e02416ec35ea394f0065180",
       "locations": {
         "canonical": null,
         "mirrors": []
