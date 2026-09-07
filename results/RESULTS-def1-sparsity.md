@@ -62,7 +62,7 @@ sparse-dataset attack, and on this feature set it fails.
 vector here is low-dimensional: four fingerprint axes and a handful of coarse structural
 bins. The paper's sparsity comes from *high* dimensionality — hundreds to thousands of
 observations per record. The framework locates the sparse, unique signal in the
-**structural / deep features** (ancestry), which are the high-dimensional ones. Those are
+structural / deep features (ancestry), which are the high-dimensional ones. Those are
 absent from this vector, because ancestry walks reach only ~2.2 hops on a two-day slice
 (`RESULTS-ancestry-crossview-feasibility.md`). So this result confirms the conceded half
 and leaves the load-bearing half — is the *ancestry* feature space (epsilon, delta)-sparse?
@@ -88,7 +88,7 @@ space and does not speak to the high-dimensional one.
 
 ## Reproducibility / provenance
 
-The sparsity **mechanism** (cosine similarity, nearest-neighbour survival curve, its
-monotonicity) is unit-tested in `tests/test_def1_sparsity.py`. The specific **(epsilon, delta)
-survival table** here is a **data-run** over the feature vectors built from unversioned local
+The sparsity mechanism (cosine similarity, nearest-neighbour survival curve, its
+monotonicity) is unit-tested in `tests/test_def1_sparsity.py`. The specific (epsilon, delta)
+survival table here is a data-run over the feature vectors built from unversioned local
 data, and is **not** pinned as asserted values in a unit test.

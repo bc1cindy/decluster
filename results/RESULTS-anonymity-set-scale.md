@@ -84,12 +84,12 @@ case) and returns a **uniform link matrix** for them instead of timing out. Meas
   collapsed to a point mass before the fix); `372fd5cb…` → 8 absorbers / 3.0 bits. This is the win:
   the coinjoin-ancestry truncation that dominated the earlier collapse is gone.
 - **What still collapses is different and correct:** the remaining collapsed targets are
-  **consolidations** (many inputs → few / distinct outputs, e.g. 203-in / few-out), not coinjoins. The
+  consolidations (many inputs → few / distinct outputs, e.g. 203-in / few-out), not coinjoins. The
   recognizer correctly does **not** fire on them (no repeated denominations); their subset-sum is
   genuinely hard, so truncation there is the answer, not a bug.
 
 **Caveat narrowed:** the "ceiling is the oracle" limit above no longer applies to coinjoins — those
-now resolve. It narrows to **consolidation-style** (many-in / few-distinct-out) transactions, whose
+now resolve. It narrows to consolidation-style (many-in / few-distinct-out) transactions, whose
 exact subset-sum remains intractable and is out of scope for the Radix fast path. The dense matrix is
-still the crude **uniform** approximation (max ambiguity); the exact radix-structured per-(i,o) matrix
+still the crude uniform approximation (max ambiguity); the exact radix-structured per-(i,o) matrix
 is a deferred refinement.

@@ -8,8 +8,8 @@ degree-labelled. Until this is excluded, "precision 0.68 at eccentricity 5" is n
 that structure carries identity.
 
 **Method.** All controls are scored on the *same* A-vertices the matcher matched, so the
-comparison is of scoring rules rather than of populations. The decisive one is the **degree
-class** expectation: for each matched vertex, one over the number of B-vertices sharing its
+comparison is of scoring rules rather than of populations. The decisive one is the degree
+class expectation: for each matched vertex, one over the number of B-vertices sharing its
 true partner's degree. That is exactly what degree is worth, with no algorithm attached, and
 it is deliberately generous — it is handed the true partner's degree, which a real
 degree-only adversary would have to guess from the other view, so it upper-bounds that

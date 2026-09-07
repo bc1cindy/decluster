@@ -46,7 +46,7 @@ The right test (one tx, each depth), live-fetched, narrow (non-coinjoin) ancestr
 Reading it:
 - **Runs and returns at every depth 1→5**, tractably (<6 s each), **0 crashes, 0 truncations** — the
   systematic-callability proof, in the clean single-transaction form.
-- **The provenance set grows with depth** (3 → 10 → 14 origins) then **converges** at depth 4–5: the
+- **The provenance set grows with depth** (3 → 10 → 14 origins) then converges at depth 4–5: the
   narrow ancestry is fully resolved, so deeper walks add nothing. Depth genuinely resolves more
   ancestral origins where they exist.
 - `min_entropy` stays 1.585 (= log₂3) even as `n_origins` grows to 14, because min-entropy is the
@@ -77,7 +77,7 @@ transaction carries an address-reuse self-transfer (`depth=1`): **34 / 90 (38%) 
 (`fused < graph`), reduction **max 2.25 bits, mean 0.98 bits**. So the §04 fusion demonstrably
 narrows the anonymity set on real transactions.
 
-**Deep (ancestral) fusion** — sharpening from a same-owner link found back in the ancestry rather than
+Deep (ancestral) fusion — sharpening from a same-owner link found back in the ancestry rather than
 in the target's own tx — is rare: a depth-sweep over 11 real targets with no own-tx reuse produced
 **0** cases of deep fusion emerging or growing with depth. This is consistent with §06/robustness
 (*"the combinatorial explosion of graph based features … rendered mostly inert"*): a single ancestral

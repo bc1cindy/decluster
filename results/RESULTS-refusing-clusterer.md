@@ -18,15 +18,15 @@ artifact rather than one owner. This measures what a refusing clusterer actually
 **What was implemented.** Two refusal channels, both decidable from the spending transaction
 alone, so both survive at slice scale:
 
-- **coinjoin shape** — where co-spending stops implying common ownership, no input merges with
+- coinjoin shape — where co-spending stops implying common ownership, no input merges with
   any other. This is the framework's own stated rule for the cautious adversary. It is now two
-  rules rather than one (`decluster/monitor.py:44-81`): the original **many-in/many-out** test,
-  twenty inputs *and* twenty outputs, and an **equal-output** test that fires on three or more
+  rules rather than one (`decluster/monitor.py:44-81`): the original many-in/many-out test,
+  twenty inputs *and* twenty outputs, and an equal-output test that fires on three or more
   inputs against three or more outputs sharing one value. The second is the defining structure
   of an equal-amount coinjoin — one interchangeable denomination per participant — and the size
   rule cannot see it: a five-participant Whirlpool round is 5-in/5-out, far under any
   participant threshold.
-- **de-mix partition** — where `coinjoin_demix` resolves inputs to distinct participants,
+- de-mix partition — where `coinjoin_demix` resolves inputs to distinct participants,
   only same-participant inputs merge, and an input it cannot resolve merges with nobody.
   Returning the partition rather than per-pair verdicts is what keeps this linear.
 
@@ -145,11 +145,11 @@ fingerprints. Single slice, single month.
 
 ## Reproducibility / provenance
 
-The refusal **mechanism** (net-bit-balance keep/reject, refuse-edges, coinjoin-shape and
+The refusal mechanism (net-bit-balance keep/reject, refuse-edges, coinjoin-shape and
 de-mix rules) is unit-tested and pinned in `tests/test_cluster_refined.py` and
-`tests/test_cluster.py`. The `sample.ndjson` table is a **data-run** over a local, unversioned
+`tests/test_cluster.py`. The `sample.ndjson` table is a data-run over a local, unversioned
 file that is present in this checkout, recomputable from `decluster.monitor.is_coinjoin` and
 `decluster.views.cluster_addresses`, and not asserted as a pinned value. The slice-scale
-figures under the banner are a data-run over `slice_2026.ndjson`, which is **absent**, under a
+figures under the banner are a data-run over `slice_2026.ndjson`, which is absent, under a
 rule that has since changed; they are neither recomputable nor re-labellable and stand only as
 a historical record.

@@ -58,7 +58,7 @@ is not.
 1.000 in both strata): it never hands back a wrong coin. The strata differ in *how often it
 declares*. On sparse coins the target stands clear of the field, the gate fires (declare rate
 ~0.95), and the pin is exact. On dense coins the near-twin ties the top two scores, the gate
-falls below phi, and it **abstains** (declare rate ~0.20). This is the Definition-3 behaviour:
+falls below phi, and it abstains (declare rate ~0.20). This is the Definition-3 behaviour:
 detect when there is no confident match rather than guess. Sharing ancestry is what preserves
 a dense coin's pseudonymity, exactly the framework's own defence.
 
@@ -68,14 +68,14 @@ declare rate falls 0.225 -> 0.200 as the added evidence makes the twin tie tight
 
 ## Scope, stated plainly
 
-- The `.cache/` is an **accreted, non-representative** sample (dominated by two large
+- The `.cache/` is an accreted, non-representative sample (dominated by two large
   clusters), not a uniform draw from the chain. This measures the sparsity->de-anon link on
   *these* signatures; it does not estimate a chain-wide de-anonymization rate.
-- **Uniform link oracle**, not the real subset-sum dss oracle: conservative, as established
+- Uniform link oracle, not the real subset-sum dss oracle: conservative, as established
   in `RESULTS-ancestry-sparsity.md`. The real oracle sharpens signatures and would widen the
   gap, not narrow it. `reid.py` takes the scoring through `provenance_link`, so the dss
   oracle drops in without changing the harness.
-- The revealed `m` ancestors are drawn at **random** from the target's support. A real
+- The revealed `m` ancestors are drawn at random from the target's support. A real
   counterparty (the Eve-Alice-Eve origin) can choose the *rare* ancestors and would do at
   least as well: the rates here are a floor for random aux, not a ceiling.
 - 200-coin fixture; the required aux grows as log N (Theorem 1), so a chain-scale attack

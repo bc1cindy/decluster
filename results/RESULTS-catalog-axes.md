@@ -10,8 +10,8 @@
 > The two historical cache snapshots below were not preserved and are not reproduced.
 
 The record-linkage corpus (`fingerprints.md`, Table 4) lists two construction fingerprints
-the paper's axis catalog (§8) marks ◐ — **output count** ("more than two outputs is less
-likely an ordinary wallet") and **SegWit-conform** ("a segwit-capable wallet is forced to
+the paper's axis catalog (§8) marks ◐ — output count ("more than two outputs is less
+likely an ordinary wallet") and SegWit-conform ("a segwit-capable wallet is forced to
 non-segwit serialization when no input is segwit"). This measures whether adding them to the
 canonical 23-axis rarity scorer buys anything. It does not — and the *shape* of the
 non-result is the point.
@@ -62,7 +62,7 @@ moving, not the axes.)
 - **The bigger magnitude comes from the *more redundant* axis.** `segwit_serialization` is
   nearly determined by `input_script_type` (+ `nested_segwit`), yet it moves the AUC more
   (~±0.002) than `output_count`. In a naïve-Bayes product-of-axes scorer, adding an axis
-  correlated with one already present **re-counts the same evidence**: same-wallet pairs share
+  correlated with one already present re-counts the same evidence: same-wallet pairs share
   their input script type by construction (address-reuse label → same type), so counting
   "both are segwit" on top of "both are `v0_p2wpkh`" inflates the positive-pair scores. A
   redundant axis producing the larger swing is the signature of that double-count.

@@ -30,7 +30,7 @@ Blocks 400000–400004 (2016), full slice:
 
 The confound: the FULL graph shares its co-spend edges with the heuristic that *defines*
 those labels, so its 0.992 is partly circular. Removing those edges — scoring pairs by
-**payment** relationships only — still yields **AUC 0.950**. The shuffle control lands at
+payment relationships only — still yields **AUC 0.950**. The shuffle control lands at
 0.500, confirming the effect is real structure, not the pair-sampling.
 
 **Addition, 7 Sep 2026 — the second control, and a determinism fix.** Two things were missing.
@@ -45,7 +45,7 @@ above survive at the precision they are quoted to.
 Second, the shuffle control says the score reads the labels, but it says nothing about *how*. The
 published negatives are drawn uniformly over cluster roots while positives are every intra-cluster
 pair, so the positive class is systematically higher-degree — and the score reads degree. Under
-**degree-matched negatives** the payment-only AUC falls to **0.9156**, and a score made of nothing
+degree-matched negatives the payment-only AUC falls to **0.9156**, and a score made of nothing
 but the pair's degree sum sits at **0.5000**, at chance by construction. So about **0.035 of the
 0.9507** was the sampling asymmetry, and the rest is not.
 
@@ -74,7 +74,7 @@ non-informative 1.00; a meaningful 2025 point needs that supercluster excluded f
 
 Two findings. **(1) At k=1 the effect is not a clean era/reuse curve**: the 2013 slice
 drops to chance (0.53) on a *substantial* 25 944 pairs — not a small-sample fluke. The
-diagnostic explains it: 1-hop AUC tracks **share%** monotonically (96%→0.97, 91%→0.95,
+diagnostic explains it: 1-hop AUC tracks share% monotonically (96%→0.97, 91%→0.95,
 65%→0.83, 48%→0.74, 6%→0.53). 2013 is the SatoshiDice / service-churn era — an owner's addresses each
 touch a *different* service address, so only 6% share a direct counterparty and the 1-hop
 feature is starved.

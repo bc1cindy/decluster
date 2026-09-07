@@ -9,7 +9,7 @@
 > wallet attribution or a privacy score.
 
 **Claim tested.** Does the 23-axis fingerprint library (`decluster/library.py`) tell same-wallet
-transactions apart from random ones — on real witness-bearing data? Scored on the **canonical** path
+transactions apart from random ones — on real witness-bearing data? Scored on the canonical path
 (`LibraryScorer` over all library axes, using the same extractors the rest of the pipeline uses), not
 the former `rust_bridge` mirror.
 

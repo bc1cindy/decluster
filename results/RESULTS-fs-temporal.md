@@ -88,12 +88,12 @@ dropped for lacking observations on this slice.
 | AUC | 0.9827 | 0.9345 |
 | **AUC delta (FS - rarity)** | **+0.0482** | |
 
-Both AUCs above are the **exact** Mann--Whitney statistic with tie half-credit
+Both AUCs above are the exact Mann--Whitney statistic with tie half-credit
 (`graph_deanon.exact_auc`, called through `fs_temporal._score_metrics`), on the identical held-out
 pairs. Note when comparing across documents: most other AUCs in `results/` — including the
 `LibraryScorer` AUC in `RESULTS-fingerprint-validation.md` — come from `graph_deanon.auc`, which
 *estimates* the same quantity from at most 20,000 sampled draws and carries sampling error in the
-third decimal. The exact one is used here because the headline is a **difference** between two AUCs,
+third decimal. The exact one is used here because the headline is a difference between two AUCs,
 where two independent third-decimal errors are a large fraction of a +0.048 delta. The 0.9345 above
 and any sampled-estimator figure for the same scorer are therefore not the same measurement to three
 decimals, and neither is wrong.

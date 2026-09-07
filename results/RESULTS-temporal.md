@@ -28,7 +28,7 @@ activity schedule.
 
 ## Real-data calibration — a NULL under proper controls
 
-Same owner = address reuse (near-certain): for an input address reused ≥8 times over a **wide**
+Same owner = address reuse (near-certain): for an input address reused ≥8 times over a wide
 window, its txs' hour-of-day histogram is its schedule. We ask whether that schedule *identifies
 the owner*. Harness: `calibrate_temporal` (`decluster/broadcast.py`), on a **30-day** export
 (`bigquery/temporal.sql`, 2024-01) of **20 000** reused input addresses (≥8 txs each, median span
@@ -46,21 +46,21 @@ The headline **0.923 is an artifact of two confounds**, not an owner-identifying
 
 1. **Random split-half tests concentration, not persistence.** The two halves are i.i.d. samples
    of one pooled distribution, so the distance is small whenever the address touches a *narrow
-   band of hours* — regardless of which hours or whether the band persists. Splitting by **time**
+   band of hours* — regardless of which hours or whether the band persists. Splitting by time
    instead (does the schedule hold across the window?) drops the AUC to **0.736**, and to **0.596**
    on the ≥7-day subset.
 2. **Negatives weren't matched on band width.** Most of the remaining separation is just
    "narrow band vs narrow band at different hours." Drawing negatives from addresses with the
-   **same active-hours count** removes it: **AUC 0.492 — chance.**
+   same active-hours count removes it: **AUC 0.492 — chance.**
 
 So on reused-address data the hour-of-day schedule does **not** separate owners once concentration
 is controlled for. A random-band synthetic (bands placed at arbitrary hours with no owner meaning)
 reproduces the ~0.92 baseline, confirming the number measures "addresses have a narrow active-hours
 band," not "the schedule identifies the owner." This joins the ~1-day slice (AUC 0.39, `sample.ndjson`)
-as a **null**: the earlier 0.92 claim was confounded and is retracted.
+as a null: the earlier 0.92 claim was confounded and is retracted.
 
 **A cleaner owner labeling gives the same null.** To rule out "it's only the service-skewed
-reused-address population," we re-ran on **co-spend entities** (`bigquery/temporal-cospend.sql`:
+reused-address population," we re-ran on co-spend entities (`bigquery/temporal-cospend.sql`:
 addresses spent together = one owner, tx count capped at 200 to drop mega-services) — closer to
 individual, multi-address wallets. Same 30-day window, 20 000 entities: baseline 0.889, persistence
 0.760, **matched 0.522** — still chance. The null is *structural* (the metric plus concentration),

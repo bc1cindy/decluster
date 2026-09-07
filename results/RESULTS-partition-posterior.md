@@ -60,7 +60,7 @@ uncertainty-reduction that channel is responsible for):
 **Reading:** on this slice, the categorical fingerprint channel carries essentially all of
 the entropy-reducing evidence — dropping it collapses the posterior from near-certainty about the
 partition (0.86 bits, effectively locked at K=5) to a nearly uninformative spread over K=2..9
-(10.45 bits). The provenance channel contributed **zero** marginal bits here: `drop_provenance`
+(10.45 bits). The provenance channel contributed zero marginal bits here: `drop_provenance`
 is bit-for-bit identical to the full run. This is a real, not a rounding-noise, null result for
 this slice — see the limits for why (depth=1 + the bounded-dimension link oracle sharply limits
 how much real provenance signal reaches the evidence at this scale).
@@ -80,7 +80,7 @@ slice, scaling it by `beta` has no measurable effect on the posterior, so ECE do
 `beta`. Not evidence that beta calibration is unnecessary in general — it is evidence that this
 particular bounded slice does not exercise the provenance channel enough to calibrate it.
 
-**Headline run** (full evidence, selected beta=0.0, 2 chains, 2000/600): ECE = **0.23884**
+Headline run (full evidence, selected beta=0.0, 2 chains, 2000/600): ECE = **0.23884**
 (consistent with the sweep's single-chain 1500/500 estimate at beta=0.0, 0.23857 — small MC
 difference from the different chain/iteration count, not a discrepancy).
 

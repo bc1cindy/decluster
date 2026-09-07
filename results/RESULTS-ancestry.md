@@ -9,7 +9,7 @@
 > not preserved. They are not part of the canonical run.
 
 > **Correction (2026-09-03) — the oracle behind these numbers is no longer the default.**
-> Every figure below was produced by the **subset-sum link oracle** (`ancestry.dss_link_oracle`,
+> Every figure below was produced by the subset-sum link oracle (`ancestry.dss_link_oracle`,
 > `dss.pairwise_link_prob`), which was `ancestry_entropy`/`ancestry_signature`'s default when this
 > was measured. The default is now `ancestry.value_flow_link_oracle` — the nominal-value transition
 > rule (an output walks back to each input in proportion to that input's value), which never refuses
@@ -49,7 +49,7 @@ mass onto fewer boundary coins.)
 **Spectrum on 8 ordinary sampled coins (1–3 in/out), depth 4:**
 
 - Shannon **median ≈ 0.00 bits**, range **[0.00, 2.94]**; min-entropy median 0.00.
-- Most coins (boundary = 1) resolve to a **single** ancestral origin — provenance fully determined,
+- Most coins (boundary = 1) resolve to a single ancestral origin — provenance fully determined,
   zero ambiguity.
 - The high end (2.94 bits over a **30-coin** boundary) is a coin that passed through a fan-out — the
   only regime with meaningful provenance ambiguity.
@@ -101,9 +101,9 @@ The **sign is right** — random pairs share *zero* provenance, same-owner pairs
 AUC is near chance because at depth 3 on a *fragmented* sample most same-owner pairs also reach no
 shared ancestor.
 
-We then tried the obvious fix — a **contiguous value-bearing slice** (2019, blocks 581000–581025,
+We then tried the obvious fix — a contiguous value-bearing slice (2019, blocks 581000–581025,
 64,744 txs; in-memory fetch with an out-of-slice boundary stub) at depth 5. It is *worse*, and the
-reason is the load-bearing finding: every signature collapses to a **single** boundary atom
+reason is the load-bearing finding: every signature collapses to a single boundary atom
 (mean support = 1.0), so pos and neg both ≈0 and AUC = 0.50. A tractable-width slice (~25 blocks ≈ 4
 hours) **cannot contain multi-hop ancestry** — a coin's parents are almost always older than the
 window, so the first backward hop already exits the slice and truncates. Keeping depth-5 ancestry
@@ -121,9 +121,9 @@ on new method.
 
 ## Boundary — what this rung is and is not
 
-Historically measured: absorber-model provenance **entropy** conditional on the DSS transition, the
-pairwise **matching** (`provenance_link`, mechanism-tested; WP4 lineage separation at 0.000), and a
-first **graph-scale** pass (weak/directional, AUC 0.52 — depth+connectivity bound). The provisional
+Historically measured: absorber-model provenance entropy conditional on the DSS transition, the
+pairwise matching (`provenance_link`, mechanism-tested; WP4 lineage separation at 0.000), and a
+first graph-scale pass (weak/directional, AUC 0.52 — depth+connectivity bound). The provisional
 edge weighting is link-probability-only (satoshi-flow value-weighting deferred;
 `ancestry.build_extended_graph`).
 

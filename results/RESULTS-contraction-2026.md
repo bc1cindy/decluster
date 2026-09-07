@@ -54,7 +54,7 @@ everything.
 
 ## Scope, and one deliberate simplification to remove
 
-The clustering here is **naive common-input union-find**, which is precisely the adversary
+The clustering here is naive common-input union-find, which is precisely the adversary
 the framework calls incompetent. That simplification has since been measured rather than
 left standing: `RESULTS-refusing-clusterer.md` measured a refusing clusterer against this slice
 and found it left the 30 304-address cluster byte-identical, so the suspicion above is narrowed

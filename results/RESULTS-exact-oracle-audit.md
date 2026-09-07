@@ -12,14 +12,14 @@ production paths use the compiled `dss` extension and the wrappers in `decluster
 `decluster/baselines/oracle_audit.py` now does; `examples/exact_oracle_audit.py` emits the report as
 JSON and exits non-zero when it carries a flag.
 
-**Headline.** `dss.pairwise_link_prob` is the uniform marginal over **dss's own mapping family**,
+**Headline.** `dss.pairwise_link_prob` is the uniform marginal over dss's own mapping family,
 which is a strict restriction of the oracle's, and a marginal over a sub-family is a bound on the
-marginal over the full family in **neither direction**. Measured: over 6,228 entries it sits
-**above** the exact marginal on 1,714 and **below** it on 4,104, agreeing on 410. And because
+marginal over the full family in neither direction. Measured: over 6,228 entries it sits
+above the exact marginal on 1,714 and below it on 4,104, agreeing on 410. And because
 `decluster/counting.py`'s own `link_matrix` docstring tells consumers that "a row with one non-zero
 entry is a deterministic link — the amounts settle that assignment on their own", the production path
 asserts **945 certainties in 328 of 507 transactions that the amounts do not settle**, while
-missing no *certain* link. That count is measured against the **full** oracle family, which is the
+missing no *certain* link. That count is measured against the full oracle family, which is the
 most conservative reading available: any smaller family has more certain links and so fewer spurious
 ones. Dropping the oracle's coarser readings (refinement-maximal selection) leaves it unchanged at
 945 / 0; selecting the finest mappings by block count instead — a strictly more generous reading
@@ -98,9 +98,9 @@ NOT Maurer's full matched-partition mapping count"); what is new here is the ver
 ## The comparisons
 
 Every row is the same quantity on both sides, computed over two different mapping families, so
-"bound direction" is a measurement and never a licence. The first four rows score against the **full**
+"bound direction" is a measurement and never a licence. The first four rows score against the full
 oracle family; the two `_finest_only` rows are the robustness reading described below, and there
-"finest" means **refinement-maximal** — the choice matters and is measured, see
+"finest" means refinement-maximal — the choice matters and is measured, see
 "None missed is a statement about that definition".
 
 | probe | relation | cases | agree | approx < exact | approx > exact | max abs error | measured bound direction |
@@ -142,15 +142,15 @@ holder privacy they were told they had. (The 4,104 entries *below* the oracle ar
 being under-confident about merely probable links; both are true, of different quantities.)
 
 **First, note what the 945 is measured against.** The `deterministic_links` probe runs against the
-**full** oracle family — every balanced set partition, coarser readings included. That is the largest
+full oracle family — every balanced set partition, coarser readings included. That is the largest
 family available and therefore the most conservative reading of the overclaim: any sub-family has
 *more* certain links, so restricting the oracle can only reduce the spurious count. The primary
 finding never calls `finest_mappings` and nothing below changes it.
 
 **The cross-check, and the definition it depends on.** As a robustness reading, the audit also scores
-against the oracle's *finest-only* family — here **refinement-maximal**: the mappings no other
+against the oracle's *finest-only* family — here refinement-maximal: the mappings no other
 mapping strictly refines. Under it the entry tallies move (1,811 above, 2,103 below, 2,314 agreeing)
-and the verdict does not: still **neither** bound, still **945** spurious certain links, still none
+and the verdict does not: still neither bound, still **945** spurious certain links, still none
 missed.
 
 **"None missed" is a statement about that definition, and only that one.** Selecting the finest
@@ -212,8 +212,8 @@ different object from `|M|` for exactly the reason `w_count` is; 486 come back `
 now measured rather than expected.
 
 **`subtransaction.subtransactions` `ambiguity_bits`** covers the 16 two-in/two-out cases. It abstains
-on 4 (no positive implied payment), and on the remaining 12 it lands **above** the exact mapping
-entropy 6 times and **below** it 6 times, never equal. Its count admits partitions that do not
+on 4 (no positive implied payment), and on the remaining 12 it lands above the exact mapping
+entropy 6 times and below it 6 times, never equal. Its count admits partitions that do not
 conserve value, so this is not a bound in either direction — its own docstring already calls it a
 count diagnostic and not a privacy quantity, and that reading is confirmed here.
 
@@ -250,7 +250,7 @@ deterministic link at all. `dss.pairwise_link_prob` answers that case with an id
   where these approximations are actually used and where the oracle cannot follow.
 - No approximation in this repo may be described as a lower bound on the strength of this run. Two
   are measured as under-only *on this family* (`mapping_count`, `mapping_entropy_bits`); the link
-  matrix is measured as **neither**, and that is a finding, not a caveat.
+  matrix is measured as neither, and that is a finding, not a caveat.
 - The enumerator behind `n_non_derived` is **not** specified here. This audit sees the count, the
   marginal and the certain-link set — not the mappings — so it reports what that family demonstrably
   is not, and stops there.

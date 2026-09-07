@@ -39,9 +39,9 @@ heuristics cross-confirming, non-circularly.
 
 ## The key finding: the co-spend-label numbers are not robust
 
-Against the **co-spend** label (a single 2024-06-01 day; `RESULTS-change-id.md`), `nSequence` reached
+Against the co-spend label (a single 2024-06-01 day; `RESULTS-change-id.md`), `nSequence` reached
 0.99 precision and `version` 1.00, and the ordering axes looked distinctly weaker. Against the
-**value** label, that collapses — **all four onward-spend axes fall to ~0.60–0.74 precision, and
+value label, that collapses — **all four onward-spend axes fall to ~0.60–0.74 precision, and
 nSequence/version no longer dominate the ordering axes.** So the "nSequence/version are the strong
 tells, ordering is weak" ranking is **label- and population-dependent, not a robust result.**
 
@@ -64,5 +64,5 @@ suggested.
 ## What closes it (Phase 2)
 
 The clean disentangling — label-inflation vs epoch/time-gap — needs a **contiguous slice with input
-values** (a BigQuery re-query), so **both** labels (co-spend and optimal-change) run on the **same
-transactions**. That, plus the cluster `findNext` against the value label, is Phase 2 (quota-gated).
+values** (a BigQuery re-query), so both labels (co-spend and optimal-change) run on the same
+transactions. That, plus the cluster `findNext` against the value label, is Phase 2 (quota-gated).

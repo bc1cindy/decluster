@@ -56,7 +56,7 @@ defaults* (`change_spk`, `input_script_type`, `output_encoding`, `low_r`, `pubke
 every low-entropy policy axis. Those agreements are individually small (+0.09 to +3.42 bits each) but
 numerous and positively correlated, and summing them under the (false) Fellegi-Sunter conditional-
 independence assumption overwhelms the three real discriminators, flipping the total from −3.16 to
-+11.67 bits — a **false LINK** that would re-merge the sender into the Cake cluster.
++11.67 bits — a false LINK that would re-merge the sender into the Cake cluster.
 
 ## Limits
 

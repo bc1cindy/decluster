@@ -122,7 +122,7 @@ Only partly, and the writeup says so itself. On the two combinatorial models it 
 
 > "In Maurer et al, the values of the inputs and the outputs must exactly cancel out, **which is not
 > sufficiently general for real world analyses**. Boltzmann casts a wider net, by allowing these to
-> vary somewhat, **accounting for fees**."
+> vary somewhat, accounting for fees."
 
 Every counting path reachable here applies the exact-cancellation criterion. Holding the shape fixed
 and moving only the fee:

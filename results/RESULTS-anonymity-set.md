@@ -89,7 +89,7 @@ Both traces are monotone non-increasing end to end, and both end in an **exact 0
 
 **Reading of step 1 (flat in both cases):** the `provenance_overlap` hypothesis contributed
 *zero* narrowing for either target — not because the mechanism is broken, but because each
-reference coin's own bounded-depth signature had already collapsed to a **single** boundary atom
+reference coin's own bounded-depth signature had already collapsed to a single boundary atom
 (1 and 4 absorbers respectively — checked: `reference_n_absorbers` = 1 and 4), and that atom did
 not coincide with any of the target's own absorbers within depth 2
 (`h1_kept_graph_argmax=False` for both — the graph's own top candidate wasn't even in the

@@ -1,8 +1,8 @@
 # Change-id validation — validating the ordering axis (M&N labels + fingerprint tests)
 
 Slice: `bigquery/slice.sql`, 1 day = 2024-06-01 (blocks 845982–846122, 739,889 txs).
-Same-owner change labels: the change output revealed by multi-input **cluster membership** (M&N),
-then filtered by M&N §2.2 (`build_gt_slice_mn`) — **fresh change** (change address appears as an
+Same-owner change labels: the change output revealed by multi-input cluster membership (M&N),
+then filtered by M&N §2.2 (`build_gt_slice_mn`) — fresh change (change address appears as an
 output only in T, an in-slice reuse proxy for M&N's "change already known at creation") and the
 **>10% two-change cluster** exclusion.
 
@@ -12,7 +12,7 @@ output only in T, an in-slice reuse proxy for M&N's "change already known at cre
 ## The valid result: per-axis change prediction (M&N Table 4 style; bootstrap B=2000)
 
 Each axis votes "change = the output whose onward-spending tx **agrees with T on that axis**" — a
-construction-fingerprint agreement between T and its output's spender, **disjoint** from the
+construction-fingerprint agreement between T and its output's spender, disjoint from the
 address-graph label. `coverage` = fraction of labels where the axis fires (else it abstains);
 `prec.` = precision when it fires (TPR / coverage).
 
@@ -39,19 +39,19 @@ coverage axes (version/nSequence) — another face of the fast-wallet skew. The 
 - **The ordering axis validates as a real but LOW-COVERAGE change signal.** `input_order` fires on
   only 39% of labels (vs 57% baseline, 78% version) and, when it fires, its precision (0.83) is
   about the round-number baseline (0.86). `output_order` fires on 48% at precision 0.90. So ordering
-  resolves **fewer** cases, not less accurately — its low TPR is mostly low coverage, not low
+  resolves fewer cases, not less accurately — its low TPR is mostly low coverage, not low
   precision. This is the answer to "validating the ordering": as a change predictor it is
   real but low-coverage and no better than the round-number baseline in precision.
 - **`nsequence` / `version` are the strong single tells here** — near-perfect precision at high
   coverage on this slice: same-owner onward-spends reuse the wallet's sequence/version ~77–78%.
-- The fresh-change filter removed ~45% of raw labels (an **in-slice** reuse proxy for M&N's
+- The fresh-change filter removed ~45% of raw labels (an in-slice reuse proxy for M&N's
   reused-change removal — not identical to M&N's whole-chain filter, and this share is slice-local,
   not comparable to M&N's 28.4%).
 
 **This ranking is NOT robust to the label or the epoch** (`results/RESULTS-special-change.md`). Against
 an *independent, value-based* label (optimal-change, disjoint from co-spend) on a multi-epoch sample,
 all four onward-spend axes fall to ~0.60–0.74 precision and `nSequence`/`version` no longer dominate
-the ordering axes. Part of that is a co-spend-label **selection bias** — the co-spend label selects
+the ordering axes. Part of that is a co-spend-label selection bias — the co-spend label selects
 changes whose onward-spender *is* the reveal tx, a same-wallet transaction that shares nSequence/version
 by construction (inflating the numbers above); part is epoch / onward-spend time-gap drift in the
 multi-epoch sample. Disentangling the two needs a contiguous-value slice running both labels on the
@@ -63,7 +63,7 @@ We also implemented Kappos's cluster-level `findNext` (change = the output at th
 index whose onward-spending tx's features are in the cluster's `TFC` set). **Against an M&N co-spend
 label this is circular and is NOT evidence for any fingerprint:**
 
-- The change output's onward-spender is, by construction, the co-spend **reveal** tx — a cluster
+- The change output's onward-spender is, by construction, the co-spend reveal tx — a cluster
   member. Verified on this slice: the change spender is a cluster member **576/578**; the payment
   spender is a member **0/226**. So `features ∈ cluster TFC` is trivially true for the change, and
   the check collapses to *cluster membership = the label itself*.

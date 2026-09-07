@@ -11,8 +11,8 @@
 
 **Claim tested.** Does the per-tx fingerprint (`decluster/fingerprint_ns.py`: sparse
 `{(axis,value): bits}` signature, agreement-overlap link, `propagate.eccentricity` acceptance
-gap) behave as a **sparse quasi-identifier** — like ancestry — that can pick one individual out
-of a crowd, or as a **low-cardinality equivalence-class conditioner**: it groups same-construction
+gap) behave as a sparse quasi-identifier — like ancestry — that can pick one individual out
+of a crowd, or as a low-cardinality equivalence-class conditioner: it groups same-construction
 transactions together but cannot further resolve *within* a group? The tx-graph anonymity-set
 theory (posts 02/03 of the anonymity-set series) predicts the latter for construction-style
 fingerprints and reserves the sparse-quasi-identifier regime for the ancestry channel
