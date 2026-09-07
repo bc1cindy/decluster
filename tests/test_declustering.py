@@ -54,18 +54,42 @@ def test_two_equally_supported_cuts_leave_the_block_whole():
     assert result.cut == ()
 
 
-def test_a_block_too_large_to_search_is_left_whole_and_counted():
+def test_a_block_too_large_to_search_gets_the_conservative_pass_and_is_counted():
     block = list(range(6))
     result = decluster(Partition([block]), lambda a, b: -5.0, cut_below=-1.0, max_block=5)
-    assert result.partition == Partition([block])
-    assert result.unsearched == (frozenset(block),)
-    assert result.summary()["unsearched"] == 1
+    assert result.partition == Partition.discrete(block)
+    assert result.approximated == (frozenset(block),)
+    assert result.summary()["approximated"] == 1
 
 
-def test_singletons_are_neither_cut_nor_counted_as_searched():
+def test_the_conservative_pass_keeps_together_anything_a_pair_holds():
+    # 1-2 is above the bar, so no boundary may separate them however the rest argues.
+    weight = table_weight({(1, 2): 0.0}, default=-9.0)
+    result = decluster(Partition([[1, 2, 3, 4]]), weight, cut_below=-1.0, max_block=3)
+    assert result.approximated == (frozenset({1, 2, 3, 4}),)
+    assert result.partition.same_block(1, 2)
+    assert result.partition == Partition([[1, 2], [3], [4]])
+
+
+def test_the_conservative_pass_is_admissible_at_any_size():
+    rng = random.Random(5)
+    for _ in range(30):
+        members = list(range(14))
+        pairs = {(a, b): rng.choice([0.0, -2.0, -8.0, 3.0])
+                 for a in members for b in members if a < b}
+        weight = table_weight(pairs)
+        result = decluster(Partition([members]), weight, cut_below=-1.0, max_block=9)
+        groups = sorted(result.partition.blocks(), key=lambda g: sorted(g))
+        for index, left in enumerate(groups):
+            for right in groups[index + 1:]:
+                crossing = sum(weight(a, b) for a in left for b in right)
+                assert crossing <= -1.0
+
+
+def test_singletons_are_neither_cut_nor_counted():
     result = decluster(Partition.discrete([1, 2, 3]), lambda a, b: -5.0, cut_below=-1.0)
     assert result.partition == Partition.discrete([1, 2, 3])
-    assert result.outcomes == () and result.unsearched == ()
+    assert result.outcomes == () and result.approximated == ()
 
 
 def test_a_stricter_threshold_never_cuts_more():
