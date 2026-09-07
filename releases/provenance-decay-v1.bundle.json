@@ -13,7 +13,7 @@
       "name": "catalog/runs/provenance-decay-v1.json",
       "role": "run_manifest",
       "bytes": 2473,
-      "sha256": "8f3000a6c698a1d1847cc8e7f141abec86977c5d05bd75ade8f3681e3233cc74",
+      "sha256": "0988c2f09a85e3d4b63b3975236bf1a4ae4db5ceaba219beda7db4b78eebbd0c",
       "locations": {
         "canonical": null,
         "mirrors": []
@@ -40,10 +40,10 @@
       }
     },
     {
-      "name": "sources/decluster-aaf8b39-runtime.tar",
+      "name": "sources/decluster-8585ef8-runtime.tar",
       "role": "source",
-      "bytes": 2283520,
-      "sha256": "d7d678652c0cdeab6bb462489a37c3416d54ae5a2e38a775878fb851c07c1287",
+      "bytes": 2293760,
+      "sha256": "31ffa18186c6915dcdd7b7204bde5d92cccc417417472139b451c061f96622fb",
       "locations": {
         "canonical": null,
         "mirrors": []
@@ -63,7 +63,7 @@
       "name": "reproduction/provenance-decay/environment.json",
       "role": "environment",
       "bytes": 368,
-      "sha256": "e3f5da0d58c358aeb978790480ab1b0c8293aa03060d18667057cbf1bebfc171",
+      "sha256": "bf94137eb0e5f65056ba3ef800ed961532fba12c700abbf316f5b230ab742602",
       "locations": {
         "canonical": null,
         "mirrors": []

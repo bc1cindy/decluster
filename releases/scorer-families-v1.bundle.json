@@ -13,7 +13,7 @@
       "name": "catalog/runs/scorer-families-v1.json",
       "role": "run_manifest",
       "bytes": 2986,
-      "sha256": "f2a998248efb6d507479cee05e1be1ea9c7d15be060edafb184925664cc22fe4",
+      "sha256": "86bcd1d1244742fab32b1a0f6a64048c55aed2e9670cc467b82a021438bdccd2",
       "locations": {
         "canonical": null,
         "mirrors": []
@@ -50,10 +50,10 @@
       }
     },
     {
-      "name": "sources/decluster-aaf8b39-runtime.tar",
+      "name": "sources/decluster-8585ef8-runtime.tar",
       "role": "source",
-      "bytes": 2283520,
-      "sha256": "d7d678652c0cdeab6bb462489a37c3416d54ae5a2e38a775878fb851c07c1287",
+      "bytes": 2293760,
+      "sha256": "31ffa18186c6915dcdd7b7204bde5d92cccc417417472139b451c061f96622fb",
       "locations": {
         "canonical": null,
         "mirrors": []
@@ -73,7 +73,7 @@
       "name": "reproduction/scorer-families/environment.json",
       "role": "environment",
       "bytes": 366,
-      "sha256": "432c5159abb6ed1e810fde22b1e7dd04c2101b32663cc040e060c84487f6cd84",
+      "sha256": "7dbf0f9091604bbc978ca8531bc449e5cc3a4ce5aa32da49711509e98f04e46f",
       "locations": {
         "canonical": null,
         "mirrors": []
