@@ -13,7 +13,7 @@
       "name": "catalog/runs/counting-router-v1.json",
       "role": "run_manifest",
       "bytes": 3217,
-      "sha256": "3533cdc6298b512b8e6cfa436ba897a9e4ca24fab526b729dbb7ae6d7f409bff",
+      "sha256": "940d943a39553b32e8b1384db9a993ad275ed60488cd347210679d2ec6b352fc",
       "locations": {
         "canonical": null,
         "mirrors": []
@@ -73,7 +73,7 @@
       "name": "reproduction/counting-router/requirements.lock",
       "role": "lockfile",
       "bytes": 90,
-      "sha256": "2a9fcd78f7c608fc9f27251c2d8d0190404961b2340514c8a3acae599342932a",
+      "sha256": "5ee1d70afd72fdb4ba3f01843e85e7ecd9a6d3e2a52abeb14c346a2143e3c186",
       "locations": {
         "canonical": null,
         "mirrors": []

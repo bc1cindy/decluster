@@ -13,7 +13,7 @@
       "name": "catalog/runs/amount-per-coin-v1.json",
       "role": "run_manifest",
       "bytes": 3472,
-      "sha256": "695d4dc43979536cd3313ffa53d31976e37d2dcf594805d8e956b661570d8319",
+      "sha256": "1535c8d742cf79f159f992d6a60c12b96050469b198903317b9bf4b88de53721",
       "locations": {
         "canonical": null,
         "mirrors": []
@@ -73,7 +73,7 @@
       "name": "reproduction/amount-per-coin/requirements.lock",
       "role": "lockfile",
       "bytes": 90,
-      "sha256": "2a9fcd78f7c608fc9f27251c2d8d0190404961b2340514c8a3acae599342932a",
+      "sha256": "5ee1d70afd72fdb4ba3f01843e85e7ecd9a6d3e2a52abeb14c346a2143e3c186",
       "locations": {
         "canonical": null,
         "mirrors": []

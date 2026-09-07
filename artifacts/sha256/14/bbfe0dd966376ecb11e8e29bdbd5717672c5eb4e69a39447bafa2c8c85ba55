@@ -1,6 +1,6 @@
 {
   "schema_version": 1,
-  "id": "amount-pairwise-family-v1",
+  "id": "amount-mapping-family-v1",
   "claim_ids": [
     "ctp.amount.subtransaction_ambiguity"
   ],
@@ -12,23 +12,23 @@
     "argv": [
       "python",
       "-m",
-      "decluster.experiments.amount_pairwise_family",
+      "decluster.experiments.amount_mapping_family",
       "--dataset",
       "data/amount-channel-812695-812831-v1.json",
       "--cap",
-      "300",
+      "250",
       "--wall-seconds",
       "3.0",
       "reproduce",
       "--artifact",
-      "results/artifacts/amount-pairwise-family-v1.json",
+      "results/artifacts/amount-mapping-family-v1.json",
       "--markdown",
-      "results/generated/amount-pairwise-family-v1.md"
+      "results/generated/amount-mapping-family-v1.md"
     ]
   },
   "environment": {
     "python": "3.13.7",
-    "lock_digest": "2a9fcd78f7c608fc9f27251c2d8d0190404961b2340514c8a3acae599342932a",
+    "lock_digest": "5ee1d70afd72fdb4ba3f01843e85e7ecd9a6d3e2a52abeb14c346a2143e3c186",
     "platform": "macOS-26.6.2-arm64-arm-64bit-Mach-O",
     "dependencies": [
       {
@@ -50,7 +50,7 @@
     }
   ],
   "parameters": {
-    "cap": 300,
+    "cap": 250,
     "selection": "first complete multi-input transactions in source order",
     "wall_seconds_per_transaction": 3.0
   },
@@ -60,14 +60,14 @@
   },
   "outputs": [
     {
-      "path": "results/artifacts/amount-pairwise-family-v1.json",
-      "bytes": 1027,
-      "sha256": "83f6a9e8501ee4df45f08b8c8ffc2f7265d40bf9add6d3f5093d712657c9dbf5"
+      "path": "results/artifacts/amount-mapping-family-v1.json",
+      "bytes": 942,
+      "sha256": "11f0ec645ea1be334dc7d24fbfc31047b234f335f48b5a514960472c7444b7d6"
     },
     {
-      "path": "results/generated/amount-pairwise-family-v1.md",
-      "bytes": 499,
-      "sha256": "aeaabdc282b4aed6946c6054b95e8b5dd9c20e50eca467de49827e453d5353df"
+      "path": "results/generated/amount-mapping-family-v1.md",
+      "bytes": 559,
+      "sha256": "73afd1c112bcec43f16464f0589d4107d33a76c4085bd508d00aadc703366c0b"
     }
   ],
   "reproducibility": {
@@ -79,38 +79,38 @@
     "argv": [
       "python",
       "-m",
-      "decluster.experiments.amount_pairwise_family",
+      "decluster.experiments.amount_mapping_family",
       "--dataset",
       "data/amount-channel-812695-812831-v1.json",
       "--cap",
-      "300",
+      "250",
       "--wall-seconds",
       "3.0",
       "verify",
       "--artifact",
-      "results/artifacts/amount-pairwise-family-v1.json",
+      "results/artifacts/amount-mapping-family-v1.json",
       "--markdown",
-      "results/generated/amount-pairwise-family-v1.md"
+      "results/generated/amount-mapping-family-v1.md"
     ],
     "tests": [
-      "tests/test_amount_pairwise_family_experiment.py",
+      "tests/test_amount_mapping_family_experiment.py",
+      "tests/test_counting.py",
       "tests/test_oracle_audit.py"
     ],
     "properties": [
       "refusal, wall timeout, and execution failure remain distinct",
-      "row support is labeled as internal to DSS's restricted family",
-      "singleton support is not presented as a global ownership proof",
+      "entropy is labeled as uniform over DSS's restricted family",
+      "certain links are not presented as global ownership proofs",
       "the selected population and ordering are explicit",
       "the generated Markdown equals the canonical rendering"
     ],
     "tolerance": null
   },
   "limitations": [
-    "the matrix is a uniform marginal over DSS's restricted mapping family",
-    "a singleton-support row is not a globally deterministic ownership link",
-    "the exact-oracle audit found false certainties outside the restricted family",
+    "DSS enumerates a strict sub-family of the full balanced mappings",
+    "entropy is uniform over that restricted family, not a posterior over ownership",
+    "certain links are certain only within the restricted family",
     "refusal, timeout, and execution failure are distinct outcomes",
-    "wall-time outcomes are resource- and platform-dependent",
     "the sample is the first complete multi-input transactions in one 137-block snapshot",
     "this diagnostic is not a privacy score or CoinScore"
   ]

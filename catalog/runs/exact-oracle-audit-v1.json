@@ -22,7 +22,7 @@
   },
   "environment": {
     "python": "3.13.7",
-    "lock_digest": "c87b26aedbefac1731d03ced97dc197a86c0687c7376b3186f8752676f977fab",
+    "lock_digest": "5ee1d70afd72fdb4ba3f01843e85e7ecd9a6d3e2a52abeb14c346a2143e3c186",
     "platform": "macOS-26.6.2-arm64-arm-64bit-Mach-O",
     "dependencies": [
       {
