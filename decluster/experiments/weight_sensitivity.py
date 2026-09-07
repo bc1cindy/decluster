@@ -35,9 +35,10 @@ def build_artifact(snapshot):
         "source": source,
         "measurement": measurement,
         "historical_comparison": {
-            "status": "partially_falsified",
+            "status": "not_supported",
             "preserved": "AUC changes little from consistency 0.90 through 0.99",
-            "falsified": "AUC is not monotone and consistency 0.99 does not improve on 0.95",
+            "not_supported": "monotone improvement: the measured sequence dips, but by a fifth of "
+                             "one standard error, which does not establish a reversal either",
         },
         "limitations": [
             "address reuse is a weak and partly feature-dependent ownership proxy",
@@ -45,6 +46,8 @@ def build_artifact(snapshot):
             "the same selected sample is reused at every grid point",
             "the snapshot is not representative of the whole chain",
             "AUC stability does not imply calibrated evidence magnitudes",
+            "the sweep resolves differences of about one standard error; smaller ones are reported "
+            "and are not readable as an ordering",
             "this is attacker-side sensitivity analysis, not CoinScore or a privacy certificate",
         ],
     }
@@ -90,8 +93,14 @@ def render_markdown(artifact):
         f"AUC range from 0.90 through 0.99: {measurement['realistic_band_auc_range']:.6f}. "
         f"Monotone non-decreasing: {str(measurement['auc_is_monotone_non_decreasing']).lower()}.",
         "",
-        "The local ranking is stable but not monotone. Evidence magnitudes remain highly "
-        "sensitive to the assumed weight. Address reuse is a weak label; this is not a "
+        f"That flag reads the measured sequence, and the sequence does dip. The largest dip is "
+        f"{measurement['largest_decrement']:.6f}, against a standard error of "
+        f"{measurement['auc_standard_error']:.6f} at {measurement['pair_cap_per_class']} pairs per "
+        f"class — {measurement['largest_decrement_in_standard_errors']:.2f} standard errors. So "
+        "the sweep does not support monotone improvement, and it does not establish a reversal "
+        "either: over this band the AUC is flat within what the sample resolves.",
+        "",
+        "Evidence magnitudes are the part that moves. Address reuse is a weak label; this is not a "
         "privacy score.",
         "",
     ])

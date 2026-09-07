@@ -13,4 +13,6 @@ Generated from the canonical experiment artifact. Do not edit manually.
 
 AUC range from 0.90 through 0.99: 0.000550. Monotone non-decreasing: false.
 
-The local ranking is stable but not monotone. Evidence magnitudes remain highly sensitive to the assumed weight. Address reuse is a weak label; this is not a privacy score.
+That flag reads the measured sequence, and the sequence does dip. The largest dip is 0.000550, against a standard error of 0.003101 at 4000 pairs per class — 0.18 standard errors. So the sweep does not support monotone improvement, and it does not establish a reversal either: over this band the AUC is flat within what the sample resolves.
+
+Evidence magnitudes are the part that moves. Address reuse is a weak label; this is not a privacy score.
