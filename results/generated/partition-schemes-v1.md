@@ -1,25 +1,36 @@
-# The partition schemes on a slice a reader has
+# Which cut makes two matchable views
 
 Generated from the canonical experiment artifact. Do not edit manually.
 
-12000 transactions, 3179 clusters. Each scheme cuts the slice into two views, a straddling entity gets a distinct pseudonym per view, and the matcher has to rejoin them from structure alone.
+300000 transactions, 71986 clusters. Each scheme cuts the slice into two views, a straddling entity gets a distinct pseudonym per view, and the matcher has to rejoin them from structure alone.
 
-| scheme | views | boundary txs | straddling entities | edges among them | non-isolated |
-|---|---|---:|---:|---:|---:|
-| epoch | 5804 / 6196 | 0 | 77 | 27 | 25 |
-| decore | 4473 / 4983 | 2544 | 50 | 10 | 14 |
-| collapse | 5794 / 6165 | 41 | 78 | 28 | 26 |
+| scheme | boundary txs | pairs to rejoin | straddler edges | mean straddler degree | non-isolated | correct @ 10% seed |
+|---|---:|---:|---:|---:|---:|---:|
+| `epoch` | 0 (0.0%) | 2562 | 1910 | 1.45 | 44.7% | 1 |
+| `decore` | 117371 (39.1%) | 1294 | 360 | 0.55 | 28.3% | 0 |
+| `collapse` | 4989 (1.7%) | 2536 | 1941 | 1.49 | 44.5% | 1 |
 
-The collapse cut costs 41 transactions more than the temporal one and leaves the straddler population and its internal connectivity where the temporal cut leaves them (78 against 77 entities, 28 against 27 edges). `decore` is the one that differs, and it differs by destroying the signal: 50 entities and 10 edges among them. That ordering is what the 300,000-transaction run found, at two orders of magnitude more data.
+**`decore` cuts the wrong thing.** Dropping the busiest 1% of addresses removes 39.1% of the transactions, takes the rejoinable population from 2562 to 1294 and the straddler subgraph's mean degree from 1.45 to 0.55. It cuts by degree, and degree is where the recurring relationships live.
 
-**The matcher does not ignite here, under any scheme.** Not zero correct out of some guesses — zero guesses. Propagation needs edges among the straddlers and this slice does not supply enough of them, so the precision and recall half of `RESULTS-partition-cuts.md` stays backed only by the export this repository does not ship. Reporting zeros as a comparison would read as a measured tie between the schemes, and it is not one.
+**`collapse` is nearly free and does not change the regime.** It costs 1.7% of the transactions and leaves the population and the degree where the temporal baseline leaves them (2536 against 2562 pairs, 1.49 against 1.45). It is the cut the framework asks for and it is not the binding constraint.
+
+| scheme | seed | seeds | guesses | correct | precision |
+|---|---:|---:|---:|---:|---:|
+| `epoch` | 5% | 128 | 0 | 0 | n/a |
+| `epoch` | 10% | 256 | 1 | 1 | 1.000 |
+| `decore` | 5% | 64 | 0 | 0 | n/a |
+| `decore` | 10% | 129 | 0 | 0 | n/a |
+| `collapse` | 5% | 126 | 0 | 0 | n/a |
+| `collapse` | 10% | 253 | 1 | 1 | 1.000 |
+
+The matcher recovers a handful of pairs at best, so what separates the schemes here is the straddler subgraph and not the precision. A cut that halves the mean straddler degree leaves nothing to propagate along, whatever its precision reads on the pairs it does return.
 
 Every scheme generalises to n views:
 
 | scheme | 2 | 3 | 4 |
 |---|---|---|---|
-| epoch | 5804/6196 | 2956/4266/4778 | 1659/1297/2848/6196 |
-| decore | 4473/4983 | 2256/3297/3903 | 1277/979/2217/4983 |
-| collapse | 5794/6165 | 2946/4247/4766 | 1655/1291/2848/6165 |
+| `epoch` | 137354/162646 | 91349/94577/114074 | 70469/66597/78032/84902 |
+| `decore` | 82820/99809 | 55231/57214/70184 | 42474/40182/46904/53069 |
+| `collapse` | 135045/159966 | 89861/93060/112090 | 69302/65459/76829/83421 |
 
-Cluster membership here is a co-spend label rather than wallet ownership, the export carries no output values so the collapse detector sees only its shape rule, and the counts are two orders of magnitude below the published run — they support the ordering, not a comparison of magnitudes. None of this is a privacy score.
+Cluster membership here is a co-spend label rather than wallet ownership, the export carries no output values so the collapse detector sees only its shape rule, and this is one slice of one era. None of it is a privacy score.

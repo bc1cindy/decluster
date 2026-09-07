@@ -6,7 +6,7 @@
     "ctp.graph.pseudonym_representation"
   ],
   "code": {
-    "revision": "4e2d32b24d35059c8a95b24e537c4529fbb7c004",
+    "revision": "096fe63467cae2ea18a1160e1af5925e0f3e75b1",
     "dirty": false
   },
   "command": {
@@ -15,7 +15,7 @@
       "-m",
       "decluster.experiments.partition_schemes",
       "--dataset",
-      "tests/fixtures/slice_a_channels_2016.ndjson.gz",
+      "data/partition-cuts-300k-2016.ndjson.gz",
       "reproduce",
       "--artifact",
       "results/artifacts/partition-schemes-v1.json",
@@ -31,8 +31,8 @@
   },
   "datasets": [
     {
-      "id": "slice-a-channels-2016-v1",
-      "sha256": "66104889f8b79f2938edb6666f16dfa19a74c68cd8016832b4f2a5e03b11865f"
+      "id": "partition-cuts-300k-2016-v1",
+      "sha256": "44192156107867a305e2f608af9185e4ce22fb88372238c88683f91120b1db16"
     }
   ],
   "parameters": {
@@ -44,7 +44,10 @@
       "collapse"
     ],
     "seed": 0,
-    "seed_share": 0.1,
+    "seed_shares": [
+      0.05,
+      0.1
+    ],
     "view_counts": [
       2,
       3,
@@ -60,18 +63,18 @@
   "outputs": [
     {
       "path": "results/artifacts/partition-schemes-v1.json",
-      "bytes": 1782,
-      "sha256": "2f71c0566f69446ef2c5a78039717685f09af4c8c99dc3d561786a797f38f44d"
+      "bytes": 2310,
+      "sha256": "a000b89fd2a3def18ab1336179c2f083690289bd90584e4c9d047d3f4c0241ee"
     },
     {
       "path": "results/generated/partition-schemes-v1.md",
-      "bytes": 2016,
-      "sha256": "84e42141d97ad5bee0fc4a3dc7bbc07c64b3da451efebd67cd05593df653d25c"
+      "bytes": 2364,
+      "sha256": "57d6d4d6155e20e2ba7537d22e014dc6cd8a78caf82d671fb11fe5318c03cea9"
     }
   ],
   "reproducibility": {
     "level": "bitwise_reproducible",
-    "availability": "partial"
+    "availability": "complete"
   },
   "verification": {
     "mode": "exact",
@@ -80,7 +83,7 @@
       "-m",
       "decluster.experiments.partition_schemes",
       "--dataset",
-      "tests/fixtures/slice_a_channels_2016.ndjson.gz",
+      "data/partition-cuts-300k-2016.ndjson.gz",
       "verify",
       "--artifact",
       "results/artifacts/partition-schemes-v1.json",
@@ -93,16 +96,16 @@
     ],
     "properties": [
       "every scheme returns exactly n_views views",
-      "a matcher that makes no guess is reported as such, never as zero precision",
-      "the collapse cut is compared against the temporal one on straddler connectivity",
+      "decore halves the mean straddler degree and the population",
+      "collapse tracks the temporal baseline on both",
+      "a seed share that yields no guess reports no precision rather than zero",
       "the generated Markdown equals the canonical rendering"
     ],
     "tolerance": null
   },
   "limitations": [
-    "the matcher does not ignite on this slice under any scheme, so the precision and recall table in RESULTS-partition-cuts.md is not reproduced here",
-    "that table rests on a 300,000-transaction export this repository does not ship",
-    "one slice, one era; the straddler counts are two orders of magnitude below the published run and should not be compared to it as measurements",
+    "the matcher recovers a handful of pairs at best, so the comparison rests on the straddler subgraph rather than on precision",
+    "one slice, one era, one 300,000-transaction prefix",
     "cluster membership is a co-spend label, not wallet ownership",
     "the export carries addresses but no values, so the collapse detector sees only the shape rule and never the de-mix arm",
     "the result is not a privacy score"

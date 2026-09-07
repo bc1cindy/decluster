@@ -2,18 +2,14 @@
 
 The framework calls the temporal cut its own trivial example and asks for one that divides along
 cluster-collapse regions instead, generalised to n views. Both are implemented, and
-`results/RESULTS-partition-cuts.md` reports the comparison — over 300,000 transactions from a
-977 MB export that is not committed. The verdict there is a clean negative for the cut criterion,
-and nobody outside this machine can check it.
+`results/RESULTS-partition-cuts.md` reports the comparison over 300,000 transactions, and for a
+while that measurement rested on a 977 MB export nobody else held. It did not need the whole
+export: the run consumes one prefix, and that prefix recompresses to 50 MB, so it is committed and
+this reproduces the published table rather than approximating it.
 
-This reproduces the part the committed slice can carry: how each scheme partitions, how many
-entities straddle the boundary, and how connected those straddlers are to each other. That last
-number is the go/no-go the matcher depends on — propagation needs edges *among* the straddlers,
-not merely a count of them — and it is where the schemes separate.
-
-What this deliberately does not reproduce is the precision and recall table. At this scale the
-matcher does not ignite at all, under any scheme, and the run records that rather than reporting
-zeros as if they were a comparison.
+The number that decides the comparison is not the straddler count but the connectivity among them
+— propagation needs edges *between* straddlers, not merely a population of them — which is why the
+run reports mean straddler degree beside the count.
 """
 
 from __future__ import annotations
@@ -29,12 +25,13 @@ from ..result_artifacts import canonical_json_bytes, write_canonical_json
 from ..view_match import ViewMatcher
 
 EXPERIMENT_ID = "partition-schemes-v1"
-DEFAULT_DATASET = "tests/fixtures/slice_a_channels_2016.ndjson.gz"
+DEFAULT_DATASET = "data/partition-cuts-300k-2016.ndjson.gz"
 SCHEMES = ("epoch", "decore", "collapse")
 VIEW_COUNTS = (2, 3, 4)
 CORE_FRACTION = 0.01
 MIN_SIDE = 2
 SEED = 0
+SEED_SHARES = (0.05, 0.10)
 
 
 class VerificationError(ValueError):
@@ -98,23 +95,34 @@ def _scheme(sample, lookup, scheme):
                 if source in crowd and destination in crowd)
     connected = sum(1 for vertex in crowd
                     if any(other in crowd for other in left.neighbours(vertex)))
-    guesses = 0
-    if truth:
-        ranked = sorted(truth, key=lambda v: -(left.degree(v) + right.degree(truth[v])))
-        seed_count = max(2, int(len(ranked) * 0.10))
-        seeds = set(ranked[:seed_count])
+    degree = (sum(1 for v in crowd for other in left.neighbours(v) if other in crowd)
+              / len(crowd)) if crowd else 0.0
+    ranked = sorted(truth, key=lambda v: -(left.degree(v) + right.degree(truth[v])))
+    seeded = []
+    for share in SEED_SHARES:
+        count = max(2, int(len(ranked) * share))
+        seeds = set(ranked[:count])
         matched = ViewMatcher(revisit=True).match(
             left, right, {v: truth[v] for v in seeds}, stat_a=stat_left, stat_b=stat_right
         )
-        guesses = sum(1 for v in matched if v in truth and v not in seeds)
+        guesses = {v: w for v, w in matched.items() if v in truth and v not in seeds}
+        correct = sum(1 for v, w in guesses.items() if w == truth[v])
+        remaining = len(truth) - len(seeds)
+        seeded.append({
+            "seed_share": share, "seeds": len(seeds), "guesses": len(guesses),
+            "correct": correct,
+            "precision": (correct / len(guesses)) if guesses else None,
+            "recall": (correct / remaining) if remaining > 0 else None,
+        })
     return {
         "scheme": scheme,
         "view_sizes": [len(part) for part in parts],
         "boundary_transactions": boundary,
         "straddling_entities": len(truth),
         "edges_among_straddlers": among,
+        "mean_straddler_degree": degree,
         "straddlers_with_a_straddling_neighbour": connected,
-        "matcher_guesses": guesses,
+        "seeded": seeded,
     }
 
 
@@ -144,7 +152,9 @@ def build_artifact(dataset=DEFAULT_DATASET):
                 by_scheme["collapse"]["boundary_transactions"]
                 - by_scheme["epoch"]["boundary_transactions"]
             ),
-            "any_scheme_ignited_the_matcher": any(row["matcher_guesses"] for row in rows),
+            "any_scheme_ignited_the_matcher": any(
+                seed["guesses"] for row in rows for seed in row["seeded"]
+            ),
         },
         "parameters": {
             "schemes": list(SCHEMES),
@@ -152,14 +162,12 @@ def build_artifact(dataset=DEFAULT_DATASET):
             "core_fraction": CORE_FRACTION,
             "min_side": MIN_SIDE,
             "seed": SEED,
-            "seed_share": 0.10,
+            "seed_shares": list(SEED_SHARES),
         },
         "limitations": [
-            "the matcher does not ignite on this slice under any scheme, so the precision and "
-            "recall table in RESULTS-partition-cuts.md is not reproduced here",
-            "that table rests on a 300,000-transaction export this repository does not ship",
-            "one slice, one era; the straddler counts are two orders of magnitude below the "
-            "published run and should not be compared to it as measurements",
+            "the matcher recovers a handful of pairs at best, so the comparison rests on the "
+            "straddler subgraph rather than on precision",
+            "one slice, one era, one 300,000-transaction prefix",
             "cluster membership is a co-spend label, not wallet ownership",
             "the export carries addresses but no values, so the collapse detector sees only the "
             "shape rule and never the de-mix arm",
@@ -192,7 +200,7 @@ def render_markdown(artifact):
     measured = artifact["measurement"]
     rows = {row["scheme"]: row for row in measured["schemes"]}
     lines = [
-        "# The partition schemes on a slice a reader has",
+        "# Which cut makes two matchable views",
         "",
         "Generated from the canonical experiment artifact. Do not edit manually.",
         "",
@@ -200,35 +208,55 @@ def render_markdown(artifact):
         "cuts the slice into two views, a straddling entity gets a distinct pseudonym per view, "
         "and the matcher has to rejoin them from structure alone.",
         "",
-        "| scheme | views | boundary txs | straddling entities | edges among them | non-isolated |",
-        "|---|---|---:|---:|---:|---:|",
+        "| scheme | boundary txs | pairs to rejoin | straddler edges | mean straddler degree | "
+        "non-isolated | correct @ 10% seed |",
+        "|---|---:|---:|---:|---:|---:|---:|",
     ]
     for scheme in ("epoch", "decore", "collapse"):
         row = rows[scheme]
+        share = (100.0 * row["straddlers_with_a_straddling_neighbour"] / row["straddling_entities"]
+                 if row["straddling_entities"] else 0.0)
+        at_ten = next(s for s in row["seeded"] if s["seed_share"] == 0.10)
+        cost = (100.0 * row["boundary_transactions"] / measured["transactions"])
         lines.append(
-            f"| {scheme} | {row['view_sizes'][0]} / {row['view_sizes'][1]} | "
-            f"{row['boundary_transactions']} | {row['straddling_entities']} | "
-            f"{row['edges_among_straddlers']} | "
-            f"{row['straddlers_with_a_straddling_neighbour']} |"
+            f"| `{scheme}` | {row['boundary_transactions']} ({cost:.1f}%) | "
+            f"{row['straddling_entities']} | {row['edges_among_straddlers']} | "
+            f"{row['mean_straddler_degree']:.2f} | {share:.1f}% | {at_ten['correct']} |"
         )
+    epoch, decore, collapse = rows["epoch"], rows["decore"], rows["collapse"]
     lines += [
         "",
-        f"The collapse cut costs {measured['collapse_costs_over_epoch']} transactions more than the "
-        "temporal one and leaves the straddler population and its internal connectivity where the "
-        f"temporal cut leaves them ({rows['collapse']['straddling_entities']} against "
-        f"{rows['epoch']['straddling_entities']} entities, "
-        f"{rows['collapse']['edges_among_straddlers']} against "
-        f"{rows['epoch']['edges_among_straddlers']} edges). `decore` is the one that differs, and "
-        f"it differs by destroying the signal: {rows['decore']['straddling_entities']} entities and "
-        f"{rows['decore']['edges_among_straddlers']} edges among them. That ordering is what the "
-        "300,000-transaction run found, at two orders of magnitude more data.",
+        f"**`decore` cuts the wrong thing.** Dropping the busiest "
+        f"{artifact['parameters']['core_fraction']:.0%} of addresses removes "
+        f"{100.0 * decore['boundary_transactions'] / measured['transactions']:.1f}% of the "
+        f"transactions, takes the rejoinable population from {epoch['straddling_entities']} to "
+        f"{decore['straddling_entities']} and the straddler subgraph's mean degree from "
+        f"{epoch['mean_straddler_degree']:.2f} to {decore['mean_straddler_degree']:.2f}. It cuts by "
+        "degree, and degree is where the recurring relationships live.",
         "",
-        "**The matcher does not ignite here, under any scheme.** Not zero correct out of some "
-        "guesses — zero guesses. Propagation needs edges among the straddlers and this slice does "
-        "not supply enough of them, so the precision and recall half of "
-        "`RESULTS-partition-cuts.md` stays backed only by the export this repository does not "
-        "ship. Reporting zeros as a comparison would read as a measured tie between the schemes, "
-        "and it is not one.",
+        f"**`collapse` is nearly free and does not change the regime.** It costs "
+        f"{100.0 * collapse['boundary_transactions'] / measured['transactions']:.1f}% of the "
+        f"transactions and leaves the population and the degree where the temporal baseline leaves "
+        f"them ({collapse['straddling_entities']} against {epoch['straddling_entities']} pairs, "
+        f"{collapse['mean_straddler_degree']:.2f} against {epoch['mean_straddler_degree']:.2f}). "
+        "It is the cut the framework asks for and it is not the binding constraint.",
+        "",
+        "| scheme | seed | seeds | guesses | correct | precision |",
+        "|---|---:|---:|---:|---:|---:|",
+    ]
+    for scheme in ("epoch", "decore", "collapse"):
+        for seed in rows[scheme]["seeded"]:
+            precision = "n/a" if seed["precision"] is None else f"{seed['precision']:.3f}"
+            lines.append(
+                f"| `{scheme}` | {seed['seed_share']:.0%} | {seed['seeds']} | {seed['guesses']} | "
+                f"{seed['correct']} | {precision} |"
+            )
+    lines += [
+        "",
+        "The matcher recovers a handful of pairs at best, so what separates the schemes here is the "
+        "straddler subgraph and not the precision. A cut that halves the mean straddler degree "
+        "leaves nothing to propagate along, whatever its precision reads on the pairs it does "
+        "return.",
         "",
         "Every scheme generalises to n views:",
         "",
@@ -238,13 +266,12 @@ def render_markdown(artifact):
     for scheme in ("epoch", "decore", "collapse"):
         sizes = measured["view_counts"][scheme]
         cells = " | ".join("/".join(str(n) for n in sizes[str(count)]) for count in (2, 3, 4))
-        lines.append(f"| {scheme} | {cells} |")
+        lines.append(f"| `{scheme}` | {cells} |")
     lines += [
         "",
         "Cluster membership here is a co-spend label rather than wallet ownership, the export "
-        "carries no output values so the collapse detector sees only its shape rule, and the "
-        "counts are two orders of magnitude below the published run — they support the ordering, "
-        "not a comparison of magnitudes. None of this is a privacy score.",
+        "carries no output values so the collapse detector sees only its shape rule, and this is "
+        "one slice of one era. None of it is a privacy score.",
         "",
     ]
     return "\n".join(lines)

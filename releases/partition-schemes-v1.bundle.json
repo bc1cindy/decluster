@@ -12,18 +12,18 @@
     {
       "name": "catalog/runs/partition-schemes-v1.json",
       "role": "run_manifest",
-      "bytes": 3213,
-      "sha256": "5a9314e6b002f109c07c865452244b4507c2042913b154cc7660c2c1840c4869",
+      "bytes": 3062,
+      "sha256": "f38da1be02e62eab6c65b09b43f639213a0ff48205aa12c326f133044016b5fa",
       "locations": {
         "canonical": null,
         "mirrors": []
       }
     },
     {
-      "name": "tests/fixtures/slice_a_channels_2016.ndjson.gz",
+      "name": "data/partition-cuts-300k-2016.ndjson.gz",
       "role": "dataset",
-      "bytes": 1837504,
-      "sha256": "66104889f8b79f2938edb6666f16dfa19a74c68cd8016832b4f2a5e03b11865f",
+      "bytes": 52278431,
+      "sha256": "44192156107867a305e2f608af9185e4ce22fb88372238c88683f91120b1db16",
       "locations": {
         "canonical": null,
         "mirrors": []
@@ -32,8 +32,8 @@
     {
       "name": "results/artifacts/partition-schemes-v1.json",
       "role": "result",
-      "bytes": 1782,
-      "sha256": "2f71c0566f69446ef2c5a78039717685f09af4c8c99dc3d561786a797f38f44d",
+      "bytes": 2310,
+      "sha256": "a000b89fd2a3def18ab1336179c2f083690289bd90584e4c9d047d3f4c0241ee",
       "locations": {
         "canonical": null,
         "mirrors": []
@@ -42,8 +42,8 @@
     {
       "name": "results/generated/partition-schemes-v1.md",
       "role": "result",
-      "bytes": 2016,
-      "sha256": "84e42141d97ad5bee0fc4a3dc7bbc07c64b3da451efebd67cd05593df653d25c",
+      "bytes": 2364,
+      "sha256": "57d6d4d6155e20e2ba7537d22e014dc6cd8a78caf82d671fb11fe5318c03cea9",
       "locations": {
         "canonical": null,
         "mirrors": []
@@ -83,6 +83,6 @@
   "limitations": [
     "The bundled environment currently targets CPython 3.13 on macOS arm64.",
     "The dataset publisher authorized redistribution of the public fixture on 2026-09-04; upstream licensing remains undetermined.",
-    "The bundle reproduces how the schemes partition and how connected the straddlers are; the matcher does not ignite at this scale and the published precision table is not reproduced."
+    "The bundle reproduces the published cut comparison on the 300,000-transaction prefix it was measured on; the matcher recovers a handful of pairs, so the comparison rests on the straddler subgraph."
   ]
 }

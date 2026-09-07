@@ -240,6 +240,7 @@ def test_all_committed_dataset_manifests_match_their_files():
         "lumen-explorer-data-v1",
         "merged-anchor-931d6627-v1",
         "ns-bitcoin-left-2016-v1",
+        "partition-cuts-300k-2016-v1",
         "ns-bitcoin-right-2016-v1",
         "reid-signatures-v1",
         "slice-a-channels-2016-v1",
