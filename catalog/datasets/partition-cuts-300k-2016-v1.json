@@ -1,0 +1,41 @@
+{
+  "schema_version": 1,
+  "id": "partition-cuts-300k-2016-v1",
+  "title": "The 300,000-transaction 2016 prefix the partition-cut comparison was measured on",
+  "kind": "git_fixture",
+  "schema": "bitcoin-address-graph-ndjson-v1",
+  "format": "ndjson.gz",
+  "content": {
+    "bytes": 52278431,
+    "sha256": "44192156107867a305e2f608af9185e4ce22fb88372238c88683f91120b1db16"
+  },
+  "locations": {
+    "local_path": "data/partition-cuts-300k-2016.ndjson.gz",
+    "canonical": null,
+    "mirrors": []
+  },
+  "source": {
+    "provider": "decluster multi-epoch export",
+    "snapshot_time": null,
+    "recipe": "the first 300,000 transactions of epoch_2016_01_391104-392111.ndjson.gz, recompressed with mtime 0 at level 9",
+    "recipe_sha256": null
+  },
+  "determinism": {
+    "ordering": "the export's own line order, truncated at 300,000",
+    "rng_algorithm": null,
+    "rng_seed": null
+  },
+  "license": {
+    "data": "public on-chain transaction records; no upstream licence attaches",
+    "recipe": null
+  },
+  "normalization": {
+    "code_revision": "096fe63467cae2ea18a1160e1af5925e0f3e75b1",
+    "parameters": {
+      "transactions": 300000
+    },
+    "parents": []
+  },
+  "redistribution": "allowed",
+  "sensitivity": "public_on_chain"
+}

@@ -240,6 +240,7 @@ def test_all_committed_dataset_manifests_match_their_files():
         "lumen-explorer-data-v1",
         "merged-anchor-931d6627-v1",
         "ns-bitcoin-left-2016-v1",
+        "partition-cuts-300k-2016-v1",
         "ns-bitcoin-right-2016-v1",
         "reid-signatures-v1",
         "slice-a-channels-2016-v1",
@@ -346,3 +347,18 @@ def test_no_other_result_json_sits_outside_the_canonical_directories():
         for path in (ROOT / "results").glob("*.json")
     }
     assert loose - set(HISTORICAL_BASELINES) == {"results/scale_output.json"}
+
+
+def test_every_run_manifest_is_carried_by_a_bundle():
+    """A run nothing bundles is a result the reproduction gate never executes.
+
+    `descent-vs-ascent-v1` — the run this repository's central comparison rests on — sat outside
+    every bundle for a day, verifying its own outputs and never being reproduced from a pinned
+    runtime by anyone.
+    """
+    runs = {path.stem for path in (ROOT / "catalog" / "runs").glob("*.json")}
+    carried = set()
+    for index in (ROOT / "releases").glob("*.bundle.json"):
+        carried.update(json.loads(index.read_text())["runs"])
+    assert runs - carried == set(), f"runs no bundle carries: {sorted(runs - carried)}"
+    assert carried - runs == set(), f"bundles naming absent runs: {sorted(carried - runs)}"

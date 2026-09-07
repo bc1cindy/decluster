@@ -372,8 +372,7 @@ def partition_coins(sample, scheme="epoch", bounds=None, core_frac=0.01, n_views
     if scheme == "epoch":
         heights = [tx.get("height") or 0 for tx, _ in sample]
         if bounds is None:
-            mid = (min(heights) + max(heights)) // 2
-            bounds = [(min(heights), mid), (mid + 1, max(heights))]
+            bounds = height_bands(heights, n_views)
         return [[i for i, h in enumerate(heights) if lo <= h <= hi] for lo, hi in bounds]
 
     if scheme == "coinjoin_boundary":
@@ -387,7 +386,7 @@ def partition_coins(sample, scheme="epoch", bounds=None, core_frac=0.01, n_views
         return ambiguity_partition(sample, sample, core_frac=core_frac, n_views=n_views)
 
     if scheme == "decore":
-        return decore_partition(sample, core_frac=core_frac, bounds=bounds)
+        return decore_partition(sample, core_frac=core_frac, bounds=bounds, n_views=n_views)
 
     if scheme == "collapse":
         return collapse_partition(sample, min_side=min_side, bounds=bounds, n_views=n_views)
@@ -487,6 +486,26 @@ def collapse_boundary(sample, min_side=2):
     return boundary, uf
 
 
+def height_bands(heights, n_views):
+    """`n_views` contiguous height bands covering the range, the last one taking the remainder.
+
+    The framework asks for the n > 2 generalisation of every cut, so the temporal axis every
+    scheme falls back on bands the same way. Two schemes used to halve the range whatever
+    `n_views` said, which returned two views for a caller that asked for four and reported
+    nothing.
+    """
+    if n_views < 1:
+        raise ValueError(f"n_views must be at least 1, not {n_views}")
+    lo_h, hi_h = min(heights), max(heights)
+    step = max(1, (hi_h - lo_h + 1) // n_views)
+    bounds, bottom = [], lo_h
+    for index in range(n_views):
+        top = hi_h if index == n_views - 1 else min(bottom + step - 1, hi_h)
+        bounds.append((bottom, top))
+        bottom = top + 1
+    return bounds
+
+
 def collapse_partition(sample, min_side=2, scheme="epoch", bounds=None, n_views=2):
     """Views cut along cluster-collapse regions rather than along time.
 
@@ -515,7 +534,7 @@ def collapse_partition(sample, min_side=2, scheme="epoch", bounds=None, n_views=
     return [[i for i in kept if lo <= h[i] <= hi] for lo, hi in bounds]
 
 
-def decore_partition(sample, core_frac=0.01, scheme="epoch", bounds=None):
+def decore_partition(sample, core_frac=0.01, scheme="epoch", bounds=None, n_views=2):
     """The ambiguity-cut reformulated so the views actually overlap.
 
     `ambiguity_partition` removes the dense core and returns its *connected components*,
@@ -545,9 +564,7 @@ def decore_partition(sample, core_frac=0.01, scheme="epoch", bounds=None):
         if not h:
             return [[], []]
         if bounds is None:
-            lo_h, hi_h = min(h.values()), max(h.values())
-            mid = (lo_h + hi_h) // 2
-            bounds = [(lo_h, mid), (mid + 1, hi_h)]
+            bounds = height_bands(list(h.values()), n_views)
         return [[i for i in kept if lo <= h[i] <= hi] for lo, hi in bounds]
     raise ValueError(f"unknown inner scheme for decore: {scheme}")
 

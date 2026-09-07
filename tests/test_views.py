@@ -2,7 +2,7 @@ import sys, os
 sys.path.insert(0, os.path.dirname(os.path.dirname(__file__)))
 import pytest
 from decluster.views import (AXES, PseudonymGraph, cluster_addresses, contract,
-                             partition_coins)
+                             height_bands, partition_coins)
 from decluster.views import contract_degrees as views_contract_degrees
 
 
@@ -623,3 +623,31 @@ def _groups(lookup):
     for addr, cid in lookup.items():
         out.setdefault(cid, []).append(addr)
     return out.values()
+
+
+def test_every_scheme_honours_the_view_count():
+    """The framework asks for the n > 2 generalisation of every cut, not of two of them.
+
+    `epoch` and `decore` used to halve the height range whatever `n_views` said, so a caller
+    asking for four views got two and was told nothing.
+    """
+    sample = [({"txid": f"t{i}", "height": 800000 + i,
+                "vin": [{"prevout": {"scriptpubkey_address": f"a{i}"}}],
+                "vout": [{"scriptpubkey_address": f"b{i}", "value": 1000}]}, 0)
+              for i in range(40)]
+    for scheme in ("epoch", "decore", "collapse"):
+        for n in (2, 3, 4):
+            parts = partition_coins(sample, scheme=scheme, n_views=n)
+            assert len(parts) == n, f"{scheme} returned {len(parts)} views for n_views={n}"
+
+
+def test_the_bands_cover_the_range_without_overlap():
+    bounds = height_bands([800000, 800001, 800009], 3)
+    assert bounds[0][0] == 800000 and bounds[-1][1] == 800009
+    for (_, top), (bottom, _) in zip(bounds, bounds[1:]):
+        assert bottom == top + 1
+
+
+def test_a_view_count_below_one_is_refused():
+    with pytest.raises(ValueError, match="at least 1"):
+        height_bands([1, 2, 3], 0)

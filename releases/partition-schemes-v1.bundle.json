@@ -1,0 +1,88 @@
+{
+  "schema_version": 1,
+  "id": "partition-schemes-v1",
+  "capabilities": [
+    "verify_outputs",
+    "reproduce_runs"
+  ],
+  "runs": [
+    "partition-schemes-v1"
+  ],
+  "blobs": [
+    {
+      "name": "catalog/runs/partition-schemes-v1.json",
+      "role": "run_manifest",
+      "bytes": 3062,
+      "sha256": "ff54e2932d2e5bf0abe980318426d9f0c8a007f4779738a9c70966e53cde9bec",
+      "locations": {
+        "canonical": null,
+        "mirrors": []
+      }
+    },
+    {
+      "name": "data/partition-cuts-300k-2016.ndjson.gz",
+      "role": "dataset",
+      "bytes": 52278431,
+      "sha256": "44192156107867a305e2f608af9185e4ce22fb88372238c88683f91120b1db16",
+      "locations": {
+        "canonical": null,
+        "mirrors": []
+      }
+    },
+    {
+      "name": "results/artifacts/partition-schemes-v1.json",
+      "role": "result",
+      "bytes": 2310,
+      "sha256": "a000b89fd2a3def18ab1336179c2f083690289bd90584e4c9d047d3f4c0241ee",
+      "locations": {
+        "canonical": null,
+        "mirrors": []
+      }
+    },
+    {
+      "name": "results/generated/partition-schemes-v1.md",
+      "role": "result",
+      "bytes": 2364,
+      "sha256": "57d6d4d6155e20e2ba7537d22e014dc6cd8a78caf82d671fb11fe5318c03cea9",
+      "locations": {
+        "canonical": null,
+        "mirrors": []
+      }
+    },
+    {
+      "name": "sources/decluster-6541e5c-runtime.tar",
+      "role": "source",
+      "bytes": 2283520,
+      "sha256": "7b01965f5e3d0003df471886325cb0a9e19b90762879897bfb1250e5abc156cc",
+      "locations": {
+        "canonical": null,
+        "mirrors": []
+      }
+    },
+    {
+      "name": "reproduction/partition-schemes/requirements.lock",
+      "role": "lockfile",
+      "bytes": 30,
+      "sha256": "e0d6a8cada5d383c0aca2bd2a37f28c15721392469c94084128d369c29c5544d",
+      "locations": {
+        "canonical": null,
+        "mirrors": []
+      }
+    },
+    {
+      "name": "reproduction/partition-schemes/environment.json",
+      "role": "environment",
+      "bytes": 370,
+      "sha256": "5f60a7b0a8105e6fc3e12c1f43b12df83090d45e7cac11f77a467bbd2a742be3",
+      "locations": {
+        "canonical": null,
+        "mirrors": []
+      }
+    }
+  ],
+  "limitations": [
+    "The bundled environment currently targets CPython 3.13 on macOS arm64.",
+    "The dataset publisher authorized redistribution of the public fixture on 2026-09-04; upstream licensing remains undetermined.",
+    "The bundle reproduces the published cut comparison on the 300,000-transaction prefix it was measured on; the matcher recovers a handful of pairs, so the comparison rests on the straddler subgraph."
+  ]
+}

@@ -13,7 +13,7 @@
       "name": "catalog/runs/ancestry-contract-v1.json",
       "role": "run_manifest",
       "bytes": 2840,
-      "sha256": "c33c3de4e2231c9b05b6dc868389d07308589ba8eeb5dd3f8f78b8598692149b",
+      "sha256": "6d27a33effef27db3f6cfcc88a2a14bd2b2a1c2c3146d2bb69791e6d895cb8e6",
       "locations": {
         "canonical": null,
         "mirrors": []
@@ -40,10 +40,10 @@
       }
     },
     {
-      "name": "sources/decluster-a2c0b71-runtime.tar",
+      "name": "sources/decluster-6541e5c-runtime.tar",
       "role": "source",
-      "bytes": 2252800,
-      "sha256": "de3bb05475e3b278c70dba6de1f26c74bd1a1af22e4a8bbdaa4d153f0502500b",
+      "bytes": 2283520,
+      "sha256": "7b01965f5e3d0003df471886325cb0a9e19b90762879897bfb1250e5abc156cc",
       "locations": {
         "canonical": null,
         "mirrors": []
@@ -63,7 +63,7 @@
       "name": "reproduction/ancestry-contract/environment.json",
       "role": "environment",
       "bytes": 370,
-      "sha256": "d17b200c853c2bee3a992edc7f40bef576a15a27d68828b7832991375eb21b89",
+      "sha256": "3899b87641fbb2faff63ce85c8c7a355074eea8f31a0625da7bd225da7d2a579",
       "locations": {
         "canonical": null,
         "mirrors": []

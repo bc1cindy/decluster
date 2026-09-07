@@ -103,6 +103,21 @@ and `collapse` are small enough that they should not be read as an ordering. The
 single sweep at one `min_side`. The export carries addresses but no output values, so the collapse
 detector sees only the shape rule and never the de-mix arm.
 
+**Addition, 7 Sep 2026 — the table above is now reproducible.** It came from
+`data/epochs_2016_weekly/`, 977 MB this repository does not ship, so none of it could be checked by
+anyone else. It never needed the whole export: the run consumes one prefix, that prefix recompresses
+to 50 MB, and it is committed as `data/partition-cuts-300k-2016.ndjson.gz`.
+`catalog/runs/partition-schemes-v1.json` reproduces every figure above — 2,562 / 1,294 / 2,536 pairs,
+1,910 / 360 / 1,941 straddler edges, 1.45 / 0.55 / 1.49 mean degree, one correct pair at a 10% seed
+for `epoch` and `collapse` and none for `decore`.
+
+Two things the canonical run states that this document did not. A seed share that returns no guess
+reports **no precision**, not zero: three of the six seed/scheme cells make no guess at all, and
+printing 0.000 there would read as a measured tie between schemes rather than as an absence of
+measurement. And `epoch` and `decore` had been ignoring `n_views` — they halved the height range
+whatever was asked, so the framework's n > 2 generalisation silently applied to one scheme of three.
+All three now band the range into the number of views requested.
+
 ## Reproducibility / provenance
 
 Per `results/REPRODUCIBILITY.md`, state 2: **mechanism unit-tested, headline number is a data-run.**
