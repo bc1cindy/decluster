@@ -123,11 +123,10 @@ def test_unknown_field_is_not_silently_ignored():
         model.score({"a": True, "typo": False})
 
 
-def test_legacy_fs_name_warns_and_preserves_result():
-    from decluster.combiner import fs_score, rarity_score
+def test_the_misleading_alias_is_gone():
+    """`fs_score` named a rarity kernel after a model it never fitted. Nothing imported it."""
+    import decluster.combiner as combiner
+    import decluster.rarity_weight_baseline as baseline
 
-    axes = [("a", lambda tx: tx["a"], {1: 0.5}, 0.5, lambda _a, _b: False)]
-    args = (axes, {"a": 1}, {"a": 1}, 0.9, 10)
-    with pytest.warns(DeprecationWarning, match="rarity baseline"):
-        legacy = fs_score(*args)
-    assert legacy == rarity_score(*args)
+    assert not hasattr(combiner, "fs_score")
+    assert not hasattr(baseline, "fs_score")

@@ -5,7 +5,6 @@ consistency assumption.  Existing callers retain this behavior.  The fitted,
 supervised Fellegi--Sunter baseline lives in :mod:`decluster.fellegi_sunter`.
 """
 import math
-import warnings
 from collections import Counter
 from .extractors import NA, x_nsequence, x_input_order, locktime_policy
 from .engine import sample_recent_txs
@@ -43,15 +42,6 @@ def rarity_score(axes, txA, txB, c, floor_n, explain=False):
         total += w; rows.append((name, va, vb, w))
     return (total, rows) if explain else total
 
-
-def fs_score(axes, txA, txB, c, floor_n, explain=False):
-    """Compatibility wrapper for the former, misleading function name."""
-    warnings.warn(
-        "fs_score is a rarity baseline, not fitted Fellegi-Sunter; use rarity_score",
-        DeprecationWarning,
-        stacklevel=2,
-    )
-    return rarity_score(axes, txA, txB, c, floor_n, explain)
 
 class Combiner:
     def __init__(self, sample=None, consistency=0.95):
