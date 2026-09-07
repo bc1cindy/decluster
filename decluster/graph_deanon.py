@@ -68,9 +68,9 @@ def build(sample, dust_guard=False):
         in_addr = [a for a in in_addr if a]
         out_addr = [o.get("scriptpubkey_address") for o in tx.get("vout", []) if o.get("scriptpubkey_address")]
         cospent.add(n, in_addr)
-        parts = set(in_addr) | set(out_addr)
-        for a in parts:
-            neigh_full.setdefault(a, set()).update(parts - {a})
+        parts = sorted(set(in_addr) | set(out_addr))   # insertion order here fixes the order
+        for a in parts:                                   # every seeded sample below walks
+            neigh_full.setdefault(a, set()).update(set(parts) - {a})
         for a in in_addr:
             neigh_pay.setdefault(a, set()).update(out_addr)
         for o in out_addr:

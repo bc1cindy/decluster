@@ -145,7 +145,7 @@ def _run(inherited, weight, ascent, cut_below):
         "cut_below": cut_below,
         "blocks_cut": summary["cut"],
         "blocks_left_whole": summary["left_whole"],
-        "blocks_unsearched": summary["unsearched"],
+        "blocks_approximated": summary["approximated"],
         "severed_weight": summary["severed_weight"],
         "resulting_blocks": len(result.partition),
         "refines_inherited": result.partition.refines(inherited),
@@ -159,15 +159,15 @@ def _evidence_reach(inherited, ascent, signals):
     reach = {
         "signalled_pairs": len(signals),
         "joined_pairs": 0,
-        "joined_pairs_in_searchable_blocks": 0,
-        "negative_pairs_inside_searchable_blocks": 0,
-        "negative_pairs_inside_unsearchable_blocks": 0,
-        "unsearchable_blocks_carrying_evidence": 0,
+        "joined_pairs_in_exactly_searched_blocks": 0,
+        "negative_pairs_in_exactly_searched_blocks": 0,
+        "negative_pairs_in_approximated_blocks": 0,
+        "approximated_blocks_carrying_evidence": 0,
         "separated_by_ascent_only": 0,
-        "separated_by_ascent_only_in_searchable_blocks": 0,
+        "separated_by_ascent_only_in_exactly_searched_blocks": 0,
     }
     for block in inherited.blocks():
-        searchable = len(block) <= MAX_BLOCK
+        exact = len(block) <= MAX_BLOCK
         pairs = _pairs(sorted(block))
         reach["joined_pairs"] += len(pairs)
         carries = 0
@@ -176,14 +176,14 @@ def _evidence_reach(inherited, ascent, signals):
                 carries += 1
             if not ascent.same_block(*pair):
                 reach["separated_by_ascent_only"] += 1
-                if searchable:
-                    reach["separated_by_ascent_only_in_searchable_blocks"] += 1
-        if searchable:
-            reach["joined_pairs_in_searchable_blocks"] += len(pairs)
-            reach["negative_pairs_inside_searchable_blocks"] += carries
+                if exact:
+                    reach["separated_by_ascent_only_in_exactly_searched_blocks"] += 1
+        if exact:
+            reach["joined_pairs_in_exactly_searched_blocks"] += len(pairs)
+            reach["negative_pairs_in_exactly_searched_blocks"] += carries
         else:
-            reach["negative_pairs_inside_unsearchable_blocks"] += carries
-            reach["unsearchable_blocks_carrying_evidence"] += carries > 0
+            reach["negative_pairs_in_approximated_blocks"] += carries
+            reach["approximated_blocks_carrying_evidence"] += carries > 0
     return reach
 
 
@@ -208,10 +208,10 @@ def build_artifact(dataset=DEFAULT_DATASET):
             "ascent_blocks": len(ascent),
             "ascent_refines_inherited": ascent.refines(inherited),
             "largest_inherited_block": max(sizes),
-            "addresses_in_searchable_blocks": sum(
+            "addresses_in_exactly_searched_blocks": sum(
                 size * count for size, count in sizes.items() if size <= MAX_BLOCK
             ),
-            "searchable_blocks": searchable,
+            "exactly_searched_blocks": searchable,
             "evidence_reach": _evidence_reach(inherited, ascent, signals),
             "descent": [_run(inherited, weight, ascent, bar) for bar in THRESHOLDS],
         },
@@ -228,7 +228,7 @@ def build_artifact(dataset=DEFAULT_DATASET):
         },
         "limitations": [
             "the snapshot contains six 2016 blocks and is not a chain-wide sample",
-            "the exact search is skipped on blocks above max_block, and those blocks are left whole",
+            "blocks above max_block get the conservative pass, which cuts only where no pair objects and is not the best cut",
             "signals are counted tells, not calibrated bits, so the thresholds are not likelihoods",
             "the two passes are compared as partitions; neither is checked against same-owner labels",
             "the fingerprint and roundness channels are absent here, as they are in the merge pass",
@@ -262,6 +262,9 @@ def render_markdown(artifact):
     reach = measured["evidence_reach"]
     runs = measured["descent"]
     covered = 100.0 * reach["signalled_pairs"] / reach["joined_pairs"]
+    best = min(runs, key=lambda run: run["agreement_with_ascent"]["joined_only_by_descent"])
+    recovered = (reach["separated_by_ascent_only"]
+                 - best["agreement_with_ascent"]["joined_only_by_descent"])
     lines = [
         "# Ascending and descending over the same slice",
         "",
@@ -273,45 +276,51 @@ def render_markdown(artifact):
         "pass is handed the common-input-ownership partition and may only cut it, from the same "
         "refusal channels with the co-spend prior removed.",
         "",
-        "| pass | blocks |",
-        "|---|---:|",
-        f"| common-input ownership, inherited | {measured['inherited_blocks']} |",
-        f"| refusing merge pass, ascending | {measured['ascent_blocks']} |",
+        "| pass | blocks | blocks cut | separations the ascent makes and this does not |",
+        "|---|---:|---:|---:|",
+        f"| common-input ownership, inherited | {measured['inherited_blocks']} | n/a | "
+        f"{reach['separated_by_ascent_only']} |",
+        f"| refusing merge pass, ascending | {measured['ascent_blocks']} | n/a | 0 |",
     ]
     for run in runs:
-        lines.append(f"| descent at cut_below {run['cut_below']:.0f} | {run['resulting_blocks']} |")
+        lines.append(
+            f"| descent at cut_below {run['cut_below']:.0f} | {run['resulting_blocks']} | "
+            f"{run['blocks_cut']} | "
+            f"{run['agreement_with_ascent']['joined_only_by_descent']} |"
+        )
     lines += [
         "",
-        f"The ascent separates {reach['separated_by_ascent_only']} address pairs the inherited "
-        f"partition joins. The descent separates none of them, at any of the "
-        f"{len(runs)} thresholds, and cut no block at all.",
+        f"At the loosest bar the descent recovers **{recovered} of the "
+        f"{reach['separated_by_ascent_only']}** separations the ascent makes, cutting "
+        f"{best['blocks_cut']} blocks and never separating a pair the ascent keeps together. "
+        "Every signal on this slice is a single tell, so a bar of two or more clears nothing: the "
+        "threshold is doing real work rather than sitting below the data.",
         "",
         "| quantity | pairs |",
         "|---|---:|",
         f"| joined by the inherited partition | {reach['joined_pairs']} |",
         f"| carrying evidence against the pairing | {reach['signalled_pairs']} |",
-        f"| joined inside a searchable block | {reach['joined_pairs_in_searchable_blocks']} |",
-        f"| evidence inside a searchable block | {reach['negative_pairs_inside_searchable_blocks']} |",
-        f"| evidence inside a block above the search bound | "
-        f"{reach['negative_pairs_inside_unsearchable_blocks']} |",
-        f"| separated by the ascent inside a searchable block | "
-        f"{reach['separated_by_ascent_only_in_searchable_blocks']} |",
+        f"| joined inside an exactly searched block | {reach['joined_pairs_in_exactly_searched_blocks']} |",
+        f"| evidence inside an exactly searched block | {reach['negative_pairs_in_exactly_searched_blocks']} |",
+        f"| evidence inside a block the conservative pass handled | "
+        f"{reach['negative_pairs_in_approximated_blocks']} |",
         "",
-        f"The null is not the threshold's doing. Evidence against a pairing reaches "
-        f"{covered:.2f}% of the joined pairs, and all of it lies inside "
-        f"{reach['unsearchable_blocks_carrying_evidence']} of the "
-        f"{measured['inherited_blocks'] - measured['searchable_blocks']} blocks that exceed the "
-        f"exact search bound of {artifact['parameters']['max_block']} addresses. Not one of the "
-        f"{measured['searchable_blocks']} blocks the search could reach contains a pair these "
-        "channels argue against, so within its reach the search had nothing to act on and "
-        "correctly did nothing.",
+        f"Evidence against a pairing reaches {covered:.2f}% of the joined pairs, and all of it lies "
+        f"inside {reach['approximated_blocks_carrying_evidence']} of the "
+        f"{measured['inherited_blocks'] - measured['exactly_searched_blocks']} blocks that exceed "
+        f"the exact bound of {artifact['parameters']['max_block']} addresses. Not one of the "
+        f"{measured['exactly_searched_blocks']} blocks the exact search reaches contains a pair "
+        "these channels argue against, so there it correctly did nothing. The heavy tail is where "
+        "the evidence lives and where an exact search cannot go, which is why the conservative pass "
+        "exists.",
         "",
-        "What the two passes do with identical evidence is therefore not symmetric. A refusal at "
-        "merge time separates two addresses without holding any evidence about that pair: the "
-        "merge is simply not made, and transitivity never carries through it. A cut has to argue "
-        "about every pair crossing the boundary it names, against a partition whose blocks here "
-        f"reach {measured['largest_inherited_block']} addresses. On this slice that asymmetry is "
-        "the whole difference between the two results.",
+        "What the two directions do with identical evidence is still not symmetric, and the "
+        f"remaining {best['agreement_with_ascent']['joined_only_by_descent']} pairs are the "
+        "measure of it. A refusal at merge time separates two addresses without holding any "
+        "evidence about that pair: the merge is simply not made, and transitivity never carries "
+        "through it. A cut has to argue about the boundary it names, against blocks reaching "
+        f"{measured['largest_inherited_block']} addresses. Descending is strictly more expensive "
+        "than not ascending, and this slice says how much.",
         "",
         "These counts describe one six-block slice under two channels, compare the passes as "
         "partitions rather than against same-owner labels, and do not establish how either pass "

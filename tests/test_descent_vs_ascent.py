@@ -78,3 +78,25 @@ def test_the_ascent_is_finer_than_the_partition_it_replaces():
     measured = artifact["measurement"]
     assert measured["ascent_refines_inherited"]
     assert measured["ascent_blocks"] >= measured["inherited_blocks"]
+
+
+def test_the_descent_never_separates_a_pair_the_ascent_keeps():
+    """The descent may recover less than the ascent; it must never claim more.
+
+    A cut the ascent did not make is a boundary the same evidence did not justify at merge time,
+    and inventing one is the error that reads downstream as privacy.
+    """
+    measured = experiment.build_artifact(DATASET)["measurement"]
+    for run in measured["descent"]:
+        assert run["agreement_with_ascent"]["joined_only_by_ascent"] == 0
+
+
+def test_the_conservative_pass_reaches_the_blocks_the_evidence_is_in():
+    measured = experiment.build_artifact(DATASET)["measurement"]
+    reach = measured["evidence_reach"]
+    # Every signalled pair sits above the exact bound, so a run that only searched exactly would
+    # cut nothing at all on this slice.
+    assert reach["negative_pairs_in_exactly_searched_blocks"] == 0
+    assert reach["negative_pairs_in_approximated_blocks"] == reach["signalled_pairs"]
+    loosest = max(measured["descent"], key=lambda run: run["cut_below"])
+    assert loosest["blocks_cut"] > 0 and loosest["blocks_approximated"] > 0

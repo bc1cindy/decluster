@@ -32,6 +32,7 @@ EXPECTED_CTP_CLAIM_IDS = {
     "ctp.forms.observer_knowledge",
     "ctp.graph.pseudonym_representation",
     "ctp.intersection.longitudinal",
+    "ctp.payjoin.receiver_change_readoff",
     "ctp.payjoin.unnecessary_input",
     "ctp.provenance.traceability",
     "ctp.robustness.counterfactual_paths",

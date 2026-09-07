@@ -9,8 +9,12 @@ def input_addrs(tx):
     return {a for v in tx["vin"] if (a := (v.get("prevout") or {}).get("scriptpubkey_address"))}
 
 def union_input_addrs(tx, uf):
-    """Union a transaction's input addresses into uf (multi-input co-spend clustering)."""
-    ins = list(input_addrs(tx))
+    """Union a transaction's input addresses into uf (multi-input co-spend clustering).
+
+    Sorted, because the union-find root is whichever address is unioned into first. The partition
+    is the same either way, but the root labels the clusters, and downstream sampling walks them in
+    that order — so an unsorted set made a seeded run give a different answer in every process."""
+    ins = sorted(input_addrs(tx))
     for a in ins[1:]:
         uf.union(ins[0], a)
 

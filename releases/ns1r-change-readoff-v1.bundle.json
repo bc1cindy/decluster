@@ -1,0 +1,78 @@
+{
+  "schema_version": 1,
+  "id": "ns1r-change-readoff-v1",
+  "capabilities": [
+    "verify_outputs",
+    "reproduce_runs"
+  ],
+  "runs": [
+    "ns1r-change-readoff-v1"
+  ],
+  "blobs": [
+    {
+      "name": "catalog/runs/ns1r-change-readoff-v1.json",
+      "role": "run_manifest",
+      "bytes": 2627,
+      "sha256": "9ca9f20c0c24a4fadd11af06d7a8a427f77c4ad6e9d038175538e3bc8647cf74",
+      "locations": {
+        "canonical": null,
+        "mirrors": []
+      }
+    },
+    {
+      "name": "results/artifacts/ns1r-change-readoff-v1.json",
+      "role": "result",
+      "bytes": 2317,
+      "sha256": "d2c40b646533f67e4e256f62260b183e6aa4e2e3e2888d0e8d41da54374ca1f1",
+      "locations": {
+        "canonical": null,
+        "mirrors": []
+      }
+    },
+    {
+      "name": "results/generated/ns1r-change-readoff-v1.md",
+      "role": "result",
+      "bytes": 1321,
+      "sha256": "37d0f5348a1fbb852a826d28b09ed7ce09184da149616c9fd5816e127058764e",
+      "locations": {
+        "canonical": null,
+        "mirrors": []
+      }
+    },
+    {
+      "name": "sources/decluster-4fa950c-runtime.tar",
+      "role": "source",
+      "bytes": 2191360,
+      "sha256": "18d49e55bb80973cb9d45b209e307d7384cbdbe236fda2ce2b4d0a1032e7a5d8",
+      "locations": {
+        "canonical": null,
+        "mirrors": []
+      }
+    },
+    {
+      "name": "reproduction/ns1r-change-readoff/requirements.lock",
+      "role": "lockfile",
+      "bytes": 30,
+      "sha256": "e0d6a8cada5d383c0aca2bd2a37f28c15721392469c94084128d369c29c5544d",
+      "locations": {
+        "canonical": null,
+        "mirrors": []
+      }
+    },
+    {
+      "name": "reproduction/ns1r-change-readoff/environment.json",
+      "role": "environment",
+      "bytes": 374,
+      "sha256": "c07d4e8a7d32abfef8bedf41aeaf0c5d49ab3b15326888d13f3550737f686b42",
+      "locations": {
+        "canonical": null,
+        "mirrors": []
+      }
+    }
+  ],
+  "limitations": [
+    "The bundled environment currently targets CPython 3.13 on macOS arm64.",
+    "Public bootstrap remains unavailable until every blob has a canonical HTTPS location and an independent mirror.",
+    "The bundle proves the receiver-side read-off on two deterministic scenarios, not its prevalence, and the negotiated payments are supplied rather than inferred."
+  ]
+}

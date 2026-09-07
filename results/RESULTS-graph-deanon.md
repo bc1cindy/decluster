@@ -33,6 +33,25 @@ those labels, so its 0.992 is partly circular. Removing those edges — scoring 
 **payment** relationships only — still yields **AUC 0.950**. The shuffle control lands at
 0.500, confirming the effect is real structure, not the pair-sampling.
 
+**Addition, 7 Sep 2026 — the second control, and a determinism fix.** Two things were missing.
+
+First, the numbers above were **not reproducible**: `union_input_addrs` took its union-find root
+from an unsorted set, so the cluster roots — and the seeded sampling that walks them — came out
+differently in every process. Three runs of this same fixture and seed gave 0.9905, 0.9908 and
+0.9910. Sorting the two sets that fix downstream order makes the run byte-identical across
+processes; the stable values are **0.9912 (full)** and **0.9507 (payment-only)**, so the figures
+above survive at the precision they are quoted to.
+
+Second, the shuffle control says the score reads the labels, but it says nothing about *how*. The
+published negatives are drawn uniformly over cluster roots while positives are every intra-cluster
+pair, so the positive class is systematically higher-degree — and the score reads degree. Under
+**degree-matched negatives** the payment-only AUC falls to **0.9156**, and a score made of nothing
+but the pair's degree sum sits at **0.5000**, at chance by construction. So about **0.035 of the
+0.9507** was the sampling asymmetry, and the rest is not.
+
+Both are published as `catalog/runs/graph-deanon-controls-v1.json`, which is also what now owns the
+`graph-deanon-2016-v1` fixture.
+
 ### Across five eras: the mechanism, not a clean curve
 
 Payment-only AUC on five connected slices, swept over graph reach *k* (k-hop common

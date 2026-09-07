@@ -1,0 +1,89 @@
+{
+  "schema_version": 1,
+  "id": "scorer-families-v1",
+  "capabilities": [
+    "verify_outputs",
+    "reproduce_runs"
+  ],
+  "runs": [
+    "scorer-families-v1"
+  ],
+  "blobs": [
+    {
+      "name": "catalog/runs/scorer-families-v1.json",
+      "role": "run_manifest",
+      "bytes": 2986,
+      "sha256": "ae5dd5b0ccf2f8f37d7b817b3c861f2896c1b473ef189f8f3ea63b1b828902d3",
+      "locations": {
+        "canonical": null,
+        "mirrors": []
+      }
+    },
+    {
+      "name": "results/artifacts/scorer-families-v1.json",
+      "role": "result",
+      "bytes": 1698,
+      "sha256": "473b7a0f83805809411d4691f18103fbb74f0587a3a5b6988b776da46f43ea25",
+      "locations": {
+        "canonical": null,
+        "mirrors": []
+      }
+    },
+    {
+      "name": "results/generated/scorer-families-v1.md",
+      "role": "result",
+      "bytes": 1257,
+      "sha256": "eb1bd191d66405751de2e39fe90e3c80c4a4c7d4a993440ea6e82ec6d0389654",
+      "locations": {
+        "canonical": null,
+        "mirrors": []
+      }
+    },
+    {
+      "name": "data/fs-blkcache-2026-09-04.tar.gz",
+      "role": "dataset",
+      "bytes": 33352455,
+      "sha256": "5a69f6f446dbdfcce09dddc91c653e5d841124d14020b720fdea276315c775a6",
+      "locations": {
+        "canonical": null,
+        "mirrors": []
+      }
+    },
+    {
+      "name": "sources/decluster-4fa950c-runtime.tar",
+      "role": "source",
+      "bytes": 2191360,
+      "sha256": "18d49e55bb80973cb9d45b209e307d7384cbdbe236fda2ce2b4d0a1032e7a5d8",
+      "locations": {
+        "canonical": null,
+        "mirrors": []
+      }
+    },
+    {
+      "name": "reproduction/scorer-families/requirements.lock",
+      "role": "lockfile",
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "locations": {
+        "canonical": null,
+        "mirrors": []
+      }
+    },
+    {
+      "name": "reproduction/scorer-families/environment.json",
+      "role": "environment",
+      "bytes": 366,
+      "sha256": "1a3ea9517538d4abd4dd7d82c6fb031dd4f28a9109e8e886f98bb22a9c2ba482",
+      "locations": {
+        "canonical": null,
+        "mirrors": []
+      }
+    }
+  ],
+  "limitations": [
+    "The bundled environment currently targets CPython 3.13 on macOS arm64.",
+    "The public on-chain snapshot is redistributed with provider authorization.",
+    "The historical 165,832-transaction cache is unavailable and is not reproduced.",
+    "Public bootstrap remains incomplete until every blob has a canonical HTTPS location and an independent mirror."
+  ]
+}

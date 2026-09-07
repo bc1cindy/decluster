@@ -10,8 +10,12 @@ unavailable, and a cut made on absent evidence invents privacy rather than measu
 `cut_below` has no default: the caller states how much aggregate evidence against a pairing is
 enough to overturn someone else's claim, and the number travels in the result.
 
-Blocks larger than `max_block` are left whole and counted, because a block that could not be
-searched is not a block that was found homogeneous.
+Blocks larger than `max_block` get the conservative pass instead of the exact one. Leaving them
+whole was honest but useless: on a real slice the whole heavy tail of a common-input clustering sits
+above any bound an exact search can reach, and that is where every pair the evidence argues about
+actually lives. The conservative pass separates only along boundaries nothing blocks — a pair whose
+weight is above the threshold holds its two elements together — which is admissible by construction
+at any size and never claims to be the best cut, only a cut the evidence permits.
 """
 
 from __future__ import annotations
@@ -20,6 +24,7 @@ from dataclasses import dataclass
 from itertools import combinations
 
 from .partition import Partition
+from .unionfind import UF
 
 # Bell(9) = 21147 candidates over at most 36 pairs. Past this the exact search stops paying for
 # itself and a sampler is the better instrument.
@@ -44,7 +49,7 @@ class BlockOutcome:
 class DeclusterResult:
     partition: Partition
     outcomes: tuple[BlockOutcome, ...]
-    unsearched: tuple[frozenset, ...]
+    approximated: tuple[frozenset, ...]
     cut_below: float
 
     @property
@@ -53,10 +58,10 @@ class DeclusterResult:
 
     def summary(self):
         return {
-            "blocks": len(self.outcomes) + len(self.unsearched),
+            "blocks": len(self.outcomes),
             "cut": len(self.cut),
             "left_whole": len(self.outcomes) - len(self.cut),
-            "unsearched": len(self.unsearched),
+            "approximated": len(self.approximated),
             "severed_weight": sum(outcome.severed_weight for outcome in self.cut),
             "cut_below": self.cut_below,
         }
@@ -129,27 +134,55 @@ def _best_cut(members, weight, cut_below):
     return tuple(frozenset(group) for group in best), best_interior, best_severed
 
 
+def _conservative_cut(members, weight, cut_below):
+    """Separate only where nothing holds the two sides together.
+
+    A pair whose weight is above `cut_below` blocks any boundary between its elements; the
+    components of those blocking pairs are the finest partition no single pair objects to. Between
+    two components every crossing pair is at or below the threshold, so their aggregate is too, and
+    the result is admissible at any block size. It is not the best cut — the exact search can beat
+    it by severing a blocking pair whose neighbours pay for it — and it never pretends to be.
+    """
+    ordered = sorted(members, key=repr)
+    uf = UF(ordered)
+    for index, a in enumerate(ordered):
+        for b in ordered[index + 1:]:
+            if weight(a, b) > cut_below:
+                uf.union(a, b)
+    groups = tuple(frozenset(group) for group in uf.groups())
+    table = _pairwise(members, weight)
+    severed = sum(
+        _across(left, right, table) for left, right in combinations(groups, 2)
+    )
+    return groups, sum(table.values()) - severed, severed
+
+
 def decluster(partition, weight, *, cut_below, max_block=MAX_BLOCK):
     """Refine `partition` where the evidence overturns the merges it inherited.
 
-    `weight(a, b)` returns signed bits for a pair and must **not** include a co-spend prior: the
-    co-spend is the inherited claim under test, not evidence for it. The result is a meet with
-    `partition`, so it can only be finer.
+    `weight(a, b)` returns a signed evidence weight for a pair and must **not** include a co-spend
+    prior: the co-spend is the inherited claim under test, not evidence for it. The result is a meet
+    with `partition`, so it can only be finer.
+
+    Blocks at or below `max_block` get the exact search; larger ones get `_conservative_cut`, and
+    the result records which pass decided each block.
     """
     if cut_below > 0:
         raise ValueError("cut_below must be at most zero; a cut needs evidence against a pairing")
 
-    outcomes, unsearched, blocks = [], [], []
+    outcomes, approximate, blocks = [], [], []
     for block in partition.blocks():
-        if len(block) < 2 or len(block) > max_block:
-            if len(block) > max_block:
-                unsearched.append(block)
+        if len(block) < 2:
             blocks.append(block)
             continue
-        groups, interior, severed = _best_cut(block, weight, cut_below)
+        if len(block) > max_block:
+            groups, interior, severed = _conservative_cut(block, weight, cut_below)
+            approximate.append(block)
+        else:
+            groups, interior, severed = _best_cut(block, weight, cut_below)
         outcomes.append(BlockOutcome(block, groups, interior, severed))
         blocks.extend(groups)
 
     return DeclusterResult(
-        partition.meet(Partition(blocks)), tuple(outcomes), tuple(unsearched), cut_below
+        partition.meet(Partition(blocks)), tuple(outcomes), tuple(approximate), cut_below
     )
