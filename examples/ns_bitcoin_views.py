@@ -251,7 +251,7 @@ def build_parser():
     parser.add_argument("--thetas", type=float, nargs="+", default=[0.5, 1.5],
                         help="eccentricity thresholds; part of the reported configuration")
     parser.add_argument("--seed", type=int, default=7)
-    parser.add_argument("--out", default="results/ns-bitcoin.json")
+    parser.add_argument("--out", default=None)   # see boltzmann_fee_audit: no default path
     parser.add_argument("--manifest", default="RESULTS-ns-bitcoin.md")
     return parser
 

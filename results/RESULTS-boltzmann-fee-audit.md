@@ -54,6 +54,10 @@ Run:
 .venv/bin/python examples/boltzmann_fee_audit.py --manifest
 ```
 
-The complete per-transaction output is `results/boltzmann-fee-audit.json`. The manifest fingerprints
+The complete per-transaction output is `results/artifacts/boltzmann-fee-audit-v1.json`, produced by
+`catalog/runs/boltzmann-fee-audit-v1.json`. `results/boltzmann-fee-audit.json` is kept beside it as
+the frozen historical report: `tests/test_boltzmann_fee_experiment.py` asserts the canonical run
+still reproduces it exactly, which is a guard the canonical artifact cannot give itself.
+The manifest fingerprints
 `sample.ndjson` and pins the configuration, population counts and outcomes above. Tests recompute
 the report from the source. The official-tool parity cell remains open.

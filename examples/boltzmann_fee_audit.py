@@ -98,7 +98,9 @@ def parser():
     out.add_argument("path", nargs="?", default="sample.ndjson")
     out.add_argument("--cap", type=int, default=300)
     out.add_argument("--max-coins", type=int, default=8)
-    out.add_argument("--out", default="results/boltzmann-fee-audit.json")
+    # No default path: the canonical output belongs to a run manifest, and an example that
+    # writes into results/ by default is how five unowned files got there.
+    out.add_argument("--out", default=None)
     out.add_argument("--manifest", action="store_true")
     return out
 

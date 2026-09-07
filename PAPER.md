@@ -269,7 +269,7 @@ this paper called it one until now. The two are not interchangeable in magnitude
 preserved cache the fitted F-S model's largest *agreement* weight is **+1.3047** bits (`nsequence`)
 and its largest disagreement weight **−11.13** (`locktime`), whereas the rarity weight reaches
 **13.88** bits on a single agreement (`cake_group_c`) — a ratio of ≈10.6× on the agreement side
-(`results/fs-temporal.json`). A fitted Fellegi–Sunter model *is* built and used in this repository —
+(`results/artifacts/fs-temporal-v1.json`). A fitted Fellegi–Sunter model *is* built and used in this repository —
 `decluster/fellegi_sunter.py`, driving the temporal split and the ablation
 (`results/RESULTS-fs-temporal.md`, `results/RESULTS-fs-ablation.md`) — but it is a different object
 from the headline scorer, whose implementation (`rarity_weight_baseline.rarity_score`,

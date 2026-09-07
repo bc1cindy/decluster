@@ -14,7 +14,8 @@ on a synthetic fixture, but had never been run end to end on real cached transac
 that run.
 
 **Method.** `examples/fellegi_sunter_temporal.py .blkcache --cap 4000 --seed 0 --train-fraction 0.7`
-(the canonical run saved to `results/fs-temporal.json`; every number below comes from that file
+(the canonical run is `results/artifacts/fs-temporal-v1.json`, and `results/fs-temporal.json` is the
+frozen historical report a test holds it against; every number below comes from that run
 except the uncapped pair-pool row in the Split table, marked with a footnote). Transactions are
 split at a block-height cutoff, strictly — the model is
 fit only on pairs drawn from the train side and scored only on pairs drawn from the test side. Labels are
@@ -38,7 +39,7 @@ carries `"independently_verified": false` rather than the word this repo does no
 | test pairs (capped) | 4,000 positive / 4,000 negative |
 | positive pairs available before capping* | 153,122 (train), 64,521 (test) |
 
-\* Not in `fs-temporal.json` — `weak_label_pairs` only reports the capped counts it actually drew.
+\* Not in the artifact — `weak_label_pairs` only reports the capped counts it actually drew.
 These are the uncapped population sizes, recomputed directly from `.blkcache` (same split, same
 `weak_label_pairs`, `cap=10**7` so no positive-side sampling ever triggers) and pinned in
 `results/manifests/RESULTS-fs-temporal.json`. `tests/test_fs_temporal.py`'s
@@ -197,5 +198,6 @@ is the one that actually recomputes every invariant above from `.blkcache` and a
 returns `ok` against that live recomputation. It skips cleanly, naming what went unrecomputed, on a
 checkout without `.blkcache`.
 
-Reproduce: `.venv/bin/python examples/fellegi_sunter_temporal.py .blkcache --cap 4000 --seed 0
---train-fraction 0.7 > results/fs-temporal.json` (the other rows above substitute the named flag).
+Reproduce the canonical run with the command in `catalog/runs/fs-temporal-v1.json`. The example
+behind it is `.venv/bin/python examples/fellegi_sunter_temporal.py .blkcache --cap 4000 --seed 0
+--train-fraction 0.7` (the other rows above substitute the named flag), which writes to stdout.

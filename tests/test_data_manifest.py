@@ -317,3 +317,32 @@ def test_every_canonical_artifact_is_owned_by_a_run_manifest():
         f"canonical outputs without manifests={sorted(canonical - declared)}; "
         f"manifest outputs without canonical files={sorted(declared - canonical)}"
     )
+
+
+# The five `results/*.json` beside the canonical artifacts are not leftovers: each is the frozen
+# report a canonical run is held against, and deleting one silently removes that guard. It was
+# nearly deleted as redundant during the audit, on a reference sweep that searched the documents
+# and the examples but not the tests.
+HISTORICAL_BASELINES = {
+    "results/boltzmann-fee-audit.json": "tests/test_boltzmann_fee_experiment.py",
+    "results/fs-ablation.json": "tests/test_fs_ablation_experiment.py",
+    "results/fs-temporal.json": "tests/test_fs_temporal_experiment.py",
+    "results/link-prediction.json": "tests/test_link_prediction_experiment.py",
+    "results/ns-bitcoin.json": "tests/test_ns_bitcoin_experiment.py",
+}
+
+
+def test_every_historical_baseline_is_present_and_still_guarded():
+    for baseline, guard in HISTORICAL_BASELINES.items():
+        assert (ROOT / baseline).is_file(), f"{baseline} is the frozen report {guard} compares against"
+        assert baseline.split("/", 1)[1] in (ROOT / guard).read_text(), (
+            f"{guard} no longer reads {baseline}; if the guard moved, this list has to move with it"
+        )
+
+
+def test_no_other_result_json_sits_outside_the_canonical_directories():
+    loose = {
+        str(path.relative_to(ROOT))
+        for path in (ROOT / "results").glob("*.json")
+    }
+    assert loose - set(HISTORICAL_BASELINES) == {"results/scale_output.json"}
