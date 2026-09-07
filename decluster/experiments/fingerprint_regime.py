@@ -59,7 +59,7 @@ def build_artifact(dataset=DEFAULT_DATASET):
         },
         "limitations": [
             "address reuse is a weak and partly feature-dependent owner proxy",
-            "candidate identities are reuse-group labels rather than wallet ground truth",
+            "candidate identities are reuse-group labels rather than wallet ownership",
             "the 600-transaction snapshot is selected and is not a chain-wide sample",
             "the snapshot-measured weights are fitted and evaluated on the same data",
             "the Lumen weighting and historical growing-cache population are not reproduced",

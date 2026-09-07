@@ -101,7 +101,7 @@ def evaluate(scenario: ConsolidationScenario) -> AttackReport:
         outcomes=(outcome,),
         limitations=(
             "synthetic fixture",
-            "the report demonstrates conditional narrowing, not identity ground truth",
+            "the report demonstrates conditional narrowing, not an identity",
             "a collaborative consolidation would invalidate the co-ownership premise",
         ),
     )

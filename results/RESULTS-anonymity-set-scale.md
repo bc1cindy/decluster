@@ -65,7 +65,7 @@ this run is the first real-data measurement of that effect.
   where the subjective demix signal is strongest) is blocked until the subset-sum oracle handles dense
   coinjoins — the "Radics special case".
 - **Conservative-lower-bound discipline.** Every entropy here is a lower bound / weight-of-evidence,
-  not a privacy score. Same-owner labels (not "ground truth") drive the address-reuse signal.
+  not a privacy score. Same-owner labels drive the address-reuse signal.
 - **Single live run.** Network variability means the exact target set and numbers are not bit-for-bit
   reproducible; the qualitative findings (deep walks resolve, §04 sharpens when covered, value_weighted
   sharpens strongly) are robust.

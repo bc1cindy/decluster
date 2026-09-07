@@ -53,8 +53,8 @@
   "outputs": [
     {
       "path": "results/artifacts/fingerprint-regime-v1.json",
-      "bytes": 1293,
-      "sha256": "d1381ece51a105db16c2ea60a37e60bb01fe94093adef9c5efb151d6e8d3a997"
+      "bytes": 1290,
+      "sha256": "6569cd89853bd99678a8de4153b3a01d0a8d7a61b7ab718b2a0fba015537d863"
     },
     {
       "path": "results/generated/fingerprint-regime-v1.md",
@@ -95,7 +95,7 @@
   },
   "limitations": [
     "address reuse is a weak and partly feature-dependent owner proxy",
-    "candidate identities are reuse-group labels rather than wallet ground truth",
+    "candidate identities are reuse-group labels rather than wallet ownership",
     "the 600-transaction snapshot is selected and is not a chain-wide sample",
     "the snapshot-measured weights are fitted and evaluated on the same data",
     "the Lumen weighting and historical growing-cache population are not reproduced",

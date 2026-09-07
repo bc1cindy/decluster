@@ -1,7 +1,7 @@
 """Special-case change candidates used to validate fingerprint signals.
 
 The optimal-change candidate is computed from values only.  It remains a
-heuristic conditioned on the absence of unnecessary inputs, not ground truth.
+heuristic conditioned on the absence of unnecessary inputs, not an ownership label.
 """
 from itertools import combinations
 from .change_gt import is_candidate, input_addrs, out_addr

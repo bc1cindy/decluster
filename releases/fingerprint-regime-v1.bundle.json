@@ -12,8 +12,8 @@
     {
       "name": "catalog/runs/fingerprint-regime-v1.json",
       "role": "run_manifest",
-      "bytes": 3163,
-      "sha256": "46fcc12808de72eec6a458cb9877782b6bf1a0c84a42b7a5daa0b0a603d73a6c",
+      "bytes": 3160,
+      "sha256": "5c52353e3f3f4eede95788bcea79516d49b6d217169cf1446d9629f70035d662",
       "locations": {
         "canonical": null,
         "mirrors": []
@@ -32,8 +32,8 @@
     {
       "name": "results/artifacts/fingerprint-regime-v1.json",
       "role": "result",
-      "bytes": 1293,
-      "sha256": "d1381ece51a105db16c2ea60a37e60bb01fe94093adef9c5efb151d6e8d3a997",
+      "bytes": 1290,
+      "sha256": "6569cd89853bd99678a8de4153b3a01d0a8d7a61b7ab718b2a0fba015537d863",
       "locations": {
         "canonical": null,
         "mirrors": []

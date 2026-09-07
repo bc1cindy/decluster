@@ -12,8 +12,8 @@
     {
       "name": "catalog/runs/reid-v1.json",
       "role": "run_manifest",
-      "bytes": 2962,
-      "sha256": "224d1b9552d77e24ebe07fcb18b96b17edf6270c8b379ed5d70d1c77124be23e",
+      "bytes": 2949,
+      "sha256": "de88fcf8ab759bd6127d98f145fcb34cf765bd2f3c1686095d5a128214a1d31b",
       "locations": {
         "canonical": null,
         "mirrors": []
@@ -32,8 +32,8 @@
     {
       "name": "results/artifacts/reid-v1.json",
       "role": "result",
-      "bytes": 1517,
-      "sha256": "2c63a3d460c19e8c49926eef1203d9d42036dda1da8e4836b70f90d8a38f2f59",
+      "bytes": 1504,
+      "sha256": "9c4ac11aa3a1014907528b5ed8b324c0a9b1995a0d7a70f2c6963c49bc8e797f",
       "locations": {
         "canonical": null,
         "mirrors": []

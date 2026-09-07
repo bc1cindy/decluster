@@ -52,8 +52,8 @@
   "outputs": [
     {
       "path": "results/artifacts/reid-v1.json",
-      "bytes": 1517,
-      "sha256": "2c63a3d460c19e8c49926eef1203d9d42036dda1da8e4836b70f90d8a38f2f59"
+      "bytes": 1504,
+      "sha256": "9c4ac11aa3a1014907528b5ed8b324c0a9b1995a0d7a70f2c6963c49bc8e797f"
     },
     {
       "path": "results/generated/reid-v1.md",
@@ -94,7 +94,7 @@
   "limitations": [
     "the 200-record snapshot is selected and is not a uniform chain sample",
     "the signature-generation recipe and original comparison population are unavailable",
-    "the target identifier is a record identity, not wallet ownership ground truth",
+    "the target identifier is a record identity, not wallet ownership",
     "the auxiliary origins are sampled from the target signature rather than observed independently",
     "this is an adaptation, not a reproduction of the published Netflix experiment",
     "the result does not establish a chain-wide deanonymization rate or privacy score",

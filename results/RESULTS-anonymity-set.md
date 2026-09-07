@@ -128,7 +128,8 @@ whatever step 1 leaves as the leading candidate), so they demonstrate (b)/(c) cl
   what a confidence-1 hypothesis structurally does to the distribution (the F-S special case), not
   a claim that either coin's origin is actually known with certainty.
 - Same-owner labels throughout are the address-reuse heuristic already validated (independent of
-  co-spend) in `RESULTS-ns-propagation.md` — "same-owner labels," not ground truth.
+  co-spend) in `RESULTS-ns-propagation.md` — same-owner labels, which are an address-reuse
+  heuristic rather than ownership.
 
 ## §04-faithful fusion: link-level (pre-solve) vs the post-solve `reweight` baseline
 
@@ -220,4 +221,5 @@ one nonzero entry.
   `coinjoin_demix` pairs, when they cleanly yield input↔output links) would very likely surface real
   sharpening that this particular slice's `_change_index`-only signal did not.
 - Same-owner labels throughout are the address-reuse heuristic already validated (independent of
-  co-spend) in `RESULTS-ns-propagation.md` — "same-owner labels," not ground truth.
+  co-spend) in `RESULTS-ns-propagation.md` — same-owner labels, which are an address-reuse
+  heuristic rather than ownership.

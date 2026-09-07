@@ -168,7 +168,7 @@ signal at this scale; it is weak-but-directionally-correct evidence, reported as
    is over all 105 pairs** (the full pairwise set), not restricted to the labeled subset — reported
    separately in the coarsening-hierarchy table's notes column to avoid conflating the two.
 
-Same-owner labels (not "ground truth") throughout — the address-reuse heuristic used for labels
+Same-owner labels throughout — the address-reuse heuristic used for labels
 here is a standard, near-certain but not infallible same-owner signal (a collaborative or shared
 tx would produce a false merge), independent of the co-spend signal the sampler's super-nodes are
 built from.
