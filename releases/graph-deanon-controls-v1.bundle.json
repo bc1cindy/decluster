@@ -25,7 +25,7 @@
       "bytes": 1405865,
       "sha256": "68690ce8689378321e4187b111c7b4300f88e5bb405a25dcb67125cd0c739c5b",
       "locations": {
-        "canonical": null,
+        "canonical": "https://github.com/bc1cindy/decluster/raw/3f5176866c6fe9b021cb3af36f49293e95883446/tests/fixtures/graph_deanon_2016.ndjson.gz",
         "mirrors": []
       }
     },

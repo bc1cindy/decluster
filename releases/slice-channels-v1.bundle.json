@@ -25,7 +25,7 @@
       "bytes": 1837504,
       "sha256": "66104889f8b79f2938edb6666f16dfa19a74c68cd8016832b4f2a5e03b11865f",
       "locations": {
-        "canonical": "https://github.com/bc1cindy/decluster/raw/43d3faaab07f6703361c300fb6d01a916bb063f0/tests/fixtures/slice_a_channels_2016.ndjson.gz",
+        "canonical": null,
         "mirrors": []
       }
     },
