@@ -1,0 +1,42 @@
+[
+ {
+  "core_vertices": 30335,
+  "mean_degree_a": 15.71,
+  "mean_per_vertex_persistence": 0.3124,
+  "neighbour_persistence": 0.2004,
+  "width": 1,
+  "with_3plus_surviving": 5929
+ },
+ {
+  "core_vertices": 68896,
+  "mean_degree_a": 14.83,
+  "mean_per_vertex_persistence": 0.3468,
+  "neighbour_persistence": 0.2331,
+  "width": 2,
+  "with_3plus_surviving": 16312
+ },
+ {
+  "core_vertices": 116471,
+  "mean_degree_a": 15.21,
+  "mean_per_vertex_persistence": 0.3796,
+  "neighbour_persistence": 0.2584,
+  "width": 3,
+  "with_3plus_surviving": 34359
+ },
+ {
+  "core_vertices": 212460,
+  "mean_degree_a": 17.23,
+  "mean_per_vertex_persistence": 0.3834,
+  "neighbour_persistence": 0.2477,
+  "width": 5,
+  "with_3plus_surviving": 70372
+ },
+ {
+  "core_vertices": 305402,
+  "mean_degree_a": 22.33,
+  "mean_per_vertex_persistence": 0.3833,
+  "neighbour_persistence": 0.2049,
+  "width": 7,
+  "with_3plus_surviving": 110017
+ }
+]

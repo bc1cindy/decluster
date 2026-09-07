@@ -70,5 +70,5 @@ overlap_share(child_tx, {parent_txid})
 
 ## Reproducibility / provenance
 
-Not yet filed against `results/REPRODUCIBILITY.md`. This document has not been assigned one of the
-five evidence states, so read its numbers as unclassified rather than as any of them.
+State 2 in `results/REPRODUCIBILITY.md`: the mechanism is pinned; the reported numbers come from a data-run over the coinjoins in the local cache, which is not committed, and are not asserted.
+The channel is guarded by `tests/test_provenance*.py`.

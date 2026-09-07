@@ -26,7 +26,7 @@ LEGACY = {p.stem + ".md" for p in (ROOT / "results" / "manifests").glob("*.json"
 
 # Documents nobody has assigned an evidence state yet. Filing one is deliberate work; so is adding to
 # the pile, which is what the ceiling stops.
-UNFILED_CEILING = 29
+UNFILED_CEILING = 2
 
 
 def _footer(doc):

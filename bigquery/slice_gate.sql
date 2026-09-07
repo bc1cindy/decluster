@@ -12,6 +12,7 @@
 -- (largest gap 962010-962489), so a slice must stay below that.
 
 -- === 1. spanning material: how much survives from one view to the other ===
+WITH tx AS (
   SELECT
     IF(block_number <= 940112, 'A', 'B') AS epoch,
     `hash` AS txid,
@@ -39,6 +40,7 @@ SELECT
   (SELECT COUNT(*) FROM a_side JOIN b_side USING (a)) AS addrs_in_both
 
 -- === 2. degree and cluster-material of the spanning addresses ===
+WITH tx AS (
   SELECT
     IF(block_number <= 940112, 'A', 'B') AS epoch,
     `hash` AS txid,
@@ -77,6 +79,7 @@ SELECT epoch,
 FROM deg GROUP BY epoch ORDER BY epoch
 
 -- === 3. seed supply: is the high-degree population the same in both views? ===
+WITH tx AS (
   SELECT IF(block_number <= 940112, 'A', 'B') AS epoch, `hash` AS txid,
     ARRAY(SELECT DISTINCT a FROM UNNEST(inputs) i, UNNEST(i.addresses) a) AS in_addr,
     ARRAY(SELECT DISTINCT a FROM UNNEST(outputs) o, UNNEST(o.addresses) a) AS out_addr

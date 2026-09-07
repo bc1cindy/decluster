@@ -56,5 +56,5 @@ not on missing implementation.
 
 ## Reproducibility / provenance
 
-Not yet filed against `results/REPRODUCIBILITY.md`. This document has not been assigned one of the
-five evidence states, so read its numbers as unclassified rather than as any of them.
+State 4 in `results/REPRODUCIBILITY.md`: the slice is too shallow for ancestry. The policy's own
+state-4 entry says a small window holds ~1% in-file parents; this document is that measurement.

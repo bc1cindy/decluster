@@ -90,5 +90,7 @@ the non-hub band. The failure was in the experiment, not in the graph.
 
 ## Reproducibility / provenance
 
-Not yet filed against `results/REPRODUCIBILITY.md`. This document has not been assigned one of the
-five evidence states, so read its numbers as unclassified rather than as any of them.
+State 2 in `results/REPRODUCIBILITY.md`: the mechanism is pinned; the reported numbers come from a data-run over `slice_2026.ndjson`, which is not committed, and are not asserted.
+
+The *direction* read off these numbers is not established: the policy flags "cross-view matcher
+precision vs baseline" as owing a migration to state 1 or state 5.

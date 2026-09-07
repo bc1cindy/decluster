@@ -52,5 +52,7 @@ Reproduce: `python3 examples/cluster_robustness.py`.
 
 ## Reproducibility / provenance
 
-Not yet filed against `results/REPRODUCIBILITY.md`. This document has not been assigned one of the
-five evidence states, so read its numbers as unclassified rather than as any of them.
+Not yet filed against `results/REPRODUCIBILITY.md`. The document demonstrates the mechanism on a
+graph it builds and says so — "it is not a whole-chain rate" — but no test was found that asserts
+the numbers below, so neither state 1 nor state 2 fits on the evidence available. Read them as
+unclassified until someone names the test.

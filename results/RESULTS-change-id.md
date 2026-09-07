@@ -88,5 +88,6 @@ pre↔post test above (T vs its output's spender). `change_cluster.py` is kept f
 
 ## Reproducibility / provenance
 
-Not yet filed against `results/REPRODUCIBILITY.md`. This document has not been assigned one of the
-five evidence states, so read its numbers as unclassified rather than as any of them.
+State 4 in `results/REPRODUCIBILITY.md`: the window `bigquery/slice.sql` names holds 739,889 non-coinbase
+transactions, so it cannot become a committed fixture; a smaller window reveals fewer change labels
+and measures something else. Moved here from state 3 on 2026-09-07.

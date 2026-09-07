@@ -86,5 +86,5 @@ Two single days; seasonal variation across the 158-epoch window is not covered.
 
 ## Reproducibility / provenance
 
-Not yet filed against `results/REPRODUCIBILITY.md`. This document has not been assigned one of the
-five evidence states, so read its numbers as unclassified rather than as any of them.
+State 1 in `results/REPRODUCIBILITY.md`: band-pinned on committed data — `tests/fixtures/slice_gate.json`, compared against the published table by
+`tests/test_state3_promotion.py`.

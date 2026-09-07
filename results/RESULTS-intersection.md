@@ -176,5 +176,5 @@ run(seeds=seeds, signature_of=default_signature_of(),
 
 ## Reproducibility / provenance
 
-Not yet filed against `results/REPRODUCIBILITY.md`. This document has not been assigned one of the
-five evidence states, so read its numbers as unclassified rather than as any of them.
+State 1 in `results/REPRODUCIBILITY.md`: band-pinned on committed data — the policy files this claim
+as "intersection attack narrows candidates", seeds in-test, asserted by `tests/test_intersection_real.py`.

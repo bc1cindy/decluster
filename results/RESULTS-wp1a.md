@@ -35,5 +35,4 @@ the locktime distribution by WP1b once a mainnet dense index exists.
 
 ## Reproducibility / provenance
 
-Not yet filed against `results/REPRODUCIBILITY.md`. This document has not been assigned one of the
-five evidence states, so read its numbers as unclassified rather than as any of them.
+State 2 in `results/REPRODUCIBILITY.md`: the mechanism is pinned; the reported numbers come from a data-run over `.cache`/`.blkcache`, which is not committed, and are not asserted.
