@@ -10,6 +10,9 @@ Two rules the procedure has to respect, both learned by breaking them:
 
   store-only blobs   a blob whose name is not in the tree — the built `dss` wheel — keeps the
                      identity it has. It is not missing; it was never a tracked file.
+  manifests first    a run manifest pins its own outputs, and a bundle pins the manifest. Refreshing
+                     them in the other order leaves the bundle pinning bytes that are already stale
+                     again by the time it is written.
   orphans last       a blob is removed from the store only after every index has been rewritten,
                      because until then "referenced" is not yet known.
 """
@@ -22,6 +25,7 @@ from dataclasses import dataclass
 from pathlib import Path
 
 INDEX_DIR = "releases"
+RUN_DIR = "catalog/runs"
 STORE_DIR = "artifacts/sha256"
 
 
@@ -50,6 +54,24 @@ def synchronise(root=".", *, write=True):
     """Return the changes the store and indexes need, applying them unless `write` is false."""
     root = Path(root)
     changes = []
+
+    for manifest_path in sorted(Path(root, RUN_DIR).glob("*.json")):
+        manifest = json.loads(manifest_path.read_text())
+        touched = False
+        for output in manifest.get("outputs", ()):
+            produced = root / output["path"]
+            if not produced.is_file():
+                changes.append(Change("unavailable", output["path"], "declared output is not here"))
+                continue
+            size, digest = _identity(produced)
+            if (size, digest) == (output["bytes"], output["sha256"]):
+                continue
+            changes.append(Change("output", output["path"],
+                                  f"{output['bytes']}/{output['sha256'][:12]} -> {size}/{digest[:12]}"))
+            output["bytes"], output["sha256"] = size, digest
+            touched = True
+        if touched and write:
+            manifest_path.write_text(json.dumps(manifest, indent=2) + "\n")
 
     for index in _indexes(root):
         bundle = json.loads(index.read_text())

@@ -47,6 +47,50 @@ def blob_for(root, relative):
     return {"name": relative, "role": "result", "bytes": len(data), "sha256": digest(data)}
 
 
+def write_run(root, name, outputs):
+    (root / "catalog" / "runs").mkdir(parents=True, exist_ok=True)
+    path = root / "catalog" / "runs" / f"{name}.json"
+    path.write_text(json.dumps({"schema_version": 1, "id": name, "outputs": outputs}, indent=2) + "\n")
+    return path
+
+
+def output_for(root, relative):
+    data = (root / relative).read_bytes()
+    return {"path": relative, "bytes": len(data), "sha256": digest(data)}
+
+
+def test_a_run_manifest_that_pins_stale_outputs_is_brought_forward(repo):
+    target = repo / "results" / "a.json"
+    target.write_text("{}")
+    write_run(repo, "r1", [output_for(repo, "results/a.json")])
+    target.write_text('{"longer": true}')
+
+    changes = synchronise(repo)
+    assert [c.kind for c in changes] == ["output"]
+    pinned = json.loads((repo / "catalog" / "runs" / "r1.json").read_text())["outputs"][0]
+    assert (pinned["bytes"], pinned["sha256"]) == (16, digest(b'{"longer": true}'))
+
+
+def test_the_manifest_is_rewritten_before_the_bundle_that_pins_it(repo):
+    """Otherwise the bundle pins bytes that are stale again the moment it is written."""
+    target = repo / "results" / "a.json"
+    target.write_text("{}")
+    manifest = write_run(repo, "r1", [output_for(repo, "results/a.json")])
+    write_bundle(repo, "b1", [blob_for(repo, "catalog/runs/r1.json")])
+    store_blob(repo, manifest.read_bytes())
+    target.write_text('{"longer": true}')
+
+    synchronise(repo)
+    pinned = json.loads((repo / "releases" / "b1.bundle.json").read_text())["blobs"][0]
+    assert pinned["sha256"] == digest(manifest.read_bytes())
+
+
+def test_a_declared_output_that_is_absent_is_reported_not_invented(repo):
+    write_run(repo, "r1", [{"path": "results/gone.json", "bytes": 2, "sha256": digest(b"{}")}])
+    changes = synchronise(repo, write=False)
+    assert [c.kind for c in changes] == ["unavailable"]
+
+
 def test_a_tree_in_step_needs_no_change(repo):
     (repo / "results" / "a.json").write_text("{}")
     store_blob(repo, b"{}")
