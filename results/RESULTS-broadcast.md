@@ -71,3 +71,8 @@ population scale.
 - Loose for low-feerate txs during congestion (they wait many blocks) → `na_loose`.
 - The cluster temporal fingerprint built on this estimate (activity schedule / timezone) was
   tested separately and is a **null** under proper controls (`results/RESULTS-temporal.md`).
+
+## Reproducibility / provenance
+
+State 2 in `results/REPRODUCIBILITY.md`: the mechanism is pinned by `tests/test_broadcast.py`; the
+reported numbers come from a live data-run and are not asserted.

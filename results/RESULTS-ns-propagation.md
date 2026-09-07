@@ -207,3 +207,8 @@ over `mempool.space` was previously abandoned mid-task as too slow (a single dep
 possible follow-up if a much larger multi-hop-connected cache (or a live, budgeted network session)
 becomes available; `examples/ns_propagation.run(txs, seeds, depth=6)` is still the entry point for
 that (`fetch=fetch_tx`, network-backed) once such a budget exists.
+
+## Reproducibility / provenance
+
+Not yet filed against `results/REPRODUCIBILITY.md`. This document has not been assigned one of the
+five evidence states, so read its numbers as unclassified rather than as any of them.

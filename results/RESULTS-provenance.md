@@ -67,3 +67,8 @@ the premise, and the reason the negative half of the result is the more trustwor
 from decluster.provenance import overlap_share   # over cached coinjoins, offline
 overlap_share(child_tx, {parent_txid})
 ```
+
+## Reproducibility / provenance
+
+Not yet filed against `results/REPRODUCIBILITY.md`. This document has not been assigned one of the
+five evidence states, so read its numbers as unclassified rather than as any of them.

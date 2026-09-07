@@ -85,3 +85,8 @@ pre↔post test above (T vs its output's spender). `change_cluster.py` is kept f
 - Kappos's address-type check (AFC) is approximated from address prefixes (`_addr_type`), not the
   raw script type; on this 2024 slice it does not help (segwit/taproot homogeneity — Kappos's own
   caveat), so the per-axis fingerprint test, not AFC, carries the validation.
+
+## Reproducibility / provenance
+
+Not yet filed against `results/REPRODUCIBILITY.md`. This document has not been assigned one of the
+five evidence states, so read its numbers as unclassified rather than as any of them.

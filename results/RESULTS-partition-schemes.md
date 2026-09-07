@@ -78,3 +78,8 @@ to expander decomposition. Other signals may behave differently, and the amount-
 ambiguity the source discusses at length is only defined for 2-in/2-out transactions, 5.6 %
 of this slice, too thin to cut on. The structural objection above is not specific to the
 signal: it applies to any reading that partitions into disconnected components.
+
+## Reproducibility / provenance
+
+Not yet filed against `results/REPRODUCIBILITY.md`. This document has not been assigned one of the
+five evidence states, so read its numbers as unclassified rather than as any of them.

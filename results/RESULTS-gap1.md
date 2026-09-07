@@ -57,3 +57,8 @@ On this merged transaction they agree on the same re-partition.
 
 `partition_signal(tx)` is the integration-ready output; wiring it into the combiner as a
 structural weight (so amount and fingerprint fuse) is a documented follow-up.
+
+## Reproducibility / provenance
+
+Not yet filed against `results/REPRODUCIBILITY.md`. This document has not been assigned one of the
+five evidence states, so read its numbers as unclassified rather than as any of them.

@@ -87,3 +87,8 @@ The first run of this experiment returned one match and was invalid. The seed ha
 topped up with the highest-degree vertices, which are exactly the hubs the matcher refuses
 to route through, so 34 of 40 seeds were invisible to it. The seed selection now draws from
 the non-hub band. The failure was in the experiment, not in the graph.
+
+## Reproducibility / provenance
+
+Not yet filed against `results/REPRODUCIBILITY.md`. This document has not been assigned one of the
+five evidence states, so read its numbers as unclassified rather than as any of them.

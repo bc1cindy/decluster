@@ -37,3 +37,8 @@ uncertainty once fingerprints and amount structure are accounted for.
   historical blocks). The metric is the contribution; the graph size is data-limited.
 - The fingerprint-aware clustering inherits the round-number change-id and the
   per-axis measured bits (the library-measured bits, decluster/library.py).
+
+## Reproducibility / provenance
+
+Not yet filed against `results/REPRODUCIBILITY.md`. This document has not been assigned one of the
+five evidence states, so read its numbers as unclassified rather than as any of them.

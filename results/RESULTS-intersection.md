@@ -173,3 +173,8 @@ from examples.intersection_pipeline import run, default_signature_of, default_cl
 run(seeds=seeds, signature_of=default_signature_of(),
     cluster_fn=default_cluster_fn(), max_depth=0)
 ```
+
+## Reproducibility / provenance
+
+Not yet filed against `results/REPRODUCIBILITY.md`. This document has not been assigned one of the
+five evidence states, so read its numbers as unclassified rather than as any of them.

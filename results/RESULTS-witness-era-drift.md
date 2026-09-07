@@ -64,3 +64,8 @@ Reproduce: `python3 -m examples.era_crawler` (balance the cache across eras), th
 `python3 -m examples.witness_bits_by_era`. On this checkout's cache the second step has one era to
 report and the SegWit column comes back empty; rebuilding a genuinely multi-era cache is a crawl,
 not a rerun, and until it is done nothing here is re-measured.
+
+## Reproducibility / provenance
+
+Not yet filed against `results/REPRODUCIBILITY.md`. This document has not been assigned one of the
+five evidence states, so read its numbers as unclassified rather than as any of them.

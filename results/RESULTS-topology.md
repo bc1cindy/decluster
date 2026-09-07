@@ -118,3 +118,8 @@ lands near it (overlap is bimodal, 11.7 vs 0.004 bits), but on a denser graph co
   overlap treated as disjoint; **discriminatively** validated (same-owner 11.7 vs different-owner
   0.004 overlap bits, AUC ≈1.00 on 889 real clusters); field-independent; the residual limit is a
   shared *rare* counterparty (inherent FS-QI limit). Validated in `tests/test_topology.py`.
+
+## Reproducibility / provenance
+
+Not yet filed against `results/REPRODUCIBILITY.md`. This document has not been assigned one of the
+five evidence states, so read its numbers as unclassified rather than as any of them.

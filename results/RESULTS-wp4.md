@@ -38,3 +38,8 @@ match.
   a rate across the chain (that needs a mainnet dense index — WP1b, deferred).
 - Thresholds (`refuse_below=-2.0`, `link_above=4.0`) are the prototype's; the sign of
   the refusal (−3.1) and the added links are what the regression test pins.
+
+## Reproducibility / provenance
+
+Not yet filed against `results/REPRODUCIBILITY.md`. This document has not been assigned one of the
+five evidence states, so read its numbers as unclassified rather than as any of them.

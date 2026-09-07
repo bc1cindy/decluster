@@ -83,3 +83,8 @@ contracted graph before the seed strategy is settled.
 Address-level proxies for cluster-level quantities, chosen because union-find does not fit
 in SQL. Every number here is a bound on the contracted graph, not a measurement of it.
 Two single days; seasonal variation across the 158-epoch window is not covered.
+
+## Reproducibility / provenance
+
+Not yet filed against `results/REPRODUCIBILITY.md`. This document has not been assigned one of the
+five evidence states, so read its numbers as unclassified rather than as any of them.

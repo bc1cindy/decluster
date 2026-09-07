@@ -81,3 +81,8 @@ question with a measured answer rather than an assumed one.
 One slice, one partition scheme, one seed size. The degree-class baseline is computed on the
 matched set, which is the fair comparison for "is the matcher adding anything" and is *not*
 an estimate of what degree alone would achieve across the whole graph.
+
+## Reproducibility / provenance
+
+Not yet filed against `results/REPRODUCIBILITY.md`. This document has not been assigned one of the
+five evidence states, so read its numbers as unclassified rather than as any of them.

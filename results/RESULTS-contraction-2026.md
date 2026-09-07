@@ -69,3 +69,8 @@ Vertex attributes are stored as raw counts against each view's own base rates, n
 bare shares, because a median 54 % of an axis value's variance tracks epoch volume
 (`RESULTS-attribute-drift.md`). No matching is performed here; this builds and measures the
 object a matcher would run on.
+
+## Reproducibility / provenance
+
+Not yet filed against `results/REPRODUCIBILITY.md`. This document has not been assigned one of the
+five evidence states, so read its numbers as unclassified rather than as any of them.

@@ -177,3 +177,8 @@ built from.
 `build_slice(cap_total=50, depth=1, max_supernodes=15)` then `channel_ablation`, `beta_sweep`,
 `shuffle_null`, and `fs_bayes_pair_marginal` as this run did (~8 minutes total, offline, no
 network). Deterministic under `seed=0`.
+
+## Reproducibility / provenance
+
+Not yet filed against `results/REPRODUCIBILITY.md`. This document has not been assigned one of the
+five evidence states, so read its numbers as unclassified rather than as any of them.

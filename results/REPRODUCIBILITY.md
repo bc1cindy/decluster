@@ -3,6 +3,12 @@
 Every claim in `results/` falls into one of five states. This is the single index; per-doc
 "Reproducibility / provenance" footers point back here.
 
+A document that has not been read and filed says so in its own footer — "Not yet filed against
+`results/REPRODUCIBILITY.md`" — rather than carrying a guessed state. That is not a sixth state; it
+is the absence of one, said out loud so a reader is never left to infer a level from silence.
+`tests/test_results_provenance_footer.py` requires every document to answer, and caps how many may
+answer this way.
+
 ## The rule
 
 A claim's **mechanism** (the algorithm) is proven by a unit test on small/synthetic input. A claim's
@@ -57,6 +63,8 @@ subsampled fixture would assert a different number.
 ## 3. Reproducible once a small BigQuery window is committed
 
 Run the query, commit the small output as a fixture, and the number becomes band-pinnable (state 1).
+`tests/test_state3_promotion.py` holds one slot per row below: each skips with the query to run and
+the path to write, so a promotion is one commit rather than a commit plus a test nobody wrote yet.
 
 | Claim | Query | Notes |
 |---|---|---|

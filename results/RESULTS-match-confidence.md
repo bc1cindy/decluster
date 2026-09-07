@@ -61,3 +61,8 @@ slice or a partition scheme that yields more.
 correctly but judged against a stricter criterion than the source states, and this
 supersedes that emphasis: coverage does not ignite, and the links that *are* produced carry
 graded, usable confidence. Both are true and the second was missing.
+
+## Reproducibility / provenance
+
+Not yet filed against `results/REPRODUCIBILITY.md`. This document has not been assigned one of the
+five evidence states, so read its numbers as unclassified rather than as any of them.

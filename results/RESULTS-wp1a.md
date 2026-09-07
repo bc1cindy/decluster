@@ -32,3 +32,8 @@ the specific, low-frequency fingerprints the combiner should weight most.
 
 Feeds WP2 (per-axis measured bits for the fingerprint library) and is superseded for
 the locktime distribution by WP1b once a mainnet dense index exists.
+
+## Reproducibility / provenance
+
+Not yet filed against `results/REPRODUCIBILITY.md`. This document has not been assigned one of the
+five evidence states, so read its numbers as unclassified rather than as any of them.

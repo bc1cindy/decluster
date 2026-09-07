@@ -68,3 +68,8 @@ independence assumption overwhelms the three real discriminators, flipping the t
   identical `fs_score` kernel, so the sign of this single-edge score is exactly what `cluster_refined`
   would act on for this pair (a positive score here clears the engine's default `link_above` threshold
   used in `RESULTS-wp4.md`).
+
+## Reproducibility / provenance
+
+Not yet filed against `results/REPRODUCIBILITY.md`. This document has not been assigned one of the
+five evidence states, so read its numbers as unclassified rather than as any of them.

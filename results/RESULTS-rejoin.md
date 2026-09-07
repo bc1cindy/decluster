@@ -70,3 +70,8 @@ slice, a single month, one partition scheme, and a clustering whose refusal chan
 separately measured to be inert on this data. The result bounds what this method achieves in
 this regime; it does not establish that no regime works, and the persistence curve says
 which lever remains untested.
+
+## Reproducibility / provenance
+
+Not yet filed against `results/REPRODUCIBILITY.md`. This document has not been assigned one of the
+five evidence states, so read its numbers as unclassified rather than as any of them.

@@ -53,3 +53,9 @@ sum — the N-S accumulation ("dozens of sparse attributes, each a few bits") on
 - **Slice, not whole chain.** A connected subset truncates counterparty sets, so the figures are
   a **lower bound** on the whole-chain per-cluster bits (§9). Reproduce:
   `python3 -m examples.cluster_bits slice.json 150000`.
+
+## Reproducibility / provenance
+
+State 2 in `results/REPRODUCIBILITY.md`: the mechanism is pinned by `tests/test_cluster_bits.py`; the
+reported numbers come from a data-run over `slice_2026.ndjson`, which is not committed, and are not
+asserted.

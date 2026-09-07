@@ -223,3 +223,8 @@ one nonzero entry.
 - Same-owner labels throughout are the address-reuse heuristic already validated (independent of
   co-spend) in `RESULTS-ns-propagation.md` — same-owner labels, which are an address-reuse
   heuristic rather than ownership.
+
+## Reproducibility / provenance
+
+Not yet filed against `results/REPRODUCIBILITY.md`. This document has not been assigned one of the
+five evidence states, so read its numbers as unclassified rather than as any of them.

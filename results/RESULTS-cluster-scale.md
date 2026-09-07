@@ -76,3 +76,8 @@ confirming the branch's premise directionally. The magnitude of the whole-chain 
 baseline-vs-fused comparison — is bounded here by the scattered, network-free sample; both grow on a
 contiguous / whole-chain source, which is the next data-layer step (local esplora), not a change to
 this method.
+
+## Reproducibility / provenance
+
+Not yet filed against `results/REPRODUCIBILITY.md`. This document has not been assigned one of the
+five evidence states, so read its numbers as unclassified rather than as any of them.

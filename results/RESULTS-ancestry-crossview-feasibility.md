@@ -53,3 +53,8 @@ window*, but that is a data-collection decision, not a code one. The correct sta
 the social-graph attack is answered negatively for this regime with a mechanism, the sparse-dataset
 attack is a separate already-measured channel, and further progress on either is gated on an export,
 not on missing implementation.
+
+## Reproducibility / provenance
+
+Not yet filed against `results/REPRODUCIBILITY.md`. This document has not been assigned one of the
+five evidence states, so read its numbers as unclassified rather than as any of them.

@@ -84,3 +84,9 @@ in a coinjoin the very relationship the construction is defined not to have. Fix
 a multi-source transaction's transfers as unattributable. Every earlier result run on the
 refusing clusterer stood on that inflated graph and is being re-checked; the results on the
 naive clusterer, and the address-level and no-contraction measurements, are unaffected.
+
+## Reproducibility / provenance
+
+State 2 in `results/REPRODUCIBILITY.md`: the mechanism is pinned by `tests/test_graph_shape.py`; the
+reported numbers come from a data-run over `slice_2026.ndjson`, which is not committed, and are not
+asserted.

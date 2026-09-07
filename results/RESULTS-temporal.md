@@ -75,3 +75,8 @@ not an artifact of picking service addresses.
   which may under-show a timezone effect for individuals; isolating that needs a different ground
   truth and a persistence-based, band-matched test (as above).
 - Uses the broadcast estimate, so it inherits its limit — coarser where the bound is loose.
+
+## Reproducibility / provenance
+
+Not yet filed against `results/REPRODUCIBILITY.md`. This document has not been assigned one of the
+five evidence states, so read its numbers as unclassified rather than as any of them.

@@ -66,3 +66,8 @@ suggested.
 The clean disentangling — label-inflation vs epoch/time-gap — needs a **contiguous slice with input
 values** (a BigQuery re-query), so both labels (co-spend and optimal-change) run on the same
 transactions. That, plus the cluster `findNext` against the value label, is Phase 2 (quota-gated).
+
+## Reproducibility / provenance
+
+Not yet filed against `results/REPRODUCIBILITY.md`. This document has not been assigned one of the
+five evidence states, so read its numbers as unclassified rather than as any of them.

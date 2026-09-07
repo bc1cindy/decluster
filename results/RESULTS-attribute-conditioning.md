@@ -83,3 +83,8 @@ The two tables come from separate runs and their degree baselines differ, 0.542 
 0.356, because the random pseudonym labelling differs. `RESULTS-match-controls.md` records
 the same effect. Comparisons within a table are internally consistent, which is what each
 table is for; the two tables should not be read against each other.
+
+## Reproducibility / provenance
+
+Not yet filed against `results/REPRODUCIBILITY.md`. This document has not been assigned one of the
+five evidence states, so read its numbers as unclassified rather than as any of them.

@@ -93,3 +93,8 @@ now resolve. It narrows to consolidation-style (many-in / few-distinct-out) tran
 exact subset-sum remains intractable and is out of scope for the Radix fast path. The dense matrix is
 still the crude uniform approximation (max ambiguity); the exact radix-structured per-(i,o) matrix
 is a deferred refinement.
+
+## Reproducibility / provenance
+
+State 1 in `results/REPRODUCIBILITY.md`: band-pinned on committed data — `results/scale_output.json`,
+asserted by `tests/test_anonymity_set_scale.py`.

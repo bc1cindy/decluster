@@ -166,3 +166,8 @@ Reading it:
   by design (same posture as `results/RESULTS-anonymity-set-scale.md`).
 - **Conservative-lower-bound footing.** Every entropy number here (Tier-1 or Tier-2) is an attacker
   lower bound / weight-of-evidence under no auxiliary information, not a privacy score.
+
+## Reproducibility / provenance
+
+Not yet filed against `results/REPRODUCIBILITY.md`. This document has not been assigned one of the
+five evidence states, so read its numbers as unclassified rather than as any of them.

@@ -56,3 +56,8 @@ constraint is not view width and the negative result is a good deal stronger.
 
 Width three is where the rate saturates; width seven is where the volume is. A run should
 use seven and report both.
+
+## Reproducibility / provenance
+
+Not yet filed against `results/REPRODUCIBILITY.md`. This document has not been assigned one of the
+five evidence states, so read its numbers as unclassified rather than as any of them.
