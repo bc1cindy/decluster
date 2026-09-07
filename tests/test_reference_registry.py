@@ -91,3 +91,38 @@ def test_registry_rejects_duplicate_source_ids(tmp_path):
     path.write_text(json.dumps(raw))
     with pytest.raises(RegistryError, match="duplicate"):
         load_sources(path)
+
+
+def test_every_claim_names_code_that_exists_and_a_run_that_exercises_it():
+    """A claim's `implementation` and its runs are the two ends of its evidence chain.
+
+    The catalogue went twenty-four commits without being touched while forty modules moved, and
+    three claims drifted: one named a comparator instead of the scorer every published AUC comes
+    from, one declared no implementation while a run already cited it, and one carried a limitation
+    the code had settled. Nothing compared the two ends.
+    """
+    import re
+
+    root = Path(__file__).resolve().parents[1]
+    claims = json.loads((root / "catalog" / "ctp-claims.json").read_text())["claims"]
+    exercised = {}
+    for path in sorted((root / "catalog" / "runs").glob("*.json")):
+        for identifier in json.loads(path.read_text())["claim_ids"]:
+            exercised.setdefault(identifier, []).append(path.stem)
+
+    dotted = re.compile(r"\bdecluster\.[A-Za-z_][A-Za-z0-9_.]*")
+    problems = []
+    for claim in claims:
+        implementation = claim.get("implementation") or ""
+        named = dotted.findall(implementation)
+        if not named:
+            problems.append(f"{claim['id']}: names no module")
+        for reference in named:
+            parts = reference.split(".")
+            if not any((root / "/".join(parts[:cut])).with_suffix(".py").exists()
+                       or (root / "/".join(parts[:cut])).is_dir()
+                       for cut in range(len(parts), 1, -1)):
+                problems.append(f"{claim['id']}: {reference} does not resolve")
+        if not exercised.get(claim["id"]):
+            problems.append(f"{claim['id']}: no run declares it")
+    assert not problems, "\n  ".join(problems)
