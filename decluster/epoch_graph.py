@@ -81,9 +81,16 @@ def out_addresses(transaction):
             if (address := vout.get("scriptpubkey_address"))]
 
 
-def encode(transactions, path, *, preset=6):
-    """Write the address graph of `transactions` to `path`. Returns what it recorded."""
-    identifiers, named = {}, {}
+def encode(transactions, path, *, preset=6, identifiers=None, namespace="single"):
+    """Write the address graph of `transactions` to `path`. Returns what it recorded.
+
+    `identifiers` carries the address-to-integer map. Windows that will be analysed together must
+    share one: an id means nothing on its own, so two files numbered from zero make the same name
+    stand for different addresses, which invents cross-view links rather than only losing them.
+    `encode_many` is the way to get that right; passing `None` here numbers this file alone.
+    """
+    identifiers = {} if identifiers is None else identifiers
+    named = {}
     heights, ins, outs, stream = [], [], [], []
     for transaction in transactions:
         inputs, outputs = in_addresses(transaction), out_addresses(transaction)
@@ -105,6 +112,7 @@ def encode(transactions, path, *, preset=6):
         previous = height
     payload = _sections([
         json.dumps({"transactions": len(heights), "addresses": len(identifiers),
+                    "namespace": namespace,
                     "first_height": heights[0] if heights else 0}, sort_keys=True).encode(),
         _varint(deltas), _varint(ins), _varint(outs), _varint(stream),
         json.dumps(named, sort_keys=True).encode(),
@@ -144,3 +152,13 @@ def decode(path):
             "vin": [{"prevout": {"scriptpubkey_address": name(i)}} for i in inputs],
             "vout": [{"scriptpubkey_address": name(o)} for o in outputs],
         }
+
+
+def encode_many(sources, targets, *, preset=6, namespace="epochs-2016-weekly-v1"):
+    """Encode several windows into one address namespace, so an id means the same thing in each."""
+    identifiers = {}
+    written = []
+    for source, target in zip(sources, targets):
+        written.append(encode(source(), target, preset=preset,
+                              identifiers=identifiers, namespace=namespace))
+    return written, len(identifiers)

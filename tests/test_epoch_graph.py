@@ -119,3 +119,36 @@ def test_every_committed_epoch_decodes():
     for path in files:
         first = next(eg.decode(path))
         assert first["height"] > 0 and ("vin" in first and "vout" in first)
+
+def test_windows_encoded_together_share_one_address_namespace(tmp_path):
+    """The failure this catches did not lose links, it invented them.
+
+    Numbering each file from zero passed every single-file check — counts, heights, coincidence
+    graph — and still corrupted the pair, because `a000000000` then stood for a different address in
+    each window and the clusterer read that as the same owner. On the committed epochs it turned
+    17,431 rejoinable pairs into 4,972, and the control that caught it was running the same pipeline
+    over the original export.
+    """
+    shared = {"scriptpubkey_address": "bc1qshared"}
+    left = [{"height": 1, "vin": [{"prevout": dict(shared)}],
+             "vout": [{"scriptpubkey_address": "bc1qleft"}]}]
+    right = [{"height": 2, "vin": [{"prevout": {"scriptpubkey_address": "bc1qright"}}],
+              "vout": [dict(shared)]}]
+    targets = [tmp_path / "left.epochgraph.xz", tmp_path / "right.epochgraph.xz"]
+    eg.encode_many([lambda: iter(left), lambda: iter(right)], targets)
+
+    names = [{a for r in eg.decode(t) for a in eg.in_addresses(r) + eg.out_addresses(r)}
+             for t in targets]
+    assert names[0] & names[1], "the address in both windows did not survive as one name"
+    assert len(names[0] & names[1]) == 1, "windows collided on a name they do not share"
+
+
+def test_encoding_windows_apart_is_refused_by_its_own_namespace_tag(tmp_path):
+    """Two files numbered alone are not comparable, and each says which namespace it belongs to."""
+    import json, lzma
+    rows = [{"height": 1, "vin": [], "vout": [{"scriptpubkey_address": "bc1qone"}]}]
+    target = tmp_path / "alone.epochgraph.xz"
+    eg.encode(rows, target)
+    raw = lzma.decompress(target.read_bytes())[len(eg.MAGIC):]
+    header = json.loads(eg._split(raw)[0])
+    assert header["namespace"] == "single"

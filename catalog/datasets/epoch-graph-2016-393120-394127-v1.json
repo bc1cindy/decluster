@@ -6,8 +6,8 @@
   "schema": "decluster-epoch-graph-v1",
   "format": "epochgraph.xz",
   "content": {
-    "bytes": 14518616,
-    "sha256": "6cbde46b93a0a8b2db8cd5b60adddd58de5b219792320ddcbd622180c5242ab3"
+    "bytes": 16193076,
+    "sha256": "314376777d4c596497aa6c8b3369916bb752873a911c9786aae2b71a408c0d11"
   },
   "locations": {
     "local_path": "data/epochs-2016-weekly-v1/393120-394127.epochgraph.xz",
@@ -18,7 +18,7 @@
     "provider": "derived from a project-held BigQuery export of the public chain",
     "snapshot_time": "2026-08",
     "recipe": "decluster/epoch_graph.py",
-    "recipe_sha256": "c8aa4f024c896b6f6af9de18c453be708cbefc899917c224318f209e9af6d041"
+    "recipe_sha256": "8d9f0b23b80b1ce8548c57001cb590a7a1b816f5046ef07b74febcd94930eee2"
   },
   "license": {
     "data": "public on-chain data; redistribution authorized by the exporter",
@@ -31,9 +31,10 @@
     "parameters": {
       "transactions": 1357379,
       "dropped": "txid, which no consumer reads",
-      "addresses": "replaced by integers; the engine's output is invariant under any bijective renaming (tests/test_epoch_graph.py)",
+      "addresses": "replaced by integers in one namespace shared by every window, so an id means the same address in each; the engine's output is invariant under any bijective renaming (tests/test_epoch_graph.py)",
       "kept_verbatim": "addresses a name-emitting detector matches by prefix",
-      "compression": "lzma preset 6"
+      "compression": "lzma preset 6",
+      "namespace": "epochs-2016-weekly-v1"
     },
     "parents": []
   },
