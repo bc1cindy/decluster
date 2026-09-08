@@ -1,0 +1,106 @@
+{
+  "schema_version": 1,
+  "id": "graph-rejoin-2016-v1",
+  "claim_ids": [
+    "ctp.social_graph.propagation",
+    "ctp.graph.pseudonym_representation"
+  ],
+  "code": {
+    "revision": "16ca53d256f3e01729ddb105d94d38bde5bbb256",
+    "dirty": false
+  },
+  "command": {
+    "argv": [
+      "python",
+      "-m",
+      "decluster.experiments.graph_rejoin_2016",
+      "reproduce",
+      "--artifact",
+      "results/artifacts/graph-rejoin-2016-v1.json",
+      "--markdown",
+      "results/generated/graph-rejoin-2016-v1.md"
+    ]
+  },
+  "datasets": [
+    {
+      "id": "epoch-graph-2016-391104-392111-v1",
+      "sha256": "cd129cd4bb225ea7a6733dab891b20272d62d1b0f3a6caf07a4209f9f2368015"
+    },
+    {
+      "id": "epoch-graph-2016-392112-393119-v1",
+      "sha256": "0893000345e68249911cb8ee6467a47fa6feecd3022f27e2732bcabfb4725f11"
+    }
+  ],
+  "parameters": {
+    "min_degree": 2,
+    "seed_shares": [
+      0.05,
+      0.1
+    ],
+    "split_fraction": 1.0,
+    "matcher": {
+      "revisit": true,
+      "min_common": 4
+    },
+    "seed": 0
+  },
+  "rng": {
+    "algorithm": "python.random.MersenneTwister",
+    "seeds": [
+      0
+    ]
+  },
+  "reproducibility": {
+    "level": "bitwise_reproducible",
+    "availability": "complete"
+  },
+  "verification": {
+    "mode": "exact",
+    "argv": [
+      "python",
+      "-m",
+      "decluster.experiments.graph_rejoin_2016",
+      "verify",
+      "--artifact",
+      "results/artifacts/graph-rejoin-2016-v1.json",
+      "--markdown",
+      "results/generated/graph-rejoin-2016-v1.md"
+    ],
+    "tests": [
+      "tests/test_graph_rejoin_experiment.py",
+      "tests/test_epoch_graph.py"
+    ],
+    "properties": [
+      "the committed epoch graphs exactly reproduce every arm",
+      "each seeded arm runs beside a shuffled-seed arm on the same graphs",
+      "the shuffled-seed arms recover nothing",
+      "the cascade does not ignite, stated as a bound a future run can break",
+      "cluster membership is a co-spend relation, not observed wallet ownership",
+      "the seeds are supplied, so this measures propagation rather than finding a foothold"
+    ],
+    "tolerance": null
+  },
+  "environment": {
+    "python": "3.13.7",
+    "lock_digest": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "platform": "macOS-26.6.2-arm64-arm-64bit-Mach-O",
+    "dependencies": []
+  },
+  "limitations": [
+    "Seeds are handed to the matcher; no independently derived seed is claimed.",
+    "Cluster membership is a co-spend relation rather than observed wallet ownership.",
+    "Two weekly views at one width; the persistence curve argues width is the untested lever."
+  ],
+  "outputs": [
+    {
+      "path": "results/artifacts/graph-rejoin-2016-v1.json",
+      "bytes": 1343,
+      "sha256": "dc0de47683b62d69ad1f507252e70012fa601da17335b274ffddcf18f6937647"
+    },
+    {
+      "path": "results/generated/graph-rejoin-2016-v1.md",
+      "bytes": 1557,
+      "sha256": "09b68d21584bb41a99f5e8951cb7cde6151b2b91cee7f6ad4907ce890aec9fcc"
+    }
+  ]
+}

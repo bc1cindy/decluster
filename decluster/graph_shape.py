@@ -36,8 +36,11 @@ def assortativity(g):
     positive: well-connected people know well-connected people. Technological and
     transactional graphs come out negative, hubs attaching to leaves."""
     xs, ys = [], []
-    for u in sorted(g.vertices):
-        for v in sorted(g.neighbours(u)):
+    # A contracted view mixes vertex types — an unsplit cluster keeps its integer root, a split one
+    # carries a string tag — so ordering by repr keeps the walk deterministic where `<` has no
+    # meaning. The correlation does not depend on the order; only reproducibility does.
+    for u in sorted(g.vertices, key=repr):
+        for v in sorted(g.neighbours(u), key=repr):
             xs.append(g.degree(u))
             ys.append(g.degree(v))          # each undirected edge is seen from both ends
     n = len(xs)

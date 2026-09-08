@@ -1,18 +1,12 @@
 # Intersection: exercising the channel on a real co-spend
 
-> **Correction (2026-09-03) — which walk produced the origin sets.**
-> Every signature below came from the subset-sum link oracle (`ancestry.dss_link_oracle`), which
-> was `ancestry_signature_and_truncation`'s default when this was measured. That default is now
-> `ancestry.value_flow_link_oracle` — the nominal-value transition rule, which never refuses on
-> transaction width. `examples/intersection_pipeline.py` had silently inherited the new default; it
-> now names `dss_link_oracle` explicitly, so the reproduce block below runs the walk measured here.
-> Read "What the origin sets are, and are not" (below) with that in mind: it contrasts this walk
-> with "a value-weighted walk", and that walk is now a shipped, callable object
-> (`ancestry.value_flow_link_oracle` / `build_value_flow_graph`), not a deferred rung. Whether it
-> intersects where this one does not has still not been measured.
-> `results/RESULTS-exact-oracle-audit.md` measures how far the subset-sum oracle sits from an exact
-> one.
-
+**Scope: which walk these signatures are.** Every signature below is the subset-sum link oracle
+(`ancestry.dss_link_oracle`), which `examples/intersection_pipeline.py` names explicitly, so the
+reproduce block runs the walk measured here. Read "What the origin sets are, and are not" with that
+in mind: it contrasts this walk with a value-weighted one, and that walk is a callable object
+(`ancestry.value_flow_link_oracle` / `build_value_flow_graph`). Whether it intersects where this one
+does not is not measured. `results/RESULTS-exact-oracle-audit.md` measures how far the subset-sum
+oracle sits from an exact one.
 > **Correction (2026-09-03) — the `truncated` counts below name no cause, because none was
 > recorded.**
 > `evaluate` now separates the two limits that can truncate a branch: an oracle that refused to link,
