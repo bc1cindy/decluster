@@ -1,0 +1,45 @@
+{
+  "schema_version": 1,
+  "id": "epoch-graph-2016-392112-393119-v1",
+  "title": "2016 weekly address graph, blocks 392112-393119",
+  "kind": "immutable_snapshot",
+  "schema": "decluster-epoch-graph-v1",
+  "format": "epochgraph.xz",
+  "content": {
+    "bytes": 11755076,
+    "sha256": "6869ecfb556800573d1ab2ee893746f209f6c6e2537727bec5f85a6250cd7d1d"
+  },
+  "locations": {
+    "local_path": "data/epochs-2016-weekly-v1/392112-393119.epochgraph.xz",
+    "canonical": null,
+    "mirrors": []
+  },
+  "source": {
+    "provider": "derived from a project-held BigQuery export of the public chain",
+    "snapshot_time": "2026-08",
+    "recipe": "decluster/epoch_graph.py",
+    "recipe_sha256": "c8aa4f024c896b6f6af9de18c453be708cbefc899917c224318f209e9af6d041"
+  },
+  "license": {
+    "data": "public on-chain data; redistribution authorized by the exporter",
+    "recipe": "MIT"
+  },
+  "redistribution": "allowed",
+  "sensitivity": "public_on_chain",
+  "normalization": {
+    "code_revision": "5890be00cedaa288bf72457cf84a5834ad97a573",
+    "parameters": {
+      "transactions": 1116563,
+      "dropped": "txid, which no consumer reads",
+      "addresses": "replaced by integers; the engine's output is invariant under any bijective renaming (tests/test_epoch_graph.py)",
+      "kept_verbatim": "addresses a name-emitting detector matches by prefix",
+      "compression": "lzma preset 6"
+    },
+    "parents": []
+  },
+  "determinism": {
+    "ordering": "export record order",
+    "rng_algorithm": null,
+    "rng_seed": null
+  }
+}

@@ -230,6 +230,12 @@ def test_all_committed_dataset_manifests_match_their_files():
     manifests = sorted((ROOT / "catalog" / "datasets").glob("*.json"))
     expected_ids = {
         "amount-channel-812695-812831-v1",
+        "epoch-graph-2016-391104-392111-v1",
+        "epoch-graph-2016-392112-393119-v1",
+        "epoch-graph-2016-393120-394127-v1",
+        "epoch-graph-2016-394128-395135-v1",
+        "epoch-graph-2016-395136-396143-v1",
+
         "boltzmann-fee-audit-v1",
         "conservation-round-three-v1",
         "entity-bitmex-2019-v1",
