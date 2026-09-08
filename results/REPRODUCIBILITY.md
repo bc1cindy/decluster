@@ -36,6 +36,7 @@ survives subsampling** can it be pinned as a **band** on a committed fixture.
 | known-entity de-anon (SatoshiDice positive + BitMEX null control) | `entity_satoshidice_2013.ndjson.gz`, `entity_bitmex_2019.ndjson.gz` | `test_entity_deanon_real.py` |
 | entity-attribute space is dense not sparse (Def-1 negative) + graph disassortative | `tests/fixtures/slice_a_channels_2016.ndjson.gz` | `test_slice_a_channels.py` |
 | Fellegi-Sunter beats the fixed-rarity baseline out-of-period (the direction `RESULTS-fs-temporal.md` publishes) | `tests/fixtures/fingerprint_blkcache_sample.json` | `test_fs_temporal.py::test_fellegi_sunter_beats_the_rarity_baseline_out_of_period` |
+| the fused engine: what each evidence channel adds over co-spend alone (`results/generated/fused-engine-v1.md`) | canonical run `catalog/runs/fused-engine-v1.json` over `data/fs-blkcache-2026-09-04.tar.gz` | `test_fused_engine_experiment.py` |
 | neighbourhood persistence against view width (`RESULTS-persistence-curve.md`) | `tests/fixtures/persistence_curve.json` | `test_state3_promotion.py` |
 | slice go/no-go: spanning material and seed supply (`RESULTS-slice-gate-2026.md`) | `tests/fixtures/slice_gate.json` | `test_state3_promotion.py` |
 | candidate-set intersection narrows, stalls or refuses (`RESULTS-candidate-set-intersection.md`) | none needed — the 3-scenario family is generated, not sampled | `test_candidate_set_intersection.py` |

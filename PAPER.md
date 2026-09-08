@@ -177,6 +177,17 @@ Three facts defeat it, in order of importance:
    ~33 bits per cluster on a real slice, a lower bound on >100 whole-chain (`results/RESULTS-cluster-bits.md`); the
    partition is decidable *without needing the merged transaction at all*.
 
+**What the fusion measurably adds.** The engine is what makes those channels one decision rather
+than a list of opinions, and `results/generated/fused-engine-v1.md` runs it over committed
+transactions as a ladder. On 335 co-spends spanning 753 funding transactions, the merge-only
+baseline leaves 697 clusters and refuses nothing; the fingerprint channel adds 7,560 links the
+co-spend missed and declines 19 of the merges the baseline takes. The two remaining channels move in
+opposite directions, which is what fusing them is for: cluster-level topology corroborates merges
+the fingerprint alone objected to, taking refusals to 11, and provenance-disjointness cuts pairs
+that survived it, taking them to 22. The amount channel moves nothing on that slice, and the reason
+is the gating stated above rather than a failure of the channel — it is refuse-only and speaks only
+where the fingerprint already disagrees.
+
 ## 3. The fingerprint library (evidence)
 
 We catalog the chain-observable transaction-construction axes (nSequence, nLockTime,

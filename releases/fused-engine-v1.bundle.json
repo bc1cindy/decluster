@@ -1,0 +1,89 @@
+{
+  "schema_version": 1,
+  "id": "fused-engine-v1",
+  "capabilities": [
+    "verify_outputs",
+    "reproduce_runs"
+  ],
+  "runs": [
+    "fused-engine-v1"
+  ],
+  "blobs": [
+    {
+      "name": "catalog/runs/fused-engine-v1.json",
+      "role": "run_manifest",
+      "bytes": 2921,
+      "sha256": "8a0f8f58196759d33b44923f0e73d0da09a641dca04b8ee13a2db4094824da34",
+      "locations": {
+        "canonical": null,
+        "mirrors": []
+      }
+    },
+    {
+      "name": "data/fs-blkcache-2026-09-04.tar.gz",
+      "role": "dataset",
+      "bytes": 33352455,
+      "sha256": "5a69f6f446dbdfcce09dddc91c653e5d841124d14020b720fdea276315c775a6",
+      "locations": {
+        "canonical": null,
+        "mirrors": []
+      }
+    },
+    {
+      "name": "results/artifacts/fused-engine-v1.json",
+      "role": "result",
+      "bytes": 1019,
+      "sha256": "192890be723f3c135f61aa513c3effcfe426021c3e22e937a555c0970bb4f2d8",
+      "locations": {
+        "canonical": null,
+        "mirrors": []
+      }
+    },
+    {
+      "name": "results/generated/fused-engine-v1.md",
+      "role": "result",
+      "bytes": 1968,
+      "sha256": "d31d64fb92d20b4d7df3fd88e750f4084dfc89e26807a8fe45b33361ae9b78d6",
+      "locations": {
+        "canonical": null,
+        "mirrors": []
+      }
+    },
+    {
+      "name": "sources/decluster-002a6be-runtime.tar",
+      "role": "source",
+      "bytes": 2293760,
+      "sha256": "83fc851ee67d554f5515747a00e07bbdc7a35d411160c99cb30a84c4df484b65",
+      "locations": {
+        "canonical": null,
+        "mirrors": []
+      }
+    },
+    {
+      "name": "reproduction/fused-engine/requirements.lock",
+      "role": "lockfile",
+      "bytes": 30,
+      "sha256": "e0d6a8cada5d383c0aca2bd2a37f28c15721392469c94084128d369c29c5544d",
+      "locations": {
+        "canonical": null,
+        "mirrors": []
+      }
+    },
+    {
+      "name": "reproduction/fused-engine/environment.json",
+      "role": "environment",
+      "bytes": 360,
+      "sha256": "53efce9566ebeabdb112a7a741c69644e15f36f6120a75b859b22df28c2b1579",
+      "locations": {
+        "canonical": null,
+        "mirrors": []
+      }
+    }
+  ],
+  "limitations": [
+    "The bundled environment currently targets CPython 3.13 on macOS arm64.",
+    "The public on-chain snapshot is redistributed with provider authorization.",
+    "The historical 165,832-transaction cache is unavailable and is not reproduced.",
+    "Public bootstrap remains incomplete until every blob has a canonical HTTPS location and an independent mirror."
+  ]
+}

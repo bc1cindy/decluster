@@ -29,7 +29,7 @@ def _run(subsetsum):
     import decluster.cluster as cl
     orig = cl._cospent_pairs
     cl.fetch_tx = _fetch
-    cl._cospent_pairs = lambda nodes: [("A", "B", "T"), ("A", "C", "T"), ("B", "C", "T")]
+    cl._cospent_pairs = lambda nodes, fetch=None: [("A", "B", "T"), ("A", "C", "T"), ("B", "C", "T")]
     try:
         groups = cl.cluster_refined(["A", "B", "C"], _FingerprintLinkAB(),
                                     amount=False, link_above=99, subsetsum=subsetsum)[0]
