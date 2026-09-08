@@ -20,12 +20,24 @@ What this does not say. A flow treats value as fungible, and a transaction that 
 not record which satoshi left by which output. A route here is a path the graph permits, not a claim
 that particular value travelled it: `k` bounds how much redundancy a cut has to defeat, and any
 reading beyond that is the taint-transfer question this module refuses to answer.
+
+The quantity is the min cut of a directed graph with unit capacities, which is the connectivity
+Abboud, Georgiadis, Italiano, Krauthgamer, Parotsidis, Trabelsi, Uznański and Wolleb-Graf study in
+*Faster Algorithms for All-Pairs Bounded Min-Cuts* (arXiv:1807.05803). Two things there carry over.
+The vertex-capacitated case reduces to the edge-capacitated one by splitting each vertex, which is
+what puts a coin's single unit of capacity on an arc of its own here. And the useful question is
+k-bounded: which coins have a *small* cut, rather than the exact value where it is large — on the
+committed cache the whole finding sits at k = 1 and k = 2.
+
+`catalog/ctp-sources.json` is the framework's own bibliography, pinned to its footnotes at a named
+revision, so a method reference like this one does not belong in it and is cited here instead.
 """
 
 from __future__ import annotations
 
 from collections import deque
 
+UNCAPPED = 1 << 30                     # a coin's own arc is the only scarce one
 SOURCE = ("__source__", -1)
 SINK = ("__sink__", -1)
 
@@ -80,21 +92,24 @@ class _Network:
                 total += pushed
         return total
 
-    def saturated_routes(self, source, sink):
-        """One path per unit of flow, read off the arcs the flow saturated."""
+    def saturated_routes(self, source, sink, carried):
+        """One route per unit of flow, walked over arcs the flow used and not yet spent.
+
+        `carried` reads the flow on a forward arc, which is what the reverse arc's capacity holds.
+        A route is reported as the coins it passes through, in walk order.
+        """
+        remaining = {i: carried(i) for i in range(0, len(self.arcs), 2) if carried(i) > 0}
         routes = []
-        used = set()
         while True:
             path, node = [], source
             while node != sink:
-                step = next((i for i in self.out.get(node, ())
-                             if i % 2 == 0 and self.arcs[i][1] == 0 and i not in used), None)
+                step = next((i for i in self.out.get(node, ()) if remaining.get(i, 0) > 0), None)
                 if step is None:
                     return routes
-                used.add(step)
+                remaining[step] -= 1
                 node = self.arcs[step][0]
                 path.append(node)
-            routes.append([coin for coin in path if coin != sink])
+            routes.append([name for name, side in path[:-1] if side == "out"])
 
 
 def _reachable_backwards(graph, target):
@@ -121,17 +136,28 @@ def route_capacity(graph, target, origins=None):
     if not ends:
         return 0, []
 
+    # A coin is an edge, not a vertex: the specification puts transactions at the vertices and coins
+    # on the arcs between them, because it is a coin that a seizure or a label removes. The graph
+    # here keys state by coin, so each coin is split into an in/out pair joined by the one unit of
+    # capacity it owns; a transition between coins is then uncapacitated. Max flow over that is the
+    # number of coin-disjoint routes, and its min cut is the coins a separation would have to take.
+    inward = lambda coin: (coin, "in")
+    outward = lambda coin: (coin, "out")
     network = _Network()
+    for coin in live:
+        network.add(inward(coin), outward(coin), 1)
     for coin in live:
         for nxt, _weight in graph.edges.get(coin, ()):
             if nxt in live:
-                network.add(coin, nxt)
+                network.add(outward(coin), inward(nxt), UNCAPPED)
     for end in ends:
-        network.add(end, SINK)
-    network.add(SOURCE, target)
+        network.add(outward(end), SINK, UNCAPPED)
+    # Every route leaves the target, so the target is the query point rather than a resource
+    # routes compete for: the source joins its outward side, past its own unit of capacity.
+    network.add(SOURCE, outward(target), UNCAPPED)
 
     k = network.max_flow(SOURCE, SINK)
-    return k, network.saturated_routes(SOURCE, SINK)
+    return k, network.saturated_routes(SOURCE, SINK, lambda i: network.arcs[i ^ 1][1])
 
 
 def cut_size(graph, target, origins=None):

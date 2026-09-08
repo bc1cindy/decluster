@@ -105,9 +105,9 @@ def build_artifact():
         },
         "implemented_capabilities": {
             "provenance_route_accumulation": True,
-            "edge_disjoint_path_enumeration": False,
-            "plausible_flow_capacity": False,
-            "k_routes": False,
+            "edge_disjoint_path_enumeration": True,   # decluster.disjoint_routes
+            "plausible_flow_capacity": False,          # the value dimension: unimplemented
+            "k_routes": True,
         },
         "limitations": [
             "the fixture is synthetic and tests implementation semantics",

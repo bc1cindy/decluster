@@ -13,7 +13,7 @@
       "name": "catalog/runs/path-count-contract-v1.json",
       "role": "run_manifest",
       "bytes": 2543,
-      "sha256": "a8b32e3307d9d8aa0bcadcc547dc730a43fbee3e44dbad541c769c0146db6f65",
+      "sha256": "cfa4a0cd520ab19ef91d8b9fa0e3d03a3a29221f50ef2a441fe9f7f4d0ce0a3a",
       "locations": {
         "canonical": null,
         "mirrors": []
@@ -22,8 +22,8 @@
     {
       "name": "results/artifacts/path-count-contract-v1.json",
       "role": "result",
-      "bytes": 930,
-      "sha256": "bf7f2fc1828f0af7a6440ad8b47831cfee1adecb64424c2becc710ca90b9fb87",
+      "bytes": 928,
+      "sha256": "39a8a365b93f06a2781a44a4e4cf41dcdcc62585970661a19ea6572f43a54fa3",
       "locations": {
         "canonical": null,
         "mirrors": []
@@ -32,8 +32,8 @@
     {
       "name": "results/generated/path-count-contract-v1.md",
       "role": "result",
-      "bytes": 670,
-      "sha256": "984ba8ca4b21f21fbaeb92ea9002ca4bfc0f7d669c7da8af43cd0e45092d4384",
+      "bytes": 668,
+      "sha256": "3fec19a61d9ad613e586dfd405269d802e6eea1a300c888aba0e331aeed12776",
       "locations": {
         "canonical": null,
         "mirrors": []

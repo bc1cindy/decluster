@@ -6,6 +6,6 @@ The ancestry and path-count distributions are identical on the fixed two-hop DAG
 
 The resulting min-entropy is 0.689660 bits and Shannon entropy is 0.958042 bits. Changing the supplied count oracle from log W = 0 to log W = ln(100) leaves the distribution unchanged: `True`.
 
-Route accumulation is implemented: `True`. Edge-disjoint path enumeration, plausible-flow capacity and k-routes are implemented: `False`, `False`, `False`.
+Route accumulation is implemented: `True`. Edge-disjoint path enumeration, plausible-flow capacity and k-routes are implemented: `True`, `False`, `True`.
 
 This is a provenance-route diagnostic, not CTP robust connectivity or CoinScore.

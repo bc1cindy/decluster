@@ -1,7 +1,9 @@
 """Probability-weighted provenance route accumulation over the ancestry DAG.
 
 The module name is retained for compatibility. This is not a counterfactual k-routes algorithm:
-it does not enumerate edge-disjoint paths or enforce plausible-flow capacity.
+it does not enumerate edge-disjoint paths, and it does not weight a route by the value it could
+carry. `disjoint_routes` answers the first of those; the second is the value dimension the framework
+states its properties over, and no module here computes it.
 
 The origin distribution is weighted by link probability alone. Subset-sum multiplicity is NOT a
 factor: `cost.py` declares the amount channel refuse-only — it may cut a coin from the graph, never
@@ -14,8 +16,9 @@ reading the weighting was the correct ambiguity signal; the refuse-only contract
 this module does not pretend the two agree.
 
 Multiplicity, not redundancy: many routes may share the same coins, so this says nothing about how
-few of them a cut would sever. Measuring that needs disjoint paths, which this repository does not
-compute.
+few of them a cut would sever. `disjoint_routes.cut_size` measures that, and the two disagree on
+three of every five coins in the committed cache: the origin set is larger than the number of routes
+that reach it without sharing a coin.
 """
 import math
 
@@ -110,6 +113,6 @@ def provenance_route_accumulation(
 
 
 # Compatibility name. It predates the distinction between probability-weighted ancestry routes and
-# the unimplemented CTP k-routes/edge-disjoint plausible-flow metric. New code should import
+# the CTP plausible-flow metric, whose value dimension is still unimplemented. New code should import
 # `provenance_route_accumulation` from its canonical namespace.
 path_count_anonymity = provenance_route_accumulation

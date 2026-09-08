@@ -27,6 +27,7 @@ class Graph:
         self.oracle_refused = 0        # the link oracle declined to link the coin's transaction
         self.node_capped = 0           # the max_nodes bound cut the frontier before any fetch
         self.zero_link_mass = 0        # the selected output has no positive incoming link mass
+        self.fetch_missing = 0         # the source produced no record for the coin
         self.unattributed = 0          # truncated by a cause this module does not name
         self.truncated_coins = {}      # coin -> cause, so truncation can be counted, and attributed,
                                        # over the mass-carrying boundary
@@ -36,6 +37,7 @@ class Graph:
 
 ORACLE_REFUSED = "oracle_refused"
 NODE_CAPPED = "node_capped"
+FETCH_MISSING = "fetch_missing"   # the source has no record of this coin
 ZERO_LINK_MASS = "zero_link_mass"
 
 
@@ -89,6 +91,8 @@ def _truncate(graph, kind, coin, cause):
         graph.node_capped += 1
     elif cause == ZERO_LINK_MASS:
         graph.zero_link_mass += 1
+    elif cause == FETCH_MISSING:
+        graph.fetch_missing += 1
     else:
         graph.unattributed += 1
 
@@ -233,6 +237,11 @@ def build_extended_graph(target, depth=6, fetch=None, link_oracle=None, value_we
             _truncate(g, kind, coin, NODE_CAPPED); continue   # node cap reached: truncate, no fetch
         txid, vout = coin
         tx = fetch(txid)
+        if tx is None:
+            # A slice holds what it holds. A parent the source cannot produce is a boundary the
+            # walk stops at, the same shape as a depth cutoff — not a reason to abandon the walk,
+            # which would report nothing for every coin whose ancestry leaves the sample.
+            _truncate(g, kind, coin, FETCH_MISSING); continue
         if _is_coinbase(tx):
             kind[coin] = "absorber"; g.source_absorbers.add(coin); continue
         if d <= 0:

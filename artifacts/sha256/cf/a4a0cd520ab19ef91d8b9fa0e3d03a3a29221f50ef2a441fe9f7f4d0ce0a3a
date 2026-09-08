@@ -40,13 +40,13 @@
   "outputs": [
     {
       "path": "results/artifacts/path-count-contract-v1.json",
-      "bytes": 930,
-      "sha256": "bf7f2fc1828f0af7a6440ad8b47831cfee1adecb64424c2becc710ca90b9fb87"
+      "bytes": 928,
+      "sha256": "39a8a365b93f06a2781a44a4e4cf41dcdcc62585970661a19ea6572f43a54fa3"
     },
     {
       "path": "results/generated/path-count-contract-v1.md",
-      "bytes": 670,
-      "sha256": "984ba8ca4b21f21fbaeb92ea9002ca4bfc0f7d669c7da8af43cd0e45092d4384"
+      "bytes": 668,
+      "sha256": "3fec19a61d9ad613e586dfd405269d802e6eea1a300c888aba0e331aeed12776"
     }
   ],
   "reproducibility": {

@@ -1,0 +1,13 @@
+{
+  "schema_version": 1,
+  "python": {
+    "implementation": "cpython",
+    "version": "3.13",
+    "system": "Darwin",
+    "machine": "arm64"
+  },
+  "source_archive": "sources/decluster-3924de0-runtime.tar",
+  "project_root": "decluster",
+  "requirements": "reproduction/route-capacity/requirements.lock",
+  "dependency_directory": "reproduction/route-capacity"
+}

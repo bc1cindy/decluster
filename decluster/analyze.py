@@ -39,8 +39,9 @@ def analyze(tx, targets=None, depth=5, *, fetch=None, link_oracle=None,
     the coin's ambiguity, never an overstatement — see build_extended_graph). path_count (default
     False, backward-compatible) exposes the provenance-route diagnostic under its legacy response
     name. It reuses the same link-probability-only walk as §04; no W(E)/subset-sum count is folded in.
-    It is not the §07 robust-connectivity object: it does not enumerate edge-disjoint paths, impose
-    plausible-flow capacity or implement k-routes.
+    It is not the §07 robust-connectivity object: it accumulates route mass rather than measuring
+    the cut that object is stated over. `disjoint_routes.cut_size` measures that cut; what neither
+    supplies is plausible-flow capacity, the value a route could actually carry.
 
     Returns {vout: {
         "provenance": {"min_entropy", "shannon", "n_absorbers", ["origins": {ancestor: mass}]},

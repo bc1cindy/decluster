@@ -1,0 +1,96 @@
+{
+  "schema_version": 1,
+  "id": "route-capacity-v1",
+  "claim_ids": [
+    "ctp.robustness.counterfactual_paths",
+    "ctp.provenance.traceability"
+  ],
+  "code": {
+    "revision": "c10e802820dd948cafc3d7d3800bf575835cb30c",
+    "dirty": false
+  },
+  "command": {
+    "argv": [
+      "python",
+      "-m",
+      "decluster.experiments.route_capacity",
+      "--snapshot",
+      "data/fs-blkcache-2026-09-04.tar.gz",
+      "reproduce",
+      "--artifact",
+      "results/artifacts/route-capacity-v1.json",
+      "--markdown",
+      "results/generated/route-capacity-v1.md"
+    ]
+  },
+  "datasets": [
+    {
+      "id": "fs-blkcache-2026-09-04-v1",
+      "sha256": "5a69f6f446dbdfcce09dddc91c653e5d841124d14020b720fdea276315c775a6"
+    }
+  ],
+  "parameters": {
+    "depth": 5,
+    "small_cut_at_most": 3,
+    "link_oracle": "value_flow_link_oracle",
+    "capacity_per_coin": 1
+  },
+  "rng": {
+    "algorithm": "none",
+    "seeds": []
+  },
+  "reproducibility": {
+    "level": "bitwise_reproducible",
+    "availability": "complete"
+  },
+  "verification": {
+    "mode": "exact",
+    "argv": [
+      "python",
+      "-m",
+      "decluster.experiments.route_capacity",
+      "--snapshot",
+      "data/fs-blkcache-2026-09-04.tar.gz",
+      "verify",
+      "--artifact",
+      "results/artifacts/route-capacity-v1.json",
+      "--markdown",
+      "results/generated/route-capacity-v1.md"
+    ],
+    "tests": [
+      "tests/test_disjoint_routes.py",
+      "tests/test_route_capacity_experiment.py"
+    ],
+    "properties": [
+      "the committed cache exactly reproduces the capacity distribution",
+      "routes share no coin beyond the target, and a shared transaction is not a shared coin",
+      "the origin set overstates redundancy for most coins, which is why the cut is measured",
+      "every cut is a lower bound: the boundary the walk stopped at is recorded beside it",
+      "routes are counted rather than weighted; plausible-flow capacity is not computed"
+    ],
+    "tolerance": null
+  },
+  "environment": {
+    "python": "3.13.7",
+    "lock_digest": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "platform": "macOS-26.6.2-arm64-arm-64bit-Mach-O",
+    "dependencies": []
+  },
+  "limitations": [
+    "Almost every origin reached is the edge of the committed slice, not a coinbase; a contiguous export can only raise these cuts.",
+    "A route is counted, not weighted by the value it could carry.",
+    "The walk depth is fixed at 5 transactions."
+  ],
+  "outputs": [
+    {
+      "path": "results/artifacts/route-capacity-v1.json",
+      "bytes": 1144,
+      "sha256": "3667cf0632e5ecbdd04a306bfbedd6f9f2699163f1eef9949973255a8eef4915"
+    },
+    {
+      "path": "results/generated/route-capacity-v1.md",
+      "bytes": 2439,
+      "sha256": "e39f5098689fe21b3d6144de06d16dd7c40174fbb72e200676a388eea97963f6"
+    }
+  ]
+}
