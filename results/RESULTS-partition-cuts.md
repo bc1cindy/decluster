@@ -90,7 +90,7 @@ and a three-point view-count sweep all land on the same matching outcome, while 
 differs does so by destroying the signal. What separates a matchable pair of views from an
 unmatchable one on this data is not where the boundary is drawn but whether the same economic
 neighbourhood recurs across it, and that is a property of the underlying activity
-(`RESULTS-multiepoch-local-2016.md`).
+(`results/generated/graph-rejoin-2016-v1.md`, `RESULTS-persistence-curve.md`).
 
 `decore` is retired as a recommendation. `collapse` replaces it as the non-trivial cut, on the
 grounds that it costs almost nothing and is the construction the framework actually asks for — not

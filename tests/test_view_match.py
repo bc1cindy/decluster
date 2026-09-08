@@ -187,6 +187,55 @@ def test_attributes_are_off_by_default():
     assert m.edge_alpha == 0.0 and m.vertex_alpha == 0.0
 
 
+def sigged(edges, sigs):
+    g = graph(edges)
+    g.edge_sig.update(sigs)
+    return g
+
+
+def test_the_conditioner_cannot_manufacture_a_score_but_does_manufacture_eccentricity():
+    """Why both conditioners default to off, decided rather than measured.
+
+    The design argument was that a bounded multiplicative factor cannot create a match where
+    structure found none, since zero times anything is zero. That holds for the score. The gate
+    does not read the score; it reads how far the leader stands from the runner-up, and scaling
+    tied candidates by different factors is exactly how that separation is made. A refusal becomes
+    an accepted match without one new structural fact.
+    """
+    ga = sigged([("u", "n1"), ("u", "n2")],
+                {("u", "n1"): ("x", "y"), ("u", "n2"): ("x", "y")})
+    gb = sigged([("v1", "m1"), ("v1", "m2"), ("v2", "m1"), ("v2", "m2")],
+                {("v1", "m1"): ("x", "y"), ("v1", "m2"): ("x", "y"),
+                 ("v2", "m1"): ("p", "q"), ("v2", "m2"): ("p", "q")})
+    seed = {"n1": "m1", "n2": "m2"}
+
+    flat = candidate_scores("u", ga, gb, seed, edge_alpha=0.0)
+    assert flat["v1"] == flat["v2"] > 0                   # a tie, and neither candidate is at zero
+    assert ViewMatcher(edge_alpha=0.0)._best("u", ga, gb, dict(seed)) is None
+
+    for alpha in (0.05, 0.5):
+        cond = candidate_scores("u", ga, gb, seed, edge_alpha=alpha)
+        assert cond["v1"] > cond["v2"] > 0                # no score was created from nothing
+        assert ViewMatcher(edge_alpha=alpha)._best("u", ga, gb, dict(seed)) == "v1"
+
+
+def test_the_smallest_perturbation_costs_as_much_as_the_largest():
+    """The gate normalises by the spread of the scores, so its verdict is scale-free in alpha.
+
+    That is why a sweep finds most of the loss between zero and the first nonzero setting: what
+    the gate reads is the ordering the conditioner imposes, not how hard it pushed.
+    """
+    ga = sigged([("u", "n1"), ("u", "n2")],
+                {("u", "n1"): ("x", "y"), ("u", "n2"): ("x", "y")})
+    gb = sigged([("v1", "m1"), ("v1", "m2"), ("v2", "m1"), ("v2", "m2")],
+                {("v1", "m1"): ("x", "y"), ("v1", "m2"): ("x", "y"),
+                 ("v2", "m1"): ("p", "q"), ("v2", "m2"): ("p", "q")})
+    seed = {"n1": "m1", "n2": "m2"}
+    eccentricities = {alpha: ViewMatcher(edge_alpha=alpha)._best(
+        "u", ga, gb, dict(seed), detail=True)[1] for alpha in (0.05, 0.25, 0.5)}
+    assert len(set(eccentricities.values())) == 1
+
+
 def test_revisit_converges_and_reproduces_the_planted_mapping():
     """The opt-in NS'09 self-reinforcing pass must not thrash: on the ring it still lands on
     the planted correspondence, and every match points at its true image."""

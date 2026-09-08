@@ -1,24 +1,382 @@
 {
   "schema_version": 1,
   "claims": [
-    {"id":"ctp.cioh.collaborative_false_merge","title":"Collaborative inputs can make CIOH merge distinct owners","scope":"qualitative_failure_mode","sources":["cioh-wp","reid-harrigan","maxwell","androulaki","meiklejohn","harrigan-fretter"],"mechanism":"compare naive co-spend clustering with an explicitly supplied collaborative ownership partition","implementation":"decluster.cluster.cluster_cospends via decluster.failure_modes.cioh_collaborative","evidence_level":"unit_fixture","status":"partially_supported","limitations":["The deterministic fixture supplies participant ownership labels","The fixture demonstrates the failure mode but does not estimate its chain-wide prevalence","A co-spend alone does not establish common ownership"]},
-    {"id":"ctp.payjoin.receiver_change_readoff","title":"A PayJoin receiver can read off senders' change by propagating the payments it negotiated","scope":"qualitative_failure_mode","sources":["ns1r","payjoin-entropy","forms"],"mechanism":"enumerate the perfect matchings of the per-sender constraint input - payment == change and count distinct readings of the amounts","implementation":"decluster.failure_modes.ns1r_change_readoff via decluster.experiments.ns1r_change_readoff","evidence_level":"unit_fixture","status":"partially_supported","limitations":["The scenarios are deterministic fixtures, not sampled transactions","The receiver's knowledge of each negotiated payment is supplied, not inferred","An external observer holds neither the payments nor the receiver's own coins","A unique reading of the amounts is not ownership attribution","The enumeration is bounded at eight senders and does not model fees"]},
-    {"id":"ctp.forms.observer_knowledge","title":"Collaborative forms expose different information to external observers and counterparties","scope":"model_limit","sources":["forms","p2ep","bip79","bip78","bip77","ns1r"],"mechanism":"compare on-chain observations separately from protocol-counterparty knowledge across ordinary spends, two-party PayJoin, NS1R, NSNR and net settlement","implementation":"decluster.failure_modes.collaborative_forms","evidence_level":"unit_fixture","status":"partially_supported","limitations":["The matrix models representative CTP amount examples rather than protocol wire implementations","P2EP, BIP79, BIP78 and BIP77 transport differences are not treated as on-chain evidence","Participant allocations and payment graphs are supplied model possibilities, not inferred ownership","Protocol deployment frequencies and empirical indistinguishability are not measured"]},
-    {"id":"ctp.payjoin.unnecessary_input","title":"Unnecessary-input conditions can expose unusual transaction structure","scope":"qualitative_failure_mode","sources":["p2ep","bip78","uih-adamisz","uih-ghesmati"],"mechanism":"classify two-output transactions with the fee-aware BlockStream UIH1/UIH2 rules, then preserve observationally equivalent unilateral and collaborative interpretations","implementation":"decluster.baselines.unnecessary_input and decluster.failure_modes.unnecessary_input; decluster.extractors.x_uih remains a legacy Gibson-like approximation","evidence_level":"unit_fixture","status":"partially_supported","limitations":["A positive unnecessary-input predicate does not identify PayJoin or ownership","Ordinary consolidation, NS1R, NSNR and net settlement may satisfy the predicate","Cycles make gross payment amounts unidentifiable from net on-chain balances","Protocol form, participant roles and ownership require independent evidence","The paper-faithful baseline is scoped to transactions with more than one input and exactly two outputs","The published longitudinal dataset and reported rates are not reproduced"]},
-    {"id":"ctp.fingerprint.statistical_linkage","title":"Construction fingerprints can support clustering","scope":"qualitative_failure_mode","sources":["moser-narayanan","kappos","sabouri"],"mechanism":"out-of-sample comparison-vector linkage","implementation":"decluster.fingerprint_validate.LibraryScorer, exercised by decluster.experiments.fingerprint_validation, fingerprint_regime, em_m, weight_sensitivity and bayes_vs_fs; decluster.fellegi_sunter is the separate fitted comparator used by fs_temporal and fs_ablation","evidence_level":"bitcoin_snapshot_experiment","status":"partially_supported","limitations":["Address reuse is a weak label","Local sample is not chain-wide"]},
-    {"id":"ctp.social_graph.propagation","title":"Seeded mappings can propagate across overlapping pseudonym graphs","scope":"qualitative_failure_mode","sources":["ns-netflix","ns-retro","ns-social"],"mechanism":"seeded cross-view vertex matching","implementation":"decluster.baselines.ns_social_attack","evidence_level":"bitcoin_snapshot_experiment","status":"partially_supported","limitations":["Bitcoin seeds are derived from retained correspondence","Published social datasets are not reproduced"]},
-    {"id":"ctp.social_graph.structural_linkage","title":"Recurring counterparty structure can link pseudonyms beyond co-spend","scope":"qualitative_failure_mode","sources":["reid-harrigan","ns-social"],"mechanism":"compare rarity-aware or common-neighbour structure under an independent entity label","implementation":"decluster.graph_deanon.evaluate_entity","evidence_level":"bitcoin_snapshot_experiment","status":"partially_supported","limitations":["The current paired fixtures evaluate common neighbours, not seeded N-S propagation","Vanity-prefix labels and entity-centred subgraphs are selected","The contrast is not representative of services or the chain"]},
-    {"id":"ctp.social_graph.link_prediction","title":"A cross-view mapping can support prediction of missing links","scope":"qualitative_failure_mode","sources":["ns-linkpred"],"mechanism":"mapping-assisted link prediction over incomplete views","implementation":"decluster.baselines.ns_link_prediction_2011","evidence_level":"synthetic_experiment","status":"partially_supported","limitations":["The zero convention for dummy-incident terms is read from the paper's prose, not from its formula","Pruning, revisitation and learned feature model are incomplete"]},
-    {"id":"ctp.amount.subtransaction_ambiguity","title":"Values can leave few plausible subtransaction mappings","scope":"qualitative_failure_mode","sources":["sudoku","boltzmann","maurer","diaz","serjantov-danezis","syverson"],"mechanism":"enumerate mappings and measure their link distribution","implementation":"decluster.baselines.maurer plus the separately named decluster.baselines.coinjoin_sudoku nominal reconstruction","evidence_level":"paper_example","status":"partially_supported","limitations":["Maurer requires exact conservation","The historical CoinJoin Sudoku analyzer was not published, so only its nominal controls are reconstructed","Some Boltzmann modes remain incomplete","Entropy alone is not a privacy certificate"]},
-    {"id":"ctp.amount.denomination_preparation_fingerprint","title":"Preparing fixed-denomination inputs can create a unilateral transaction fingerprint","scope":"qualitative_failure_mode","sources":["tx0","maxwell"],"mechanism":"compare denomination-preparation transaction shapes with an explicitly defined control population","implementation":"decluster.failure_modes.denomination_preparation","evidence_level":"unit_fixture","status":"partially_supported","limitations":["The deterministic fixture identifies an exact-denomination output consumed by the declared next CoinJoin","Controls match input and output arity but are not a sampled real-world population","The CTP statement is a qualification without an independent cited experiment","A match does not establish unilateral construction, common ownership, rarity or prevalence"]},
-    {"id":"ctp.amount.deterministic_partition","title":"Amount constraints can force links shared by every feasible CoinJoin partition","scope":"qualitative_failure_mode","sources":["sudoku","boltzmann","maurer"],"mechanism":"enumerate a declared mapping family and return only links present in every feasible mapping","implementation":"decluster.baselines.maurer via decluster.failure_modes.deterministic_partition; CoinJoin Sudoku remains a separate nominal reconstruction","evidence_level":"paper_example","status":"partially_supported","limitations":["The identified deterministic-partition reproduction uses Maurer's exact non-derived mapping family, not the unavailable CoinJoin Sudoku analyzer","Certainty is conditional on exact per-block conservation and the declared mapping family","Fees, contextual priors and net-settlement cycles can change admissibility","Unanimous mapping links are not ownership attribution"]},
-    {"id":"ctp.graph.pseudonym_representation","title":"Partial clusters induce an attributed directed multigraph rather than a complete user network","scope":"model_limit","sources":["reid-harrigan","minor-nitpick","multigraph-nitpick","ns-social"],"mechanism":"contract only declared cluster edges while preserving transfer direction, multiplicity and attributes","implementation":"decluster.views.contract via decluster.adaptations.pseudonym_graph","evidence_level":"unit_fixture","status":"partially_supported","limitations":["The deterministic fixture supplies the partial clustering lookup","Parallel transfers are folded into one directed edge carrying count, value and height span rather than separate edge objects","The fixture validates representation invariants but not social-graph deanonymization","Vertices remain pseudonyms unless clustering completeness is independently established"]},
-    {"id":"ctp.provenance.traceability","title":"Candidate-origin ambiguity can decay under value-flow and auxiliary knowledge","scope":"qualitative_failure_mode","sources":["kelen-seres","goldfeder"],"mechanism":"propagate model-relative origins and distinguish candidate elimination from graph fracture","implementation":"decluster.kelen_seres_value_flow and decluster.failure_modes.provenance_decay","evidence_level":"paper_example","status":"partially_supported","limitations":["Full published datasets are not reproduced","The synthetic graph-fracture fixture does not establish an exponential deanonymization rate","Value-flow traceability and ownership attribution remain distinct"]},
-    {"id":"ctp.disclosure.statistical_longitudinal","title":"Repeated observations can disclose persistent sender behavior","scope":"qualitative_failure_mode","sources":["danezis"],"mechanism":"accumulate observations across rounds and estimate a persistent sender profile","implementation":"decluster.failure_modes.statistical_disclosure","evidence_level":"unit_fixture","status":"partially_supported","limitations":["The deterministic fixture reproduces the threshold-mix estimator and a background-matched control","Target activity and the background distribution are supplied","The mix-network observation model is not a Bitcoin ownership model","The cited empirical experiments and real-world attack rates are not reproduced"]},
-    {"id":"ctp.disclosure.perfect_matching","title":"Profile-weighted perfect matching can jointly de-anonymize a mixing round","scope":"qualitative_failure_mode","sources":["troncoso"],"mechanism":"estimate sender profiles across observed rounds, then maximize the joint probability of a bijective sender-message to receiver-message assignment within one round","implementation":"decluster.failure_modes.perfect_matching_disclosure","evidence_level":"unit_fixture","status":"partially_supported","limitations":["The deterministic fixture reproduces the joint maximum-weight perfect-matching objective and a tied control","Profiles are supplied; their longitudinal estimation is represented by the separate statistical-disclosure failure mode","The exact enumerator is bounded to small fixtures rather than implementing a scalable assignment solver","The paper's empirical simulations and success rates are not reproduced","This mechanism is neither value-flow ancestry nor Bitcoin ownership attribution"]},
-    {"id":"ctp.intersection.longitudinal","title":"Linked post-CoinJoin coins can narrow pre-CoinJoin origin clusters","scope":"qualitative_failure_mode","sources":["goldfeder","scroll-intersection"],"mechanism":"intersect cluster-lifted candidate-origin sets across observations","implementation":"decluster.baselines.candidate_set_intersection","evidence_level":"unit_fixture","status":"partially_supported","limitations":["JoinMarket detection and recursive clustering are not reproduced","Historical purchase experiment is not reproduced"]},
-    {"id":"ctp.robustness.counterfactual_paths","title":"Robust privacy requires multiple plausible counterfactual paths","scope":"defensive_criterion","sources":["flow","proximity","goldfeder"],"mechanism":"enumerate amount-plausible edge-disjoint paths with temporal qualifications","implementation":"decluster.path_count via decluster.experiments.path_count_contract; decluster.provenance_route_accumulation is the separately named route-accumulation reading","evidence_level":"unit_fixture","status":"partially_supported","limitations":["The production k-routes implementation belongs to the defensive project","Current weighted path count is not a k-routes oracle"]},
-    {"id":"ctp.entropy.not_sufficient","title":"Point-in-time entropy is not a sufficient privacy certificate","scope":"model_limit","sources":["diaz","serjantov-danezis","syverson","goldfeder"],"mechanism":"contrast equal entropy with different future intersection or auxiliary-information outcomes","implementation":"decluster.failure_modes.entropy_insufficiency","evidence_level":"unit_fixture","status":"partially_supported","limitations":["The paired counterexample is synthetic","The fixture falsifies sufficiency but does not measure real-world attack frequency"]},
-    {"id":"ctp.sparse_dataset.feature_uniqueness","title":"Sparse feature vectors can support record-linkage deanonymization","scope":"qualitative_failure_mode","sources":["ns-netflix","ns-retro"],"mechanism":"measure nearest-neighbour similarity before applying auxiliary-information record linkage","implementation":"decluster.experiments.ancestry_sparsity and decluster.experiments.reid","evidence_level":"bitcoin_snapshot_experiment","status":"partially_supported","limitations":["The frozen signature snapshot contains 200 selected records","The signature-generation recipe and original comparison population were not preserved","Auxiliary origins are sampled from each target signature rather than independently observed","Record identity is not wallet ownership","The published Netflix corpus is not reproduced"]}
+    {
+      "id": "ctp.cioh.collaborative_false_merge",
+      "title": "Collaborative inputs can make CIOH merge distinct owners",
+      "scope": "qualitative_failure_mode",
+      "sources": [
+        "cioh-wp",
+        "reid-harrigan",
+        "maxwell",
+        "androulaki",
+        "meiklejohn",
+        "harrigan-fretter"
+      ],
+      "mechanism": "compare naive co-spend clustering with an explicitly supplied collaborative ownership partition",
+      "implementation": "decluster.cluster.cluster_cospends via decluster.failure_modes.cioh_collaborative",
+      "evidence_level": "unit_fixture",
+      "status": "supported_at_evidence_level",
+      "limitations": [
+        "The deterministic fixture supplies participant ownership labels",
+        "The fixture demonstrates the failure mode but does not estimate its chain-wide prevalence",
+        "A co-spend alone does not establish common ownership"
+      ]
+    },
+    {
+      "id": "ctp.payjoin.receiver_change_readoff",
+      "title": "A PayJoin receiver can read off senders' change by propagating the payments it negotiated",
+      "scope": "qualitative_failure_mode",
+      "sources": [
+        "ns1r",
+        "payjoin-entropy",
+        "forms"
+      ],
+      "mechanism": "enumerate the perfect matchings of the per-sender constraint input - payment == change and count distinct readings of the amounts",
+      "implementation": "decluster.failure_modes.ns1r_change_readoff via decluster.experiments.ns1r_change_readoff",
+      "evidence_level": "unit_fixture",
+      "status": "supported_at_evidence_level",
+      "limitations": [
+        "The scenarios are deterministic fixtures, not sampled transactions",
+        "The receiver's knowledge of each negotiated payment is supplied, not inferred",
+        "An external observer holds neither the payments nor the receiver's own coins",
+        "A unique reading of the amounts is not ownership attribution",
+        "The enumeration is bounded at eight senders and does not model fees"
+      ]
+    },
+    {
+      "id": "ctp.forms.observer_knowledge",
+      "title": "Collaborative forms expose different information to external observers and counterparties",
+      "scope": "model_limit",
+      "sources": [
+        "forms",
+        "p2ep",
+        "bip79",
+        "bip78",
+        "bip77",
+        "ns1r"
+      ],
+      "mechanism": "compare on-chain observations separately from protocol-counterparty knowledge across ordinary spends, two-party PayJoin, NS1R, NSNR and net settlement",
+      "implementation": "decluster.failure_modes.collaborative_forms",
+      "evidence_level": "unit_fixture",
+      "status": "supported_at_evidence_level",
+      "limitations": [
+        "The matrix models representative CTP amount examples rather than protocol wire implementations",
+        "P2EP, BIP79, BIP78 and BIP77 transport differences are not treated as on-chain evidence",
+        "Participant allocations and payment graphs are supplied model possibilities, not inferred ownership",
+        "Protocol deployment frequencies and empirical indistinguishability are not measured"
+      ]
+    },
+    {
+      "id": "ctp.payjoin.unnecessary_input",
+      "title": "Unnecessary-input conditions can expose unusual transaction structure",
+      "scope": "qualitative_failure_mode",
+      "sources": [
+        "p2ep",
+        "bip78",
+        "uih-adamisz",
+        "uih-ghesmati"
+      ],
+      "mechanism": "classify two-output transactions with the fee-aware BlockStream UIH1/UIH2 rules, then preserve observationally equivalent unilateral and collaborative interpretations",
+      "implementation": "decluster.baselines.unnecessary_input and decluster.failure_modes.unnecessary_input; decluster.extractors.x_uih remains a legacy Gibson-like approximation",
+      "evidence_level": "unit_fixture",
+      "status": "supported_at_evidence_level",
+      "limitations": [
+        "A positive unnecessary-input predicate does not identify PayJoin or ownership",
+        "Ordinary consolidation, NS1R, NSNR and net settlement may satisfy the predicate",
+        "Cycles make gross payment amounts unidentifiable from net on-chain balances",
+        "Protocol form, participant roles and ownership require independent evidence",
+        "The paper-faithful baseline is scoped to transactions with more than one input and exactly two outputs",
+        "The published longitudinal dataset and reported rates are not reproduced"
+      ]
+    },
+    {
+      "id": "ctp.fingerprint.statistical_linkage",
+      "title": "Construction fingerprints can support clustering",
+      "scope": "qualitative_failure_mode",
+      "sources": [
+        "moser-narayanan",
+        "kappos",
+        "sabouri"
+      ],
+      "mechanism": "out-of-sample comparison-vector linkage",
+      "implementation": "decluster.fingerprint_validate.LibraryScorer, exercised by decluster.experiments.fingerprint_validation, fingerprint_regime, em_m, weight_sensitivity and bayes_vs_fs; decluster.fellegi_sunter is the separate fitted comparator used by fs_temporal and fs_ablation",
+      "evidence_level": "bitcoin_snapshot_experiment",
+      "status": "supported_at_evidence_level",
+      "limitations": [
+        "Address reuse is a weak label",
+        "Local sample is not chain-wide"
+      ]
+    },
+    {
+      "id": "ctp.social_graph.propagation",
+      "title": "Seeded mappings can propagate across overlapping pseudonym graphs",
+      "scope": "qualitative_failure_mode",
+      "sources": [
+        "ns-netflix",
+        "ns-retro",
+        "ns-social"
+      ],
+      "mechanism": "seeded cross-view vertex matching",
+      "implementation": "decluster.baselines.ns_social_attack",
+      "evidence_level": "bitcoin_snapshot_experiment",
+      "status": "partially_supported",
+      "limitations": [
+        "Propagation is exercised rather than established: the canonical run finds one rejoin in 15,688 candidate pairs, with every shuffled-seed control at zero",
+        "Bitcoin seeds are derived from retained correspondence",
+        "Published social datasets are not reproduced"
+      ]
+    },
+    {
+      "id": "ctp.social_graph.structural_linkage",
+      "title": "Recurring counterparty structure can link pseudonyms beyond co-spend",
+      "scope": "qualitative_failure_mode",
+      "sources": [
+        "reid-harrigan",
+        "ns-social"
+      ],
+      "mechanism": "compare rarity-aware or common-neighbour structure under an independent entity label",
+      "implementation": "decluster.graph_deanon.evaluate_entity",
+      "evidence_level": "bitcoin_snapshot_experiment",
+      "status": "partially_supported",
+      "limitations": [
+        "Seeded N-S propagation is not exercised here; the paired fixtures score common neighbours",
+        "The current paired fixtures evaluate common neighbours, not seeded N-S propagation",
+        "Vanity-prefix labels and entity-centred subgraphs are selected",
+        "The contrast is not representative of services or the chain"
+      ]
+    },
+    {
+      "id": "ctp.social_graph.link_prediction",
+      "title": "A cross-view mapping can support prediction of missing links",
+      "scope": "qualitative_failure_mode",
+      "sources": [
+        "ns-linkpred"
+      ],
+      "mechanism": "mapping-assisted link prediction over incomplete views",
+      "implementation": "decluster.baselines.ns_link_prediction_2011",
+      "evidence_level": "synthetic_experiment",
+      "status": "partially_supported",
+      "limitations": [
+        "Confidence pruning and accepted-mapping correction are not implemented",
+        "The zero convention for dummy-incident terms is read from the paper's prose, not from its formula",
+        "Pruning, revisitation and learned feature model are incomplete"
+      ]
+    },
+    {
+      "id": "ctp.amount.subtransaction_ambiguity",
+      "title": "Values can leave few plausible subtransaction mappings",
+      "scope": "qualitative_failure_mode",
+      "sources": [
+        "sudoku",
+        "boltzmann",
+        "maurer",
+        "diaz",
+        "serjantov-danezis",
+        "syverson"
+      ],
+      "mechanism": "enumerate mappings and measure their link distribution",
+      "implementation": "decluster.baselines.maurer plus the separately named decluster.baselines.coinjoin_sudoku nominal reconstruction",
+      "evidence_level": "paper_example",
+      "status": "partially_supported",
+      "limitations": [
+        "Maurer requires exact conservation",
+        "The historical CoinJoin Sudoku analyzer was not published, so only its nominal controls are reconstructed",
+        "Some Boltzmann modes remain incomplete",
+        "Entropy alone is not a privacy certificate"
+      ]
+    },
+    {
+      "id": "ctp.amount.denomination_preparation_fingerprint",
+      "title": "Preparing fixed-denomination inputs can create a unilateral transaction fingerprint",
+      "scope": "qualitative_failure_mode",
+      "sources": [
+        "tx0",
+        "maxwell"
+      ],
+      "mechanism": "compare denomination-preparation transaction shapes with an explicitly defined control population",
+      "implementation": "decluster.failure_modes.denomination_preparation",
+      "evidence_level": "unit_fixture",
+      "status": "supported_at_evidence_level",
+      "limitations": [
+        "The deterministic fixture identifies an exact-denomination output consumed by the declared next CoinJoin",
+        "Controls match input and output arity but are not a sampled real-world population",
+        "The CTP statement is a qualification without an independent cited experiment",
+        "A match does not establish unilateral construction, common ownership, rarity or prevalence"
+      ]
+    },
+    {
+      "id": "ctp.amount.deterministic_partition",
+      "title": "Amount constraints can force links shared by every feasible CoinJoin partition",
+      "scope": "qualitative_failure_mode",
+      "sources": [
+        "sudoku",
+        "boltzmann",
+        "maurer"
+      ],
+      "mechanism": "enumerate a declared mapping family and return only links present in every feasible mapping",
+      "implementation": "decluster.baselines.maurer via decluster.failure_modes.deterministic_partition; CoinJoin Sudoku remains a separate nominal reconstruction",
+      "evidence_level": "paper_example",
+      "status": "supported_at_evidence_level",
+      "limitations": [
+        "The identified deterministic-partition reproduction uses Maurer's exact non-derived mapping family, not the unavailable CoinJoin Sudoku analyzer",
+        "Certainty is conditional on exact per-block conservation and the declared mapping family",
+        "Fees, contextual priors and net-settlement cycles can change admissibility",
+        "Unanimous mapping links are not ownership attribution"
+      ]
+    },
+    {
+      "id": "ctp.graph.pseudonym_representation",
+      "title": "Partial clusters induce an attributed directed multigraph rather than a complete user network",
+      "scope": "model_limit",
+      "sources": [
+        "reid-harrigan",
+        "minor-nitpick",
+        "multigraph-nitpick",
+        "ns-social"
+      ],
+      "mechanism": "contract only declared cluster edges while preserving transfer direction, multiplicity and attributes",
+      "implementation": "decluster.views.contract via decluster.adaptations.pseudonym_graph",
+      "evidence_level": "unit_fixture",
+      "status": "supported_at_evidence_level",
+      "limitations": [
+        "The deterministic fixture supplies the partial clustering lookup",
+        "Parallel transfers are folded into one directed edge carrying count, value and height span rather than separate edge objects",
+        "The fixture validates representation invariants but not social-graph deanonymization",
+        "Vertices remain pseudonyms unless clustering completeness is independently established"
+      ]
+    },
+    {
+      "id": "ctp.provenance.traceability",
+      "title": "Candidate-origin ambiguity can decay under value-flow and auxiliary knowledge",
+      "scope": "qualitative_failure_mode",
+      "sources": [
+        "kelen-seres",
+        "goldfeder"
+      ],
+      "mechanism": "propagate model-relative origins and distinguish candidate elimination from graph fracture",
+      "implementation": "decluster.kelen_seres_value_flow and decluster.failure_modes.provenance_decay",
+      "evidence_level": "paper_example",
+      "status": "supported_at_evidence_level",
+      "limitations": [
+        "Full published datasets are not reproduced",
+        "The synthetic graph-fracture fixture does not establish an exponential deanonymization rate",
+        "Value-flow traceability and ownership attribution remain distinct"
+      ]
+    },
+    {
+      "id": "ctp.disclosure.statistical_longitudinal",
+      "title": "Repeated observations can disclose persistent sender behavior",
+      "scope": "qualitative_failure_mode",
+      "sources": [
+        "danezis"
+      ],
+      "mechanism": "accumulate observations across rounds and estimate a persistent sender profile",
+      "implementation": "decluster.failure_modes.statistical_disclosure",
+      "evidence_level": "unit_fixture",
+      "status": "supported_at_evidence_level",
+      "limitations": [
+        "The deterministic fixture reproduces the threshold-mix estimator and a background-matched control",
+        "Target activity and the background distribution are supplied",
+        "The mix-network observation model is not a Bitcoin ownership model",
+        "The cited empirical experiments and real-world attack rates are not reproduced"
+      ]
+    },
+    {
+      "id": "ctp.disclosure.perfect_matching",
+      "title": "Profile-weighted perfect matching can jointly de-anonymize a mixing round",
+      "scope": "qualitative_failure_mode",
+      "sources": [
+        "troncoso"
+      ],
+      "mechanism": "estimate sender profiles across observed rounds, then maximize the joint probability of a bijective sender-message to receiver-message assignment within one round",
+      "implementation": "decluster.failure_modes.perfect_matching_disclosure",
+      "evidence_level": "unit_fixture",
+      "status": "supported_at_evidence_level",
+      "limitations": [
+        "The deterministic fixture reproduces the joint maximum-weight perfect-matching objective and a tied control",
+        "Profiles are supplied; their longitudinal estimation is represented by the separate statistical-disclosure failure mode",
+        "The exact enumerator is bounded to small fixtures rather than implementing a scalable assignment solver",
+        "The paper's empirical simulations and success rates are not reproduced",
+        "This mechanism is neither value-flow ancestry nor Bitcoin ownership attribution"
+      ]
+    },
+    {
+      "id": "ctp.intersection.longitudinal",
+      "title": "Linked post-CoinJoin coins can narrow pre-CoinJoin origin clusters",
+      "scope": "qualitative_failure_mode",
+      "sources": [
+        "goldfeder",
+        "scroll-intersection"
+      ],
+      "mechanism": "intersect cluster-lifted candidate-origin sets across observations",
+      "implementation": "decluster.baselines.candidate_set_intersection",
+      "evidence_level": "unit_fixture",
+      "status": "partially_supported",
+      "limitations": [
+        "JoinMarket detection and recursive clustering are not reproduced",
+        "Historical purchase experiment is not reproduced"
+      ]
+    },
+    {
+      "id": "ctp.robustness.counterfactual_paths",
+      "title": "Robust privacy requires multiple plausible counterfactual paths",
+      "scope": "defensive_criterion",
+      "sources": [
+        "flow",
+        "proximity",
+        "goldfeder"
+      ],
+      "mechanism": "enumerate amount-plausible edge-disjoint paths with temporal qualifications",
+      "implementation": "decluster.disjoint_routes measures the cut; decluster.path_count via decluster.experiments.path_count_contract accumulates route mass, and decluster.provenance_route_accumulation is the separately named route-accumulation alias",
+      "evidence_level": "unit_fixture",
+      "status": "partially_supported",
+      "limitations": [
+        "Plausible-flow capacity is computed as a maximum flow over coin values; what remains unsolved is the allocation, not the capacity",
+        "Own-origin robustness is not exercised: the corpus states that property relative to a privileged counterparty that is itself the origin, and `flow_capacity` takes an `origins` argument that would express it, but both runs pass the whole absorber set instead of a user's own antecedent coins. What is measured here is the general robust-connectivity form",
+        "Value enters as a threshold \u2014 a route either can or cannot carry the amount \u2014 not as an allocation; choosing which routes carry how much is the k-splittable problem and is not solved here",
+        "The cut is measured against the boundary a bounded walk stopped at, so a deeper walk can only move it up"
+      ]
+    },
+    {
+      "id": "ctp.entropy.not_sufficient",
+      "title": "Point-in-time entropy is not a sufficient privacy certificate",
+      "scope": "model_limit",
+      "sources": [
+        "diaz",
+        "serjantov-danezis",
+        "syverson",
+        "goldfeder"
+      ],
+      "mechanism": "contrast equal entropy with different future intersection or auxiliary-information outcomes",
+      "implementation": "decluster.failure_modes.entropy_insufficiency",
+      "evidence_level": "unit_fixture",
+      "status": "supported_at_evidence_level",
+      "limitations": [
+        "The paired counterexample is synthetic",
+        "The fixture falsifies sufficiency but does not measure real-world attack frequency"
+      ]
+    },
+    {
+      "id": "ctp.sparse_dataset.feature_uniqueness",
+      "title": "Sparse feature vectors can support record-linkage deanonymization",
+      "scope": "qualitative_failure_mode",
+      "sources": [
+        "ns-netflix",
+        "ns-retro"
+      ],
+      "mechanism": "measure nearest-neighbour similarity before applying auxiliary-information record linkage",
+      "implementation": "decluster.experiments.ancestry_sparsity and decluster.experiments.reid",
+      "evidence_level": "bitcoin_snapshot_experiment",
+      "status": "partially_supported",
+      "limitations": [
+        "The linkage is not measured against an independently observed auxiliary: origins are sampled from each target's own stored signature",
+        "The frozen signature snapshot contains 200 selected records",
+        "The signature-generation recipe and original comparison population were not preserved",
+        "Auxiliary origins are sampled from each target signature rather than independently observed",
+        "Record identity is not wallet ownership",
+        "The published Netflix corpus is not reproduced"
+      ]
+    }
   ]
 }

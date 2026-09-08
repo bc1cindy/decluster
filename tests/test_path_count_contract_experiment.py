@@ -5,11 +5,14 @@ def test_contract_distinguishes_route_accumulation_from_robust_connectivity():
     artifact = experiment.build_artifact()
     assert artifact["ancestry_distribution"] == artifact["path_count_distribution"]
     assert artifact["count_oracle_invariance"]["distributions_equal"] is True
+    # Pinned rather than derived, so a capability cannot start or stop being claimed without
+    # someone saying so here. `path_count` still accumulates route mass and is still not the
+    # connectivity object; what changed is that `disjoint_routes` now measures that object beside it.
     assert artifact["implemented_capabilities"] == {
         "provenance_route_accumulation": True,
-        "edge_disjoint_path_enumeration": False,
-        "plausible_flow_capacity": False,
-        "k_routes": False,
+        "edge_disjoint_path_enumeration": True,
+        "plausible_flow_capacity": True,
+        "k_routes": True,
     }
 
 

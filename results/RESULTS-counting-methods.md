@@ -113,7 +113,7 @@ range, so the estimator question there is a modelling choice rather than an esti
 Per `results/REPRODUCIBILITY.md`, state 2: **mechanism unit-tested, headline number is a data-run.**
 The routing order, the zero-count rule and the estimator's absence from the post-output path are
 pinned in `tests/test_counting.py`. The timings and the L comparison are regenerated over
-`sample.ndjson` and synthetic draws, and are not asserted.
+`data/amount-channel-812695-812831-v1.json` and synthetic draws, and are not asserted.
 
 
 ## Is any of this the model the writeup asks for?

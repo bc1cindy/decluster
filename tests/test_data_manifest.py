@@ -390,3 +390,25 @@ def test_every_experiment_test_compares_against_a_fresh_execution():
     assert not without, (
         f"these build an artifact and never compare it to the stored one: {without}"
     )
+
+
+def test_every_run_passes_its_datasets_on_the_command_line():
+    """A dataset the argv never names cannot be redirected at the materialized bundle copy.
+
+    `_resolve_dataset_arguments` rewrites an argument that exactly equals a declared dataset's
+    local path, and nothing else. A run that hardcodes its inputs instead therefore verifies fine
+    in the tree — where those relative paths resolve — and fails the moment a third party
+    reproduces it from the bundle, which is the only run of it that proves anything.
+    `graph-rejoin-2016-v1` shipped that way and its cold start had never once succeeded.
+    """
+    catalog = {manifest["id"]: manifest["locations"]["local_path"]
+               for manifest in (json.loads(path.read_text())
+                                for path in (ROOT / "catalog" / "datasets").glob("*.json"))}
+    missing = {}
+    for path in sorted((ROOT / "catalog" / "runs").glob("*.json")):
+        run = json.loads(path.read_text())
+        absent = [catalog[entry["id"]] for entry in run.get("datasets", [])
+                  if entry["id"] in catalog and catalog[entry["id"]] not in run["command"]["argv"]]
+        if absent:
+            missing[path.stem] = absent
+    assert not missing, f"runs whose argv does not name their datasets: {missing}"

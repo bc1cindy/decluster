@@ -27,15 +27,18 @@ class Graph:
         self.oracle_refused = 0        # the link oracle declined to link the coin's transaction
         self.node_capped = 0           # the max_nodes bound cut the frontier before any fetch
         self.zero_link_mass = 0        # the selected output has no positive incoming link mass
+        self.fetch_missing = 0         # the source produced no record for the coin
         self.unattributed = 0          # truncated by a cause this module does not name
         self.truncated_coins = {}      # coin -> cause, so truncation can be counted, and attributed,
                                        # over the mass-carrying boundary
         self.source_absorbers = set()  # fetched coinbase boundaries (real sources)
         self.depth_capped = set()      # artificial boundaries introduced by depth
+        self.values = {}               # coin -> satoshis, recorded as the walk reads them
 
 
 ORACLE_REFUSED = "oracle_refused"
 NODE_CAPPED = "node_capped"
+FETCH_MISSING = "fetch_missing"   # the source has no record of this coin
 ZERO_LINK_MASS = "zero_link_mass"
 
 
@@ -89,6 +92,8 @@ def _truncate(graph, kind, coin, cause):
         graph.node_capped += 1
     elif cause == ZERO_LINK_MASS:
         graph.zero_link_mass += 1
+    elif cause == FETCH_MISSING:
+        graph.fetch_missing += 1
     else:
         graph.unattributed += 1
 
@@ -233,12 +238,23 @@ def build_extended_graph(target, depth=6, fetch=None, link_oracle=None, value_we
             _truncate(g, kind, coin, NODE_CAPPED); continue   # node cap reached: truncate, no fetch
         txid, vout = coin
         tx = fetch(txid)
+        if tx is None:
+            # A slice holds what it holds. A parent the source cannot produce is a boundary the
+            # walk stops at, the same shape as a depth cutoff — not a reason to abandon the walk,
+            # which would report nothing for every coin whose ancestry leaves the sample.
+            _truncate(g, kind, coin, FETCH_MISSING); continue
         if _is_coinbase(tx):
             kind[coin] = "absorber"; g.source_absorbers.add(coin); continue
         if d <= 0:
             kind[coin] = "absorber"; g.depth_capped.add(coin); continue  # depth cutoff
         in_vals = [v["prevout"]["value"] for v in tx["vin"]]
         out_vals = [o["value"] for o in tx["vout"]]
+        # The walk already holds every value it passes; recording them lets a consumer ask what a
+        # route could carry without fetching the chain a second time.
+        g.values[coin] = out_vals[vout] if vout < len(out_vals) else None
+        for vin in tx["vin"]:
+            if vin.get("txid") is not None:
+                g.values.setdefault((vin["txid"], vin["vout"]), vin["prevout"]["value"])
         matrix = link_oracle(in_vals, out_vals)
         if matrix is None:
             _truncate(g, kind, coin, ORACLE_REFUSED); continue   # refuse to fabricate

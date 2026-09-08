@@ -17,9 +17,9 @@
     "selected": 300
   },
   "source": {
-    "bytes": 10181430,
-    "digest": "35bf7effa620a699551268d6915383072af0c21cba6315701b0193fa7dbbe2e5",
+    "bytes": 8028513,
+    "digest": "ea099cf7a43712ad5b4493915b4232aae8b4bca1e8e862d7ba7b890c832411a0",
     "files": 1,
-    "pattern": "sample.ndjson"
+    "pattern": "data/amount-channel-812695-812831-v1.json"
   }
 }

@@ -45,8 +45,6 @@ UNBACKED = {
     "0.768": "the change-predictor ordering table, measured on a slice that is not committed",
     "0.775": "the change-predictor ordering table, measured on a slice that is not committed",
     "0.779": "the change-predictor ordering table, measured on a slice that is not committed",
-    "2.58": "the entity-ratio reading across corpus sizes, from a scale run that is not canonical",
-    "2.67": "the entity-ratio reading across corpus sizes, from a scale run that is not canonical",
     "105,000": "the size of the BigQuery uniform sample the library bits came from; that export is gone",
     "3,500": "the size of the mempool sample the witness bits came from; that sample is not preserved",
     "165,832": "the size of a growing cache behind a historical AUC, not the committed one",

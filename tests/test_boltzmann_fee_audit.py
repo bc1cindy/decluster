@@ -7,6 +7,7 @@ from decluster import reproducibility
 from examples.boltzmann_fee_audit import DOC, audit, invariants, values
 
 ROOT = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
+SOURCE = "data/amount-channel-812695-812831-v1.json"
 
 
 def test_values_requires_complete_multi_input_amounts():
@@ -16,10 +17,8 @@ def test_values_requires_complete_multi_input_amounts():
 
 
 def test_committed_report_and_manifest_recompute_from_sample():
-    source = os.path.join(ROOT, "sample.ndjson")
-    if not os.path.exists(source):
-        pytest.skip("sample.ndjson not present; fee-audit invariants not recomputed")
-    report = audit(source)
+    """The snapshot is committed, so this is a check a reader runs rather than one that skips."""
+    report = audit(os.path.join(ROOT, SOURCE))
     with open(os.path.join(ROOT, "results", "boltzmann-fee-audit.json")) as handle:
         assert report == json.load(handle)
     status, message = reproducibility.check_manifest(DOC, invariants(report), root=ROOT)
@@ -27,10 +26,7 @@ def test_committed_report_and_manifest_recompute_from_sample():
 
 
 def test_roundness_is_recorded_but_does_not_select_mappings():
-    source = os.path.join(ROOT, "sample.ndjson")
-    if not os.path.exists(source):
-        pytest.skip("sample.ndjson not present; fee-audit rows not recomputed")
-    report = audit(source, cap=20)
+    report = audit(os.path.join(ROOT, SOURCE), cap=20)
     assert all("fee_roundness" in row for row in report["rows"])
     assert all(set(row) >= {"exact_mappings", "fee_tolerant_mappings"}
                for row in report["rows"])

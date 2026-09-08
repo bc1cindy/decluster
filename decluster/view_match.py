@@ -9,8 +9,9 @@ from — not from the vertex's own attributes, which measure out far too coarse
 
 Three guards, each answering something measured rather than assumed:
 
-  hub cap        degree in a contracted 2026 view is heavy-tailed, median 2 against a
-                 maximum above 15 000 (`RESULTS-contraction-2026.md`). A hub is adjacent to
+  hub cap        degree in a contracted view is heavy-tailed: mean 4.79 against a second
+                 moment of 6289, which forces some vertex above 1300
+                 (`results/generated/graph-rejoin-2016-v1.md`). A hub is adjacent to
                  thousands of candidates and would vote for all of them, so propagation
                  must not route through one.
   eccentricity   a match is accepted only when its score stands clear of the runner-up,
@@ -72,11 +73,12 @@ def _condition(weight, agree, alpha):
 
     It can, however, manufacture *eccentricity*, and that is what the gate reads. Scaling
     tied candidates by different factors creates the separation the gate tests for, turning
-    refusals into accepted matches. `RESULTS-attribute-conditioning.md` measures the cost:
-    the margin over a degree-only guess falls monotonically as alpha rises from zero, and
-    even alpha 0.05 gives most of the loss away. Both conditioners therefore default to off,
-    and they are kept as the instrument that measured this rather than as a feature to
-    enable."""
+    refusals into accepted matches on no new structural fact
+    (`test_view_match.test_the_conditioner_cannot_manufacture_a_score_but_does_manufacture_eccentricity`).
+    The gate normalises by the spread of the scores, so its verdict does not depend on how
+    large alpha is, only on the ordering the conditioner imposes: the smallest nonzero
+    setting costs what the largest does. Both conditioners therefore default to off, and they
+    are kept as the instrument that established this rather than as a feature to enable."""
     return weight if agree is None else weight * ((1 - alpha) + 2 * alpha * agree)
 
 
@@ -206,7 +208,13 @@ class ViewMatcher:
         frontier = {n for u in mapping for n in ga.neighbours(u) if n not in mapping}
         while frontier:
             nxt, refused, matched = set(), set(), 0
-            for u in frontier:
+            # Sorted, because the order decides the outcome and a set's order is not defined.
+            # `_best` denies an image once it is claimed, so whoever is scored first takes it from
+            # everyone contesting it; iterating the set directly makes that hinge on string hashing,
+            # which Python randomises per process. The algorithm does not specify an order, but an
+            # implementation whose result changes between two runs of the same input has not
+            # measured anything. This was found by a canonical run failing to reproduce itself.
+            for u in sorted(frontier, key=repr):
                 if u in mapping:
                     continue
                 v, ecc, sc = self._best(u, ga, gb, mapping, detail=True)
@@ -262,7 +270,7 @@ class ViewMatcher:
         mapping = self.match(ga, gb, seed, stat_a, stat_b)
         candidates = {}
         frontier = {n for u in mapping for n in ga.neighbours(u) if n not in mapping}
-        for u in frontier:
+        for u in sorted(frontier, key=repr):
             scores = candidate_scores(u, ga, gb, mapping, self.hubcap, self.damping,
                                       self.stat.get(id(gb)), self.edge_alpha, self.directional)
             for taken in mapping.values():
