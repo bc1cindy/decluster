@@ -329,9 +329,8 @@
    "evidence_level": "unit_fixture",
    "status": "partially_supported",
    "limitations": [
-    "Routes are counted, not weighted: plausible-flow capacity, the value a route could carry, is unimplemented and is the half the framework states as mass",
-    "The value-carrying k-splittable formulation belongs to the defensive project",
-    "The cut is measured against the boundary a bounded walk stopped at, so a deeper walk can only move it"
+    "Value enters as a threshold \u2014 a route either can or cannot carry the amount \u2014 not as an allocation; choosing which routes carry how much is the k-splittable problem and is not solved here",
+    "The cut is measured against the boundary a bounded walk stopped at, so a deeper walk can only move it up"
    ]
   },
   {

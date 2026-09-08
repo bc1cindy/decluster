@@ -77,3 +77,26 @@ def test_the_committed_artifact_is_what_a_fresh_run_produces(artifact):
     if not SNAPSHOT.is_file():
         pytest.skip("the block-cache snapshot is not committed")
     rc.verify_artifact(artifact, str(SNAPSHOT))
+
+
+def test_pruning_by_value_does_not_lower_the_cut(artifact):
+    """Removing routes can only remove routes: the pruned distribution cannot exceed the raw one."""
+    raw = artifact["capacity"]
+    carrying = artifact["capacity_carrying_the_coin"]
+    assert sum(carrying.values()) == sum(raw.values())
+    assert max((int(k) for k in carrying), default=0) <= max(int(k) for k in raw)
+
+
+def test_the_value_threshold_changes_the_answer(artifact):
+    """If it never did, the specification's pruning step would be measuring nothing here."""
+    readings = artifact["readings"]
+    assert readings["cut_of_one_carrying_the_coin"] > readings["cut_of_one"], (
+        "pruning to routes that could carry the coin no longer moves the single-coin cut; either "
+        "the slice changed or the threshold stopped being applied")
+
+
+def test_both_readings_reach_the_document(artifact):
+    """The unpruned number alone overstates redundancy, so it must not travel on its own."""
+    rendered = rc.render_markdown(artifact)
+    for key in ("cut_of_one", "cut_of_one_carrying_the_coin", "no_route_carries_the_coin"):
+        assert str(artifact["readings"][key]) in rendered, key

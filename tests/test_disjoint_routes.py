@@ -119,3 +119,40 @@ def test_two_routes_through_one_output_of_that_transaction_are_one():
                ("M", 0): [("A", 0), ("B", 0)]},
               [("A", 0), ("B", 0)])
     assert cut_size(g, TARGET) == 1
+
+
+def valued(edges, absorbers, values):
+    g = graph(edges, absorbers)
+    g.values = values
+    return g
+
+
+def test_a_route_too_small_to_carry_the_coin_is_not_a_route():
+    """The specification prunes this way: a path worth less than the amount may have been removed.
+
+    Counting it makes redundancy look larger than it is, which is the wrong direction for a measure
+    of fragility — the same overstatement this module exists to correct in the origin count.
+    """
+    g = valued({TARGET: [("big", 0), ("dust", 0)],
+                ("big", 0): [("A", 0)], ("dust", 0): [("B", 0)]},
+               [("A", 0), ("B", 0)],
+               {TARGET: 1_000_000, ("big", 0): 5_000_000, ("dust", 0): 1_000,
+                ("A", 0): 9_000_000, ("B", 0): 1_000})
+    from decluster.disjoint_routes import TARGET_VALUE
+    assert cut_size(g, TARGET) == 2
+    assert cut_size(g, TARGET, carries=TARGET_VALUE) == 1
+
+
+def test_a_threshold_below_every_coin_prunes_nothing():
+    g = valued({TARGET: [("a", 0), ("b", 0)], ("a", 0): [("A", 0)], ("b", 0): [("B", 0)]},
+               [("A", 0), ("B", 0)],
+               {TARGET: 500, ("a", 0): 900, ("b", 0): 900, ("A", 0): 900, ("B", 0): 900})
+    assert cut_size(g, TARGET, carries=100) == 2
+
+
+def test_pruning_recomputes_reachability_rather_than_only_dropping_coins():
+    """A coin that survives the threshold but whose only way onward did not is no longer a route."""
+    g = valued({TARGET: [("a", 0)], ("a", 0): [("thin", 0)], ("thin", 0): [("A", 0)]},
+               [("A", 0)],
+               {TARGET: 1_000, ("a", 0): 9_000, ("thin", 0): 10, ("A", 0): 9_000})
+    assert cut_size(g, TARGET, carries=1_000) == 0

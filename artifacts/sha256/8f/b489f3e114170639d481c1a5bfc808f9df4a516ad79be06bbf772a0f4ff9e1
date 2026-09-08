@@ -33,7 +33,8 @@
     "depth": 5,
     "small_cut_at_most": 3,
     "link_oracle": "value_flow_link_oracle",
-    "capacity_per_coin": 1
+    "capacity_per_coin": 1,
+    "value_threshold": "the target coin's own value"
   },
   "rng": {
     "algorithm": "none",
@@ -62,11 +63,12 @@
       "tests/test_route_capacity_experiment.py"
     ],
     "properties": [
-      "the committed cache exactly reproduces the capacity distribution",
+      "the committed cache exactly reproduces both capacity distributions",
       "routes share no coin beyond the target, and a shared transaction is not a shared coin",
       "the origin set overstates redundancy for most coins, which is why the cut is measured",
+      "pruning to routes that could carry the coin raises the single-coin cut, and is reported beside it",
       "every cut is a lower bound: the boundary the walk stopped at is recorded beside it",
-      "routes are counted rather than weighted; plausible-flow capacity is not computed"
+      "value enters as a threshold, not as capacity: no flow in satoshis is computed"
     ],
     "tolerance": null
   },
@@ -84,13 +86,13 @@
   "outputs": [
     {
       "path": "results/artifacts/route-capacity-v1.json",
-      "bytes": 1144,
-      "sha256": "3667cf0632e5ecbdd04a306bfbedd6f9f2699163f1eef9949973255a8eef4915"
+      "bytes": 1408,
+      "sha256": "dbdf5bfe50044090072426978d4652ada73b3f8f4e2bf4c03bbc712966ae3733"
     },
     {
       "path": "results/generated/route-capacity-v1.md",
-      "bytes": 2439,
-      "sha256": "e39f5098689fe21b3d6144de06d16dd7c40174fbb72e200676a388eea97963f6"
+      "bytes": 3399,
+      "sha256": "ab71380e9108340f33ac47735d924b95d54085bc91bfc446e06f4351f60c2cb6"
     }
   ]
 }

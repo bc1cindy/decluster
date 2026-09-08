@@ -38,6 +38,7 @@ from __future__ import annotations
 from collections import deque
 
 UNCAPPED = 1 << 30                     # a coin's own arc is the only scarce one
+TARGET_VALUE = object()               # prune to what the target coin itself is worth
 SOURCE = ("__source__", -1)
 SINK = ("__sink__", -1)
 
@@ -112,6 +113,14 @@ class _Network:
             routes.append([name for name, side in path[:-1] if side == "out"])
 
 
+class _Restricted:
+    """A view of `graph` holding only the coins in `keep`, so reachability is recomputed on them."""
+
+    def __init__(self, graph, keep):
+        self.edges = {coin: [(nxt, w) for nxt, w in graph.edges.get(coin, ()) if nxt in keep]
+                      for coin in keep}
+
+
 def _reachable_backwards(graph, target):
     """The coins a walk from `target` can still reach, so the cut is measured on live ground."""
     seen, queue = {target}, deque([target])
@@ -124,13 +133,27 @@ def _reachable_backwards(graph, target):
     return seen
 
 
-def route_capacity(graph, target, origins=None):
+def route_capacity(graph, target, origins=None, carries=None):
     """`(k, routes)`: how many edge-disjoint routes join `target` to `origins`.
 
     `origins` defaults to the graph's absorbers — the boundary the walk stopped at. A coin that no
     longer reaches the target is dropped rather than counted as an origin it cannot serve.
+
+    `carries` is the amount a route has to be able to deliver, in satoshis, and prunes every coin
+    worth less than it before the cut is measured. Without it a route of a thousand satoshis counts
+    the same as a route that could have supplied the whole coin, which overstates redundancy in the
+    direction that matters: the specification prunes exactly this way — a path worth less than the
+    amount in question may have been removed. `carries=TARGET_VALUE` uses the target's own value,
+    the natural threshold for asking which routes could have produced it.
     """
     live = _reachable_backwards(graph, target)
+    if carries is not None:
+        floor = graph.values.get(target) if carries is TARGET_VALUE else carries
+        if floor is not None:
+            values = getattr(graph, "values", {})
+            live = {coin for coin in live
+                    if coin == target or (values.get(coin) or 0) >= floor}
+            live = _reachable_backwards(_Restricted(graph, live), target)
     ends = [coin for coin in (origins if origins is not None else graph.absorbers)
             if coin in live and coin != target]
     if not ends:
@@ -160,6 +183,6 @@ def route_capacity(graph, target, origins=None):
     return k, network.saturated_routes(SOURCE, SINK, lambda i: network.arcs[i ^ 1][1])
 
 
-def cut_size(graph, target, origins=None):
+def cut_size(graph, target, origins=None, carries=None):
     """The minimum number of coins whose removal separates `target` from every origin."""
-    return route_capacity(graph, target, origins)[0]
+    return route_capacity(graph, target, origins, carries)[0]

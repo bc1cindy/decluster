@@ -33,6 +33,7 @@ class Graph:
                                        # over the mass-carrying boundary
         self.source_absorbers = set()  # fetched coinbase boundaries (real sources)
         self.depth_capped = set()      # artificial boundaries introduced by depth
+        self.values = {}               # coin -> satoshis, recorded as the walk reads them
 
 
 ORACLE_REFUSED = "oracle_refused"
@@ -248,6 +249,12 @@ def build_extended_graph(target, depth=6, fetch=None, link_oracle=None, value_we
             kind[coin] = "absorber"; g.depth_capped.add(coin); continue  # depth cutoff
         in_vals = [v["prevout"]["value"] for v in tx["vin"]]
         out_vals = [o["value"] for o in tx["vout"]]
+        # The walk already holds every value it passes; recording them lets a consumer ask what a
+        # route could carry without fetching the chain a second time.
+        g.values[coin] = out_vals[vout] if vout < len(out_vals) else None
+        for vin in tx["vin"]:
+            if vin.get("txid") is not None:
+                g.values.setdefault((vin["txid"], vin["vout"]), vin["prevout"]["value"])
         matrix = link_oracle(in_vals, out_vals)
         if matrix is None:
             _truncate(g, kind, coin, ORACLE_REFUSED); continue   # refuse to fabricate
