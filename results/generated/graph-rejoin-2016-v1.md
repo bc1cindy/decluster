@@ -15,6 +15,8 @@ Two consecutive 2016 weekly windows of 982,021 and 1,116,563 transactions. 17,43
 | assortativity | -0.0764 | -0.0782 |
 | tail exponent | 2.8613 | 2.8337 |
 
+The framework's premise is that a contracted view is a social network in the sense its matching algorithm needs. On this measurement it is not, on the two axes that decide it. Clustering sits at 0.0062 and 0.0001 against a configuration-model null of 0.6113 and 0.3976 — the degree distribution alone would produce far more triangles than the graph has. Degree correlation is -0.0764 and -0.0782: hubs attach to leaves, which is what transaction graphs do and the opposite of what a social graph does. A matcher that routes through a vertex's neighbourhood is asking that neighbourhood to be distinctive and stable, and neither statistic says it is.
+
 | seed share | matcher | arm | guesses | correct | precision |
 |---:|---|---|---:|---:|---:|
 | 5% | undirected | seeded | 0 | 0 | — |

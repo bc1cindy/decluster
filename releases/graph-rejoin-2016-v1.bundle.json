@@ -13,7 +13,7 @@
       "name": "catalog/runs/graph-rejoin-2016-v1.json",
       "role": "run_manifest",
       "bytes": 3008,
-      "sha256": "3983dad704bc289a1e7a4bb2874e45308930ce6454d41404b092d7bf8bfaf2f8",
+      "sha256": "a435b42215609a4a9d69c4e330b6178d0a4768da42c4906f11a439f27db84dfb",
       "locations": {
         "canonical": null,
         "mirrors": []
@@ -42,8 +42,8 @@
     {
       "name": "results/artifacts/graph-rejoin-2016-v1.json",
       "role": "result",
-      "bytes": 1343,
-      "sha256": "dc0de47683b62d69ad1f507252e70012fa601da17335b274ffddcf18f6937647",
+      "bytes": 1831,
+      "sha256": "03a32b75e1575f8b2296469f722712bc2892731b6d281bfc3d32452f15ad8df9",
       "locations": {
         "canonical": null,
         "mirrors": []
@@ -52,8 +52,8 @@
     {
       "name": "results/generated/graph-rejoin-2016-v1.md",
       "role": "result",
-      "bytes": 1557,
-      "sha256": "09b68d21584bb41a99f5e8951cb7cde6151b2b91cee7f6ad4907ce890aec9fcc",
+      "bytes": 2507,
+      "sha256": "1d5afe106a2bb84edd7925ca4ed213d9f5bc3c35349d48dac47c6051492543ed",
       "locations": {
         "canonical": null,
         "mirrors": []

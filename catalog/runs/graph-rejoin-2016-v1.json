@@ -94,13 +94,13 @@
   "outputs": [
     {
       "path": "results/artifacts/graph-rejoin-2016-v1.json",
-      "bytes": 1343,
-      "sha256": "dc0de47683b62d69ad1f507252e70012fa601da17335b274ffddcf18f6937647"
+      "bytes": 1831,
+      "sha256": "03a32b75e1575f8b2296469f722712bc2892731b6d281bfc3d32452f15ad8df9"
     },
     {
       "path": "results/generated/graph-rejoin-2016-v1.md",
-      "bytes": 1557,
-      "sha256": "09b68d21584bb41a99f5e8951cb7cde6151b2b91cee7f6ad4907ce890aec9fcc"
+      "bytes": 2507,
+      "sha256": "1d5afe106a2bb84edd7925ca4ed213d9f5bc3c35349d48dac47c6051492543ed"
     }
   ]
 }
