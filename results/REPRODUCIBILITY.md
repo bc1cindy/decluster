@@ -130,12 +130,21 @@ one run, two verdicts, each named. The cross-view matcher row flagged above stil
 
 ### A measurement whose data is gone
 
-The five states all assume the data still exists: state 1 re-asserts it, state 2 regenerates from it,
-states 3 and 4 collect it, state 5 has it and declines the direction. `RESULTS-witness-era-drift.md`
-fits none of them — the `.blkcache` it was measured on was not preserved, so the figures can be
-neither re-asserted nor regenerated. It says so on its own page and is counted as unfiled by
-`tests/test_results_provenance_footer.py`. Naming a sixth state is a decision, not a formality: it
-would have to say whether such a number may stay published at all.
+The five states all assume the data still exists: state 1 re-asserts it, state 2 regenerates from
+it, states 3 and 4 collect it, state 5 has it and declines the direction. A measurement whose source
+cannot be recovered fits none of them, and the corpus already names that condition rather than
+needing a sixth state for it — `fonte indisponível`, the source could not be examined.
+
+A document in that condition does not support a claim. Its numbers are a record of what was once
+measured, and `PAPER.md` must not cite them as evidence. The alternative is the reversal of the
+burden of proof this work exists to argue against: an attack asserted on a figure nobody can check
+asks for the same credit it denies a vendor. So the resolution is not a label but a decision — read
+the document, and either measure it again on data that exists, which produces a new result rather
+than a restoration, or remove it.
+
+Three were removed on 2026-09-08 under that rule: an ancestry cross-view feasibility note and a
+cluster-scale reading, neither cited by the paper, and the witness-axis era drift, whose paper
+paragraph went with it. Git keeps them; the published surface does not.
 
 ### Manifests
 

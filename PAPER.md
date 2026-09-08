@@ -391,22 +391,6 @@ Whole-chain calibration notes:
   when the claim is about Ghesmati's rates.
 - Distributions are non-stationary: e.g. round fee-rates are ~17% chain-wide but ~9%
   in recent blocks — old wallets used round fees more. Chain-wide is the right prior.
-- **Witness bits drift by era** — reported on a balanced multi-era sample (180k txs split at the
-  SegWit/Taproot activations, `results/RESULTS-witness-era-drift.md`,
-  `examples/witness_bits_by_era.py`): `low_r` carries 2.33 bits in the SegWit era but only
-  **1.01** in the Taproot era (grinding went mainstream), `pubkey_compression` `compressed`
-  falls 2.64 → 0.46, and `nested_segwit` *inverts* 1.88 → 4.01 (P2SH wrappers gave way to
-  native bech32, so the wrapper regained rarity). **This one carries no run manifest and is not
-  recomputable here:** that 180k multi-era cache was not preserved, and the cache this checkout does
-  hold is 22,112 transactions spanning heights 800,000–965,220 — the **Taproot era only**. Read the
-  drift figures as an evidence record, not a canonical result, and read every "multi-era" statement
-  about the local cache as unsupported by the data now on disk. What survives independently of them
-  is the direction of the argument: a single bits number per witness axis is an era-weighted
-  approximation, and a whole-chain model would carry per-era bits for the drifting axes. The
-  validation headline does not rest on these per-value bits either way — it scores pairs on the cache
-  directly. (The five-era structural sweep of §6 is a *different* dataset — contiguous BigQuery
-  block ranges, `bigquery/graph.sql` — and is unaffected by this.)
-
 This is a large representative sample (~105,000 txs), not literally every tx; exhaustive
 per-tx measurement would still want the whole chain, but for calibrating fingerprint
 frequencies this is publication-grade (rare values become estimable).
