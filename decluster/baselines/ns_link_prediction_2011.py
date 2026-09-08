@@ -6,6 +6,9 @@ propagation, and the Algorithm 3 cascade, which takes its machine-learning score
 from the caller.  Confidence pruning, the correction of accepted mappings and the
 25-feature random forest are absent.  :func:`pipeline_coverage` is the machine-
 readable version of that boundary and :func:`require_components` enforces it.
+
+Source: `ns-linkpred` in `catalog/ctp-sources.json` — Narayanan, Shi & Rubinstein,
+*Link Prediction by De-anonymization* (2011).
 """
 
 from dataclasses import dataclass

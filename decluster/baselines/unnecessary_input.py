@@ -3,6 +3,9 @@
 The published comparison is scoped to transactions with more than one input
 and exactly two outputs.  A positive classification describes transaction
 shape.  It does not identify PayJoin, ownership, or the payment output.
+
+Source: `uih-ghesmati` in `catalog/ctp-sources.json` — Ghesmati et al., §3; `uih-adamisz`
+states the heuristic informally and `bip78` the protocol it applies to.
 """
 
 from collections.abc import Mapping, Sequence

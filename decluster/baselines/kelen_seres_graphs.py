@@ -10,6 +10,9 @@ inherited from the paper: splitting an account into per-receipt snapshots makes 
 snapshot hold a balance, and the carry edge into the next snapshot is only defined when
 the spend does not exceed it. Requiring the balances up front also keeps pre-window state
 from being back-derived out of the observed transfers.
+
+Source: `kelen-seres` in `catalog/ctp-sources.json` — Kelen & Seres, *Towards Measuring
+the Traceability of Cryptocurrencies*, Section 3.
 """
 
 from collections import defaultdict

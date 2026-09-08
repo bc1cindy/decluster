@@ -26,6 +26,9 @@ from independently observed labels, and the difference is not visible in the sco
 
 The graph interface is the structural subset :class:`contraction.PseudonymGraph` exposes —
 ``vertices``, ``_in`` and ``_out`` — the same subset the propagation consumes.
+
+Source: `ns-linkpred` in `catalog/ctp-sources.json` — Narayanan, Shi & Rubinstein,
+*Link Prediction by De-anonymization* (2011). The propagation it drives is `ns-social`.
 """
 
 from __future__ import annotations

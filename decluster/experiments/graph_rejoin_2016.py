@@ -21,7 +21,7 @@ from pathlib import Path
 
 from .. import epoch_graph as eg
 from ..contraction import contract, contract_degrees
-from ..graph_shape import assortativity
+from ..graph_shape import summary as shape_summary
 from ..result_artifacts import canonical_json_bytes, write_canonical_json
 from ..scale_cluster import cluster_scale_np_stream
 from ..view_match import ViewMatcher
@@ -78,7 +78,9 @@ def build_artifact(epochs=DEFAULT_EPOCHS, seed=0):
     straddlers = set(truth)
     internal = {u: sum(1 for n in graph_a.neighbours(u) if n in straddlers) for u in straddlers}
 
-    shape = assortativity(graph_a)
+    shapes = [{k: (round(v, 6) if isinstance(v, float) else v)
+               for k, v in shape_summary(g, rng=random.Random(seed)).items()}
+              for g in (graph_a, graph_b)]
     ordered = sorted(truth, key=lambda u: -(graph_a.degree(u) + graph_b.degree(truth[u])))
     rng = random.Random(seed)
     arms = []
@@ -114,8 +116,8 @@ def build_artifact(epochs=DEFAULT_EPOCHS, seed=0):
                 len(truth) - max(int(len(ordered) * share) for share in SEED_SHARES),
             "mean_internal_degree": round(sum(internal.values()) / len(straddlers), 6)
             if straddlers else 0.0,
-            "assortativity_view_a": round(shape, 6) if isinstance(shape, (int, float)) else None,
         },
+        "shape": shapes,
         "matching": arms,
     }
 
@@ -150,12 +152,33 @@ def render_markdown(artifact):
         f"Two consecutive 2016 weekly windows of {population['transactions'][0]:,} and "
         f"{population['transactions'][1]:,} transactions. {population['pairs_to_rejoin']:,} clusters straddle "
         f"the boundary and survive contraction in both views, at a mean internal degree of "
-        f"{population['mean_internal_degree']:.3f}; view A contracts to an assortativity of "
-        f"{population['assortativity_view_a']:.3f}.",
+        f"{population['mean_internal_degree']:.3f}.",
+        "",
+        "| statistic | view A | view B |",
+        "|---|---:|---:|",
+    ]
+    for field in ("vertices", "edges", "mean_degree", "degree_1_share", "transitivity",
+                  "configuration_transitivity", "assortativity", "tail_exponent"):
+        left_value, right_value = (s[field] for s in artifact["shape"])
+        fmt = (lambda v: "—" if v is None else f"{v:,}" if isinstance(v, int) else f"{v:.4f}")
+        lines.append(f"| {field.replace('_', ' ')} | {fmt(left_value)} | {fmt(right_value)} |")
+    left, right = artifact["shape"]
+    lines.extend([
+        "",
+        f"The framework's premise is that a contracted view is a social network in the sense its "
+        f"matching algorithm needs. On this measurement it is not, on the two axes that decide it. "
+        f"Clustering sits at {left['transitivity']:.4f} and {right['transitivity']:.4f} against a "
+        f"configuration-model null of {left['configuration_transitivity']:.4f} and "
+        f"{right['configuration_transitivity']:.4f} — the degree distribution alone would produce "
+        f"far more triangles than the graph has. Degree correlation is "
+        f"{left['assortativity']:+.4f} and {right['assortativity']:+.4f}: hubs attach to leaves, "
+        f"which is what transaction graphs do and the opposite of what a social graph does. A "
+        f"matcher that routes through a vertex's neighbourhood is asking that neighbourhood to be "
+        f"distinctive and stable, and neither statistic says it is.",
         "",
         "| seed share | matcher | arm | guesses | correct | precision |",
         "|---:|---|---|---:|---:|---:|",
-    ]
+    ])
     for row in artifact["matching"]:
         precision = "—" if row["precision"] is None else f"{row['precision']:.3f}"
         lines.append(f"| {row['seed_share']:.0%} | {row['matcher']} | {row['arm']} | "

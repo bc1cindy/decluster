@@ -30,6 +30,9 @@ The eccentricity population has two readings in the paper. The prose scores "a s
 and each unmapped node in v2"; the pseudocode initializes one score per right vertex and leaves
 the claimed ones at zero, because only the vote loop skips them. ``population`` selects between
 them and defaults to the prose reading, which is the one every published run used.
+
+Source: `ns-social` in `catalog/ctp-sources.json` — Narayanan & Shmatikov,
+*De-anonymizing Social Networks* (2009).
 """
 
 from __future__ import annotations

@@ -5,6 +5,9 @@ therefore implements only the mechanism stated in the advisory: partition both
 transaction sides into non-empty groups and retain equal-sum pairings. Selection,
 weighting and the fee model are separate, explicitly local adaptations. This module
 does not reproduce the digit-skipping optimization or historical SharedCoin result.
+
+Source: `sudoku` in `catalog/ctp-sources.json`. The original analyzer was never published,
+so this reconstructs the grouping it describes rather than porting it.
 """
 
 from __future__ import annotations

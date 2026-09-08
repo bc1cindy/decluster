@@ -2,7 +2,18 @@
 
 Generated from the canonical experiment artifact. Do not edit manually.
 
-Two consecutive 2016 weekly windows of 982,021 and 1,116,563 transactions. 17,431 clusters straddle the boundary and survive contraction in both views, at a mean internal degree of 2.866; view A contracts to an assortativity of -0.076.
+Two consecutive 2016 weekly windows of 982,021 and 1,116,563 transactions. 17,431 clusters straddle the boundary and survive contraction in both views, at a mean internal degree of 2.866.
+
+| statistic | view A | view B |
+|---|---:|---:|
+| vertices | 588,843 | 638,436 |
+| edges | 1,430,236 | 1,561,102 |
+| mean degree | 4.7874 | 4.8199 |
+| degree 1 share | 0.0464 | 0.0600 |
+| transitivity | 0.0062 | 0.0001 |
+| configuration transitivity | 0.6113 | 0.3976 |
+| assortativity | -0.0764 | -0.0782 |
+| tail exponent | 2.8613 | 2.8337 |
 
 | seed share | matcher | arm | guesses | correct | precision |
 |---:|---|---|---:|---:|---:|

@@ -46,24 +46,53 @@ two people into one).
 
 ## Layout
 
-- `decluster/` — the attacker (the measurement half that runs): extractors, library, combiner,
-  cluster (engine: `cluster_refined`); `baselines/narayanan_shmatikov` contains the two-view 2009
-  propagation scoring kernel, while `propagate`, `graph_deanon`, and `baselines/link_prediction`
-  are separately named adaptations rather than N-S reproductions
-- the construction/cost half (deferred — PAPER §9): `cost` (leak / amount-cut / topology leaf terms + the deferred `construction_cost`), `ancestry` (the absorber-model provenance target; feeds propagate), `report` (fuses the terms on a real tx), `subsetsum`/`coinjoin_demix` (the amount de-mix channel); consumes the `dense-subset-sum` engine (build: `maturin develop`); `cluster_refined` optionally refuses links when provenance and fingerprints diverge
-- chain-analysis channels that select what to ask and read the answer, all outside the engine:
-  `conservation` (what the other participants could not have funded — arithmetic on one transaction,
-  no client model), `provenance` (which inputs descend from known transactions), `monitor` (watches
-  tracked coins for the co-spend an intersection argument needs), `intersect` (the N-ary origin
-  intersection, handed to `cluster_refined` to score rather than asserted)
-- `PAPER.md` — the manuscript; `results/` — a mixture of canonical generated artifacts and
-  explicitly inventoried historical reports; `catalog/` — claims, datasets and executable run
-  manifests; `bigquery/` — versioned extraction recipes
+**The package.** `decluster/` holds the measurement half. Modules are named for the evidence channel
+they carry — `extractors`/`library`/`combiner` for construction fingerprints, `subsetsum`/`counting`/
+`subtransaction` for amounts, `ancestry`/`provenance`/`intersect` for provenance, `views`/
+`view_partition`/`contraction` for the coin graph — and they converge on two objects that travel in
+opposite directions across the partition lattice: `cluster.cluster_refined` ascends, declining a
+co-spend the merge-only heuristic would take, and `declustering.decluster` descends, cutting a
+partition it did not build. `decluster/baselines/` reimplements published algorithms against their papers,
+`decluster/experiments/` holds one module per canonical run, and `decluster/adaptations/` holds the pieces that are
+named adaptations rather than reproductions.
+
+**The evidence chain.** Every published number travels the same path, and each step is checkable:
+
+```
+catalog/datasets/   the data, pinned by digest
+        ↓
+decluster/experiments/   one module per run
+        ↓
+catalog/runs/   the manifest: command, parameters, environment, claim ids, verification
+        ↓
+results/artifacts/   the machine-written result
+        ↓
+results/generated/   the document rendered from it, never edited by hand
+        ↓
+releases/   the evidence bundle, listing every blob by name, size and digest
+        ↓
+artifacts/sha256/   the content-addressed store holding those bytes
+```
+
+`reproduction/` carries one environment and lockfile per bundle, and `sources/` a deterministic
+archive of the code at the revision a run names. `decluster-bundle sync` keeps tree, index and store
+in step; a gate fails if they drift. A run's `verify` recomputes its artifact and compares it byte
+for byte.
+
+**The prose.** `PAPER.md` is the manuscript. `results/` holds both halves of the record: documents
+generated from artifacts, and hand-written `RESULTS-*.md` reports that predate the chain.
+`results/REPRODUCIBILITY.md` files every one of them under an evidence state, and each document
+carries a footer naming its state or saying plainly that none has been assigned.
+
+**The rest.** `bigquery/` holds the extraction recipes, including the ones for collections the
+policy names as still missing. `catalog/ctp-claims.json` and `ctp-sources.json` bind each claim to
+the literature and to the code that implements it. `tests/` is written as gates rather than
+coverage: each file pins a property that has broken once, and says which in its docstring.
 
 Installable (`pip install -e .`), so a protocol-specific client model can consume these primitives
 from above without this repository knowing the protocol exists.
 
-Reproducibility is tracked per result. The exact-oracle audit is the first bitwise-reproducible run:
+Reproducibility is tracked per result. Every canonical run is bitwise reproducible from the committed store; the exact-oracle audit was the first, and bootstrapping any bundle looks the same:
 
 ```console
 decluster-bundle --index releases/exact-oracle-evidence-v1.bundle.json \

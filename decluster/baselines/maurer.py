@@ -3,6 +3,9 @@
 This is the deliberately narrow reference baseline: every participant block must
 balance exactly.  Fees, amount tolerances, roundness, and contextual priors are
 outside this module.
+
+Source: `maurer` in `catalog/ctp-sources.json` — Maurer, Neudecker & Florian, *Anonymous
+CoinJoin Transactions with Arbitrary Values* (2017), §4.1-4.2.
 """
 
 from dataclasses import dataclass

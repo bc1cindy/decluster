@@ -25,6 +25,9 @@ An empty intersection is a refusal, never an identification.  Observations that 
 are inconsistent -- one of them is wrong, or the coins were not co-held -- and the attack has no
 answer.  Reporting that as a maximal narrowing would turn the strongest evidence of a broken
 assumption into the strongest claim.
+
+Source: `goldfeder` in `catalog/ctp-sources.json` — the candidate-set intersection this
+narrows with; `scroll-intersection` states the same attack informally.
 """
 
 from dataclasses import dataclass
