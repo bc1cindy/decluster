@@ -13,7 +13,7 @@
       "name": "catalog/runs/amount-per-coin-v1.json",
       "role": "run_manifest",
       "bytes": 3472,
-      "sha256": "2bf88ccf2e7f11447fe919f6b142ca9dec094e3983830c503cbda6c889a3a6f9",
+      "sha256": "63c046bd504daf70fb10c23c6bfa2f14467082fa101969e0ff03277bd02b4628",
       "locations": {
         "canonical": null,
         "mirrors": []
@@ -50,10 +50,10 @@
       }
     },
     {
-      "name": "sources/decluster-002a6be-runtime.tar",
+      "name": "sources/decluster-ebd2dcb-runtime.tar",
       "role": "source",
-      "bytes": 2293760,
-      "sha256": "83fc851ee67d554f5515747a00e07bbdc7a35d411160c99cb30a84c4df484b65",
+      "bytes": 2314240,
+      "sha256": "f0c5abd4d25ebf608faf407f7ba01d6377ab86dd9de38a3ab21f2d3752a1b491",
       "locations": {
         "canonical": null,
         "mirrors": []
@@ -83,7 +83,7 @@
       "name": "reproduction/amount-per-coin/environment.json",
       "role": "environment",
       "bytes": 350,
-      "sha256": "790bf92cc12af261d30c9ac532fbc8d11b74064da2aebb32ed88bcac4dbba142",
+      "sha256": "996a0d406a38af7507709227a2fe4e5ad218c0b51878e986f033acdfb2be7150",
       "locations": {
         "canonical": null,
         "mirrors": []
