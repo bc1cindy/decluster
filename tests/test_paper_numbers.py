@@ -45,19 +45,11 @@ UNBACKED = {
     "0.768": "the change-predictor ordering table, measured on a slice that is not committed",
     "0.775": "the change-predictor ordering table, measured on a slice that is not committed",
     "0.779": "the change-predictor ordering table, measured on a slice that is not committed",
-    "1.01": "witness bits by era, from an example script over the cache rather than a canonical run",
-    "1.88": "witness bits by era, from an example script over the cache rather than a canonical run",
-    "2.33": "witness bits by era, from an example script over the cache rather than a canonical run",
-    "2.64": "witness bits by era, from an example script over the cache rather than a canonical run",
-    "4.01": "witness bits by era, from an example script over the cache rather than a canonical run",
     "2.58": "the entity-ratio reading across corpus sizes, from a scale run that is not canonical",
     "2.67": "the entity-ratio reading across corpus sizes, from a scale run that is not canonical",
     "105,000": "the size of the BigQuery uniform sample the library bits came from; that export is gone",
     "3,500": "the size of the mempool sample the witness bits came from; that sample is not preserved",
     "165,832": "the size of a growing cache behind a historical AUC, not the committed one",
-    "982,021": "a complete weekly 2016 view, from the multi-epoch export this repository does not ship",
-    "1,116,563": "a complete weekly 2016 view, from the multi-epoch export this repository does not ship",
-    "15,688": "the non-seed pair count of a cross-view match over those same unshipped views",
     "739,889": "the 2024-06-01 slice the change labels were drawn from, which is not committed",
 }
 
@@ -156,4 +148,4 @@ def test_the_backed_share_is_reported_and_does_not_fall(pool):
     """A floor, not a target: the point is that it can only be raised deliberately."""
     tokens = cited()
     backed = sum(1 for token in tokens if resolves(token, pool))
-    assert backed >= 122, f"{backed}/{len(tokens)} resolve; this used to be 122"
+    assert backed >= 126, f"{backed}/{len(tokens)} resolve; this used to be 126"

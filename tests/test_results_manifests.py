@@ -69,7 +69,6 @@ def test_every_manifest_names_a_document_that_exists():
 # invisibly.
 NOT_YET_MIGRATED = {
     "RESULTS-3v23-engine.md",
-    "RESULTS-ancestry-crossview-feasibility.md",
     "RESULTS-anonymity-set-scale.md",
     "RESULTS-anonymity-set.md",
     "RESULTS-attribute-conditioning.md",
@@ -77,7 +76,6 @@ NOT_YET_MIGRATED = {
     "RESULTS-change-id.md",
     "RESULTS-cluster-bits.md",
     "RESULTS-cluster-robustness.md",
-    "RESULTS-cluster-scale.md",
     "RESULTS-conspicuous-order.md",
     "RESULTS-contraction-2026.md",
     "RESULTS-def1-sparsity.md",
@@ -104,7 +102,6 @@ NOT_YET_MIGRATED = {
     "RESULTS-temporal.md",
     "RESULTS-topology.md",
     "RESULTS-view-match-2026.md",
-    "RESULTS-witness-era-drift.md",
     "RESULTS-wp1a.md",
     "RESULTS-wp4.md",
 }

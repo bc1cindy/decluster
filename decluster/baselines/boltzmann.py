@@ -9,6 +9,9 @@ contributes is inexpressible, and that block is exactly the JoinMarket maker: th
 admits it through a negative-difference bound (``diff >= -fees_maker``).  So the intrafee case
 usually cited alongside this mechanism is outside this module, not merely untested.
 ``boltzmann_reference`` carries the reference intrafee interval; it is not modelled here.
+
+Source: `boltzmann` in `catalog/ctp-sources.json` — LaurentMT, *Boltzmann* (2015),
+the link-probability matrix this analysis is measured against rather than ported from.
 """
 
 from dataclasses import dataclass

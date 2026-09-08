@@ -109,7 +109,7 @@ evidence from this run should be read as weak/inflated, not trusted at face valu
 Over this sample, the refined partition has more clusters and higher entropy than the raw
 union-find baseline — i.e. it fragmented slightly further, not less. This is the opposite direction
 from the engine's usual role (`cluster_refined` normally *reduces* overcount relative to
-`cluster_naive`, see `RESULTS-cluster-scale.md`/`graph_metric.overcount_report`): here the split
+`cluster_naive`, see `graph_metric.overcount_report`): here the split
 channel (`NSPropagator.refine`, the provenance-aware analogue) removed a few co-spend edges
 (6 of 40 clusters split), and — per the caveat above — a meaningful fraction of those removals rest
 on a provenance-disjointness signal that the cache boundary made spuriously easy to satisfy. Read

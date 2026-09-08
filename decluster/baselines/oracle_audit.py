@@ -57,6 +57,9 @@ overclaim is identical under both readings.
 
 Every comparison carries a measured `bound_direction`.  "Lower bound" is a claim about all inputs,
 and until something ran, no approximation in this repo had earned it.
+
+Sources: `maurer` and `boltzmann` in `catalog/ctp-sources.json`. The pair is the exact
+oracle the production approximations are measured against; neither is reimplemented here.
 """
 
 from itertools import combinations, combinations_with_replacement

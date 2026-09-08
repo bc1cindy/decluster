@@ -8,19 +8,13 @@
 > numbers below remain historical because their complete input snapshots and execution protocol were
 > not preserved. They are not part of the canonical run.
 
-> **Correction (2026-09-03) — the oracle behind these numbers is no longer the default.**
-> Every figure below was produced by the subset-sum link oracle (`ancestry.dss_link_oracle`,
-> `dss.pairwise_link_prob`), which was `ancestry_entropy`/`ancestry_signature`'s default when this
-> was measured. The default is now `ancestry.value_flow_link_oracle` — the nominal-value transition
-> rule (an output walks back to each input in proportion to that input's value), which never refuses
-> and never truncates on transaction width. To reproduce these numbers, pass
-> `link_oracle=decluster.ancestry.dss_link_oracle` explicitly — the command at the foot of this file
-> has been amended to do so. The two
-> walks are not interchangeable and no re-measurement under value flow has been done, so the
-> headline below ("provenance is a near-deterministic quasi-identifier", Shannon median ~0.00 bits)
-> stands only for the subset-sum walk. `results/RESULTS-exact-oracle-audit.md` measures how far that
-> oracle sits from an exact one.
-
+**Scope: which walk these figures are.** Every figure below is the subset-sum link oracle
+(`ancestry.dss_link_oracle`, `dss.pairwise_link_prob`). Reproducing them takes
+`link_oracle=decluster.ancestry.dss_link_oracle`, which the command at the foot of this file passes.
+The headline — provenance as a near-deterministic quasi-identifier, Shannon median ~0.00 bits —
+stands for that walk. The nominal-value transition rule (`ancestry.value_flow_link_oracle`), which
+never refuses and never truncates on transaction width, is a different walk and is not measured here.
+`results/RESULTS-exact-oracle-audit.md` measures how far the subset-sum oracle sits from an exact one.
 The `ancestry_entropy` engine (`decluster/ancestry.py`) measures the **provenance / deep-feature
 channel** that the framework (`tx-graph-anonymity-sets`, the absorber / random-walk model) centres:
 a backward walk over the transaction graph, edge-weighted by the DSS model's subset-sum link matrix

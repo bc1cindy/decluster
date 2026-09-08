@@ -1,5 +1,10 @@
 """Is the contracted pseudonym graph a social network in the sense the matching needs?
 
+Every walk here orders vertices by `repr`. A contracted view mixes an unsplit cluster's
+integer root with a split one's tagged string, so `<` has no meaning across them; the
+statistics do not depend on the order, only reproducibility does. Sorting them raw raised
+a TypeError, which is why no contracted view had been measured for shape before.
+
 The framework asserts it is: the cluster graph under an incomplete clustering "is a social
 network per Shmatikov and Narayanan's definition". Everything downstream rests on that, and
 it is an assertion rather than a measurement. The algorithms were validated on social
@@ -36,8 +41,8 @@ def assortativity(g):
     positive: well-connected people know well-connected people. Technological and
     transactional graphs come out negative, hubs attaching to leaves."""
     xs, ys = [], []
-    for u in sorted(g.vertices):
-        for v in sorted(g.neighbours(u)):
+    for u in sorted(g.vertices, key=repr):
+        for v in sorted(g.neighbours(u), key=repr):
             xs.append(g.degree(u))
             ys.append(g.degree(v))          # each undirected edge is seen from both ends
     n = len(xs)
@@ -52,7 +57,7 @@ def assortativity(g):
 def transitivity(g, sample=None, rng=None):
     """Global clustering: closed triples over all triples. Sampling vertices bounds the cost
     on a large graph; the estimate is over the sampled vertices' triples."""
-    verts = sorted(g.vertices)
+    verts = sorted(g.vertices, key=repr)
     if sample and sample < len(verts):
         verts = (rng or random.Random(0)).sample(verts, sample)
     triples = closed = 0
@@ -62,7 +67,7 @@ def transitivity(g, sample=None, rng=None):
         if d < 2:
             continue
         triples += d * (d - 1) // 2
-        nb_list = sorted(nb)
+        nb_list = sorted(nb, key=repr)
         for i in range(len(nb_list)):
             ni = g.neighbours(nb_list[i])
             for j in range(i + 1, len(nb_list)):

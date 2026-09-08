@@ -10,7 +10,7 @@ class _Neutral:
 def _setup(cl):
     cl.fetch_tx = lambda t: {"txid": t, "vin": [{"txid": "s_" + t, "prevout": {"value": 100}}],
                              "vout": [{"value": 90}]}
-    cl._cospent_pairs = lambda nodes: [("A", "B", "T")]
+    cl._cospent_pairs = lambda nodes, fetch=None: [("A", "B", "T")]
 
 
 def test_subsetsum_off_matches_no_flag():
@@ -48,7 +48,7 @@ def test_default_resolve_routes_to_demix(monkeypatch):
     calls = []
     cl.fetch_tx = lambda t: {"txid": t, "vin": [{"txid": "s_" + t, "prevout": {"value": 100}}],
                              "vout": [{"value": 90}]}
-    cl._cospent_pairs = lambda nodes: [("A", "B", "T")]
+    cl._cospent_pairs = lambda nodes, fetch=None: [("A", "B", "T")]
     monkeypatch.setattr(ss, "amount_refuse_demix", lambda tx, a, b, *_: calls.append((a, b)) or 0.0)
     try:
         cl.cluster_refined(["A", "B"], _Neutral(), link_above=99, subsetsum=True)

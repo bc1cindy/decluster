@@ -17,6 +17,9 @@ estimating the participant count, and neither the test nor the derivation is
 ported, so nothing here decides *whether* a transaction is a CoinJoin or what
 its intrafees would be.  Known-owner input groups are likewise given, not
 recovered from shared addresses.
+
+Source: `boltzmann` in `catalog/ctp-sources.json` — LaurentMT, *Boltzmann* (2015).
+This is the port; `baselines.boltzmann` is the analysis built on top of it.
 """
 
 from collections import defaultdict, deque

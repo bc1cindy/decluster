@@ -13,7 +13,7 @@ def test_decision_log_separates_direct_transitive_and_refused(monkeypatch):
     monkeypatch.setattr(
         cluster,
         "_cospent_pairs",
-        lambda nodes: [("a", "b", "t1"), ("a", "c", "t2"), ("b", "c", "t3")],
+        lambda nodes, fetch=None: [("a", "b", "t1"), ("a", "c", "t2"), ("b", "c", "t3")],
     )
     monkeypatch.setattr(cluster, "fetch_tx", lambda txid: {"txid": txid})
     scores = {
@@ -40,7 +40,7 @@ def test_decision_log_separates_direct_transitive_and_refused(monkeypatch):
 
 
 def test_decision_log_preserves_each_numeric_channel(monkeypatch):
-    monkeypatch.setattr(cluster, "_cospent_pairs", lambda nodes: [("a", "b", "spend")])
+    monkeypatch.setattr(cluster, "_cospent_pairs", lambda nodes, fetch=None: [("a", "b", "spend")])
     monkeypatch.setattr(cluster, "fetch_tx", lambda txid: {"txid": txid})
     monkeypatch.setattr(cluster, "amount_refuse_weight", lambda *args: -1.5)
     signatures = {"a": {"x": 1.0}, "b": {"y": 1.0}}

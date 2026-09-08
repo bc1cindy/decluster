@@ -7,7 +7,7 @@ sys.path.insert(0, os.path.dirname(os.path.dirname(__file__)))
 def _stub(cl, pairs):
     cl.fetch_tx = lambda t: {"txid": t, "vin": [{"txid": "seed_" + t, "prevout": {"value": 1000}}],
                              "vout": [{"value": 900}]}
-    cl._cospent_pairs = lambda nodes: pairs
+    cl._cospent_pairs = lambda nodes, fetch=None: pairs
 
 
 class _Neutral:

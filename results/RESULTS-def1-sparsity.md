@@ -63,8 +63,8 @@ vector here is low-dimensional: four fingerprint axes and a handful of coarse st
 bins. The paper's sparsity comes from *high* dimensionality — hundreds to thousands of
 observations per record. The framework locates the sparse, unique signal in the
 structural / deep features (ancestry), which are the high-dimensional ones. Those are
-absent from this vector, because ancestry walks reach only ~2.2 hops on a two-day slice
-(`RESULTS-ancestry-crossview-feasibility.md`). So this result confirms the conceded half
+absent from this vector, because an ancestry walk over a slice this shallow reaches too few
+hops to carry them. So this result confirms the conceded half
 and leaves the load-bearing half — is the *ancestry* feature space (epsilon, delta)-sparse?
 — unmeasured.
 

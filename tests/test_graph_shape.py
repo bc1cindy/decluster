@@ -69,3 +69,20 @@ def test_sampling_bounds_the_cost_without_changing_a_uniform_graph():
     full = transitivity(ring)
     part = transitivity(ring, sample=20, rng=random.Random(0))
     assert full == part == 0.0
+
+
+def test_assortativity_walks_a_graph_whose_vertices_are_not_mutually_comparable():
+    """A contracted view mixes integer cluster roots with tagged strings, and `<` has no meaning."""
+    from decluster.graph_shape import assortativity
+
+    class Mixed:
+        vertices = [1, "2#a", 3, "4#b"]
+        _edges = {1: ["2#a"], "2#a": [1, 3], 3: ["2#a", "4#b"], "4#b": [3]}
+
+        def neighbours(self, u):
+            return self._edges[u]
+
+        def degree(self, u):
+            return len(self._edges[u])
+
+    assert assortativity(Mixed()) is not None

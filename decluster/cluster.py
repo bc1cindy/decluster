@@ -7,23 +7,24 @@ from .fetch import fetch_tx
 from .subtransaction import subtransactions, norm
 from .unionfind import UF
 
-def _cospent_pairs(nodes):
+def _cospent_pairs(nodes, fetch=None):
+    fetch = fetch or fetch_tx
     """common-input-ownership: coins co-spent in one tx -> same owner. A node is the txid
     that funded a coin; if tx T spends coins funded by F1,F2..., F1,F2 get a same-owner edge.
     A bare-coinbase vin (`{"is_coinbase": True}`, no "txid") has no funder to record — skip it,
     rather than KeyError on a well-formed coinbase input."""
     pairs = []
     for t in nodes:
-        funders = [vin["txid"] for vin in fetch_tx(t)["vin"] if vin.get("txid") in nodes]
+        funders = [vin["txid"] for vin in fetch(t)["vin"] if vin.get("txid") in nodes]
         for i in range(len(funders)):
             for j in range(i+1, len(funders)):
                 pairs.append((funders[i], funders[j], t))
     return pairs
 
-def cluster_naive(nodes):
+def cluster_naive(nodes, fetch=None):
     """pure union-find over common-input-ownership (the BlockSci heuristic)."""
     uf = UF(nodes)
-    for a, b, _ in _cospent_pairs(nodes): uf.union(a, b)
+    for a, b, _ in _cospent_pairs(nodes, fetch): uf.union(a, b)
     return uf.groups()
 
 
@@ -53,7 +54,7 @@ def cluster_from_index(nodes, lookup):
         groups.setdefault(key, []).append(n)
     return list(groups.values())
 
-def amount_refuse_weight(t, a, b):
+def amount_refuse_weight(t, a, b, fetch=None):
     """Amount refuse weight (<=0) for a 2-in/2-out co-spend of inputs a,b: returns
     -(roundness margin) = -(best re-partition's roundness minus the runner-up's). A soft refuse
     that grows only when one round re-partition is distinctly more plausible than the alternatives,
@@ -61,7 +62,7 @@ def amount_refuse_weight(t, a, b):
     merge. Roundness is a heuristic, not proof (paper §2): refuse-only (it can cut a co-spend from
     the graph, never add a positive same-owner term), meant to be corroborated by the fingerprint
     and topology channels. 0 out of scope (not a 2-in/2-out co-spend of {a,b}, or no partition)."""
-    tx = norm(fetch_tx(t))
+    tx = norm((fetch or fetch_tx)(t))
     ins = [v["txid"] for v in tx["vin"]]
     if set(ins) != {a, b}:
         return 0.0
@@ -233,7 +234,7 @@ class ClusterPairDecision:
 def cluster_refined(nodes, combiner, cospend_prior=COSPEND_PRIOR, link_above=4.0, neigh=None,
                     amount=True, topo_tau=1.0, subsetsum=False, _ss_fn=None, hubs=None,
                     provenance=False, signatures=None, rarity=None, prov_refuse_bits=-3.0,
-                    link_eps=1e-9, _decision_log=None):
+                    link_eps=1e-9, fetch=None, _decision_log=None):
     """The engine (the only fingerprint-aware clusterer; `cluster_naive` is the merge-only BlockSci
     baseline). This pass ASCENDS: it starts from the discrete partition and declines a merge rather
     than undoing one, so it owns every block it builds and can never cut a block it inherited.
@@ -253,17 +254,18 @@ def cluster_refined(nodes, combiner, cospend_prior=COSPEND_PRIOR, link_above=4.0
     (`fp >= link_above`). Monotone, so it converges in <= |nodes| rounds. Returns (groups,
     refused, linked): refused = (a, b, t, fp, amt, fp+amt+top) for co-spent pairs left split;
     linked = (a, b, sc)."""
+    fetch = fetch or fetch_tx
     cbits = counterparty_bits(neigh, hubs=hubs) if neigh else None   # hubs: known super-cluster addresses forced to 0 bits (never corroborate a merge)
     ev = {}                                     # (t, fp, amt) per pair: fp is a pair property (scored
-    for a, b, t in _cospent_pairs(nodes):       # once); amt kept from the most-refuting co-spend of the pair
+    for a, b, t in _cospent_pairs(nodes, fetch):       # once); amt kept from the most-refuting co-spend of the pair
         k = (a, b) if a <= b else (b, a)
-        fp = ev[k][1] if k in ev else combiner.score(fetch_tx(a), fetch_tx(b))
+        fp = ev[k][1] if k in ev else combiner.score(fetch(a), fetch(b))
         # amount channel, mode 1 of 2 (refuse-only): structural roundness re-partition. Roundness is a
         # heuristic (paper §2), not proof, so it only refuses a co-spend the fingerprint ALSO disagrees
         # on (fp < 0) — it corroborates, never splits a benign single-owner 2-in/2-out round payment on
         # its own; the fingerprint-silent case falls to the topology control (§8). Mode 2 is the
         # denomination de-mix (`subsetsum=`, below), which carries its own uniqueness guard.
-        amt = amount_refuse_weight(t, a, b) if (amount and fp < 0) else 0.0
+        amt = amount_refuse_weight(t, a, b, fetch) if (amount and fp < 0) else 0.0
         if k not in ev or amt < ev[k][2]:
             ev[k] = (t, fp, amt)
     base = {k: cospend_prior + fp + amt for k, (t, fp, amt) in ev.items()}
@@ -289,7 +291,7 @@ def cluster_refined(nodes, combiner, cospend_prior=COSPEND_PRIOR, link_above=4.0
             def resolve(tx, a, b):
                 return amount_refuse_demix(tx, a, b)           # per-pair de-mix verdict (diff participants -> refuse)
         for k, (t, fp, amt) in ev.items():
-            subset_sum_bits[k] = resolve(fetch_tx(t), k[0], k[1])
+            subset_sum_bits[k] = resolve(fetch(t), k[0], k[1])
             base[k] += subset_sum_bits[k]                          # per-pair: amount refuse / forced-link
     uf = UF(nodes); linked = []
     node_list = list(nodes)                     # links the co-spend MISSED: only NON-co-spent pairs —
@@ -298,7 +300,7 @@ def cluster_refined(nodes, combiner, cospend_prior=COSPEND_PRIOR, link_above=4.0
             a, b = node_list[i], node_list[j]    # coerced-uniform merge cannot bypass an amount/topology refusal
             if ((a, b) if a <= b else (b, a)) in base:
                 continue
-            sc = combiner.score(fetch_tx(a), fetch_tx(b))
+            sc = combiner.score(fetch(a), fetch(b))
             if sc >= link_above:
                 uf.union(a, b); linked.append((a, b, sc))
     direct_topology = {}

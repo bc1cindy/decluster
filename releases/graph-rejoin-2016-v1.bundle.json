@@ -1,0 +1,99 @@
+{
+  "schema_version": 1,
+  "id": "graph-rejoin-2016-v1",
+  "capabilities": [
+    "verify_outputs",
+    "reproduce_runs"
+  ],
+  "runs": [
+    "graph-rejoin-2016-v1"
+  ],
+  "blobs": [
+    {
+      "name": "catalog/runs/graph-rejoin-2016-v1.json",
+      "role": "run_manifest",
+      "bytes": 3008,
+      "sha256": "a6eef2444b57e2e4b3fec1da29641c93a749cd7b455dd7a4c5a18f65693836a9",
+      "locations": {
+        "canonical": null,
+        "mirrors": []
+      }
+    },
+    {
+      "name": "data/epochs-2016-weekly-v1/391104-392111.epochgraph.xz",
+      "role": "dataset",
+      "bytes": 10422968,
+      "sha256": "cd129cd4bb225ea7a6733dab891b20272d62d1b0f3a6caf07a4209f9f2368015",
+      "locations": {
+        "canonical": null,
+        "mirrors": []
+      }
+    },
+    {
+      "name": "data/epochs-2016-weekly-v1/392112-393119.epochgraph.xz",
+      "role": "dataset",
+      "bytes": 12928408,
+      "sha256": "0893000345e68249911cb8ee6467a47fa6feecd3022f27e2732bcabfb4725f11",
+      "locations": {
+        "canonical": null,
+        "mirrors": []
+      }
+    },
+    {
+      "name": "results/artifacts/graph-rejoin-2016-v1.json",
+      "role": "result",
+      "bytes": 1831,
+      "sha256": "03a32b75e1575f8b2296469f722712bc2892731b6d281bfc3d32452f15ad8df9",
+      "locations": {
+        "canonical": null,
+        "mirrors": []
+      }
+    },
+    {
+      "name": "results/generated/graph-rejoin-2016-v1.md",
+      "role": "result",
+      "bytes": 2507,
+      "sha256": "1d5afe106a2bb84edd7925ca4ed213d9f5bc3c35349d48dac47c6051492543ed",
+      "locations": {
+        "canonical": null,
+        "mirrors": []
+      }
+    },
+    {
+      "name": "sources/decluster-3924de0-runtime.tar",
+      "role": "source",
+      "bytes": 2355200,
+      "sha256": "2f01398ce811c7202da07f90c9817bd74b4c035aa668f4bd23e9ff0d32bfe6f6",
+      "locations": {
+        "canonical": null,
+        "mirrors": []
+      }
+    },
+    {
+      "name": "reproduction/graph-rejoin-2016/requirements.lock",
+      "role": "lockfile",
+      "bytes": 30,
+      "sha256": "e0d6a8cada5d383c0aca2bd2a37f28c15721392469c94084128d369c29c5544d",
+      "locations": {
+        "canonical": null,
+        "mirrors": []
+      }
+    },
+    {
+      "name": "reproduction/graph-rejoin-2016/environment.json",
+      "role": "environment",
+      "bytes": 370,
+      "sha256": "09840bec1a88dcfc70afd36ae386292d98598cc237aeb1af06916f3f51c491f9",
+      "locations": {
+        "canonical": null,
+        "mirrors": []
+      }
+    }
+  ],
+  "limitations": [
+    "The bundled environment currently targets CPython 3.13 on macOS arm64.",
+    "The public on-chain snapshot is redistributed with provider authorization.",
+    "The historical 165,832-transaction cache is unavailable and is not reproduced.",
+    "Public bootstrap remains incomplete until every blob has a canonical HTTPS location and an independent mirror."
+  ]
+}
