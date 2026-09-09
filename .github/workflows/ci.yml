@@ -36,6 +36,8 @@ jobs:
   dss:
     name: Python 3.13 with pinned DSS
     runs-on: ubuntu-latest
+    env:
+      DSS_GIT_REV: d8099bc540c9de7d0f3c9f095e8b2aad8f9d8c8d
     steps:
       - name: Check out source
         uses: actions/checkout@08c6903cd8c0fde910a37f88322edcfb5dd907a8 # v5.0.0
@@ -43,7 +45,7 @@ jobs:
         uses: actions/checkout@08c6903cd8c0fde910a37f88322edcfb5dd907a8 # v5.0.0
         with:
           repository: bc1cindy/dense-subset-sum
-          ref: d8099bc540c9de7d0f3c9f095e8b2aad8f9d8c8d
+          ref: ${{ env.DSS_GIT_REV }}
           path: .ci/dense-subset-sum
       - name: Set up Python
         uses: actions/setup-python@a309ff8b426b58ec0e2a45f0f869d46889d02405 # v6.2.0
@@ -59,6 +61,6 @@ jobs:
           python -m pip install --disable-pip-version-check ".[test,data]"
           python -m pip install --disable-pip-version-check .ci/dense-subset-sum
       - name: Verify DSS revision
-        run: python -c 'import dss; assert dss.__rev__ == "d8099bc540c9de7d0f3c9f095e8b2aad8f9d8c8d"'
+        run: python -c 'import dss, os; assert dss.__rev__ == os.environ["DSS_GIT_REV"]'
       - name: Run offline gate with DSS
         run: python -m pytest -m "not live and not reproduction"
