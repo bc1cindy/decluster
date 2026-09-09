@@ -8,8 +8,9 @@
 > below remain historical and are not reproduced by the canonical run.
 
 **Why this reconciles the whole session.** The social-graph matching attack did not cascade
-(`RESULTS-view-match-2026.md`) and the pseudonym graph turned out not to be a social network
-(`RESULTS-graph-shape.md`). But the framework's claim is specific: "cluster features, both
+(`results/generated/graph-rejoin-2016-v1.md`) and the pseudonym graph turned out not to be a
+social network by the two statistics that decide it (same run: clustering far below its
+configuration null, and negative degree correlation). But the framework's claim is specific: "cluster features, both
 statistical and more importantly structural, are very likely to be unique." Structural
 here means ancestry / deep features. This measures whether *that* space — not the graph
 topology, not the statistical fingerprints — is sparse in the sparse-dataset attack's own
@@ -46,7 +47,8 @@ distinct N-S attacks, and this data separates them cleanly:
 
 - the social-graph attack (cit. 24) matches two graphs by neighbourhood topology. Its
   strong form needs the pseudonym graph to be a social network, and it is not
-  (`RESULTS-graph-shape.md`), so the cascade does not ignite across 2013–2026; its modest
+  (`results/generated/graph-rejoin-2016-v1.md`), so the cascade does not ignite across 2013–2026;
+  its modest
   form — a few high-confidence links that feed clustering — does fire, which is what the
   framework claims for it.
 - the sparse-dataset attack (cit. 19–20) matches records by sparse feature-vector

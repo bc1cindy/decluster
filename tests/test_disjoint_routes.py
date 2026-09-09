@@ -156,3 +156,40 @@ def test_pruning_recomputes_reachability_rather_than_only_dropping_coins():
                [("A", 0)],
                {TARGET: 1_000, ("a", 0): 9_000, ("thin", 0): 10, ("A", 0): 9_000})
     assert cut_size(g, TARGET, carries=1_000) == 0
+
+
+def test_flow_capacity_is_the_value_the_origins_could_deliver():
+    """The mass the framework states its property over, which counting routes cannot see.
+
+    Two routes both pass a per-route threshold and are both disjoint, so counting says two and
+    pruning says two. Together they carry less than the coin is worth, which only capacity says.
+    """
+    from decluster.disjoint_routes import flow_capacity
+    g = valued({TARGET: [("a", 0), ("b", 0)], ("a", 0): [("A", 0)], ("b", 0): [("B", 0)]},
+               [("A", 0), ("B", 0)],
+               {TARGET: 1_000_000, ("a", 0): 700_000, ("b", 0): 250_000,
+                ("A", 0): 9_000_000, ("B", 0): 9_000_000})
+    assert cut_size(g, TARGET) == 2
+    carried, routes = flow_capacity(g, TARGET)
+    assert carried == 950_000 < g.values[TARGET]
+    assert sum(amount for amount, _route in routes) == carried
+    assert len(routes) == 2, "valued flow must be decomposed by path, not once per satoshi"
+
+
+def test_a_narrow_coin_bounds_the_flow_through_it():
+    """Capacity is a min cut in satoshis: the tightest coin on the path is what the path delivers."""
+    from decluster.disjoint_routes import flow_capacity
+    g = valued({TARGET: [("wide", 0)], ("wide", 0): [("narrow", 0)], ("narrow", 0): [("A", 0)]},
+               [("A", 0)],
+               {TARGET: 500_000, ("wide", 0): 9_000_000, ("narrow", 0): 40_000,
+                ("A", 0): 9_000_000})
+    assert flow_capacity(g, TARGET)[0] == 40_000
+
+
+def test_a_coin_with_no_recorded_value_does_not_invent_a_cut():
+    """Treating an unknown value as zero would report a separation the graph does not have."""
+    from decluster.disjoint_routes import flow_capacity
+    g = valued({TARGET: [("unknown", 0)], ("unknown", 0): [("A", 0)]},
+               [("A", 0)],
+               {TARGET: 100, ("A", 0): 900})          # ("unknown", 0) has no recorded value
+    assert flow_capacity(g, TARGET)[0] > 0

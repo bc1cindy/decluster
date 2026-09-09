@@ -106,9 +106,7 @@ def build_artifact():
         "implemented_capabilities": {
             "provenance_route_accumulation": True,
             "edge_disjoint_path_enumeration": True,   # decluster.disjoint_routes
-            # A threshold is not a capacity: disjoint_routes prunes a coin that cannot carry the
-            # amount, but no module gives each coin its value as capacity and measures the flow.
-            "plausible_flow_capacity": False,
+            "plausible_flow_capacity": True,           # disjoint_routes.flow_capacity
             "k_routes": True,
         },
         "limitations": [

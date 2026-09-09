@@ -15,8 +15,8 @@ Alice's counterparties differ from Bob's.
 
 Each counterparty is weighted by its rarity, `−log2(share of nodes touching it)`
 (`counterparty_bits`): a hub (an exchange everyone touches) earns ~0 bits, a private address
-many. On a connected real slice (`sample.ndjson`, 5 491 txs, 27 281 addresses, 889 co-spend
-entities) counterparty bits range 4.1 (hub) to 14.7 (unique), and a shared-counterparty
+many. On a connected real slice (`data/amount-channel-812695-812831-v1.json`, 5 491 txs,
+27 281 addresses, 889 co-spend entities) counterparty bits range 4.1 (hub) to 14.7 (unique), and a shared-counterparty
 score separates held-out same-owner pairs from cross-owner pairs:
 
 | topology score | mean same-owner | mean cross-owner | AUC |
@@ -80,7 +80,8 @@ candidate set; that was field-dependent — a genuinely common hub could be miss
 held no co-occurring cluster — so it was replaced by this global rarity test, which is N-S's own
 quasi-identifier weighting `wt = 1/log|supp|`.)
 
-**Discriminative calibration on a real slice** (`sample.ndjson`, `calibrate_topo_tau`). Unlike a
+**Discriminative calibration on a real slice** (`data/amount-channel-812695-812831-v1.json`,
+`calibrate_topo_tau`). Unlike a
 same-owner-only pass-rate, this measures the actual discrimination: rarity-weighted overlap bits
 for same-owner cluster pairs (split-half) vs different-owner pairs.
 
@@ -121,4 +122,6 @@ lands near it (overlap is bimodal, 11.7 vs 0.004 bits), but on a denser graph co
 
 ## Reproducibility / provenance
 
-State 2 in `results/REPRODUCIBILITY.md`: the mechanism is pinned; the reported numbers come from a data-run over `sample.ndjson`, which is not committed, and are not asserted.
+State 2 in `results/REPRODUCIBILITY.md`: the mechanism is pinned; the reported numbers come from a
+data-run over `data/amount-channel-812695-812831-v1.json`, which is committed, and are not asserted
+as pinned values.

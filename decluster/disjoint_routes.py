@@ -112,6 +112,29 @@ class _Network:
                 path.append(node)
             routes.append([name for name, side in path[:-1] if side == "out"])
 
+    def saturated_flow_routes(self, source, sink, carried):
+        """Decompose an integral flow into ``(amount, route)`` records.
+
+        Unlike ``saturated_routes``, this spends the bottleneck amount at once.  Calling the
+        unit-flow decomposer for satoshi capacities would emit one route per satoshi even when
+        every satoshi follows the same path.
+        """
+        remaining = {i: carried(i) for i in range(0, len(self.arcs), 2) if carried(i) > 0}
+        routes = []
+        while True:
+            path, steps, node = [], [], source
+            while node != sink:
+                step = next((i for i in self.out.get(node, ()) if remaining.get(i, 0) > 0), None)
+                if step is None:
+                    return routes
+                steps.append(step)
+                node = self.arcs[step][0]
+                path.append(node)
+            amount = min(remaining[step] for step in steps)
+            for step in steps:
+                remaining[step] -= amount
+            routes.append((amount, [name for name, side in path[:-1] if side == "out"]))
+
 
 class _Restricted:
     """A view of `graph` holding only the coins in `keep`, so reachability is recomputed on them."""
@@ -186,3 +209,40 @@ def route_capacity(graph, target, origins=None, carries=None):
 def cut_size(graph, target, origins=None, carries=None):
     """The minimum number of coins whose removal separates `target` from every origin."""
     return route_capacity(graph, target, origins, carries)[0]
+
+def flow_capacity(graph, target, origins=None):
+    """`(satoshis, valued_routes)`: the largest value origins could deliver at once.
+
+    The framework states its property over the *mass* of a coin's candidate origins, not only over
+    how many routes reach it. Giving each coin its own value as capacity answers that: the maximum
+    flow is the value the origin set could deliver if every route ran at once, and its minimum cut
+    is the value a separation would have to remove.
+
+    This is still one flow and still polynomial. What it is not is the k-splittable question —
+    the most value carried by at most k routes — which is strongly NP-hard and is a choice about
+    routing rather than a measurement of capacity.
+
+    A coin whose value the walk did not record cannot bound anything, so it is treated as
+    unconstrained rather than as zero: understating capacity here would invent a cut.
+    """
+    live = _reachable_backwards(graph, target)
+    ends = [coin for coin in (origins if origins is not None else graph.absorbers)
+            if coin in live and coin != target]
+    if not ends:
+        return 0, []
+    values = getattr(graph, "values", {})
+    worth = lambda coin: values.get(coin) or UNCAPPED
+    inward, outward = lambda c: (c, "in"), lambda c: (c, "out")
+    network = _Network()
+    for coin in live:
+        network.add(inward(coin), outward(coin), worth(coin))
+    for coin in live:
+        for nxt, _weight in graph.edges.get(coin, ()):
+            if nxt in live:
+                network.add(outward(coin), inward(nxt), UNCAPPED)
+    for end in ends:
+        network.add(outward(end), SINK, UNCAPPED)
+    network.add(SOURCE, outward(target), UNCAPPED)
+    total = network.max_flow(SOURCE, SINK)
+    return total, network.saturated_flow_routes(SOURCE, SINK,
+                                                lambda i: network.arcs[i ^ 1][1])

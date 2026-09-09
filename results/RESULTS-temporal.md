@@ -56,7 +56,8 @@ The headline **0.923 is an artifact of two confounds**, not an owner-identifying
 So on reused-address data the hour-of-day schedule does not separate owners once concentration
 is controlled for. A random-band synthetic (bands placed at arbitrary hours with no owner meaning)
 reproduces the ~0.92 baseline, confirming the number measures "addresses have a narrow active-hours
-band," not "the schedule identifies the owner." This joins the ~1-day slice (AUC 0.39, `sample.ndjson`)
+band," not "the schedule identifies the owner." This joins the ~1-day slice (AUC 0.39,
+`data/amount-channel-812695-812831-v1.json`)
 as a null: the earlier 0.92 claim was confounded and is retracted.
 
 **A cleaner owner labeling gives the same null.** To rule out "it's only the service-skewed

@@ -36,10 +36,7 @@ ROOTS = (
 
 UNAVAILABLE = {
     "slice_2026.ndjson": "1.1 GB and never committed; the one input this repository cannot restore",
-    "slice.json": "a gitignored local slice; the committed fixtures replace it for every published run",
     "catalog/entities.ndjson": "a curated address list the reader supplies; only the example is shipped",
-    "data/epochs_2016_weekly/manifest.json": "produced by a local multi-epoch collection, gitignored",
-    "epoch_2016_01.ndjson.gz": "the unsplit monthly export the weekly chunks were cut from, gitignored",
     "epoch_2016_01_391104-392111.ndjson.gz": "a gitignored epoch export from that collection",
     "epoch_2016_01_392112-393119.ndjson.gz": "a gitignored epoch export from that collection",
     "fingerprints.md": "a private reference corpus held outside this repository",

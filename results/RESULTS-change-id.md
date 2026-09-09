@@ -48,14 +48,15 @@ coverage axes (version/nSequence) — another face of the fast-wallet skew. The 
   reused-change removal — not identical to M&N's whole-chain filter, and this share is slice-local,
   not comparable to M&N's 28.4%).
 
-**This ranking is NOT robust to the label or the epoch** (`results/RESULTS-special-change.md`). Against
-an *independent, value-based* label (optimal-change, disjoint from co-spend) on a multi-epoch sample,
-all four onward-spend axes fall to ~0.60–0.74 precision and `nSequence`/`version` no longer dominate
-the ordering axes. Part of that is a co-spend-label selection bias — the co-spend label selects
-changes whose onward-spender *is* the reveal tx, a same-wallet transaction that shares nSequence/version
-by construction (inflating the numbers above); part is epoch / onward-spend time-gap drift in the
-multi-epoch sample. Disentangling the two needs a contiguous-value slice running both labels on the
-same transactions (Phase 2). Read the single-day numbers above as slice-and-label-specific, not general.
+**This ranking is not established as robust to the label.** The co-spend label selects changes whose
+onward-spender *is* the reveal transaction, a same-wallet transaction that shares nSequence/version by
+construction, so it inflates exactly the two axes that lead the table. An independent value-based
+label (optimal-change, disjoint from co-spend) carries no such bias, and against it the two
+within-transaction heuristics agree at 0.81 and 0.90 precision
+(`results/generated/special-change-labels-v1.md`). The per-axis comparison that would settle the
+ranking needs each change output's spender in the same data; the committed cache holds it for 12 of
+1138 labelled transactions, so that arm awaits a contiguous export carrying values at depth. Read the
+single-day numbers above as slice-and-label-specific, not general.
 
 ## The circular non-result: cluster `findNext` (reported ONLY as a circularity demonstration)
 

@@ -85,7 +85,8 @@ B, and the matcher must rejoin the two from graph structure alone. Each view is 
 own lookup — tagging an address by where it is first seen instead leaves an address used in *both*
 windows marked `#a` everywhere, so view B holds `C#a` as well as `C#b` and the identity match, which
 is graded wrong, is the structurally better one. The figures below predate that fix (2 Sep 2026) and
-are superseded; see `RESULTS-multiepoch-local-2016.md` for the corrected construction.
+are superseded; see `results/generated/graph-rejoin-2016-v1.md` for the corrected construction on
+committed data.
 (Contracting a complete clustering against itself instead only lets the matcher recover the identity
 map, which carries no new information.) On this slice, of 5077 split pseudonym pairs a 5-10% seed
 rejoins none (precision 0.000). The graph is disassortative (-0.064, hubs attaching to leaves) with no

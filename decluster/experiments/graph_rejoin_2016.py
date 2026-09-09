@@ -109,7 +109,10 @@ def build_artifact(epochs=DEFAULT_EPOCHS, seed=0):
         "experiment": EXPERIMENT_ID,
         "datasets": [f"epoch-graph-2016-{Path(p).name.split('.')[0]}-v1" for p in epochs],
         "population": {
-            "views": [str(left), str(right)],
+            # The file names, not the paths given: a cold-start reproduction reads the
+            # datasets from wherever the bundle materialized them, and a path recorded
+            # here would make the artifact differ by where it was run.
+            "views": [left.name, right.name],
             "transactions": counts,
             "pairs_to_rejoin": len(truth),
             "non_seed_pairs_at_widest_seeding":
@@ -210,6 +213,10 @@ def render_markdown(artifact):
 def _parser():
     parser = argparse.ArgumentParser(description=__doc__.splitlines()[0])
     parser.add_argument("command", choices=("reproduce", "verify"))
+    # The bundle harness rewrites a dataset path it finds in the argv, and only there. Taking the
+    # views as arguments is what lets a cold-start reproduction read the materialized copies rather
+    # than paths relative to a source tree that does not carry the data.
+    parser.add_argument("--epochs", nargs=2, default=list(DEFAULT_EPOCHS))
     parser.add_argument("--artifact", required=True)
     parser.add_argument("--markdown", required=True)
     return parser
@@ -218,13 +225,13 @@ def _parser():
 def main(argv=None):
     args = _parser().parse_args(argv)
     if args.command == "reproduce":
-        artifact = build_artifact()
+        artifact = build_artifact(tuple(args.epochs))
         write_canonical_json(args.artifact, artifact)
         destination = Path(args.markdown)
         destination.parent.mkdir(parents=True, exist_ok=True)
         destination.write_text(render_markdown(artifact), encoding="utf-8")
     else:
-        artifact = verify_artifact(load_artifact(args.artifact))
+        artifact = verify_artifact(load_artifact(args.artifact), tuple(args.epochs))
         if Path(args.markdown).read_text(encoding="utf-8") != render_markdown(artifact):
             raise VerificationError("Markdown differs from canonical rendering")
     return 0

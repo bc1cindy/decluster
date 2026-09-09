@@ -10,9 +10,9 @@ clusters. The ordering is inert; the gate is not.
 
 ## Data
 
-`sample.ndjson`: 5,491 transactions over blocks 812,695–812,831, every one carrying prevout values
-and script types, 1,428 of them multi-input. This is the only contiguous slice in the repository
-that supports the amount channel — the graph-scale exports (`epoch_2016_*`, the committed graph
+`data/amount-channel-812695-812831-v1.json`: 5,491 transactions over blocks 812,695–812,831, every
+one carrying prevout values and script types, 1,428 of them multi-input. This is the committed
+contiguous slice that supports the amount channel — the graph-scale exports (`epoch_2016_*`, the committed graph
 fixtures) carry addresses only, and the fingerprint survey is aggregate rather than per-transaction.
 
 ## What the transactions say against themselves
@@ -23,28 +23,25 @@ inputs that disagree on script type. Over the 1,428 multi-input transactions:
 
 | objections | transactions | share |
 |---:|---:|---:|
-| 0 | 513 | 35.9% |
-| 1 | 820 | 57.4% |
-| 2 | 95 | 6.6% |
+| 0 | 855 | 59.9% |
+| 1 | 512 | 35.9% |
+| 2 | 61 | 4.3% |
 | unrankable | 0 | — |
 
-> **This distribution was computed on string amounts and is arithmetically wrong.** `sample.ndjson`
-> stores every amount as a JSON string, so the comparison in `x_uih` ran lexicographically:
-> `"330" > "1000"` is true as text and false as a number. Over the same 1,428 transactions,
-> **51.3% of the UIH verdicts change** once the amounts are read as integers, which is what produces
-> the row above. The committed dataset for the same block range,
-> `data/amount-channel-812695-812831-v1.json`, holds integers and gives **855 / 512 / 61**
-> (0 / 1 / 2 objections). That is the correct distribution, and it makes the conspicuous tier
-> **59.9%** rather than 35.9% — the argument the ordering rests on is *stronger* under it, not
-> weaker. `x_uih` now refuses a non-integer amount instead of ranking it, so this cannot recur
-> silently. The table is left in place as the published record; the totals, the "unrankable = 0"
-> row, the partition tables, the ordering result and the doubt gate are unaffected and were re-run
-> unchanged.
+> **Superseded numbers, and how far the error reached.** An earlier revision published 513 / 820 / 95
+> here. It was computed over an export storing every amount as a JSON string, so the comparison in
+> `x_uih` ran lexicographically — `"330" > "1000"` is true as text and false as a number — and 51.3%
+> of the UIH verdicts changed once the amounts were read as integers. `x_uih` now refuses a
+> non-integer amount instead of ranking it, so this cannot recur silently.
+>
+> That revision also stated that the partition tables below were unaffected. They were not: the two
+> doubt-gate rows are recomputed here as well, and they move a great deal, because the gate only
+> declines a merge that the transaction argues against and under string amounts *every* multi-input
+> transaction appeared to argue against itself.
 
-**A substantial share of multi-input transactions is not unambiguous** — between 36% and 60% of
-them raise no objection, depending on which of the two readings above survives, so blind
-common-input ownership merges the rest regardless. That is the quantity the refusal exists to act
-on, and pinning it down is what the re-run is for.
+**A majority of multi-input transactions is unambiguous** — 59.9% raise no objection at all, so
+blind common-input ownership merges the rest regardless. That is the quantity the refusal exists to
+act on.
 
 ## What each rule does to the partition
 
@@ -53,11 +50,14 @@ on, and pinning it down is what the re-run is for.
 | naive CIOH | 889 | 996 | 9,960 |
 | refuse (shape + de-mix), block order | 868 | 996 | 9,109 |
 | refuse, conspicuous-first | 868 | 996 | 9,109 |
-| refuse + doubt gate, block order | 1,117 | 996 | 9,257 |
-| refuse + doubt gate, conspicuous-first | 1,117 | 996 | 9,257 |
+| refuse + doubt gate, block order | 869 | 996 | 9,009 |
+| refuse + doubt gate, conspicuous-first | 869 | 996 | 9,009 |
 
-- Refusal changes the partition: yes
-- The doubt gate changes it: yes (868 → 1,117)
+- Refusal changes the partition: yes (889 → 868)
+- The doubt gate barely changes it: 868 → 869, one cluster. The earlier 1,117 was the string-amount
+  reading, where every multi-input transaction raised an objection and the gate therefore had a
+  candidate to decline almost everywhere. Read on the amounts as numbers, the gate is nearly inert
+  on this slice
 - The order changes it: no — the two gated runs are identical, and so are the two ungated ones
 
 The largest cluster is 996 addresses in every configuration, including naive. Nothing here prevents
@@ -89,13 +89,15 @@ measurement says the *cheap* version of the idea buys nothing, not that staging 
 
 ## Scope
 
-One slice, 137 blocks, one era. The doubt gate's threshold was swept over 2, 3, 5 and 10 and the
-first three are indistinguishable. The largest-cluster figure is stable across every configuration,
+One slice, 137 blocks, one era. The doubt gate's threshold sweep was run under the string-amount
+reading and is not carried over; what is measured here is the threshold of two. The largest-cluster figure is stable across every configuration,
 which limits what this slice can say about cluster collapse — nothing here produces one.
 
 ## Reproducibility / provenance
 
-Per `results/REPRODUCIBILITY.md`, state 2: **mechanism unit-tested, headline number is a data-run.**
-`merge_objections`, `merge_order` and the ordering's refusal on an unrankable export are pinned in
-`tests/test_views.py`. The tables here are regenerated over `sample.ndjson`, which is local and
-unversioned, and are not asserted.
+State 1 in `results/REPRODUCIBILITY.md`: band-pinned on committed data. `merge_objections`,
+`merge_order` and the ordering's refusal on an unrankable export are pinned in
+`tests/test_views.py`; the tables above are recomputed from
+`data/amount-channel-812695-812831-v1.json` and asserted in
+`tests/test_conspicuous_order_slice.py`, so a change that moves them fails rather than republishing
+quietly.

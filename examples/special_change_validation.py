@@ -4,8 +4,9 @@ the value-carrying downloads. Prints: label counts, a pairwise agreement matrix,
 per label (no network), and onward-spend per-axis per label (live mempool.space fetch, sampled). The
 per-axis rate compared ACROSS the four independent labels is the label-robustness check.
 Caveat: the within-tx `round_number` predictor against the round_number LABEL is near-circular (both
-read roundness) — read that cell as self-agreement, not corroboration. The single-label Phase-1 tables
-are in results/RESULTS-special-change.md; a full triangulation results doc awaits a run.
+read roundness) — read that cell as self-agreement, not corroboration. The offline half of this runs as a
+canonical experiment over committed transactions (decluster.experiments.special_change_labels); what
+is left here is the onward-spend half, which needs a fetcher.
 Run from repo root: python3 examples/special_change_validation.py [n_onward]
 Reads the value-carrying downloads in ~/Downloads/bquxjob_*.json."""
 import glob

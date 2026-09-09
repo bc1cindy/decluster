@@ -76,7 +76,8 @@ define as decisive: the (epsilon, delta)-sparsity survival curve over ancestry s
 If that space is non-sparse too, the attack's precondition fails on the feature the
 framework calls most important, and the negative is complete and clean. If it is sparse,
 then the attack's failure on this graph is the surprising result, and the reason lies in
-the graph's topology (`RESULTS-graph-shape.md`), not its feature sparsity — a genuinely
+the graph's topology (`results/generated/graph-rejoin-2016-v1.md`), not its feature sparsity — a
+genuinely
 interesting split. Either outcome is a real finding; neither can be had without the export.
 
 ## Scope

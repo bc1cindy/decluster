@@ -1,0 +1,99 @@
+{
+  "schema_version": 1,
+  "id": "match-controls-v1",
+  "capabilities": [
+    "verify_outputs",
+    "reproduce_runs"
+  ],
+  "runs": [
+    "match-controls-v1"
+  ],
+  "blobs": [
+    {
+      "name": "catalog/runs/match-controls-v1.json",
+      "role": "run_manifest",
+      "bytes": 3396,
+      "sha256": "a9a16d87e75b3c194df7d504e802331cf9cda836890cb5be3e5bbb78f0ee97a1",
+      "locations": {
+        "canonical": null,
+        "mirrors": []
+      }
+    },
+    {
+      "name": "data/epochs-2016-weekly-v1/391104-392111.epochgraph.xz",
+      "role": "dataset",
+      "bytes": 10422968,
+      "sha256": "cd129cd4bb225ea7a6733dab891b20272d62d1b0f3a6caf07a4209f9f2368015",
+      "locations": {
+        "canonical": null,
+        "mirrors": []
+      }
+    },
+    {
+      "name": "data/epochs-2016-weekly-v1/392112-393119.epochgraph.xz",
+      "role": "dataset",
+      "bytes": 12928408,
+      "sha256": "0893000345e68249911cb8ee6467a47fa6feecd3022f27e2732bcabfb4725f11",
+      "locations": {
+        "canonical": null,
+        "mirrors": []
+      }
+    },
+    {
+      "name": "results/artifacts/match-controls-v1.json",
+      "role": "result",
+      "bytes": 2390,
+      "sha256": "5234bb250121404ed4ace83f3f0ddbb3a02204b9eb0e792d9b74f3a85b143b2e",
+      "locations": {
+        "canonical": null,
+        "mirrors": []
+      }
+    },
+    {
+      "name": "results/generated/match-controls-v1.md",
+      "role": "result",
+      "bytes": 3705,
+      "sha256": "48e21384adfffae4ad26fbc3d90bca4bd461c30af7c9804927739ba3b54a7ec6",
+      "locations": {
+        "canonical": null,
+        "mirrors": []
+      }
+    },
+    {
+      "name": "sources/decluster-f2d5ee6-runtime.tar",
+      "role": "source",
+      "bytes": 2385920,
+      "sha256": "92a063235f9801215ea132b022626b020de9be52d4ce65077f12bf0eb0e7a935",
+      "locations": {
+        "canonical": null,
+        "mirrors": []
+      }
+    },
+    {
+      "name": "reproduction/match-controls/requirements.lock",
+      "role": "lockfile",
+      "bytes": 30,
+      "sha256": "e0d6a8cada5d383c0aca2bd2a37f28c15721392469c94084128d369c29c5544d",
+      "locations": {
+        "canonical": null,
+        "mirrors": []
+      }
+    },
+    {
+      "name": "reproduction/match-controls/environment.json",
+      "role": "environment",
+      "bytes": 364,
+      "sha256": "3e2f5c24d218229dbc8dcdc1b87b0996651798377614082f7a22cab7c67d7774",
+      "locations": {
+        "canonical": null,
+        "mirrors": []
+      }
+    }
+  ],
+  "limitations": [
+    "The bundled environment currently targets CPython 3.13 on macOS arm64.",
+    "The public on-chain snapshot is redistributed with provider authorization.",
+    "The historical 165,832-transaction cache is unavailable and is not reproduced.",
+    "Public bootstrap remains incomplete until every blob has a canonical HTTPS location and an independent mirror."
+  ]
+}

@@ -1,9 +1,9 @@
 # Does widening the view recover the neighbourhoods the matcher needs?
 
-**Why ask.** `RESULTS-view-match-2026.md` finds the matcher's frontier collapses on its
-first step: of the 400 seeds' 15 324 neighbours, only 14 % were present and linked in the
-other view. The framework's mechanism requires *recurring* relationships, and at a one-day
-view width most relationships do not recur. View width is the obvious untested lever, but
+**Why ask.** Seeded propagation across two views does not ignite
+(`results/generated/graph-rejoin-2016-v1.md`), and the frontier is where it stops: a seed can only
+pass information to a neighbour the other view also holds. The framework's mechanism requires
+*recurring* relationships, and at a one-day view width most relationships do not recur. View width is the obvious untested lever, but
 testing it properly means a much larger export and a run near the memory ceiling. This
 measures the lever first, cheaply.
 

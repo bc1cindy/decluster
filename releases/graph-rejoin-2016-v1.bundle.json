@@ -12,8 +12,8 @@
     {
       "name": "catalog/runs/graph-rejoin-2016-v1.json",
       "role": "run_manifest",
-      "bytes": 3008,
-      "sha256": "0b7d7f1ed6f33d2e14ba8066ed97381dd31934c06cbb21ffe1e104df9ce51721",
+      "bytes": 3300,
+      "sha256": "19b74e8590ae43403cf690dfc100dd44062ee427e7358fbbe3fa8d1aa0639884",
       "locations": {
         "canonical": null,
         "mirrors": []
@@ -42,8 +42,8 @@
     {
       "name": "results/artifacts/graph-rejoin-2016-v1.json",
       "role": "result",
-      "bytes": 1831,
-      "sha256": "03a32b75e1575f8b2296469f722712bc2892731b6d281bfc3d32452f15ad8df9",
+      "bytes": 1777,
+      "sha256": "ec27b8a3dc36b06482b86cdcb556038d88b73f3595c1e37d78867c5ce159841c",
       "locations": {
         "canonical": null,
         "mirrors": []

@@ -40,6 +40,9 @@ survives subsampling** can it be pinned as a **band** on a committed fixture.
 | neighbourhood persistence against view width (`RESULTS-persistence-curve.md`) | `tests/fixtures/persistence_curve.json` | `test_state3_promotion.py` |
 | slice go/no-go: spanning material and seed supply (`RESULTS-slice-gate-2026.md`) | `tests/fixtures/slice_gate.json` | `test_state3_promotion.py` |
 | candidate-set intersection narrows, stalls or refuses (`RESULTS-candidate-set-intersection.md`) | none needed — the 3-scenario family is generated, not sampled | `test_candidate_set_intersection.py` |
+| a cluster's identifying structure against the merge's ambiguity (`results/generated/cluster-bits-v1.md`) | canonical run `catalog/runs/cluster-bits-v1.json` over `data/fs-blkcache-2026-09-04.tar.gz` | `test_cluster_bits_experiment.py` |
+| change labels that read values and types rather than co-spend (`results/generated/special-change-labels-v1.md`) | canonical run `catalog/runs/special-change-labels-v1.json` over `data/fs-blkcache-2026-09-04.tar.gz` | `test_special_change_labels_experiment.py` |
+| what the transactions argue against themselves, and what refusal and the doubt gate do to the partition (`RESULTS-conspicuous-order.md`) | `data/amount-channel-812695-812831-v1.json` | `test_conspicuous_order_slice.py` |
 
 ## 2. Mechanism unit-tested, headline number is a data-run (proven algorithm, labelled number)
 
@@ -56,12 +59,12 @@ subsampled fixture would assert a different number.
 | global fingerprint-weight sensitivity (`RESULTS-weight-sensitivity.md`; exact snapshot rerun; historical monotonicity falsified) | `test_fingerprint_ns.py`, `test_weight_sensitivity_experiment.py` | `data/fs-blkcache-2026-09-04.tar.gz` |
 | per-axis EM diagnostic (`RESULTS-em-m.md`; exact snapshot rerun; historical 165,832-transaction table not reproduced) | `test_fs_em.py`, `test_em_m_experiment.py` | `data/fs-blkcache-2026-09-04.tar.gz` |
 | pair-level Bayesian vs Fellegi-Sunter (`RESULTS-bayes-vs-fs.md`; exact snapshot rerun; historical handwritten table not reproduced) | `test_fs_bayes.py`, `test_bayes_vs_fs_experiment.py` | `data/fs-blkcache-2026-09-04.tar.gz` |
-| cluster-bits, graph-shape, contraction | `test_cluster_bits.py`, `test_graph_shape.py`, `test_views.py` | `slice_2026.ndjson` |
+| graph-shape, contraction | `test_graph_shape.py`, `test_views.py` | `slice_2026.ndjson` |
 | entropy overcount, provenance overlap | `test_metric.py`, `test_provenance*.py` | live / `.cache/` |
 | Fellegi-Sunter fit early / scored late — the reported AUCs, thresholds and calibration (`RESULTS-fs-temporal.md`; manifest + recomputed invariants; the *direction* is pinned in state 1 above) | `test_fs_temporal.py` | `.blkcache/` |
 | N-S propagation on contracted Bitcoin views — the reported precision, coverage and controls (`RESULTS-ns-bitcoin.md`; manifest + recomputed configuration; the direction at 5% / 10% seeding is **state 5**, at 25% it separates) | `test_ns_bitcoin.py`, `test_ns_social_baseline.py` | `epoch_2016_*.ndjson.gz` |
 | broadcast timing, temporal | `test_broadcast.py` | live |
-| exact versus explicit fee allocation (`RESULTS-boltzmann-fee-audit.md`; manifest + recomputed invariants) | `test_boltzmann_fee_audit.py` | `sample.ndjson` |
+| exact versus explicit fee allocation (`RESULTS-boltzmann-fee-audit.md`; manifest + recomputed invariants) | `test_boltzmann_fee_audit.py` | `data/amount-channel-812695-812831-v1.json` |
 
 ## 3. Reproducible once a small BigQuery window is committed
 
@@ -92,7 +95,8 @@ filed, so it belongs in state 4, below, and is recorded there.
 - **the amount channel at graph scale** — the de-mix arm of the refusing clusterer, the
   unnecessary-input axis, conservation and the conspicuousness ranking all need prevout **values**
   and **script types**. The graph-scale exports (`epoch_2016_*`, the committed graph fixtures)
-  carry addresses only. They are measurable today on `sample.ndjson` (5,491 txs, blocks
+  carry addresses only. They are measurable today on
+  `data/amount-channel-812695-812831-v1.json` (5,491 txs, blocks
   812,695-812,831, complete) and `.blkcache/` (22,571 txs, of which 22,112 are not coinbase; complete, but block-sampled rather than
   contiguous); what is missing is a *graph-scale* contiguous export carrying them, which is a
   re-collection of the existing query with two more columns rather than new method.
@@ -145,6 +149,17 @@ than a restoration, or remove it.
 Three were removed on 2026-09-08 under that rule: an ancestry cross-view feasibility note and a
 cluster-scale reading, neither cited by the paper, and the witness-axis era drift, whose paper
 paragraph went with it. Git keeps them; the published surface does not.
+
+Three more went on the same rule, and they show both of its outcomes. The cluster-bits reading and
+the special-case-label cross-check were measured again on the committed block cache and became state
+1 above; what the cache cannot carry — the per-axis onward-spend arm, which needs each change
+output's spender in the same data — is absent from the new run and named there rather than carried
+over. The attribute-conditioning result had no such path: its conditioners read construction axes
+per edge, and every graph-scale export this repository ships carries addresses only, so there is
+nothing at that scale for them to read. What survives it is the mechanism, which needed no slice —
+the conditioner cannot create a score but does create the eccentricity the gate reads, and that is
+now decided by `tests/test_view_match.py` instead of argued from a table. Re-measuring is not
+restoring: the new numbers are new, and the paper cites those.
 
 ### Manifests
 

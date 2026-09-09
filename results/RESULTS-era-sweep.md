@@ -1,8 +1,8 @@
 # Is the pseudonym graph a social network in any era?
 
-**Why sweep eras.** `RESULTS-graph-shape.md` found the 2026 pseudonym graph is not a social
-network — clustering far below chance, disassortative — which explains the social-graph
-attack's failure. But that could be a property of the 2026 chain (segwit, taproot, privacy
+**Why sweep eras.** A contracted pseudonym graph is not a social network — clustering far below
+chance, disassortative (`results/generated/graph-rejoin-2016-v1.md`) — which explains the
+social-graph attack's failure. But that could be a property of the 2026 chain (segwit, taproot, privacy
 tooling, little address reuse) rather than of Bitcoin graphs generally. The framework's claim
 is about "today's transaction graph"; the test that decides it is whether the precondition ever held.
 2016 is the sharp case: heavy address reuse, and the era where `RESULTS-graph-deanon.md`

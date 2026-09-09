@@ -25,7 +25,7 @@ from tempfile import TemporaryDirectory
 
 from .. import ancestry
 from ..archive_snapshot import extract_tar_gz
-from ..disjoint_routes import TARGET_VALUE, route_capacity
+from ..disjoint_routes import TARGET_VALUE, flow_capacity, route_capacity
 from ..fingerprint_validate import load_blkcache
 from ..reproducibility import fingerprint_source
 from ..result_artifacts import canonical_json_bytes, write_canonical_json
@@ -52,7 +52,7 @@ def build_artifact(snapshot="data/fs-blkcache-2026-09-04.tar.gz"):
                       if sum(1 for vin in tx["vin"] if vin.get("txid") in index) >= 2})
 
     capacity, plausible, excess, boundary = Counter(), Counter(), Counter(), Counter()
-    measured = 0
+    measured = short_of_value = 0
     for target in targets:
         graph = ancestry.build_extended_graph(
             target, depth=DEPTH, fetch=index.get,
@@ -62,6 +62,10 @@ def build_artifact(snapshot="data/fs-blkcache-2026-09-04.tar.gz"):
             continue
         k, _routes = route_capacity(graph, target)
         payable, _ = route_capacity(graph, target, carries=TARGET_VALUE)
+        deliverable, _ = flow_capacity(graph, target)
+        worth = graph.values.get(target)
+        if worth is not None and deliverable < worth:
+            short_of_value += 1
         measured += 1
         capacity[k] += 1
         plausible[payable] += 1
@@ -87,6 +91,7 @@ def build_artifact(snapshot="data/fs-blkcache-2026-09-04.tar.gz"):
             "cut_of_one": capacity[1],
             "cut_of_one_carrying_the_coin": plausible[1],
             "no_route_carries_the_coin": plausible[0],
+            "origins_cannot_deliver_the_value": short_of_value,
             "cut_at_most_small": small,
             "origin_set_overstates": overstated,
             "largest_cut": max(capacity) if capacity else 0,
@@ -165,9 +170,17 @@ def render_markdown(artifact):
         f"Read the shape — that a tenth of coins are separated by one coin while others carry "
         f"{artifact['readings']['largest_cut']} routes — rather than the level.",
         "",
-        "The value dimension here is a threshold, not an optimisation: a coin either can or cannot "
-        "carry the amount, and pruning on that is as cheap as the cut itself. Choosing which routes "
-        "carry how much — the k-splittable formulation — is the hard problem and is not this one.",
+        f"**The framework states its property over the mass of a coin's candidate origins, not only "
+        f"over how many routes reach it**, so the same network is solved a second time with each "
+        f"coin's own value as its capacity. The maximum flow is what the origin set could deliver "
+        f"if every route ran at once, and its minimum cut is the value a separation would have to "
+        f"remove. For {share(readings['origins_cannot_deliver_the_value'])} of these coins the "
+        f"origins cannot deliver the coin's own value at all — a shortfall a route count cannot "
+        f"see, because those routes exist and simply are not worth enough together.",
+        "",
+        "That is still one flow and still polynomial. Choosing which routes carry how much — the "
+        "k-splittable formulation — is strongly NP-hard, is a decision about routing rather than a "
+        "measurement of capacity, and is not this one.",
         "",
         "## Reproducibility / provenance",
         "",

@@ -11,7 +11,7 @@ The population measurements below remain specific to the local fee-allocation mo
 
 ## Protocol
 
-Source: `sample.ndjson`. Scan in file order and select the first 300 transactions satisfying all of:
+Source: `data/amount-channel-812695-812831-v1.json`. Scan in file order and select the first 300 transactions satisfying all of:
 
 - at least two inputs and one output;
 - every input prevout and output has an integer value;
@@ -59,5 +59,6 @@ The complete per-transaction output is `results/artifacts/boltzmann-fee-audit-v1
 the frozen historical report: `tests/test_boltzmann_fee_experiment.py` asserts the canonical run
 still reproduces it exactly, which is a guard the canonical artifact cannot give itself.
 The manifest fingerprints
-`sample.ndjson` and pins the configuration, population counts and outcomes above. Tests recompute
-the report from the source. The official-tool parity cell remains open.
+`data/amount-channel-812695-812831-v1.json` and pins the configuration, population counts and outcomes
+above. Tests recompute the report from that committed source rather than skipping when it is
+absent. The official-tool parity cell remains open.

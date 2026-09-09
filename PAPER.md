@@ -116,7 +116,7 @@ quantitatively misplaced. A two-in/two-out merge adds at most **log₂3 ≈ 1.6 
 ambiguity, while an established cluster in a social-transaction graph carries far more
 identifying structure. We measure it: on a real connected slice, every co-spend cluster's
 counterparty-rarity bits sum past the merge's 1.6 (median **~33 bits**, ~12% already exceed
-100) — the Narayanan–Shmatikov accumulation computed directly (`results/RESULTS-cluster-bits.md`).
+100) — the Narayanan–Shmatikov accumulation computed directly (`results/generated/cluster-bits-v1.md`).
 The **>100-bit** figure is the whole-chain order of magnitude; a slice undercounts each
 cluster's counterparties, so the measured median is a lower bound (§10). An analyst needs only
 ~2 of those bits to override the merge, and every cluster supplies an order of magnitude more.
@@ -173,9 +173,10 @@ Three facts defeat it, in order of importance:
    Those carry wallet-specific fingerprints an analyst reads to corroborate the amount
    partition.
 2. **The bit asymmetry.** Even with perfectly uniform fingerprints and ambiguous amounts,
-   the merge's ~1.6 bits are dwarfed by the prior clustering evidence — measured at a median
-   ~33 bits per cluster on a real slice, a lower bound on >100 whole-chain (`results/RESULTS-cluster-bits.md`); the
-   partition is decidable *without needing the merged transaction at all*.
+   the merge's ~1.6 bits are dwarfed by the prior clustering evidence — a median of 29.0 bits per
+   cluster on the committed cache, where every one of the 2538 clusters clears the merge's
+   contribution (`results/generated/cluster-bits-v1.md`); the cache is block-sampled, so that median
+   is a floor. The partition is decidable *without needing the merged transaction at all*.
 
 **What the fusion measurably adds.** The engine is what makes those channels one decision rather
 than a list of opinions, and `results/generated/fused-engine-v1.md` runs it over committed
@@ -356,8 +357,8 @@ Three properties matter for the thesis:
   **refuse** a merge — impossible for a monotone union-find.
 - **Bit-accounting / priors.** A large established cluster contracts as a unit carrying
   its full weight; a merge-strength contrary signal (−3 bits) cannot override an established
-  cluster's prior (measured at a median ~33 bits, >100 whole-chain; §1,
-  `results/RESULTS-cluster-bits.md`). We verify this as a property test (`high_weight_prior_survives_contrary_fingerprint`);
+  cluster's prior (measured at a median of 29.0 bits on the committed cache; §1,
+  `results/generated/cluster-bits-v1.md`). We verify this as a property test (`high_weight_prior_survives_contrary_fingerprint`);
   the fixed-point union-find keeps a large wallet whole as one component (replacing the old hard
   "skip large groups"), so large wallets are not silently dropped at scale.
 - **Real bits.** `Combiner.from_library` lets the engine score from the measured library bits
@@ -740,15 +741,18 @@ combined tx-level pre↔post score reaches AUC ≈ 0.76 against a shuffle-null �
 distinction: the 3.00-bit ordering *link* weight and ordering as a *change* signal are different
 quantities — the former stands; the latter is real but weak-coverage.
 
-**A label-robustness caveat.** This ranking does not survive an independent label
-(`results/RESULTS-special-change.md`). Re-run against an *optimal-change* label (the smaller-than-any-input
-output must be change — a value signal disjoint from co-spend) on a multi-epoch sample, all four
-onward-spend axes fall to ~0.60–0.74 precision and `nSequence`/`version` no longer dominate ordering.
-Part is a co-spend-label selection bias — that label selects changes whose onward-spender *is* the
-same-wallet reveal transaction, which shares nSequence/version by construction (inflating the numbers
-above); part is epoch / time-gap drift in the multi-epoch sample. Disentangling the two needs a
-contiguous-value slice running both labels on the same transactions (future work). The single-day
-figures above are slice- and label-specific, not a general claim.
+**A label-robustness caveat.** The label above is drawn from co-spend clustering, and that
+construction inflates exactly the axes it then scores: it identifies the change by its onward-spender
+being the same-wallet reveal transaction, and a same-wallet transaction repeats `nSequence` and
+`version` by definition. A value-based label carries no such bias — the output smaller than every
+input must be the change, whatever addresses it uses — and on committed transactions the two
+universal within-transaction heuristics agree with it at 0.81 and 0.90 precision, a cross-check
+neither the fingerprints nor co-spend enter (`results/generated/special-change-labels-v1.md`).
+The per-axis comparison that would settle whether the ranking above survives the label change needs
+each change output's *spender* in the same data, which the block-sampled cache holds for 12 of 1138
+labelled transactions; a contiguous export carrying values at that depth is a collection, not a
+method. So the single-day figures above are slice- and label-specific, and their robustness is
+untested rather than established.
 
 **A circularity caveat.** We also implemented Kappos's cluster-level `findNext` (change = the output
 whose onward-spend's construction features are in the input cluster's feature set). Against an M&N
@@ -988,31 +992,41 @@ The contracted pseudonym graph is, per the framework, a social network (cit 24):
 views of it should be matchable from a small seed. Contracting two views, seeding a mining-pool /
 high-degree correspondence, and propagating (`view_match`) tests the framework's own "*if* the social
 network structure is recoverable" premise. On one-day views a week apart the result is
-modest and negative: the cascade does not ignite, attribute conditioners hurt rather than help,
-and the ambiguity-cut partition does not decompose the graph — all against degree-baseline and
-shuffle controls (`results/RESULTS-view-match-2026.md`, `results/RESULTS-graph-shape.md`,
-`results/RESULTS-attribute-conditioning.md`, `results/RESULTS-partition-schemes.md`). A larger slice reads the same under the
+modest and negative: the cascade does not ignite and the ambiguity-cut partition does not decompose
+the graph — both against degree-baseline and shuffle controls
+(`results/generated/graph-rejoin-2016-v1.md`, `results/generated/partition-schemes-v1.md`). The framework's vertex and edge attributes are built here
+and deliberately kept out of the acceptance gate: a bounded multiplicative conditioner cannot turn a
+zero score positive, but the gate reads the *separation* between the leader and the runner-up, and
+scaling tied candidates by different factors is exactly how that separation is made
+(`decluster/view_match.py`, `tests/test_view_match.py`). Whether they cost accuracy at slice scale is
+not measured — the graph-scale exports this repository ships carry addresses and no construction
+axes, so there is nothing for a conditioner to read. A larger slice reads the same under the
 harness that does not hand the matcher its answer: splitting each cluster along the view boundary into two pseudonyms (`split_clusters_by_view`,
 the incomplete-clustering premise) and asking the matcher to rejoin them from structure. Earlier
 revisions cited "none of 5077 split pairs" from `results/RESULTS-slice-a-channels.md`; that file
 declares itself superseded — its view split leaked, tagging an address by where it was *first* seen,
 which both offered the matcher a wrong-but-structurally-better identity match and silently dropped
 part of the rejoinable population. The corrected construction is
-`results/RESULTS-multiepoch-local-2016.md`, over complete weekly January-2016 views (982,021 and
-1,116,563 transactions) whose rejoinable population is **2.3× larger**: at a 10% high-degree seed the
+`results/generated/graph-rejoin-2016-v1.md`, over complete weekly January-2016 views (982,021 and
+1,116,563 transactions) holding 17,431 straddling clusters: at a 10% high-degree seed the
 directed matcher makes **one guess, and it is correct — 1 of 15,688** non-seed pairs; the undirected
 matcher and the 5% seeds guess nothing, and **all four shuffled-seed controls produce zero guesses**.
 One match is not ignition and recall rounds to zero, but it is a different statement from "none": the
-high-confidence path is not inert and it separates from the shuffle arm. The gating quantity is
-unchanged by scale — the share of pseudonyms reaching the matcher's four-recurring-neighbour minimum
-reads 2.58% / 2.48% / 2.67% across a 3.5× range of transactions, flat and not even monotone.
+high-confidence path is not inert and it separates from the shuffle arm. What gates it is the
+neighbourhood rather than the transaction count: per-vertex persistence rises from 31% to 38% as the
+view widens from one day to seven and saturates by day three
+(`results/RESULTS-persistence-curve.md`), so a wider window adds relationships without adding
+recurring ones.
 `graph_shape` shows why the structure is not there: the contracted graph is disassortative
 (−0.044 on the canonical snapshot, `results/artifacts/slice-channels-v1.json`) — hubs attaching to
-leaves, the transactional sign, not the positive sign of a social graph. The companion clustering and
-degree-tail statistics (`results/RESULTS-graph-shape.md`: transitivity two orders of magnitude *below*
-its configuration null, tail exponent 3.9 against the social 2–3, 58% leaves) point the same way but
-were measured on `slice_2026.ndjson`, which is not in this checkout — an evidence record, not a
-canonical result. The
+leaves, the transactional sign, not the positive sign of a social graph. The clustering statistic points the same
+way on committed data and is the sharper of the two: transitivity reads 0.0062 and 0.0001 against a
+configuration-model null of 0.6113 and 0.3976, so the degree sequence alone would produce two orders
+of magnitude more triangles than the graph has (`results/generated/graph-rejoin-2016-v1.md`). The
+degree tail does *not* carry the argument and earlier revisions claimed too much from it: on these
+committed views the exponent is 2.86, inside the social 2–3 range rather than above it, and leaves
+are 4.6–6.0% rather than a majority. Those were properties of a one-day 2026 view, not of contracted
+Bitcoin graphs. The
 limit is the window: a pseudonym's view-A and view-B neighbours are different one-off counterparties,
 and a neighbourhood that does not recur cannot be rejoined — a stable representation needs an entity's
 relationships to repeat across many epochs. The result is therefore **underpowered, not a robust
@@ -1243,7 +1257,7 @@ What they do not establish, stated as plainly. Fingerprints are not a sparse qua
 committed window, exact-vector classes of size one are a rounding error, so the fingerprint buckets
 and does not single out (`results/generated/fingerprint-sparsity-v1.md`). Seeded propagation across
 two pseudonym views does not ignite at the view widths measured, and neighbourhood persistence — not
-the matcher — is the binding constraint (`results/RESULTS-view-match-2026.md`,
+the matcher — is the binding constraint (`results/generated/graph-rejoin-2016-v1.md`,
 `results/RESULTS-persistence-curve.md`). The framework's own positive properties, robust connectivity
 and own-origin robustness, are stated over counterfactual disjoint paths; the k-routes oracle that
 would measure them is not implemented here and the path-count object is not a substitute for it
