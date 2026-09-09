@@ -13,9 +13,9 @@
       "name": "catalog/runs/statistical-disclosure-v1.json",
       "role": "run_manifest",
       "bytes": 2671,
-      "sha256": "3e442d2e4163e1f1404413f653574ae5174df91a6ebdd4628540fd450c71ad13",
+      "sha256": "02e150bcd803b636850e66cf8dbb6b99541cd67af57a8f5339fe3365f14e2d9a",
       "locations": {
-        "canonical": "https://github.com/bc1cindy/decluster/raw/3b5e1762a28e4a8a7f869c41cf3785e158950a50/catalog/runs/statistical-disclosure-v1.json",
+        "canonical": null,
         "mirrors": []
       }
     },
@@ -40,12 +40,12 @@
       }
     },
     {
-      "name": "sources/decluster-4844877-runtime.tar",
+      "name": "sources/decluster-d9be533-runtime.tar",
       "role": "source",
       "bytes": 2457600,
-      "sha256": "18893f6a7cf35071c8065a531df466b391b971d690969e89a838de59ba250666",
+      "sha256": "2ae81385418725bd259bb2b79f9ed640231dc30069b587f26930ee452f352e13",
       "locations": {
-        "canonical": "https://github.com/bc1cindy/decluster/raw/3b5e1762a28e4a8a7f869c41cf3785e158950a50/sources/decluster-4844877-runtime.tar",
+        "canonical": null,
         "mirrors": []
       }
     },
@@ -63,9 +63,9 @@
       "name": "reproduction/statistical-disclosure/environment.json",
       "role": "environment",
       "bytes": 380,
-      "sha256": "226f05af8755b237a870779092c7261c352a62ede90f627952679d605a6b36c4",
+      "sha256": "fd8dfe5ff15b8f1125e5c9841dbde0219c603c9e77b24be106285bbfc5222671",
       "locations": {
-        "canonical": "https://github.com/bc1cindy/decluster/raw/3b5e1762a28e4a8a7f869c41cf3785e158950a50/reproduction/statistical-disclosure/environment.json",
+        "canonical": null,
         "mirrors": []
       }
     }

@@ -13,9 +13,9 @@
       "name": "catalog/runs/collaborative-forms-v1.json",
       "role": "run_manifest",
       "bytes": 2998,
-      "sha256": "0140b2692b0cf0022f8e2ef9643c30195f6c78e6538b64de8761ab5473c96eb1",
+      "sha256": "268967a5d6214cd0e449c3648d1f48c59113ca35422ce5ea78bb058962951683",
       "locations": {
-        "canonical": "https://github.com/bc1cindy/decluster/raw/3b5e1762a28e4a8a7f869c41cf3785e158950a50/catalog/runs/collaborative-forms-v1.json",
+        "canonical": null,
         "mirrors": []
       }
     },
@@ -40,12 +40,12 @@
       }
     },
     {
-      "name": "sources/decluster-4844877-runtime.tar",
+      "name": "sources/decluster-d9be533-runtime.tar",
       "role": "source",
       "bytes": 2457600,
-      "sha256": "18893f6a7cf35071c8065a531df466b391b971d690969e89a838de59ba250666",
+      "sha256": "2ae81385418725bd259bb2b79f9ed640231dc30069b587f26930ee452f352e13",
       "locations": {
-        "canonical": "https://github.com/bc1cindy/decluster/raw/3b5e1762a28e4a8a7f869c41cf3785e158950a50/sources/decluster-4844877-runtime.tar",
+        "canonical": null,
         "mirrors": []
       }
     },
@@ -63,9 +63,9 @@
       "name": "reproduction/collaborative-forms/environment.json",
       "role": "environment",
       "bytes": 374,
-      "sha256": "ba337d538cb1b820f5d56707db8432437484826cff60a2b3e0c01c2d059604bf",
+      "sha256": "6d40a8e3e4cf0d28dd18a2c23312f7747e4268b44b966729eba9588dd4b76fbc",
       "locations": {
-        "canonical": "https://github.com/bc1cindy/decluster/raw/3b5e1762a28e4a8a7f869c41cf3785e158950a50/reproduction/collaborative-forms/environment.json",
+        "canonical": null,
         "mirrors": []
       }
     }

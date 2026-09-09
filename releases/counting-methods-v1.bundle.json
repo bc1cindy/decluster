@@ -13,9 +13,9 @@
       "name": "catalog/runs/counting-methods-v1.json",
       "role": "run_manifest",
       "bytes": 2644,
-      "sha256": "8e55ac0dfcfed6b2c9318a81336c74b2c8ca71fe4143dd1e7198adab9b2879ba",
+      "sha256": "79e65206887a84212c44385e24c2b4f8c8e78e7e089bc93331d078b5fb34b929",
       "locations": {
-        "canonical": "https://github.com/bc1cindy/decluster/raw/3b5e1762a28e4a8a7f869c41cf3785e158950a50/catalog/runs/counting-methods-v1.json",
+        "canonical": null,
         "mirrors": []
       }
     },
@@ -60,12 +60,12 @@
       }
     },
     {
-      "name": "sources/decluster-4844877-runtime.tar",
+      "name": "sources/decluster-d9be533-runtime.tar",
       "role": "source",
       "bytes": 2457600,
-      "sha256": "18893f6a7cf35071c8065a531df466b391b971d690969e89a838de59ba250666",
+      "sha256": "2ae81385418725bd259bb2b79f9ed640231dc30069b587f26930ee452f352e13",
       "locations": {
-        "canonical": "https://github.com/bc1cindy/decluster/raw/3b5e1762a28e4a8a7f869c41cf3785e158950a50/sources/decluster-4844877-runtime.tar",
+        "canonical": null,
         "mirrors": []
       }
     },
@@ -83,9 +83,9 @@
       "name": "reproduction/counting-methods/environment.json",
       "role": "environment",
       "bytes": 351,
-      "sha256": "e672640da5e419a3e81522415d3e6aa267f41f77cdf0a449d88a36fb2559b4e6",
+      "sha256": "a10d6b672c20cf701699fae433cada5ccbe7217c5de9bfa9e3d9d5bfdfcedc72",
       "locations": {
-        "canonical": "https://github.com/bc1cindy/decluster/raw/3b5e1762a28e4a8a7f869c41cf3785e158950a50/reproduction/counting-methods/environment.json",
+        "canonical": null,
         "mirrors": []
       }
     }

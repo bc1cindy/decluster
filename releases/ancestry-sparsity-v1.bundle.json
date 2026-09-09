@@ -13,9 +13,9 @@
       "name": "catalog/runs/ancestry-sparsity-v1.json",
       "role": "run_manifest",
       "bytes": 2951,
-      "sha256": "5361ef962ea3f306cdcaf82e57b3e28084618bdd8f1e24b12f0e233388455a00",
+      "sha256": "33e51cd6883b6403e7e29a30cd3014d8f60ecf2f698b410dd2b3f0c7a1c9a536",
       "locations": {
-        "canonical": "https://github.com/bc1cindy/decluster/raw/3b5e1762a28e4a8a7f869c41cf3785e158950a50/catalog/runs/ancestry-sparsity-v1.json",
+        "canonical": null,
         "mirrors": []
       }
     },
@@ -50,12 +50,12 @@
       }
     },
     {
-      "name": "sources/decluster-4844877-runtime.tar",
+      "name": "sources/decluster-d9be533-runtime.tar",
       "role": "source",
       "bytes": 2457600,
-      "sha256": "18893f6a7cf35071c8065a531df466b391b971d690969e89a838de59ba250666",
+      "sha256": "2ae81385418725bd259bb2b79f9ed640231dc30069b587f26930ee452f352e13",
       "locations": {
-        "canonical": "https://github.com/bc1cindy/decluster/raw/3b5e1762a28e4a8a7f869c41cf3785e158950a50/sources/decluster-4844877-runtime.tar",
+        "canonical": null,
         "mirrors": []
       }
     },
@@ -73,9 +73,9 @@
       "name": "reproduction/ancestry-sparsity/environment.json",
       "role": "environment",
       "bytes": 370,
-      "sha256": "dcd1e82b3fe3d6e4723b04fc61e0694f0aa4de0c45532fd1a9b306247ce81098",
+      "sha256": "a08f7ae675207e0b3675376ff3e4c9761d32f59c32f408c65e890cb5f1592a15",
       "locations": {
-        "canonical": "https://github.com/bc1cindy/decluster/raw/3b5e1762a28e4a8a7f869c41cf3785e158950a50/reproduction/ancestry-sparsity/environment.json",
+        "canonical": null,
         "mirrors": []
       }
     }

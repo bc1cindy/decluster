@@ -13,9 +13,9 @@
       "name": "catalog/runs/counting-router-v1.json",
       "role": "run_manifest",
       "bytes": 3217,
-      "sha256": "5ae1da524ff0f6512864d283e4277a889ac9870350a16f6ca3435c682a2a330b",
+      "sha256": "9c5cb55764408d23e539f6ba9f93223bfaffd9bf3abe398369564bb1aab7fdf1",
       "locations": {
-        "canonical": "https://github.com/bc1cindy/decluster/raw/3b5e1762a28e4a8a7f869c41cf3785e158950a50/catalog/runs/counting-router-v1.json",
+        "canonical": null,
         "mirrors": []
       }
     },
@@ -50,12 +50,12 @@
       }
     },
     {
-      "name": "sources/decluster-4844877-runtime.tar",
+      "name": "sources/decluster-d9be533-runtime.tar",
       "role": "source",
       "bytes": 2457600,
-      "sha256": "18893f6a7cf35071c8065a531df466b391b971d690969e89a838de59ba250666",
+      "sha256": "2ae81385418725bd259bb2b79f9ed640231dc30069b587f26930ee452f352e13",
       "locations": {
-        "canonical": "https://github.com/bc1cindy/decluster/raw/3b5e1762a28e4a8a7f869c41cf3785e158950a50/sources/decluster-4844877-runtime.tar",
+        "canonical": null,
         "mirrors": []
       }
     },
@@ -83,9 +83,9 @@
       "name": "reproduction/counting-router/environment.json",
       "role": "environment",
       "bytes": 350,
-      "sha256": "06cd576b0caa31eb5c251bdfed5be81b7032cecf5c45d385aa7fc6546e0fb6d2",
+      "sha256": "61d8485765227d9cf285752e0c5fb1727f7afa168605ec8a111a460d85038f9c",
       "locations": {
-        "canonical": "https://github.com/bc1cindy/decluster/raw/3b5e1762a28e4a8a7f869c41cf3785e158950a50/reproduction/counting-router/environment.json",
+        "canonical": null,
         "mirrors": []
       }
     }

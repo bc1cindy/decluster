@@ -13,9 +13,9 @@
       "name": "catalog/runs/amount-pairwise-family-v1.json",
       "role": "run_manifest",
       "bytes": 3592,
-      "sha256": "cbb409492abe48f4078b4f884983576aea43b135d5162109d39509f976947d99",
+      "sha256": "a3c94029bbaeff6dcfeb81cb3907049710cf5a6e7975b1cbf7c04db79a8eab87",
       "locations": {
-        "canonical": "https://github.com/bc1cindy/decluster/raw/3b5e1762a28e4a8a7f869c41cf3785e158950a50/catalog/runs/amount-pairwise-family-v1.json",
+        "canonical": null,
         "mirrors": []
       }
     },
@@ -50,12 +50,12 @@
       }
     },
     {
-      "name": "sources/decluster-4844877-runtime.tar",
+      "name": "sources/decluster-d9be533-runtime.tar",
       "role": "source",
       "bytes": 2457600,
-      "sha256": "18893f6a7cf35071c8065a531df466b391b971d690969e89a838de59ba250666",
+      "sha256": "2ae81385418725bd259bb2b79f9ed640231dc30069b587f26930ee452f352e13",
       "locations": {
-        "canonical": "https://github.com/bc1cindy/decluster/raw/3b5e1762a28e4a8a7f869c41cf3785e158950a50/sources/decluster-4844877-runtime.tar",
+        "canonical": null,
         "mirrors": []
       }
     },
@@ -83,9 +83,9 @@
       "name": "reproduction/amount-pairwise-family/environment.json",
       "role": "environment",
       "bytes": 357,
-      "sha256": "5416825a144b76e3dd4312810c420dbf5668eb2363b337c0b16b621f0c09eb08",
+      "sha256": "b548371afc80dfc0919f6e82b97f2051d3085d27f8d58d3d4e91575103dd1bd3",
       "locations": {
-        "canonical": "https://github.com/bc1cindy/decluster/raw/3b5e1762a28e4a8a7f869c41cf3785e158950a50/reproduction/amount-pairwise-family/environment.json",
+        "canonical": null,
         "mirrors": []
       }
     }

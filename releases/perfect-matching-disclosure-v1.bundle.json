@@ -13,9 +13,9 @@
       "name": "catalog/runs/perfect-matching-disclosure-v1.json",
       "role": "run_manifest",
       "bytes": 2883,
-      "sha256": "395e6def9ca56d3fcdc935cbe77e46aa69cdf2bb666844a91d63efe11b7b69c8",
+      "sha256": "f4fa5e052ffa092f6ecef3a68e1d235325293687993d0c6ac82963aab631e6df",
       "locations": {
-        "canonical": "https://github.com/bc1cindy/decluster/raw/3b5e1762a28e4a8a7f869c41cf3785e158950a50/catalog/runs/perfect-matching-disclosure-v1.json",
+        "canonical": null,
         "mirrors": []
       }
     },
@@ -40,12 +40,12 @@
       }
     },
     {
-      "name": "sources/decluster-4844877-runtime.tar",
+      "name": "sources/decluster-d9be533-runtime.tar",
       "role": "source",
       "bytes": 2457600,
-      "sha256": "18893f6a7cf35071c8065a531df466b391b971d690969e89a838de59ba250666",
+      "sha256": "2ae81385418725bd259bb2b79f9ed640231dc30069b587f26930ee452f352e13",
       "locations": {
-        "canonical": "https://github.com/bc1cindy/decluster/raw/3b5e1762a28e4a8a7f869c41cf3785e158950a50/sources/decluster-4844877-runtime.tar",
+        "canonical": null,
         "mirrors": []
       }
     },
@@ -63,9 +63,9 @@
       "name": "reproduction/perfect-matching-disclosure/environment.json",
       "role": "environment",
       "bytes": 390,
-      "sha256": "5d736e54590fb9f1552badd8d8b0635a0dfaca407a411ad7a1c787eb72a16c0e",
+      "sha256": "9092c2a42af8ba6e40f3f709b5b267247b4832def88eec772930c496f40438aa",
       "locations": {
-        "canonical": "https://github.com/bc1cindy/decluster/raw/3b5e1762a28e4a8a7f869c41cf3785e158950a50/reproduction/perfect-matching-disclosure/environment.json",
+        "canonical": null,
         "mirrors": []
       }
     }

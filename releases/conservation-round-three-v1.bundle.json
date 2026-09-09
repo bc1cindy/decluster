@@ -13,9 +13,9 @@
       "name": "catalog/runs/conservation-round-three-v1.json",
       "role": "run_manifest",
       "bytes": 3128,
-      "sha256": "87b378c07f3385f18bddd2a3851dbbd8f886592eb8786383e1fcdeaeda2f19d7",
+      "sha256": "bdf86f3b89d50411b7883325173323eeeaeb3754dd6933fc18951ccc63a72a01",
       "locations": {
-        "canonical": "https://github.com/bc1cindy/decluster/raw/3b5e1762a28e4a8a7f869c41cf3785e158950a50/catalog/runs/conservation-round-three-v1.json",
+        "canonical": null,
         "mirrors": []
       }
     },
@@ -50,12 +50,12 @@
       }
     },
     {
-      "name": "sources/decluster-4844877-runtime.tar",
+      "name": "sources/decluster-d9be533-runtime.tar",
       "role": "source",
       "bytes": 2457600,
-      "sha256": "18893f6a7cf35071c8065a531df466b391b971d690969e89a838de59ba250666",
+      "sha256": "2ae81385418725bd259bb2b79f9ed640231dc30069b587f26930ee452f352e13",
       "locations": {
-        "canonical": "https://github.com/bc1cindy/decluster/raw/3b5e1762a28e4a8a7f869c41cf3785e158950a50/sources/decluster-4844877-runtime.tar",
+        "canonical": null,
         "mirrors": []
       }
     },
@@ -73,9 +73,9 @@
       "name": "reproduction/conservation-round-three/environment.json",
       "role": "environment",
       "bytes": 384,
-      "sha256": "ba7514d7bd564b213c8c75e76dea02775e7c43de2494197dac30f3156693c5b0",
+      "sha256": "55d4e3f5d923769e69bf74286ecfba40dd48465f03fcbd2c1dba8e048b8bda76",
       "locations": {
-        "canonical": "https://github.com/bc1cindy/decluster/raw/3b5e1762a28e4a8a7f869c41cf3785e158950a50/reproduction/conservation-round-three/environment.json",
+        "canonical": null,
         "mirrors": []
       }
     }

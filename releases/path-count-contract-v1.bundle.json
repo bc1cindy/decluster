@@ -13,9 +13,9 @@
       "name": "catalog/runs/path-count-contract-v1.json",
       "role": "run_manifest",
       "bytes": 2594,
-      "sha256": "3b5c717e5dda168f6b9b0597e478b7b3641ba93a9797012d97cbe58202e54d4b",
+      "sha256": "3f956103855cfb2fcd7a4285e6fbf59951dfc60d2cfe1c4abe6c7c0f6fbc1639",
       "locations": {
-        "canonical": "https://github.com/bc1cindy/decluster/raw/3b5e1762a28e4a8a7f869c41cf3785e158950a50/catalog/runs/path-count-contract-v1.json",
+        "canonical": null,
         "mirrors": []
       }
     },
@@ -40,12 +40,12 @@
       }
     },
     {
-      "name": "sources/decluster-4844877-runtime.tar",
+      "name": "sources/decluster-d9be533-runtime.tar",
       "role": "source",
       "bytes": 2457600,
-      "sha256": "18893f6a7cf35071c8065a531df466b391b971d690969e89a838de59ba250666",
+      "sha256": "2ae81385418725bd259bb2b79f9ed640231dc30069b587f26930ee452f352e13",
       "locations": {
-        "canonical": "https://github.com/bc1cindy/decluster/raw/3b5e1762a28e4a8a7f869c41cf3785e158950a50/sources/decluster-4844877-runtime.tar",
+        "canonical": null,
         "mirrors": []
       }
     },
@@ -63,9 +63,9 @@
       "name": "reproduction/path-count-contract/environment.json",
       "role": "environment",
       "bytes": 354,
-      "sha256": "e98b208300f9fd0dedfa47054228f3fe15577edaa5c4d3a75f4fe0ea3e271187",
+      "sha256": "54a2141a0808246a89f213554c10d74b187bf338e0fef91f587e93965a084ae6",
       "locations": {
-        "canonical": "https://github.com/bc1cindy/decluster/raw/3b5e1762a28e4a8a7f869c41cf3785e158950a50/reproduction/path-count-contract/environment.json",
+        "canonical": null,
         "mirrors": []
       }
     }

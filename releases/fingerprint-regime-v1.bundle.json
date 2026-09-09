@@ -13,9 +13,9 @@
       "name": "catalog/runs/fingerprint-regime-v1.json",
       "role": "run_manifest",
       "bytes": 3160,
-      "sha256": "72603affbfeaecde450cc51ae07e8c1e2f6c50a4e6915c761d08c46030ad9613",
+      "sha256": "0e703a9ab76d6e51a5d3f99e52cc5812abfa08443e1cc7724f70f60ccbe4582f",
       "locations": {
-        "canonical": "https://github.com/bc1cindy/decluster/raw/3b5e1762a28e4a8a7f869c41cf3785e158950a50/catalog/runs/fingerprint-regime-v1.json",
+        "canonical": null,
         "mirrors": []
       }
     },
@@ -50,12 +50,12 @@
       }
     },
     {
-      "name": "sources/decluster-4844877-runtime.tar",
+      "name": "sources/decluster-d9be533-runtime.tar",
       "role": "source",
       "bytes": 2457600,
-      "sha256": "18893f6a7cf35071c8065a531df466b391b971d690969e89a838de59ba250666",
+      "sha256": "2ae81385418725bd259bb2b79f9ed640231dc30069b587f26930ee452f352e13",
       "locations": {
-        "canonical": "https://github.com/bc1cindy/decluster/raw/3b5e1762a28e4a8a7f869c41cf3785e158950a50/sources/decluster-4844877-runtime.tar",
+        "canonical": null,
         "mirrors": []
       }
     },
@@ -73,9 +73,9 @@
       "name": "reproduction/fingerprint-regime/environment.json",
       "role": "environment",
       "bytes": 372,
-      "sha256": "11b9e72b30aaeffa310657659b72f0d65b1c9c84da90d217909feca580d4dd7c",
+      "sha256": "65f98eac286b7fc7ad021090c816ac70adfc4917cda21c17943edfd822566048",
       "locations": {
-        "canonical": "https://github.com/bc1cindy/decluster/raw/3b5e1762a28e4a8a7f869c41cf3785e158950a50/reproduction/fingerprint-regime/environment.json",
+        "canonical": null,
         "mirrors": []
       }
     }
