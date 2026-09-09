@@ -15,7 +15,7 @@
       "bytes": 2899,
       "sha256": "ca8d5a90a85d685e961fcd0cd4537bbc2e3d56c656ef701193dbbcdb3392224b",
       "locations": {
-        "canonical": null,
+        "canonical": "https://github.com/bc1cindy/decluster/raw/f85c47c743ea7eb3a7e73d23dae60ccf65241e46/catalog/runs/counting-fee-sensitivity-v1.json",
         "mirrors": []
       }
     },
@@ -45,7 +45,7 @@
       "bytes": 2457600,
       "sha256": "2ae81385418725bd259bb2b79f9ed640231dc30069b587f26930ee452f352e13",
       "locations": {
-        "canonical": null,
+        "canonical": "https://github.com/bc1cindy/decluster/raw/f85c47c743ea7eb3a7e73d23dae60ccf65241e46/sources/decluster-d9be533-runtime.tar",
         "mirrors": []
       }
     },
@@ -75,7 +75,7 @@
       "bytes": 359,
       "sha256": "16bd08b91ffcca0433ec6dd98e38c6cec2efb873552c136190b4cb9db3918c77",
       "locations": {
-        "canonical": null,
+        "canonical": "https://github.com/bc1cindy/decluster/raw/f85c47c743ea7eb3a7e73d23dae60ccf65241e46/reproduction/counting-fee-sensitivity/environment.json",
         "mirrors": []
       }
     }

@@ -15,7 +15,7 @@
       "bytes": 3084,
       "sha256": "22fc5496bd85084c919609ab79f53d4e3f94aa1baddb6580964a1c1cca0022e9",
       "locations": {
-        "canonical": null,
+        "canonical": "https://github.com/bc1cindy/decluster/raw/f85c47c743ea7eb3a7e73d23dae60ccf65241e46/catalog/runs/bayes-vs-fs-v1.json",
         "mirrors": []
       }
     },
@@ -55,7 +55,7 @@
       "bytes": 2457600,
       "sha256": "2ae81385418725bd259bb2b79f9ed640231dc30069b587f26930ee452f352e13",
       "locations": {
-        "canonical": null,
+        "canonical": "https://github.com/bc1cindy/decluster/raw/f85c47c743ea7eb3a7e73d23dae60ccf65241e46/sources/decluster-d9be533-runtime.tar",
         "mirrors": []
       }
     },
@@ -75,7 +75,7 @@
       "bytes": 358,
       "sha256": "bc96d31cac04088ce9a1340e849fd0b82120c8a0e1e5aac6fc360b65f45e1321",
       "locations": {
-        "canonical": null,
+        "canonical": "https://github.com/bc1cindy/decluster/raw/f85c47c743ea7eb3a7e73d23dae60ccf65241e46/reproduction/bayes-vs-fs/environment.json",
         "mirrors": []
       }
     }

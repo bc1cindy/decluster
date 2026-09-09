@@ -15,7 +15,7 @@
       "bytes": 2672,
       "sha256": "d65fee970f4a86439285d4cd563185841345600ed47f90abc8edc1be2fae00e0",
       "locations": {
-        "canonical": null,
+        "canonical": "https://github.com/bc1cindy/decluster/raw/f85c47c743ea7eb3a7e73d23dae60ccf65241e46/catalog/runs/link-prediction-v1.json",
         "mirrors": []
       }
     },
@@ -45,7 +45,7 @@
       "bytes": 2457600,
       "sha256": "2ae81385418725bd259bb2b79f9ed640231dc30069b587f26930ee452f352e13",
       "locations": {
-        "canonical": null,
+        "canonical": "https://github.com/bc1cindy/decluster/raw/f85c47c743ea7eb3a7e73d23dae60ccf65241e46/sources/decluster-d9be533-runtime.tar",
         "mirrors": []
       }
     },
@@ -65,7 +65,7 @@
       "bytes": 366,
       "sha256": "46d6d93707301e3182c22ec9f4c0be4be4c5ba52e5caf6369781390b10fdf972",
       "locations": {
-        "canonical": null,
+        "canonical": "https://github.com/bc1cindy/decluster/raw/f85c47c743ea7eb3a7e73d23dae60ccf65241e46/reproduction/link-prediction/environment.json",
         "mirrors": []
       }
     }

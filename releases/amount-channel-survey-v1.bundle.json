@@ -15,7 +15,7 @@
       "bytes": 3149,
       "sha256": "5ebf41c087393fb4e1081a6adc71205d2c67b6d699a0e2bf045d771225e98648",
       "locations": {
-        "canonical": null,
+        "canonical": "https://github.com/bc1cindy/decluster/raw/f85c47c743ea7eb3a7e73d23dae60ccf65241e46/catalog/runs/amount-channel-survey-v1.json",
         "mirrors": []
       }
     },
@@ -95,7 +95,7 @@
       "bytes": 2457600,
       "sha256": "2ae81385418725bd259bb2b79f9ed640231dc30069b587f26930ee452f352e13",
       "locations": {
-        "canonical": null,
+        "canonical": "https://github.com/bc1cindy/decluster/raw/f85c47c743ea7eb3a7e73d23dae60ccf65241e46/sources/decluster-d9be533-runtime.tar",
         "mirrors": []
       }
     },
@@ -115,7 +115,7 @@
       "bytes": 378,
       "sha256": "0319af3898744e66778621c11bd799d96a8255d264ae34dd0435c63590222192",
       "locations": {
-        "canonical": null,
+        "canonical": "https://github.com/bc1cindy/decluster/raw/f85c47c743ea7eb3a7e73d23dae60ccf65241e46/reproduction/amount-channel-survey/environment.json",
         "mirrors": []
       }
     }

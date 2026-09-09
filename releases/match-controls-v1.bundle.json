@@ -15,7 +15,7 @@
       "bytes": 3396,
       "sha256": "1a7a5b9a4d3d050eb71c7cf59743beb156a502b4a316fc582842fd35949eda74",
       "locations": {
-        "canonical": null,
+        "canonical": "https://github.com/bc1cindy/decluster/raw/f85c47c743ea7eb3a7e73d23dae60ccf65241e46/catalog/runs/match-controls-v1.json",
         "mirrors": []
       }
     },
@@ -65,7 +65,7 @@
       "bytes": 2457600,
       "sha256": "2ae81385418725bd259bb2b79f9ed640231dc30069b587f26930ee452f352e13",
       "locations": {
-        "canonical": null,
+        "canonical": "https://github.com/bc1cindy/decluster/raw/f85c47c743ea7eb3a7e73d23dae60ccf65241e46/sources/decluster-d9be533-runtime.tar",
         "mirrors": []
       }
     },
@@ -95,7 +95,7 @@
       "bytes": 349,
       "sha256": "045a60c72a6a7ee43cf28875ce6163e517348f12d2b1326eb51e8ae4fc49417b",
       "locations": {
-        "canonical": null,
+        "canonical": "https://github.com/bc1cindy/decluster/raw/f85c47c743ea7eb3a7e73d23dae60ccf65241e46/reproduction/match-controls/environment.json",
         "mirrors": []
       }
     }

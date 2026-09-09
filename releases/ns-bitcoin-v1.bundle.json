@@ -15,7 +15,7 @@
       "bytes": 3351,
       "sha256": "bab5ada74992f76e9612a4c521ccfe04b59bcb72e776a865d77d8b37fa7a1f22",
       "locations": {
-        "canonical": null,
+        "canonical": "https://github.com/bc1cindy/decluster/raw/f85c47c743ea7eb3a7e73d23dae60ccf65241e46/catalog/runs/ns-bitcoin-v1.json",
         "mirrors": []
       }
     },
@@ -65,7 +65,7 @@
       "bytes": 2457600,
       "sha256": "2ae81385418725bd259bb2b79f9ed640231dc30069b587f26930ee452f352e13",
       "locations": {
-        "canonical": null,
+        "canonical": "https://github.com/bc1cindy/decluster/raw/f85c47c743ea7eb3a7e73d23dae60ccf65241e46/sources/decluster-d9be533-runtime.tar",
         "mirrors": []
       }
     },
@@ -85,7 +85,7 @@
       "bytes": 356,
       "sha256": "4898c80e330623f3499176a58d3c367b865006444b396dd4243f00f1a99edc50",
       "locations": {
-        "canonical": null,
+        "canonical": "https://github.com/bc1cindy/decluster/raw/f85c47c743ea7eb3a7e73d23dae60ccf65241e46/reproduction/ns-bitcoin/environment.json",
         "mirrors": []
       }
     }

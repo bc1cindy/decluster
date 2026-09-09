@@ -15,7 +15,7 @@
       "bytes": 2404,
       "sha256": "30ccaa4c15ebbe50065e3c84e2a2829aa75b60c04ab32c8c1ba087d815f325bb",
       "locations": {
-        "canonical": null,
+        "canonical": "https://github.com/bc1cindy/decluster/raw/f85c47c743ea7eb3a7e73d23dae60ccf65241e46/catalog/runs/eve-alice-eve-v1.json",
         "mirrors": []
       }
     },
@@ -45,7 +45,7 @@
       "bytes": 2457600,
       "sha256": "2ae81385418725bd259bb2b79f9ed640231dc30069b587f26930ee452f352e13",
       "locations": {
-        "canonical": null,
+        "canonical": "https://github.com/bc1cindy/decluster/raw/f85c47c743ea7eb3a7e73d23dae60ccf65241e46/sources/decluster-d9be533-runtime.tar",
         "mirrors": []
       }
     },
@@ -65,7 +65,7 @@
       "bytes": 362,
       "sha256": "00a87c3141e79853b2ce75ed58320fa68f0f3812ac72ce9c09a0d03babe23e5d",
       "locations": {
-        "canonical": null,
+        "canonical": "https://github.com/bc1cindy/decluster/raw/f85c47c743ea7eb3a7e73d23dae60ccf65241e46/reproduction/eve-alice-eve/environment.json",
         "mirrors": []
       }
     }

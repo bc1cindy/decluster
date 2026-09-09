@@ -15,7 +15,7 @@
       "bytes": 3592,
       "sha256": "a3c94029bbaeff6dcfeb81cb3907049710cf5a6e7975b1cbf7c04db79a8eab87",
       "locations": {
-        "canonical": null,
+        "canonical": "https://github.com/bc1cindy/decluster/raw/f85c47c743ea7eb3a7e73d23dae60ccf65241e46/catalog/runs/amount-pairwise-family-v1.json",
         "mirrors": []
       }
     },
@@ -55,7 +55,7 @@
       "bytes": 2457600,
       "sha256": "2ae81385418725bd259bb2b79f9ed640231dc30069b587f26930ee452f352e13",
       "locations": {
-        "canonical": null,
+        "canonical": "https://github.com/bc1cindy/decluster/raw/f85c47c743ea7eb3a7e73d23dae60ccf65241e46/sources/decluster-d9be533-runtime.tar",
         "mirrors": []
       }
     },
@@ -85,7 +85,7 @@
       "bytes": 357,
       "sha256": "b548371afc80dfc0919f6e82b97f2051d3085d27f8d58d3d4e91575103dd1bd3",
       "locations": {
-        "canonical": null,
+        "canonical": "https://github.com/bc1cindy/decluster/raw/f85c47c743ea7eb3a7e73d23dae60ccf65241e46/reproduction/amount-pairwise-family/environment.json",
         "mirrors": []
       }
     }

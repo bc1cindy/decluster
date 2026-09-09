@@ -15,7 +15,7 @@
       "bytes": 3362,
       "sha256": "c13b041efc7ff8ed92da4ab9d2cbc78e594e1f6dca15143bc49aeb4861e06568",
       "locations": {
-        "canonical": null,
+        "canonical": "https://github.com/bc1cindy/decluster/raw/f85c47c743ea7eb3a7e73d23dae60ccf65241e46/catalog/runs/unnecessary-input-v2.json",
         "mirrors": []
       }
     },
@@ -45,7 +45,7 @@
       "bytes": 2457600,
       "sha256": "2ae81385418725bd259bb2b79f9ed640231dc30069b587f26930ee452f352e13",
       "locations": {
-        "canonical": null,
+        "canonical": "https://github.com/bc1cindy/decluster/raw/f85c47c743ea7eb3a7e73d23dae60ccf65241e46/sources/decluster-d9be533-runtime.tar",
         "mirrors": []
       }
     },
@@ -65,7 +65,7 @@
       "bytes": 370,
       "sha256": "c4a332d4193b6507bcaf16dd3a08965f595750d8989e8be27eebb91aa19d9123",
       "locations": {
-        "canonical": null,
+        "canonical": "https://github.com/bc1cindy/decluster/raw/f85c47c743ea7eb3a7e73d23dae60ccf65241e46/reproduction/unnecessary-input/environment.json",
         "mirrors": []
       }
     }

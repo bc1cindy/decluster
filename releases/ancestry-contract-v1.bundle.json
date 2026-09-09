@@ -15,7 +15,7 @@
       "bytes": 3039,
       "sha256": "060d8dfe0dfeacf448a4e23261f9a4119ebee25e721c9658b72aa7fa6a82e733",
       "locations": {
-        "canonical": null,
+        "canonical": "https://github.com/bc1cindy/decluster/raw/f85c47c743ea7eb3a7e73d23dae60ccf65241e46/catalog/runs/ancestry-contract-v1.json",
         "mirrors": []
       }
     },
@@ -45,7 +45,7 @@
       "bytes": 2457600,
       "sha256": "2ae81385418725bd259bb2b79f9ed640231dc30069b587f26930ee452f352e13",
       "locations": {
-        "canonical": null,
+        "canonical": "https://github.com/bc1cindy/decluster/raw/f85c47c743ea7eb3a7e73d23dae60ccf65241e46/sources/decluster-d9be533-runtime.tar",
         "mirrors": []
       }
     },
@@ -65,7 +65,7 @@
       "bytes": 370,
       "sha256": "e19abd17fbd27248a2992274fa449d6f8677c6ff9ec471d5e79f62ae9ae8b929",
       "locations": {
-        "canonical": null,
+        "canonical": "https://github.com/bc1cindy/decluster/raw/f85c47c743ea7eb3a7e73d23dae60ccf65241e46/reproduction/ancestry-contract/environment.json",
         "mirrors": []
       }
     }

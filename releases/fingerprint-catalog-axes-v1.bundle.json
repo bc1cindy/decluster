@@ -15,7 +15,7 @@
       "bytes": 3295,
       "sha256": "8ad21545d03a181571ee14d721d8cf0090a0ffe102786997f8c4e0df6124276c",
       "locations": {
-        "canonical": null,
+        "canonical": "https://github.com/bc1cindy/decluster/raw/f85c47c743ea7eb3a7e73d23dae60ccf65241e46/catalog/runs/fingerprint-catalog-axes-v1.json",
         "mirrors": []
       }
     },
@@ -55,7 +55,7 @@
       "bytes": 2457600,
       "sha256": "2ae81385418725bd259bb2b79f9ed640231dc30069b587f26930ee452f352e13",
       "locations": {
-        "canonical": null,
+        "canonical": "https://github.com/bc1cindy/decluster/raw/f85c47c743ea7eb3a7e73d23dae60ccf65241e46/sources/decluster-d9be533-runtime.tar",
         "mirrors": []
       }
     },
@@ -75,7 +75,7 @@
       "bytes": 384,
       "sha256": "a5cfdef1626dd7c0b3a32e47e7b50517c50d81569a901b34668b1d701ef78517",
       "locations": {
-        "canonical": null,
+        "canonical": "https://github.com/bc1cindy/decluster/raw/f85c47c743ea7eb3a7e73d23dae60ccf65241e46/reproduction/fingerprint-catalog-axes/environment.json",
         "mirrors": []
       }
     }

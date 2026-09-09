@@ -15,7 +15,7 @@
       "bytes": 2990,
       "sha256": "f525148739771099d1b77bf23db86a11fc75126ff72c555452667de3c736b22a",
       "locations": {
-        "canonical": null,
+        "canonical": "https://github.com/bc1cindy/decluster/raw/f85c47c743ea7eb3a7e73d23dae60ccf65241e46/catalog/runs/boltzmann-fee-audit-v1.json",
         "mirrors": []
       }
     },
@@ -55,7 +55,7 @@
       "bytes": 2457600,
       "sha256": "2ae81385418725bd259bb2b79f9ed640231dc30069b587f26930ee452f352e13",
       "locations": {
-        "canonical": null,
+        "canonical": "https://github.com/bc1cindy/decluster/raw/f85c47c743ea7eb3a7e73d23dae60ccf65241e46/sources/decluster-d9be533-runtime.tar",
         "mirrors": []
       }
     },
@@ -75,7 +75,7 @@
       "bytes": 374,
       "sha256": "7aab89b9a546e8681c92e31ef3ee1cddf9ae8dc8622ec05a3b3cc91cec226660",
       "locations": {
-        "canonical": null,
+        "canonical": "https://github.com/bc1cindy/decluster/raw/f85c47c743ea7eb3a7e73d23dae60ccf65241e46/reproduction/boltzmann-fee-audit/environment.json",
         "mirrors": []
       }
     }

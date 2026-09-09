@@ -15,7 +15,7 @@
       "bytes": 2951,
       "sha256": "33e51cd6883b6403e7e29a30cd3014d8f60ecf2f698b410dd2b3f0c7a1c9a536",
       "locations": {
-        "canonical": null,
+        "canonical": "https://github.com/bc1cindy/decluster/raw/f85c47c743ea7eb3a7e73d23dae60ccf65241e46/catalog/runs/ancestry-sparsity-v1.json",
         "mirrors": []
       }
     },
@@ -55,7 +55,7 @@
       "bytes": 2457600,
       "sha256": "2ae81385418725bd259bb2b79f9ed640231dc30069b587f26930ee452f352e13",
       "locations": {
-        "canonical": null,
+        "canonical": "https://github.com/bc1cindy/decluster/raw/f85c47c743ea7eb3a7e73d23dae60ccf65241e46/sources/decluster-d9be533-runtime.tar",
         "mirrors": []
       }
     },
@@ -75,7 +75,7 @@
       "bytes": 370,
       "sha256": "a08f7ae675207e0b3675376ff3e4c9761d32f59c32f408c65e890cb5f1592a15",
       "locations": {
-        "canonical": null,
+        "canonical": "https://github.com/bc1cindy/decluster/raw/f85c47c743ea7eb3a7e73d23dae60ccf65241e46/reproduction/ancestry-sparsity/environment.json",
         "mirrors": []
       }
     }

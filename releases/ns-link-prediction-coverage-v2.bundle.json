@@ -15,7 +15,7 @@
       "bytes": 2837,
       "sha256": "4dce3b9cadce020ce5cf32b2603cf08905fd51119f3daf4b1b0d4cb99dbeee84",
       "locations": {
-        "canonical": null,
+        "canonical": "https://github.com/bc1cindy/decluster/raw/f85c47c743ea7eb3a7e73d23dae60ccf65241e46/catalog/runs/ns-link-prediction-coverage-v2.json",
         "mirrors": []
       }
     },
@@ -45,7 +45,7 @@
       "bytes": 2457600,
       "sha256": "2ae81385418725bd259bb2b79f9ed640231dc30069b587f26930ee452f352e13",
       "locations": {
-        "canonical": null,
+        "canonical": "https://github.com/bc1cindy/decluster/raw/f85c47c743ea7eb3a7e73d23dae60ccf65241e46/sources/decluster-d9be533-runtime.tar",
         "mirrors": []
       }
     },
@@ -65,7 +65,7 @@
       "bytes": 390,
       "sha256": "751b42b62ae7bf557aae692ab0d2fa4eedbe63091fbe2a3e4c45e787b17a2227",
       "locations": {
-        "canonical": null,
+        "canonical": "https://github.com/bc1cindy/decluster/raw/f85c47c743ea7eb3a7e73d23dae60ccf65241e46/reproduction/ns-link-prediction-coverage/environment.json",
         "mirrors": []
       }
     }

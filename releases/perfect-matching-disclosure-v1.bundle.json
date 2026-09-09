@@ -15,7 +15,7 @@
       "bytes": 2883,
       "sha256": "f4fa5e052ffa092f6ecef3a68e1d235325293687993d0c6ac82963aab631e6df",
       "locations": {
-        "canonical": null,
+        "canonical": "https://github.com/bc1cindy/decluster/raw/f85c47c743ea7eb3a7e73d23dae60ccf65241e46/catalog/runs/perfect-matching-disclosure-v1.json",
         "mirrors": []
       }
     },
@@ -45,7 +45,7 @@
       "bytes": 2457600,
       "sha256": "2ae81385418725bd259bb2b79f9ed640231dc30069b587f26930ee452f352e13",
       "locations": {
-        "canonical": null,
+        "canonical": "https://github.com/bc1cindy/decluster/raw/f85c47c743ea7eb3a7e73d23dae60ccf65241e46/sources/decluster-d9be533-runtime.tar",
         "mirrors": []
       }
     },
@@ -65,7 +65,7 @@
       "bytes": 390,
       "sha256": "9092c2a42af8ba6e40f3f709b5b267247b4832def88eec772930c496f40438aa",
       "locations": {
-        "canonical": null,
+        "canonical": "https://github.com/bc1cindy/decluster/raw/f85c47c743ea7eb3a7e73d23dae60ccf65241e46/reproduction/perfect-matching-disclosure/environment.json",
         "mirrors": []
       }
     }

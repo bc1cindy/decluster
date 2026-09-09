@@ -15,7 +15,7 @@
       "bytes": 2735,
       "sha256": "4e1cdeb2f63c65840645bafb14ba8baf64947b6c08fa5fcd55c3bbf7963be8e4",
       "locations": {
-        "canonical": null,
+        "canonical": "https://github.com/bc1cindy/decluster/raw/f85c47c743ea7eb3a7e73d23dae60ccf65241e46/catalog/runs/exact-oracle-audit-v1.json",
         "mirrors": []
       }
     },
@@ -45,7 +45,7 @@
       "bytes": 2457600,
       "sha256": "2ae81385418725bd259bb2b79f9ed640231dc30069b587f26930ee452f352e13",
       "locations": {
-        "canonical": null,
+        "canonical": "https://github.com/bc1cindy/decluster/raw/f85c47c743ea7eb3a7e73d23dae60ccf65241e46/sources/decluster-d9be533-runtime.tar",
         "mirrors": []
       }
     },
@@ -75,7 +75,7 @@
       "bytes": 347,
       "sha256": "ea58ce3ea48a90ce4e8bd91974dda83e7b530e9d983bc8e09780fa7e35072795",
       "locations": {
-        "canonical": null,
+        "canonical": "https://github.com/bc1cindy/decluster/raw/f85c47c743ea7eb3a7e73d23dae60ccf65241e46/reproduction/exact-oracle/environment.json",
         "mirrors": []
       }
     }

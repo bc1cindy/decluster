@@ -15,7 +15,7 @@
       "bytes": 2699,
       "sha256": "42b143fc5eec2dbe0a4361ad4689d3beeace42893c524b85d22bc968453550a6",
       "locations": {
-        "canonical": null,
+        "canonical": "https://github.com/bc1cindy/decluster/raw/f85c47c743ea7eb3a7e73d23dae60ccf65241e46/catalog/runs/pseudonym-graph-contract-v1.json",
         "mirrors": []
       }
     },
@@ -45,7 +45,7 @@
       "bytes": 2457600,
       "sha256": "2ae81385418725bd259bb2b79f9ed640231dc30069b587f26930ee452f352e13",
       "locations": {
-        "canonical": null,
+        "canonical": "https://github.com/bc1cindy/decluster/raw/f85c47c743ea7eb3a7e73d23dae60ccf65241e46/sources/decluster-d9be533-runtime.tar",
         "mirrors": []
       }
     },
@@ -65,7 +65,7 @@
       "bytes": 384,
       "sha256": "dc7fff76f93ca0f5c69d57627ebcb24f670dc28dee860fd883aeeb98deaf113c",
       "locations": {
-        "canonical": null,
+        "canonical": "https://github.com/bc1cindy/decluster/raw/f85c47c743ea7eb3a7e73d23dae60ccf65241e46/reproduction/pseudonym-graph-contract/environment.json",
         "mirrors": []
       }
     }

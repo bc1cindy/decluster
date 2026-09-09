@@ -15,7 +15,7 @@
       "bytes": 2503,
       "sha256": "5024a9bd7eaa1598d2f5d4153893063be6353084ea0ab3da0d95ab7555a08a4a",
       "locations": {
-        "canonical": null,
+        "canonical": "https://github.com/bc1cindy/decluster/raw/f85c47c743ea7eb3a7e73d23dae60ccf65241e46/catalog/runs/change-consolidation-v1.json",
         "mirrors": []
       }
     },
@@ -45,7 +45,7 @@
       "bytes": 2457600,
       "sha256": "2ae81385418725bd259bb2b79f9ed640231dc30069b587f26930ee452f352e13",
       "locations": {
-        "canonical": null,
+        "canonical": "https://github.com/bc1cindy/decluster/raw/f85c47c743ea7eb3a7e73d23dae60ccf65241e46/sources/decluster-d9be533-runtime.tar",
         "mirrors": []
       }
     },
@@ -65,7 +65,7 @@
       "bytes": 376,
       "sha256": "f0b8bc0f42bc7cada0c3ca3e1e523f2cd4243bfa0b3fb21784b79de94b6913ec",
       "locations": {
-        "canonical": null,
+        "canonical": "https://github.com/bc1cindy/decluster/raw/f85c47c743ea7eb3a7e73d23dae60ccf65241e46/reproduction/change-consolidation/environment.json",
         "mirrors": []
       }
     }

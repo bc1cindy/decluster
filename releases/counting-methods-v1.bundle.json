@@ -15,7 +15,7 @@
       "bytes": 2644,
       "sha256": "79e65206887a84212c44385e24c2b4f8c8e78e7e089bc93331d078b5fb34b929",
       "locations": {
-        "canonical": null,
+        "canonical": "https://github.com/bc1cindy/decluster/raw/f85c47c743ea7eb3a7e73d23dae60ccf65241e46/catalog/runs/counting-methods-v1.json",
         "mirrors": []
       }
     },
@@ -65,7 +65,7 @@
       "bytes": 2457600,
       "sha256": "2ae81385418725bd259bb2b79f9ed640231dc30069b587f26930ee452f352e13",
       "locations": {
-        "canonical": null,
+        "canonical": "https://github.com/bc1cindy/decluster/raw/f85c47c743ea7eb3a7e73d23dae60ccf65241e46/sources/decluster-d9be533-runtime.tar",
         "mirrors": []
       }
     },
@@ -85,7 +85,7 @@
       "bytes": 351,
       "sha256": "a10d6b672c20cf701699fae433cada5ccbe7217c5de9bfa9e3d9d5bfdfcedc72",
       "locations": {
-        "canonical": null,
+        "canonical": "https://github.com/bc1cindy/decluster/raw/f85c47c743ea7eb3a7e73d23dae60ccf65241e46/reproduction/counting-methods/environment.json",
         "mirrors": []
       }
     }

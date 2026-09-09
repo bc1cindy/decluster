@@ -15,7 +15,7 @@
       "bytes": 2565,
       "sha256": "0a787779fd36a37fa2eab496a9bc8baf2e30da77fff06606f799b3f929bc313f",
       "locations": {
-        "canonical": null,
+        "canonical": "https://github.com/bc1cindy/decluster/raw/f85c47c743ea7eb3a7e73d23dae60ccf65241e46/catalog/runs/cioh-collaborative-false-merge-v1.json",
         "mirrors": []
       }
     },
@@ -45,7 +45,7 @@
       "bytes": 2457600,
       "sha256": "2ae81385418725bd259bb2b79f9ed640231dc30069b587f26930ee452f352e13",
       "locations": {
-        "canonical": null,
+        "canonical": "https://github.com/bc1cindy/decluster/raw/f85c47c743ea7eb3a7e73d23dae60ccf65241e46/sources/decluster-d9be533-runtime.tar",
         "mirrors": []
       }
     },
@@ -65,7 +65,7 @@
       "bytes": 372,
       "sha256": "0287747ae28e65688a3f9f9e4eec2dc96014a3de9ac4e059b16286c24dd657e6",
       "locations": {
-        "canonical": null,
+        "canonical": "https://github.com/bc1cindy/decluster/raw/f85c47c743ea7eb3a7e73d23dae60ccf65241e46/reproduction/cioh-collaborative/environment.json",
         "mirrors": []
       }
     }

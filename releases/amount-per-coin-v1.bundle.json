@@ -15,7 +15,7 @@
       "bytes": 3472,
       "sha256": "a579ef66090475506dd18ec2e469a63ac4fdc6136c2a4d4660d1489ad8a48a7b",
       "locations": {
-        "canonical": null,
+        "canonical": "https://github.com/bc1cindy/decluster/raw/f85c47c743ea7eb3a7e73d23dae60ccf65241e46/catalog/runs/amount-per-coin-v1.json",
         "mirrors": []
       }
     },
@@ -55,7 +55,7 @@
       "bytes": 2457600,
       "sha256": "2ae81385418725bd259bb2b79f9ed640231dc30069b587f26930ee452f352e13",
       "locations": {
-        "canonical": null,
+        "canonical": "https://github.com/bc1cindy/decluster/raw/f85c47c743ea7eb3a7e73d23dae60ccf65241e46/sources/decluster-d9be533-runtime.tar",
         "mirrors": []
       }
     },
@@ -85,7 +85,7 @@
       "bytes": 350,
       "sha256": "57c87a7b22f5538d5f295bdfe1ba65b1e9b6e925f5dd0f9ce7fbb86ca40e0982",
       "locations": {
-        "canonical": null,
+        "canonical": "https://github.com/bc1cindy/decluster/raw/f85c47c743ea7eb3a7e73d23dae60ccf65241e46/reproduction/amount-per-coin/environment.json",
         "mirrors": []
       }
     }

@@ -15,7 +15,7 @@
       "bytes": 2627,
       "sha256": "c08280a268b0e04d6965b209145e68fc7b8f2baea21ff3f31f16403dd9f915eb",
       "locations": {
-        "canonical": null,
+        "canonical": "https://github.com/bc1cindy/decluster/raw/f85c47c743ea7eb3a7e73d23dae60ccf65241e46/catalog/runs/ns1r-change-readoff-v1.json",
         "mirrors": []
       }
     },
@@ -45,7 +45,7 @@
       "bytes": 2457600,
       "sha256": "2ae81385418725bd259bb2b79f9ed640231dc30069b587f26930ee452f352e13",
       "locations": {
-        "canonical": null,
+        "canonical": "https://github.com/bc1cindy/decluster/raw/f85c47c743ea7eb3a7e73d23dae60ccf65241e46/sources/decluster-d9be533-runtime.tar",
         "mirrors": []
       }
     },
@@ -65,7 +65,7 @@
       "bytes": 374,
       "sha256": "2e69fb8ab1b9c576f1a351924bbdf36b278379951771333448b715cc85fdb172",
       "locations": {
-        "canonical": null,
+        "canonical": "https://github.com/bc1cindy/decluster/raw/f85c47c743ea7eb3a7e73d23dae60ccf65241e46/reproduction/ns1r-change-readoff/environment.json",
         "mirrors": []
       }
     }

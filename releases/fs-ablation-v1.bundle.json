@@ -15,7 +15,7 @@
       "bytes": 2748,
       "sha256": "3944c2d7c683eae8b3acc1d8b4f1b8d036e8a51fee1d9a0d0b1f1f3674736434",
       "locations": {
-        "canonical": null,
+        "canonical": "https://github.com/bc1cindy/decluster/raw/f85c47c743ea7eb3a7e73d23dae60ccf65241e46/catalog/runs/fs-ablation-v1.json",
         "mirrors": []
       }
     },
@@ -55,7 +55,7 @@
       "bytes": 2457600,
       "sha256": "2ae81385418725bd259bb2b79f9ed640231dc30069b587f26930ee452f352e13",
       "locations": {
-        "canonical": null,
+        "canonical": "https://github.com/bc1cindy/decluster/raw/f85c47c743ea7eb3a7e73d23dae60ccf65241e46/sources/decluster-d9be533-runtime.tar",
         "mirrors": []
       }
     },
@@ -75,7 +75,7 @@
       "bytes": 358,
       "sha256": "097e889c4ae34dd60baf0c80fc19a003e1adea40bad626e9faa8162a6a4ef9cf",
       "locations": {
-        "canonical": null,
+        "canonical": "https://github.com/bc1cindy/decluster/raw/f85c47c743ea7eb3a7e73d23dae60ccf65241e46/reproduction/fs-ablation/environment.json",
         "mirrors": []
       }
     }
