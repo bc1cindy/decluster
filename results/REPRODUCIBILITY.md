@@ -189,6 +189,29 @@ This does not yet establish public or platform-independent reproduction. The env
 CPython 3.13 on macOS arm64, and the bundle has no public HTTPS origin or independent mirror. The
 readiness command reports those distribution blockers explicitly.
 
+### Running the gate on what changed
+
+The full gate is `pytest -m reproduction`, and its cost is concentrated rather than spread: one run,
+`graph-rejoin-2016-v1`, takes about thirty-five minutes on its own — the bundle test executes the
+experiment once to reproduce it and again to verify it — while twenty-five of the sixty-three
+bundles finish in under five seconds each. CI never runs it (both jobs are
+`-m "not live and not reproduction"`), and it skips off CPython 3.13 on macOS arm64, so it is a local
+gate that has to be worth starting.
+
+`decluster.bundle_selection` narrows it to the bundles a change can reach — by pinned blob, by the
+entry module's static import closure, or by the blanket for a file read at run time:
+
+```
+python -m decluster.bundle_selection --base HEAD
+python -m pytest -m reproduction -k "$(python -m decluster.bundle_selection --pytest)"
+```
+
+Two limits, both load-bearing. The closure is static, so an `importlib` lookup is invisible to it and
+a narrowed run is evidence about the bundles it names, not a licence to skip the full gate before
+publishing. And it wants the change, not its aftermath: `--repoint` rewrites `code.revision` in every
+run manifest, and a manifest is a pinned blob, so afterwards every bundle is selected. Run it while
+the edit is still the only thing that differs.
+
 
 ## Oracle contradiction: prose resolved, measurement still historical (2026-09-09)
 

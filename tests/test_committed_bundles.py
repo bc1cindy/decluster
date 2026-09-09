@@ -69,7 +69,8 @@ def test_every_committed_bundle_is_complete_and_content_verified():
     or platform.machine() != "arm64",
     reason="the first reproduction environment targets CPython 3.13 on macOS arm64",
 )
-@pytest.mark.parametrize("index", sorted((ROOT / "releases").glob("*.bundle.json")))
+@pytest.mark.parametrize("index", sorted((ROOT / "releases").glob("*.bundle.json")),
+                         ids=lambda index: index.name.removesuffix(".bundle.json"))
 @pytest.mark.reproduction
 def test_committed_bundle_reproduces_from_materialized_contents(tmp_path, index):
     bundle = load_bundle(index)
