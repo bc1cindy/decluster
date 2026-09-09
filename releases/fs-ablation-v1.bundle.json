@@ -13,9 +13,9 @@
       "name": "catalog/runs/fs-ablation-v1.json",
       "role": "run_manifest",
       "bytes": 2748,
-      "sha256": "84af261db268b784c4674130786064767506f070657f95b0c1b8d840bd6c012c",
+      "sha256": "de763472937f487597f5d69a7625fbb4f367b8bcf3248dcac8c781fb4a1e3b50",
       "locations": {
-        "canonical": "https://github.com/bc1cindy/decluster/raw/b797864acf974e329d27d394ced7bb96cabbbfd7/catalog/runs/fs-ablation-v1.json",
+        "canonical": null,
         "mirrors": []
       }
     },
@@ -50,12 +50,12 @@
       }
     },
     {
-      "name": "sources/decluster-59195e2-runtime.tar",
+      "name": "sources/decluster-3be37b0-runtime.tar",
       "role": "source",
-      "bytes": 2437120,
-      "sha256": "8803bf1fe4950365bd5e07e582b087b2ad6bffef05bc869e294dd7e50fa6fb19",
+      "bytes": 2457600,
+      "sha256": "16b8a7a6afb2678755aefb8cc75eacc497bba40249156889f3e467a244ffb576",
       "locations": {
-        "canonical": "https://github.com/bc1cindy/decluster/raw/b797864acf974e329d27d394ced7bb96cabbbfd7/sources/decluster-59195e2-runtime.tar",
+        "canonical": null,
         "mirrors": []
       }
     },
@@ -73,9 +73,9 @@
       "name": "reproduction/fs-ablation/environment.json",
       "role": "environment",
       "bytes": 358,
-      "sha256": "ca8a2b23da050dd09104bdf8323ea024266f3f3e15826f2fb85c1633b47bf1ec",
+      "sha256": "706a8d819f28afae591eec520471444e30886ff5f10492477cdf32735ce02c71",
       "locations": {
-        "canonical": "https://github.com/bc1cindy/decluster/raw/b797864acf974e329d27d394ced7bb96cabbbfd7/reproduction/fs-ablation/environment.json",
+        "canonical": null,
         "mirrors": []
       }
     }

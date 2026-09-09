@@ -13,9 +13,9 @@
       "name": "catalog/runs/library-calibration-v1.json",
       "role": "run_manifest",
       "bytes": 3011,
-      "sha256": "09770a51260ebf1235d166b663c0570bb594a84ddbda7d42eb7c6822106ed39d",
+      "sha256": "89f83d1efb8969f47b36f32e925f79d751cf648f128387617c813a2c726c5b73",
       "locations": {
-        "canonical": "https://github.com/bc1cindy/decluster/raw/b797864acf974e329d27d394ced7bb96cabbbfd7/catalog/runs/library-calibration-v1.json",
+        "canonical": null,
         "mirrors": []
       }
     },
@@ -50,12 +50,12 @@
       }
     },
     {
-      "name": "sources/decluster-59195e2-runtime.tar",
+      "name": "sources/decluster-3be37b0-runtime.tar",
       "role": "source",
-      "bytes": 2437120,
-      "sha256": "8803bf1fe4950365bd5e07e582b087b2ad6bffef05bc869e294dd7e50fa6fb19",
+      "bytes": 2457600,
+      "sha256": "16b8a7a6afb2678755aefb8cc75eacc497bba40249156889f3e467a244ffb576",
       "locations": {
-        "canonical": "https://github.com/bc1cindy/decluster/raw/b797864acf974e329d27d394ced7bb96cabbbfd7/sources/decluster-59195e2-runtime.tar",
+        "canonical": null,
         "mirrors": []
       }
     },
@@ -73,9 +73,9 @@
       "name": "reproduction/library-calibration/environment.json",
       "role": "environment",
       "bytes": 374,
-      "sha256": "16ae5529668fab653654f8a24c2c39e4c298dfa1941417924d7caf9203ade49c",
+      "sha256": "4cdab71c6bdd51053a7771c2a7067cbe6a0e7f00c5c8e4e07700be835e9d0d0f",
       "locations": {
-        "canonical": "https://github.com/bc1cindy/decluster/raw/b797864acf974e329d27d394ced7bb96cabbbfd7/reproduction/library-calibration/environment.json",
+        "canonical": null,
         "mirrors": []
       }
     }

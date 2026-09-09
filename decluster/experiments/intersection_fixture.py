@@ -9,10 +9,15 @@ from pathlib import Path
 from examples.intersection_pipeline import run
 
 from ..adaptations.ancestry import ancestry_signature_report
+from ..ancestry import value_flow_link_oracle
 from ..result_artifacts import canonical_json_bytes, write_canonical_json
 
 
 EXPERIMENT_ID = "intersection-cluster-fixture-v1"
+# Named rather than defaulted: the branches this run intersects are only as comparable as the
+# walk that produced them, so the walk is part of the result.
+ORACLE = value_flow_link_oracle
+ORACLE_ID = "decluster.ancestry.value_flow_link_oracle"
 
 
 class VerificationError(ValueError):
@@ -71,7 +76,7 @@ def build_artifact():
         get_tx=fetch,
         get_outspends=lambda txid: outspends.get(txid, []),
         ancestry_report_of=lambda outpoint: ancestry_signature_report(
-            outpoint, depth=2, fetch=fetch
+            outpoint, depth=2, fetch=fetch, link_oracle=ORACLE
         ),
         intersection_options={"cluster_of": lambda coin: coin[0]},
         max_depth=1,
@@ -80,6 +85,7 @@ def build_artifact():
     return {
         "schema_version": 1,
         "experiment": EXPERIMENT_ID,
+        "oracle": ORACLE_ID,
         "parameters": {
             "ancestry_depth": 2,
             "cluster_key": "creating transaction id",
@@ -132,6 +138,8 @@ def render_markdown(artifact):
         "# Cluster-level provenance intersection fixture",
         "",
         "Generated from the canonical experiment artifact. Do not edit manually.",
+        "",
+        f"Ancestry oracle: `{artifact['oracle']}`, named by this run rather than defaulted.",
         "",
         "| quantity | value |",
         "|---|---:|",

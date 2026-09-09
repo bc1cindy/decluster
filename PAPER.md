@@ -756,10 +756,13 @@ and the regime the conditioner-vs-quasi-identifier split there points to: the sp
 the anonymity-set object they measure.
 
 `ancestry_entropy` (`decluster/ancestry.py`) computes the
-absorber-model provenance entropy — a backward walk weighted by the subset-sum link matrix
-(`dss.pairwise_link_prob`), solved as an absorbing Markov chain — a per-coin lower bound on provenance
-ambiguity. On real coins the bound is **≈0 bits** for typical coins — the origin resolves to a single
-ancestral coin — rising only through genuine fan-out (`results/RESULTS-ancestry.md`). As a *bound*
+absorber-model provenance entropy — a backward walk weighted by the nominal-value transition rule
+(`ancestry.value_flow_link_oracle`), solved as an absorbing Markov chain — a per-coin lower bound on
+provenance ambiguity. The older **≈0-bit** mainnet observation was measured with the opt-in subset-sum
+oracle and remains historical (`results/RESULTS-ancestry.md`); its input snapshot was not preserved,
+so it is neither re-measurable under the new default nor carried over to it. What runs under the
+default is the deterministic contract in `catalog/runs/ancestry-contract-v1.json`, which now names
+the oracle in its own artifact rather than inheriting it. As a *bound*
 that holds however it arose: truncation on an oracle refusal, like the depth cutoff, merges mass into
 one atom and can only understate ambiguity. Reading it as confirmation of the framework's
 "every coin is sparsely represented" premise asks more, because a boundary that is entirely the
@@ -767,7 +770,7 @@ oracle declining to walk is not an observed origin, and the run does not separat
 distinction is reported by `intersect.evaluate` as `blind` (§9); applying it here is a
 re-run, not a re-derivation. This first rung is only the entropy of the graph-only walk; the full
 measurement it feeds — the same-owner fusion, the `max_nodes` node bound for deep coinjoins, the
-opt-in `value_weighted` flow rung, the §07 path count, and the partition-posterior check, all as one
+opt-in `value_weighted` hybrid weighting, the §07 path count, and the partition-posterior check, all as one
 callable pipeline — is developed in the rest of this section. The deep-feature matching
 attack — using that sparse ancestry signature as a Narayanan–Shmatikov distinguishing feature to *link*
 coins — has a first demonstration too: `provenance_link` (`ancestry.py`) scores the rarity-weighted
@@ -807,8 +810,9 @@ output beside a subjective-fused
 reading. Its min-entropy is the same conservative lower bound on the coin's provenance entropy (§04;
 a linear solve, not Monte Carlo); §06 reads such entropy as a lower bound on the graph cuts to
 de-anonymize, but — per §12 — that transfer is not adopted for this absorber-model entropy, so the number
-is an entropy bound, not a cut count. (The default weights transitions by subset-sum link probability,
-not §04's coin-value measure; the value-weighted flow rung is the opt-in `value_weighted` — §12.)
+is an entropy bound, not a cut count. The default follows §04's nominal coin-value transition rule.
+Subset-sum ancestry is retained only through the explicitly selected `dss_link_oracle`; the separate
+`value_weighted` option is a hybrid that scales a link-oracle column by input value, not the flow oracle.
 
 **Fusion.** Address-reuse self-transfer enters by default as a per-transaction subjective link matrix
 that combines with the graph-derived one *before* the absorbing solve (our §04-faithful reading; §04
@@ -1193,7 +1197,7 @@ which evidence state every result document is filed under, and which are not yet
 
 ## 12. Related work
 
-- <sub>**Yuval Kogman (nothingmuch), [*Anonymity Sets on the Transaction Graph*](https://github.com/nothingmuch/tx-graph-anonymity-sets)** supplies the entropic anonymity-set, sub-transaction, absorber and graph-quasi-identifier framework used in §2/§6/§9. Its walk weights transitions by coin value; `decluster/ancestry.py` defaults instead to row-normalized subset-sum link probability and exposes coin-value weighting through `value_weighted`. Provenance signatures and intersection results inherit that substitution. This paper treats entropy as attacker weight-of-evidence rather than a privacy score. `path_count.py` extends the framework's counterfactual-path notion using link probability alone. The framework's proposed relation between output entropy and excluded graph edges is not transferred to absorber entropy here because the required equivalence is not established.</sub>
+- <sub>**Yuval Kogman (nothingmuch), [*Anonymity Sets on the Transaction Graph*](https://github.com/nothingmuch/tx-graph-anonymity-sets)** supplies the entropic anonymity-set, sub-transaction, absorber and graph-quasi-identifier framework used in §2/§6/§9. Its walk weights transitions by coin value; `decluster/ancestry.py` now follows that nominal-value rule by default through `value_flow_link_oracle`. The row-normalized subset-sum oracle remains an explicit compatibility path for historical results, while `value_weighted` is a distinct hybrid rather than the framework's flow rule. Provenance signatures and intersection inherit whichever oracle the caller pins. This paper treats entropy as attacker weight-of-evidence rather than a privacy score. `path_count.py` extends the framework's counterfactual-path notion using link probability alone. The framework's proposed relation between output entropy and excluded graph edges is not transferred to absorber entropy here because the required equivalence is not established.</sub>
 - <sub>**Yuval Kogman (nothingmuch), [*Collaborative Transaction Privacy*](https://gist.github.com/nothingmuch/d84ba390d89b5b08897af2d95009c2a1)**: the failure-mode taxonomy this paper calibrates against — CIOH violation by collaborative transactions, the NS1R / NSNR / net-settlement progression, and the robust-connectivity / own-origin / deep-feature program (§2/§9/§10). It shows how net-settlement with cycles and deliberately underdetermined values can *silence* amount analysis — on our reading the most defeatable layer — which is why our *primary* amount signal is scoped to the decidable regime (§2), and the provenance / deep-feature channel it develops is exactly the one §7 sets aside and §8 develops.</sub>
 - <sub>**Armin Sabouri, [*How Fingerprints Damage PayJoin Privacy*](https://github.com/payjoin/research-docs/blob/main/fingerprints/payjoin.md)** (payjoin/research-docs): the applied payjoin case for this program — it walks real payjoin transactions through the same construction tells this paper measures (low-R, SIGHASH serialization, nSequence, value-conservation/round-number, input ordering/locktime, coin-selection residuals), across intra- and inter-transaction layers, and concludes that "PayJoin's privacy extends only as far as the uniformity of the participating wallets." That is precisely the collaborative-transaction failure our engine quantifies: the merge is refused by the amount structure and again by the fingerprints (§2/§6), and the same per-axis bits, inverted, define the construction-side uniformity a payjoin must reach (§10).</sub>
 - <sub>**Cindy (bc1cindy)**, [*Tracking: chain-observable transaction-level fingerprinting*](https://github.com/payjoin/rust-payjoin/issues/1597) (payjoin/rust-payjoin #1597): the venue for this program and its review discussion — the tracking issue that scopes the fingerprint checklist (§7) this paper measures against.</sub>

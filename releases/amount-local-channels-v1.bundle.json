@@ -13,9 +13,9 @@
       "name": "catalog/runs/amount-local-channels-v1.json",
       "role": "run_manifest",
       "bytes": 3064,
-      "sha256": "e89c9d21c6a39b240a9c7a5e734c3415b48e76eaef85e677632dc705175adcd8",
+      "sha256": "b57d979573caee9fe8ad841d05cb3db11b327e9c34e776e91628a536c2751820",
       "locations": {
-        "canonical": "https://github.com/bc1cindy/decluster/raw/b797864acf974e329d27d394ced7bb96cabbbfd7/catalog/runs/amount-local-channels-v1.json",
+        "canonical": null,
         "mirrors": []
       }
     },
@@ -50,12 +50,12 @@
       }
     },
     {
-      "name": "sources/decluster-59195e2-runtime.tar",
+      "name": "sources/decluster-3be37b0-runtime.tar",
       "role": "source",
-      "bytes": 2437120,
-      "sha256": "8803bf1fe4950365bd5e07e582b087b2ad6bffef05bc869e294dd7e50fa6fb19",
+      "bytes": 2457600,
+      "sha256": "16b8a7a6afb2678755aefb8cc75eacc497bba40249156889f3e467a244ffb576",
       "locations": {
-        "canonical": "https://github.com/bc1cindy/decluster/raw/b797864acf974e329d27d394ced7bb96cabbbfd7/sources/decluster-59195e2-runtime.tar",
+        "canonical": null,
         "mirrors": []
       }
     },
@@ -73,9 +73,9 @@
       "name": "reproduction/amount-local-channels/environment.json",
       "role": "environment",
       "bytes": 378,
-      "sha256": "f25bcf92a341595bd32435f9bef5e079e3773549b51425e16d04420c69824269",
+      "sha256": "cb06ff384fb934ed48b06dd0246ac0cd7e7ddd1e44bee98442ea8d0b0ffcc174",
       "locations": {
-        "canonical": "https://github.com/bc1cindy/decluster/raw/b797864acf974e329d27d394ced7bb96cabbbfd7/reproduction/amount-local-channels/environment.json",
+        "canonical": null,
         "mirrors": []
       }
     }

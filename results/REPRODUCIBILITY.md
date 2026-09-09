@@ -190,9 +190,36 @@ CPython 3.13 on macOS arm64, and the bundle has no public HTTPS origin or indepe
 readiness command reports those distribution blockers explicitly.
 
 
-## Known contradictions (2026-09-03)
+## Oracle contradiction: prose resolved, measurement still historical (2026-09-09)
 
-Filed, not fixed. The 2026-09 attack-faithfulness wave changed the provenance walk's default link
+The three `PAPER.md` items in the log below are closed. The `results/` documents are not, and are not
+closed by this correction: they keep their dated notes and remain the subset-sum walk.
+
+**`PAPER.md` no longer describes the old default.** §8 and the `tx-graph-anonymity-sets` footnote now
+name `ancestry.value_flow_link_oracle` as the ancestry default, keep `dss_link_oracle` as the opt-in
+compatibility path, and stop calling `value_weighted` the flow rung — it scales a link-oracle column
+by input value and is a hybrid, not the framework's flow rule.
+
+**The two canonical runs under that default now name it.** `ancestry-contract-v1` and
+`intersection-cluster-fixture-v1` were already executing the default oracle, and they now pass
+`value_flow_link_oracle` explicitly and record `"oracle"` in their artifacts, so a later change of
+the library default makes them fail loudly instead of restating a different walk under the same run
+id. Every measured value in both artifacts is unchanged by the pin — that is the evidence they were
+running the default already, and it is the reason no result was renamed or reissued.
+`tests/test_default_link_oracle.py` pins the library binding itself.
+
+**The historical mainnet figures were not re-measured, and cannot be here.** The DSS-backed numbers
+in `RESULTS-ancestry.md` and `RESULTS-intersection.md` depend on input snapshots and a network fetch
+protocol that were not preserved (see the canonical-status notes at the head of each). They stay
+labelled as the subset-sum walk. Re-measuring the value-flow walk on real data is gated on the same
+whole-graph provenance stream §9 already names, not on this correction, so "no `results/` document
+reports a value-flow measurement on real data" still stands — what changed is that the fixture-level
+runs which do exercise it are now unambiguous about which walk they are.
+
+## Historical contradiction log (2026-09-03)
+
+Filed at the time; retained as an audit log of what the tree disagreed with, with the oracle items
+resolved above rather than edited out here. The 2026-09 attack-faithfulness wave changed the provenance walk's default link
 oracle from the subset-sum link matrix (`ancestry.dss_link_oracle`, `dss.pairwise_link_prob`) to the
 nominal-value transition rule (`ancestry.value_flow_link_oracle`), and measured the subset-sum
 oracle against an exact one (`RESULTS-exact-oracle-audit.md`). Prose alignment across `PAPER.md` and

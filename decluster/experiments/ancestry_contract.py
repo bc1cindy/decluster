@@ -11,11 +11,15 @@ from ..adaptations.ancestry import (
     TruncatedAncestry,
     ancestry_signature_report,
 )
-from ..ancestry import provenance_link, value_flow_untraceability
+from ..ancestry import provenance_link, value_flow_link_oracle, value_flow_untraceability
 from ..result_artifacts import canonical_json_bytes, write_canonical_json
 
 EXPERIMENT_ID = "ancestry-contract-v1"
 TARGET = ("target", 0)
+# Named rather than defaulted, so a later change of `ancestry`'s default oracle cannot silently
+# restate what this run measured. `tests/test_default_link_oracle.py` guards the binding itself.
+ORACLE = value_flow_link_oracle
+ORACLE_ID = "decluster.ancestry.value_flow_link_oracle"
 
 
 class VerificationError(ValueError):
@@ -56,8 +60,10 @@ def _truncation(report):
 
 
 def build_artifact():
-    complete = ancestry_signature_report(TARGET, depth=2, fetch=_fetch)
-    capped = ancestry_signature_report(TARGET, depth=2, fetch=_fetch, max_nodes=1)
+    complete = ancestry_signature_report(TARGET, depth=2, fetch=_fetch, link_oracle=ORACLE)
+    capped = ancestry_signature_report(
+        TARGET, depth=2, fetch=_fetch, link_oracle=ORACLE, max_nodes=1,
+    )
     refused = ancestry_signature_report(
         TARGET, depth=2, fetch=_fetch, link_oracle=lambda _inputs, _outputs: None,
     )
@@ -68,6 +74,7 @@ def build_artifact():
     return {
         "schema_version": 1,
         "experiment": EXPERIMENT_ID,
+        "oracle": ORACLE_ID,
         "fixture": {"transactions": len(TRANSACTIONS), "target": "target:0", "depth": 2},
         "complete": {
             "state": type(complete.state).__name__,
@@ -137,6 +144,8 @@ def render_markdown(artifact):
         "# Nominal-value ancestry contract",
         "",
         "Generated from the canonical experiment artifact. Do not edit manually.",
+        "",
+        f"Transition oracle: `{artifact['oracle']}`, named by this run rather than defaulted.",
         "",
         f"The complete walk reaches `{complete['distribution']}` with Shannon entropy "
         f"{complete['shannon_bits']:.6f} bits and "

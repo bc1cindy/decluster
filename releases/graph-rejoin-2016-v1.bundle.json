@@ -13,9 +13,9 @@
       "name": "catalog/runs/graph-rejoin-2016-v1.json",
       "role": "run_manifest",
       "bytes": 3300,
-      "sha256": "98e6cd1af3866eff28ead4b88f74b7d40cfebdaf59eab374e31a0be617c54801",
+      "sha256": "33cf1e7e582d836ffe9b90090771935027ddd381be583c7fd41f7802397a4c73",
       "locations": {
-        "canonical": "https://github.com/bc1cindy/decluster/raw/b797864acf974e329d27d394ced7bb96cabbbfd7/catalog/runs/graph-rejoin-2016-v1.json",
+        "canonical": null,
         "mirrors": []
       }
     },
@@ -60,12 +60,12 @@
       }
     },
     {
-      "name": "sources/decluster-59195e2-runtime.tar",
+      "name": "sources/decluster-3be37b0-runtime.tar",
       "role": "source",
-      "bytes": 2437120,
-      "sha256": "8803bf1fe4950365bd5e07e582b087b2ad6bffef05bc869e294dd7e50fa6fb19",
+      "bytes": 2457600,
+      "sha256": "16b8a7a6afb2678755aefb8cc75eacc497bba40249156889f3e467a244ffb576",
       "locations": {
-        "canonical": "https://github.com/bc1cindy/decluster/raw/b797864acf974e329d27d394ced7bb96cabbbfd7/sources/decluster-59195e2-runtime.tar",
+        "canonical": null,
         "mirrors": []
       }
     },
@@ -93,9 +93,9 @@
       "name": "reproduction/graph-rejoin-2016/environment.json",
       "role": "environment",
       "bytes": 352,
-      "sha256": "5c5cd35dfaaf8370bb182975a1e2b2a53e3d9ba0b2ab268d3135cde4578d979f",
+      "sha256": "5f8474f24c0837324fd34d568fc2cf52f2f054a8cfcc30b73fa044a0c72ac4c8",
       "locations": {
-        "canonical": "https://github.com/bc1cindy/decluster/raw/b797864acf974e329d27d394ced7bb96cabbbfd7/reproduction/graph-rejoin-2016/environment.json",
+        "canonical": null,
         "mirrors": []
       }
     }

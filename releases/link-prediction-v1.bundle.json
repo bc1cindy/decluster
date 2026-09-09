@@ -13,9 +13,9 @@
       "name": "catalog/runs/link-prediction-v1.json",
       "role": "run_manifest",
       "bytes": 2672,
-      "sha256": "77a4c59f1ff34c4a848cbdec8edb7c618688608ed111225c6c28220c5d2f0f57",
+      "sha256": "3b0ee5a3b592b189e3d29e1c499900780a9b6f1369bdde4afd38da032aeef7a1",
       "locations": {
-        "canonical": "https://github.com/bc1cindy/decluster/raw/b797864acf974e329d27d394ced7bb96cabbbfd7/catalog/runs/link-prediction-v1.json",
+        "canonical": null,
         "mirrors": []
       }
     },
@@ -40,12 +40,12 @@
       }
     },
     {
-      "name": "sources/decluster-59195e2-runtime.tar",
+      "name": "sources/decluster-3be37b0-runtime.tar",
       "role": "source",
-      "bytes": 2437120,
-      "sha256": "8803bf1fe4950365bd5e07e582b087b2ad6bffef05bc869e294dd7e50fa6fb19",
+      "bytes": 2457600,
+      "sha256": "16b8a7a6afb2678755aefb8cc75eacc497bba40249156889f3e467a244ffb576",
       "locations": {
-        "canonical": "https://github.com/bc1cindy/decluster/raw/b797864acf974e329d27d394ced7bb96cabbbfd7/sources/decluster-59195e2-runtime.tar",
+        "canonical": null,
         "mirrors": []
       }
     },
@@ -63,9 +63,9 @@
       "name": "reproduction/link-prediction/environment.json",
       "role": "environment",
       "bytes": 366,
-      "sha256": "c2944a25ebe28caffdbf37227162979aac54b6ed33bb3a2592ea0f57fa6b3e93",
+      "sha256": "a9ae1a7a4f5612543699452c5d9c8bab6b02dc72f3f5e5caaf7714be0339a3d2",
       "locations": {
-        "canonical": "https://github.com/bc1cindy/decluster/raw/b797864acf974e329d27d394ced7bb96cabbbfd7/reproduction/link-prediction/environment.json",
+        "canonical": null,
         "mirrors": []
       }
     }
