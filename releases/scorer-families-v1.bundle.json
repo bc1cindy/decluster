@@ -13,7 +13,7 @@
       "name": "catalog/runs/scorer-families-v1.json",
       "role": "run_manifest",
       "bytes": 2986,
-      "sha256": "1f9c313f7afd16ab18d7e878d6c37c5deee5f302c73df610f925475095106c97",
+      "sha256": "c09a9c354263eb1e5b711d461ae69b4df38d8ed90aa795694d55c41faf84fd1c",
       "locations": {
         "canonical": null,
         "mirrors": []
@@ -50,10 +50,10 @@
       }
     },
     {
-      "name": "sources/decluster-f2d5ee6-runtime.tar",
+      "name": "sources/decluster-07435bb-runtime.tar",
       "role": "source",
-      "bytes": 2385920,
-      "sha256": "92a063235f9801215ea132b022626b020de9be52d4ce65077f12bf0eb0e7a935",
+      "bytes": 2447360,
+      "sha256": "885ec03fe7023d1a938f0b16baddc7ec9e471fbfdb311872a2f35ea70cc2048a",
       "locations": {
         "canonical": null,
         "mirrors": []
@@ -73,7 +73,7 @@
       "name": "reproduction/scorer-families/environment.json",
       "role": "environment",
       "bytes": 366,
-      "sha256": "b1c1898948039d6531faab9a0b3f42462751e73600883d53f0f00d6d5861ea36",
+      "sha256": "439ac989da9d2a9b8c7036c5a8b9c08ceb92b3d496ffacf6433c3616da9bbe9e",
       "locations": {
         "canonical": null,
         "mirrors": []
