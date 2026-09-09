@@ -15,7 +15,7 @@
       "bytes": 3064,
       "sha256": "8d8f360769041eaa0d76638afd9ed89a4e875a68784bbbcd4d1c0d9ed818feb3",
       "locations": {
-        "canonical": null,
+        "canonical": "https://github.com/bc1cindy/decluster/raw/3b5e1762a28e4a8a7f869c41cf3785e158950a50/catalog/runs/amount-local-channels-v1.json",
         "mirrors": []
       }
     },
@@ -55,7 +55,7 @@
       "bytes": 2457600,
       "sha256": "18893f6a7cf35071c8065a531df466b391b971d690969e89a838de59ba250666",
       "locations": {
-        "canonical": null,
+        "canonical": "https://github.com/bc1cindy/decluster/raw/3b5e1762a28e4a8a7f869c41cf3785e158950a50/sources/decluster-4844877-runtime.tar",
         "mirrors": []
       }
     },
@@ -75,7 +75,7 @@
       "bytes": 378,
       "sha256": "13cdb6960ad819611f3dc03dacf967d9ac7daf1839c08cec809a51f42a07337c",
       "locations": {
-        "canonical": null,
+        "canonical": "https://github.com/bc1cindy/decluster/raw/3b5e1762a28e4a8a7f869c41cf3785e158950a50/reproduction/amount-local-channels/environment.json",
         "mirrors": []
       }
     }

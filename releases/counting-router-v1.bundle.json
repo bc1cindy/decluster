@@ -15,7 +15,7 @@
       "bytes": 3217,
       "sha256": "5ae1da524ff0f6512864d283e4277a889ac9870350a16f6ca3435c682a2a330b",
       "locations": {
-        "canonical": null,
+        "canonical": "https://github.com/bc1cindy/decluster/raw/3b5e1762a28e4a8a7f869c41cf3785e158950a50/catalog/runs/counting-router-v1.json",
         "mirrors": []
       }
     },
@@ -55,7 +55,7 @@
       "bytes": 2457600,
       "sha256": "18893f6a7cf35071c8065a531df466b391b971d690969e89a838de59ba250666",
       "locations": {
-        "canonical": null,
+        "canonical": "https://github.com/bc1cindy/decluster/raw/3b5e1762a28e4a8a7f869c41cf3785e158950a50/sources/decluster-4844877-runtime.tar",
         "mirrors": []
       }
     },
@@ -85,7 +85,7 @@
       "bytes": 350,
       "sha256": "06cd576b0caa31eb5c251bdfed5be81b7032cecf5c45d385aa7fc6546e0fb6d2",
       "locations": {
-        "canonical": null,
+        "canonical": "https://github.com/bc1cindy/decluster/raw/3b5e1762a28e4a8a7f869c41cf3785e158950a50/reproduction/counting-router/environment.json",
         "mirrors": []
       }
     }

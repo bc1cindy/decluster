@@ -15,7 +15,7 @@
       "bytes": 2694,
       "sha256": "5ec5f9b614c4f3bde7d259e4dfc288352803ae12d448fbd19a7d735384fd9652",
       "locations": {
-        "canonical": null,
+        "canonical": "https://github.com/bc1cindy/decluster/raw/3b5e1762a28e4a8a7f869c41cf3785e158950a50/catalog/runs/intersection-cluster-fixture-v1.json",
         "mirrors": []
       }
     },
@@ -25,7 +25,7 @@
       "bytes": 1922,
       "sha256": "0291c4e303de595704190b0aee91d6f46a3d49def5622e9bb06fa71ce5c6fdad",
       "locations": {
-        "canonical": null,
+        "canonical": "https://github.com/bc1cindy/decluster/raw/3b5e1762a28e4a8a7f869c41cf3785e158950a50/results/artifacts/intersection-cluster-fixture-v1.json",
         "mirrors": []
       }
     },
@@ -35,7 +35,7 @@
       "bytes": 489,
       "sha256": "008de251d5fc583c56100dd6a60edf0829739a993d109dc7238aba61f76d8e38",
       "locations": {
-        "canonical": null,
+        "canonical": "https://github.com/bc1cindy/decluster/raw/3b5e1762a28e4a8a7f869c41cf3785e158950a50/results/generated/intersection-cluster-fixture-v1.md",
         "mirrors": []
       }
     },
@@ -45,7 +45,7 @@
       "bytes": 2457600,
       "sha256": "18893f6a7cf35071c8065a531df466b391b971d690969e89a838de59ba250666",
       "locations": {
-        "canonical": null,
+        "canonical": "https://github.com/bc1cindy/decluster/raw/3b5e1762a28e4a8a7f869c41cf3785e158950a50/sources/decluster-4844877-runtime.tar",
         "mirrors": []
       }
     },
@@ -65,7 +65,7 @@
       "bytes": 392,
       "sha256": "1696eb7227ffe1eb91fd9e5a5c2bdd4c88e7ace0a523978610b56800be3cfa9e",
       "locations": {
-        "canonical": null,
+        "canonical": "https://github.com/bc1cindy/decluster/raw/3b5e1762a28e4a8a7f869c41cf3785e158950a50/reproduction/intersection-cluster-fixture/environment.json",
         "mirrors": []
       }
     }

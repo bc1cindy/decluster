@@ -15,7 +15,7 @@
       "bytes": 3180,
       "sha256": "ac8f4d8cfb28c585415a1668eabbe30bbaa750a5d57c71d966e45478a34f8e34",
       "locations": {
-        "canonical": null,
+        "canonical": "https://github.com/bc1cindy/decluster/raw/3b5e1762a28e4a8a7f869c41cf3785e158950a50/catalog/runs/fingerprint-sparsity-v1.json",
         "mirrors": []
       }
     },
@@ -55,7 +55,7 @@
       "bytes": 2457600,
       "sha256": "18893f6a7cf35071c8065a531df466b391b971d690969e89a838de59ba250666",
       "locations": {
-        "canonical": null,
+        "canonical": "https://github.com/bc1cindy/decluster/raw/3b5e1762a28e4a8a7f869c41cf3785e158950a50/sources/decluster-4844877-runtime.tar",
         "mirrors": []
       }
     },
@@ -75,7 +75,7 @@
       "bytes": 376,
       "sha256": "1b58fd37f6e347ec54fa0f260f56bb24c8b0d05e77435c5060b9ed09efe132a8",
       "locations": {
-        "canonical": null,
+        "canonical": "https://github.com/bc1cindy/decluster/raw/3b5e1762a28e4a8a7f869c41cf3785e158950a50/reproduction/fingerprint-sparsity/environment.json",
         "mirrors": []
       }
     }

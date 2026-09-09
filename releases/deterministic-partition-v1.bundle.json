@@ -15,7 +15,7 @@
       "bytes": 2943,
       "sha256": "1e38221ad7f8e5eb6be03c88fc0b2c0815483a1088c445965386d0100d8effb3",
       "locations": {
-        "canonical": null,
+        "canonical": "https://github.com/bc1cindy/decluster/raw/3b5e1762a28e4a8a7f869c41cf3785e158950a50/catalog/runs/deterministic-partition-v1.json",
         "mirrors": []
       }
     },
@@ -45,7 +45,7 @@
       "bytes": 2457600,
       "sha256": "18893f6a7cf35071c8065a531df466b391b971d690969e89a838de59ba250666",
       "locations": {
-        "canonical": null,
+        "canonical": "https://github.com/bc1cindy/decluster/raw/3b5e1762a28e4a8a7f869c41cf3785e158950a50/sources/decluster-4844877-runtime.tar",
         "mirrors": []
       }
     },
@@ -65,7 +65,7 @@
       "bytes": 382,
       "sha256": "50eee6c33d7e35ecb763621ca7a55b69268f677332b696da7b2cd81b9e311600",
       "locations": {
-        "canonical": null,
+        "canonical": "https://github.com/bc1cindy/decluster/raw/3b5e1762a28e4a8a7f869c41cf3785e158950a50/reproduction/deterministic-partition/environment.json",
         "mirrors": []
       }
     }

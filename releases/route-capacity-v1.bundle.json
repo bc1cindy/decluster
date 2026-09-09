@@ -15,7 +15,7 @@
       "bytes": 3153,
       "sha256": "8ff3fe1ac9455dfd8090b99a0da38326cdb25502852810b0c6969da4cfe4e484",
       "locations": {
-        "canonical": null,
+        "canonical": "https://github.com/bc1cindy/decluster/raw/3b5e1762a28e4a8a7f869c41cf3785e158950a50/catalog/runs/route-capacity-v1.json",
         "mirrors": []
       }
     },
@@ -55,7 +55,7 @@
       "bytes": 2457600,
       "sha256": "18893f6a7cf35071c8065a531df466b391b971d690969e89a838de59ba250666",
       "locations": {
-        "canonical": null,
+        "canonical": "https://github.com/bc1cindy/decluster/raw/3b5e1762a28e4a8a7f869c41cf3785e158950a50/sources/decluster-4844877-runtime.tar",
         "mirrors": []
       }
     },
@@ -75,7 +75,7 @@
       "bytes": 364,
       "sha256": "d8529d7f109382fc5ebc15269b1f7b9e4984dc7fd50d1e51214b150f7390b2cc",
       "locations": {
-        "canonical": null,
+        "canonical": "https://github.com/bc1cindy/decluster/raw/3b5e1762a28e4a8a7f869c41cf3785e158950a50/reproduction/route-capacity/environment.json",
         "mirrors": []
       }
     }

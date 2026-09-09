@@ -15,7 +15,7 @@
       "bytes": 2843,
       "sha256": "8a212b1444a43824ee00302b3e86eb4fa7d932212aecb1fe428e0ad6d2d46350",
       "locations": {
-        "canonical": null,
+        "canonical": "https://github.com/bc1cindy/decluster/raw/3b5e1762a28e4a8a7f869c41cf3785e158950a50/catalog/runs/coinjoin-sudoku-nominal-v1.json",
         "mirrors": []
       }
     },
@@ -45,7 +45,7 @@
       "bytes": 2457600,
       "sha256": "18893f6a7cf35071c8065a531df466b391b971d690969e89a838de59ba250666",
       "locations": {
-        "canonical": null,
+        "canonical": "https://github.com/bc1cindy/decluster/raw/3b5e1762a28e4a8a7f869c41cf3785e158950a50/sources/decluster-4844877-runtime.tar",
         "mirrors": []
       }
     },
@@ -65,7 +65,7 @@
       "bytes": 382,
       "sha256": "3aa94eeea1d9401b35f4564849640b189cbf11350a2ed2aca917a014d8bd480a",
       "locations": {
-        "canonical": null,
+        "canonical": "https://github.com/bc1cindy/decluster/raw/3b5e1762a28e4a8a7f869c41cf3785e158950a50/reproduction/coinjoin-sudoku-nominal/environment.json",
         "mirrors": []
       }
     }

@@ -15,7 +15,7 @@
       "bytes": 2653,
       "sha256": "86223ebfaae42cb505be1772e755a1e55d1e2f0eee3d4dda6577528fc64c8327",
       "locations": {
-        "canonical": null,
+        "canonical": "https://github.com/bc1cindy/decluster/raw/3b5e1762a28e4a8a7f869c41cf3785e158950a50/catalog/runs/analyze-contract-v1.json",
         "mirrors": []
       }
     },
@@ -45,7 +45,7 @@
       "bytes": 2457600,
       "sha256": "18893f6a7cf35071c8065a531df466b391b971d690969e89a838de59ba250666",
       "locations": {
-        "canonical": null,
+        "canonical": "https://github.com/bc1cindy/decluster/raw/3b5e1762a28e4a8a7f869c41cf3785e158950a50/sources/decluster-4844877-runtime.tar",
         "mirrors": []
       }
     },
@@ -65,7 +65,7 @@
       "bytes": 368,
       "sha256": "be96491d00b27f70103a0ccd8c81862723204b62e5857c68e154845daee2b3ce",
       "locations": {
-        "canonical": null,
+        "canonical": "https://github.com/bc1cindy/decluster/raw/3b5e1762a28e4a8a7f869c41cf3785e158950a50/reproduction/analyze-contract/environment.json",
         "mirrors": []
       }
     }

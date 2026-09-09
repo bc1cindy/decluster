@@ -15,7 +15,7 @@
       "bytes": 2998,
       "sha256": "0140b2692b0cf0022f8e2ef9643c30195f6c78e6538b64de8761ab5473c96eb1",
       "locations": {
-        "canonical": null,
+        "canonical": "https://github.com/bc1cindy/decluster/raw/3b5e1762a28e4a8a7f869c41cf3785e158950a50/catalog/runs/collaborative-forms-v1.json",
         "mirrors": []
       }
     },
@@ -45,7 +45,7 @@
       "bytes": 2457600,
       "sha256": "18893f6a7cf35071c8065a531df466b391b971d690969e89a838de59ba250666",
       "locations": {
-        "canonical": null,
+        "canonical": "https://github.com/bc1cindy/decluster/raw/3b5e1762a28e4a8a7f869c41cf3785e158950a50/sources/decluster-4844877-runtime.tar",
         "mirrors": []
       }
     },
@@ -65,7 +65,7 @@
       "bytes": 374,
       "sha256": "ba337d538cb1b820f5d56707db8432437484826cff60a2b3e0c01c2d059604bf",
       "locations": {
-        "canonical": null,
+        "canonical": "https://github.com/bc1cindy/decluster/raw/3b5e1762a28e4a8a7f869c41cf3785e158950a50/reproduction/collaborative-forms/environment.json",
         "mirrors": []
       }
     }

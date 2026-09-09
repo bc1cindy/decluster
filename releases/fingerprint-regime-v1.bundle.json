@@ -15,7 +15,7 @@
       "bytes": 3160,
       "sha256": "72603affbfeaecde450cc51ae07e8c1e2f6c50a4e6915c761d08c46030ad9613",
       "locations": {
-        "canonical": null,
+        "canonical": "https://github.com/bc1cindy/decluster/raw/3b5e1762a28e4a8a7f869c41cf3785e158950a50/catalog/runs/fingerprint-regime-v1.json",
         "mirrors": []
       }
     },
@@ -55,7 +55,7 @@
       "bytes": 2457600,
       "sha256": "18893f6a7cf35071c8065a531df466b391b971d690969e89a838de59ba250666",
       "locations": {
-        "canonical": null,
+        "canonical": "https://github.com/bc1cindy/decluster/raw/3b5e1762a28e4a8a7f869c41cf3785e158950a50/sources/decluster-4844877-runtime.tar",
         "mirrors": []
       }
     },
@@ -75,7 +75,7 @@
       "bytes": 372,
       "sha256": "11b9e72b30aaeffa310657659b72f0d65b1c9c84da90d217909feca580d4dd7c",
       "locations": {
-        "canonical": null,
+        "canonical": "https://github.com/bc1cindy/decluster/raw/3b5e1762a28e4a8a7f869c41cf3785e158950a50/reproduction/fingerprint-regime/environment.json",
         "mirrors": []
       }
     }

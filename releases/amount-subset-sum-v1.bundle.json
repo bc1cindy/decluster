@@ -15,7 +15,7 @@
       "bytes": 3205,
       "sha256": "d81b26ec04a81a375c3577693879dd0d576a152d480a03d314dd36f7a37a7d90",
       "locations": {
-        "canonical": null,
+        "canonical": "https://github.com/bc1cindy/decluster/raw/3b5e1762a28e4a8a7f869c41cf3785e158950a50/catalog/runs/amount-subset-sum-v1.json",
         "mirrors": []
       }
     },
@@ -55,7 +55,7 @@
       "bytes": 2457600,
       "sha256": "18893f6a7cf35071c8065a531df466b391b971d690969e89a838de59ba250666",
       "locations": {
-        "canonical": null,
+        "canonical": "https://github.com/bc1cindy/decluster/raw/3b5e1762a28e4a8a7f869c41cf3785e158950a50/sources/decluster-4844877-runtime.tar",
         "mirrors": []
       }
     },
@@ -85,7 +85,7 @@
       "bytes": 352,
       "sha256": "27a2aa9b7e72aa28572697d4b35c99d875455fa1557e4d7fb368b059cc2a110c",
       "locations": {
-        "canonical": null,
+        "canonical": "https://github.com/bc1cindy/decluster/raw/3b5e1762a28e4a8a7f869c41cf3785e158950a50/reproduction/amount-subset-sum/environment.json",
         "mirrors": []
       }
     }
