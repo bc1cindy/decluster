@@ -36,15 +36,28 @@ def moments(deg):
     return k1, k2
 
 
-def assortativity(g):
+def assortativity(g, deg=None):
     """Pearson correlation of the degrees at the two ends of an edge. Social graphs come out
     positive: well-connected people know well-connected people. Technological and
-    transactional graphs come out negative, hubs attaching to leaves."""
+    transactional graphs come out negative, hubs attaching to leaves.
+
+    `deg` is an already-computed degree table. A contracted graph has no degree of its own to
+    read — it unions the two adjacency sets on every call — so asking it once per edge end,
+    twice over, is most of the cost of a whole-view summary."""
+    deg = dict(deg) if deg else {}
+
+    def degree(v):
+        d = deg.get(v)
+        if d is None:
+            d = deg[v] = g.degree(v)
+        return d
+
     xs, ys = [], []
     for u in sorted(g.vertices, key=repr):
+        du = degree(u)
         for v in sorted(g.neighbours(u), key=repr):
-            xs.append(g.degree(u))
-            ys.append(g.degree(v))          # each undirected edge is seen from both ends
+            xs.append(du)
+            ys.append(degree(v))            # each undirected edge is seen from both ends
     n = len(xs)
     if n < 2:
         return None
@@ -111,6 +124,6 @@ def summary(g, sample=20000, rng=None):
         "transitivity": obs,
         "configuration_transitivity": null,
         "transitivity_ratio": (obs / null) if obs and null else None,
-        "assortativity": assortativity(g),
+        "assortativity": assortativity(g, deg),
         "tail_exponent": tail_exponent(deg),
     }

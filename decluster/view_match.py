@@ -165,11 +165,16 @@ class ViewMatcher:
         self.revisit_rounds = revisit_rounds
         self.confidence = {}
 
-    def _best(self, u, src, dst, mapping, detail=False):
+    def _best(self, u, src, dst, mapping, detail=False, claimed=None):
         """Returns the accepted candidate, or None. With `detail`, returns
         (candidate, eccentricity, score) so a caller can rank matches by how clearly they
         won — the framework's value lies in the *high confidence* links, not in coverage,
-        so a match has to carry how confident it was."""
+        so a match has to carry how confident it was.
+
+        `claimed` is any membership test over the dst-vertices already taken — `match` keeps one
+        as `reverse`. Without it the images have to be collected from `mapping` on every call,
+        which is the whole mapping scanned per scored vertex rather than the few candidates that
+        were actually scored."""
         miss = (None, 0.0, 0.0) if detail else None
         scores, support = candidate_scores(u, src, dst, mapping, self.hubcap, self.damping,
                                            self.stat.get(id(dst)), self.edge_alpha,
@@ -182,8 +187,10 @@ class ViewMatcher:
                 scores[v] = _condition(scores[v],
                                        vertex_agreement(src, u, dst, v),
                                        self.vertex_alpha)
-        for taken in mapping.values():
-            scores.pop(taken, None)              # a dst vertex is claimed at most once
+        if claimed is None:
+            claimed = set(mapping.values())
+        for taken in [v for v in scores if v in claimed]:
+            del scores[taken]                    # a dst vertex is claimed at most once
         if not scores:
             return miss
         best = max(scores, key=scores.get)
@@ -217,9 +224,9 @@ class ViewMatcher:
             for u in sorted(frontier, key=repr):
                 if u in mapping:
                     continue
-                v, ecc, sc = self._best(u, ga, gb, mapping, detail=True)
+                v, ecc, sc = self._best(u, ga, gb, mapping, detail=True, claimed=reverse)
                 if v is not None and self.reversible \
-                        and self._best(v, gb, ga, reverse) != u:
+                        and self._best(v, gb, ga, reverse, claimed=mapping) != u:
                     v = None                     # must win from the other side too
                 if v is None:
                     refused.add(u)
@@ -247,9 +254,9 @@ class ViewMatcher:
             for u in [k for k in mapping if k not in seeds]:
                 old = mapping.pop(u)
                 reverse.pop(old, None)
-                v, ecc, sc = self._best(u, ga, gb, mapping, detail=True)
+                v, ecc, sc = self._best(u, ga, gb, mapping, detail=True, claimed=reverse)
                 if v is not None and self.reversible \
-                        and self._best(v, gb, ga, reverse) != u:
+                        and self._best(v, gb, ga, reverse, claimed=mapping) != u:
                     v = None
                 if v is None:
                     mapping[u], reverse[old] = old, u        # keep the prior match
@@ -270,11 +277,12 @@ class ViewMatcher:
         mapping = self.match(ga, gb, seed, stat_a, stat_b)
         candidates = {}
         frontier = {n for u in mapping for n in ga.neighbours(u) if n not in mapping}
+        claimed = set(mapping.values())
         for u in sorted(frontier, key=repr):
             scores = candidate_scores(u, ga, gb, mapping, self.hubcap, self.damping,
                                       self.stat.get(id(gb)), self.edge_alpha, self.directional)
-            for taken in mapping.values():
-                scores.pop(taken, None)
+            for taken in [v for v in scores if v in claimed]:
+                del scores[taken]
             if scores:
                 candidates[u] = [v for v, _ in scores.most_common(top_k)]
         return mapping, candidates
