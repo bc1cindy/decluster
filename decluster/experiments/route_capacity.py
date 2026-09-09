@@ -1,7 +1,9 @@
 """How small a cut separates a coin from its origins, on committed transactions.
 
 The framework states robust connectivity as a property of a cut: no small cut should separate an
-output from the mass of its candidate origin coins. Nothing here measured that. `path_count`
+output from the mass of its candidate origin coins. This experiment measures three bounded readings
+of that object on the committed slice: the coin-disjoint route cut, the cut after pruning routes that
+cannot carry the target coin, and the maximum value the remaining network can deliver. `path_count`
 accumulates route mass, and its own docstring says why that is a different number — many routes may
 run through one coin, so a large count is consistent with a cut of one.
 
@@ -10,9 +12,10 @@ which coins have a *small* cut, not the exact value where it is large. A coin wi
 disjoint routes and a coin with fifty are both out of reach; a coin with one is not.
 
 Two bounds the numbers carry. The walk stops at a fixed depth and at coins the slice does not hold,
-so every cut here is a lower bound — a deeper walk can only find more routes, never fewer. And a
-route is counted, not weighted: the value it could carry is the plausible-flow half of the property,
-which no module in this repository computes.
+so every cut here is a lower bound — a deeper walk can only find more routes, never fewer. The
+value-capacitated reading measures simultaneous deliverable value on the graph the oracle admits; it
+does not identify the real path of particular satoshis, establish own-origin robustness without a
+user's antecedent set, or turn this bounded sample into a general robust-connectivity result.
 """
 
 from __future__ import annotations

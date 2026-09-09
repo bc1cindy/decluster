@@ -1139,21 +1139,24 @@ result, and the gap between them is where the remaining work is.
   tested as a candidate quasi-identifier and reported as a negative result: a naive split-half
   gives AUC 0.92, but a persistence split with matched negatives collapses it to **0.49 (chance)**, so
   the schedule does not identify owners in this data (`results/RESULTS-temporal.md`).
-- **No structural-property term in provenance route accumulation.**
+- **A separate bounded structural-property measurement.**
   `provenance_route_accumulation` (§8)
   weights ancestral origins by link probability alone; subset-sum multiplicity does not enter, because
   the amount channel is refuse-only (§1). It therefore measures no structural property of the graph.
-  Measuring one would need edge-disjoint plausible-flow paths in the transaction graph: transactions
-  are vertices and amount-labelled coins are directed edges. A traceable path is not necessarily a
-  plausible flow, and this repository computes neither that k-routes object nor its corresponding
-  edge cut.
+  `disjoint_routes`, evaluated separately by `route-capacity-v1`, now measures coin-disjoint routes
+  and their corresponding minimum cut in the transaction graph, where transactions are vertices and
+  amount-labelled coins are directed edges. It also reports the cut after pruning routes unable to
+  carry the target coin and a value-capacitated maximum-flow reading
+  (`results/generated/route-capacity-v1.md`). These are bounded measurements on one committed slice,
+  not a structural term already composed into provenance accumulation or a chain-scale proof of
+  robust connectivity.
   This names the most expensive structural notion, not the only one, and the gap should not be read
   as wider than it is — but "composition, not machinery" holds only for the unqualified
   conservative reading, and this bullet used to say it flatly. Precisely: how many coins
   belonging to *other* users already share a user's deep features needs no cut at all, and its
   primitives are built here (`ancestry.absorber_distribution`, `ancestry.provenance_link`,
   `intersect.shared_origins`) — for that reading, composition is indeed what is missing. Each way of
-  *qualifying* it, however, needs a primitive that does not exist:
+  *qualifying* it, however, needs a primitive and an evaluation appropriate to the qualification:
   - Qualifying by proximity needs mass resolved by path length, `M_ℓ`.
     `absorber_distribution` marginalizes length away by construction — it solves the absorbing chain
     for the boundary distribution — and `collapsed_expected_steps` returns only the mean number of
@@ -1161,9 +1164,12 @@ result, and the gap between them is where the remaining work is.
     iterate `H_ℓ = Q·H_{ℓ−1}` rather than solving to the fixed point, which sums back to
     `absorber_distribution` — but it is not built, and until it is, a proximity qualification is one
     this repository cannot express.
-  - Qualifying by flow capacity needs capacity, and `value_flow_link_oracle` distributes
-    *probability*: it returns a row-normalized transition matrix (`inputs[i]/sum(inputs)`), not
-    satoshis a route can carry. A stochastic row cannot bound simultaneous throughput.
+  - Qualifying by flow capacity is now implemented separately from the stochastic transition
+    weights. `flow_capacity` assigns each known coin its recorded value as capacity and computes the
+    maximum value the admitted graph can deliver simultaneously. On the committed slice, 8 of 335
+    measured targets cannot receive their own value from the observed origins. This is still a
+    depth- and data-bounded graph reading: it neither identifies which satoshis actually travelled a
+    route nor supplies the user's antecedent set required to test own-origin robustness.
   - **Cost is real and omitted.** The conservative reading is one backward walk per candidate input,
     and `results/RESULTS-path-count.md` measures **292 s (~5 min) for a single coinjoin** at
     `depth=5, max_nodes=20`; the unbounded walk over the same transaction did not finish in a
@@ -1259,8 +1265,12 @@ and does not single out (`results/generated/fingerprint-sparsity-v1.md`). Seeded
 two pseudonym views does not ignite at the view widths measured, and neighbourhood persistence — not
 the matcher — is the binding constraint (`results/generated/graph-rejoin-2016-v1.md`,
 `results/RESULTS-persistence-curve.md`). The framework's own positive properties, robust connectivity
-and own-origin robustness, are stated over counterfactual disjoint paths; the k-routes oracle that
-would measure them is not implemented here and the path-count object is not a substitute for it
+and own-origin robustness, are stated over counterfactual disjoint paths. The bounded route-capacity
+experiment now measures coin-disjoint cuts, value-pruned cuts and maximum flow on one committed
+slice; it finds small cuts as well as high-redundancy cases
+(`results/generated/route-capacity-v1.md`). That is evidence about the structural object, not proof
+of either property: the sample ends mostly at missing parents, and own-origin still lacks a run with
+a user's independently specified antecedent coins. The path-count result remains a different object
 (§9, `results/RESULTS-path-count.md`).
 
 Every measurement above resolves to a canonical artifact. The measurements that do not are listed in
