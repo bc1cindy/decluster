@@ -13,7 +13,7 @@
       "name": "catalog/runs/graph-rejoin-2016-v1.json",
       "role": "run_manifest",
       "bytes": 3300,
-      "sha256": "f7b4170f210763960c785f30fc482170fb41aaa8aa5d75b26dbd7915d65288bf",
+      "sha256": "30d63608e64e7c91e84205949d9edc3781d3caeff68dc536cb69687216f11f86",
       "locations": {
         "canonical": null,
         "mirrors": []
@@ -70,10 +70,20 @@
       }
     },
     {
+      "name": "dependencies/numpy-2.5.1-cp313-cp313-macosx_14_0_arm64.whl",
+      "role": "dependency",
+      "bytes": 5325143,
+      "sha256": "6165343f81b56ef8f514f396989e529b61d9dc709b99421b07e9f3e698e2287d",
+      "locations": {
+        "canonical": null,
+        "mirrors": []
+      }
+    },
+    {
       "name": "reproduction/graph-rejoin-2016/requirements.lock",
       "role": "lockfile",
-      "bytes": 30,
-      "sha256": "e0d6a8cada5d383c0aca2bd2a37f28c15721392469c94084128d369c29c5544d",
+      "bytes": 92,
+      "sha256": "efdf4055dba10bfff2541ccaf3668be030c7caed44c61650540cc106393e9636",
       "locations": {
         "canonical": null,
         "mirrors": []
@@ -82,8 +92,8 @@
     {
       "name": "reproduction/graph-rejoin-2016/environment.json",
       "role": "environment",
-      "bytes": 370,
-      "sha256": "b5533943c67e5d0d4e6ba6ec5ffa67404640d2ce4c55554fc76ecaaba7fc7d25",
+      "bytes": 352,
+      "sha256": "e5294eac42341c3a41a0e8ba75a2c00f6b8317e0d27553f7cb901eead4e9fff9",
       "locations": {
         "canonical": null,
         "mirrors": []

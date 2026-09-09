@@ -13,7 +13,7 @@
       "name": "catalog/runs/match-controls-v1.json",
       "role": "run_manifest",
       "bytes": 3396,
-      "sha256": "58f651e4d25e220b70b664220b502be3c6e90a9df23a5bbf879822c31ad085e2",
+      "sha256": "1095d4bb7e2479548fd23b758ee3ed601e11e8a0189ec373fa6ef273f57165ef",
       "locations": {
         "canonical": null,
         "mirrors": []
@@ -70,10 +70,20 @@
       }
     },
     {
+      "name": "dependencies/numpy-2.5.1-cp313-cp313-macosx_14_0_arm64.whl",
+      "role": "dependency",
+      "bytes": 5325143,
+      "sha256": "6165343f81b56ef8f514f396989e529b61d9dc709b99421b07e9f3e698e2287d",
+      "locations": {
+        "canonical": null,
+        "mirrors": []
+      }
+    },
+    {
       "name": "reproduction/match-controls/requirements.lock",
       "role": "lockfile",
-      "bytes": 30,
-      "sha256": "e0d6a8cada5d383c0aca2bd2a37f28c15721392469c94084128d369c29c5544d",
+      "bytes": 92,
+      "sha256": "efdf4055dba10bfff2541ccaf3668be030c7caed44c61650540cc106393e9636",
       "locations": {
         "canonical": null,
         "mirrors": []
@@ -82,8 +92,8 @@
     {
       "name": "reproduction/match-controls/environment.json",
       "role": "environment",
-      "bytes": 364,
-      "sha256": "7c25e37223a4ca944aef80048944e3a063e3660530b06856ff86ce04d25c6d01",
+      "bytes": 349,
+      "sha256": "45f0463058833d882642877d2701d8c6e616c41f8fd68ea468904ea818f83493",
       "locations": {
         "canonical": null,
         "mirrors": []

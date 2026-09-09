@@ -8,6 +8,6 @@
   },
   "source_archive": "sources/decluster-b40fa37-runtime.tar",
   "project_root": "decluster",
-  "requirements": "reproduction/graph-rejoin-2016/requirements.lock",
-  "dependency_directory": "reproduction/graph-rejoin-2016"
+  "requirements": "reproduction/match-controls/requirements.lock",
+  "dependency_directory": "dependencies"
 }

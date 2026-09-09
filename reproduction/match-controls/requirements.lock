@@ -1,1 +1,1 @@
-# no third-party dependencies
+numpy==2.5.1 --hash=sha256:6165343f81b56ef8f514f396989e529b61d9dc709b99421b07e9f3e698e2287d

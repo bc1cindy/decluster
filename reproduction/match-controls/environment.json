@@ -9,5 +9,5 @@
   "source_archive": "sources/decluster-b40fa37-runtime.tar",
   "project_root": "decluster",
   "requirements": "reproduction/match-controls/requirements.lock",
-  "dependency_directory": "reproduction/match-controls"
+  "dependency_directory": "dependencies"
 }
