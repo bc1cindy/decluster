@@ -1,0 +1,89 @@
+{
+  "schema_version": 1,
+  "id": "route-capacity-v1",
+  "capabilities": [
+    "verify_outputs",
+    "reproduce_runs"
+  ],
+  "runs": [
+    "route-capacity-v1"
+  ],
+  "blobs": [
+    {
+      "name": "catalog/runs/route-capacity-v1.json",
+      "role": "run_manifest",
+      "bytes": 3153,
+      "sha256": "ab5fcf0b9beca9d745695bd8fc9e4de44e498086aa1a4f8230943c39a3aa793e",
+      "locations": {
+        "canonical": null,
+        "mirrors": []
+      }
+    },
+    {
+      "name": "data/fs-blkcache-2026-09-04.tar.gz",
+      "role": "dataset",
+      "bytes": 33352455,
+      "sha256": "5a69f6f446dbdfcce09dddc91c653e5d841124d14020b720fdea276315c775a6",
+      "locations": {
+        "canonical": null,
+        "mirrors": []
+      }
+    },
+    {
+      "name": "results/artifacts/route-capacity-v1.json",
+      "role": "result",
+      "bytes": 1445,
+      "sha256": "e2bad958dea37ae3a7eacaa6e0f77fa88b2ad0378d854f31592ce76ecbe353f0",
+      "locations": {
+        "canonical": null,
+        "mirrors": []
+      }
+    },
+    {
+      "name": "results/generated/route-capacity-v1.md",
+      "role": "result",
+      "bytes": 3907,
+      "sha256": "5602b6166b55f7f7366a7eb9cd5603c95a6d2073bf95828cebd47b5c82504022",
+      "locations": {
+        "canonical": null,
+        "mirrors": []
+      }
+    },
+    {
+      "name": "sources/decluster-59195e2-runtime.tar",
+      "role": "source",
+      "bytes": 2437120,
+      "sha256": "8803bf1fe4950365bd5e07e582b087b2ad6bffef05bc869e294dd7e50fa6fb19",
+      "locations": {
+        "canonical": null,
+        "mirrors": []
+      }
+    },
+    {
+      "name": "reproduction/route-capacity/requirements.lock",
+      "role": "lockfile",
+      "bytes": 30,
+      "sha256": "e0d6a8cada5d383c0aca2bd2a37f28c15721392469c94084128d369c29c5544d",
+      "locations": {
+        "canonical": null,
+        "mirrors": []
+      }
+    },
+    {
+      "name": "reproduction/route-capacity/environment.json",
+      "role": "environment",
+      "bytes": 364,
+      "sha256": "1a8c4d2baa37c663e72d07b49ba764a817cace7a62aaa45dd90b207e4c963067",
+      "locations": {
+        "canonical": null,
+        "mirrors": []
+      }
+    }
+  ],
+  "limitations": [
+    "The bundled environment currently targets CPython 3.13 on macOS arm64.",
+    "The public on-chain snapshot is redistributed with provider authorization.",
+    "The historical 165,832-transaction cache is unavailable and is not reproduced.",
+    "Public bootstrap remains incomplete until every blob has a canonical HTTPS location and an independent mirror."
+  ]
+}

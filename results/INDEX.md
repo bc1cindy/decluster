@@ -129,7 +129,7 @@ Prose over measurements whose source is named in the document itself. Several re
 | [`RESULTS-provenance.md`](RESULTS-provenance.md) | Provenance overlap: what ranking by descended inputs does and does not isolate |
 | [`RESULTS-refusing-clusterer.md`](RESULTS-refusing-clusterer.md) | Does declining to apply CIOH blindly change the 2026 picture? |
 | [`RESULTS-reid.md`](RESULTS-reid.md) | Ancestry-signature record linkage |
-| [`RESULTS-slice-a-channels.md`](RESULTS-slice-a-channels.md) | The entity-attribute and social-graph channels on a real slice |
+| [`RESULTS-slice-a-channels.md`](RESULTS-slice-a-channels.md) | Structural density and graph shape on a real slice |
 | [`RESULTS-slice-gate-2026.md`](RESULTS-slice-gate-2026.md) | Go/no-go gate for a 2026 cross-view slice |
 | [`RESULTS-subtx-demix.md`](RESULTS-subtx-demix.md) | Subtransaction de-mix diagnostic |
 | [`RESULTS-temporal.md`](RESULTS-temporal.md) | Cluster temporal fingerprint — when is a cluster active |

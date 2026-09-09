@@ -12,8 +12,8 @@
     {
       "name": "catalog/runs/graph-rejoin-2016-v1.json",
       "role": "run_manifest",
-      "bytes": 3008,
-      "sha256": "a6eef2444b57e2e4b3fec1da29641c93a749cd7b455dd7a4c5a18f65693836a9",
+      "bytes": 3300,
+      "sha256": "98e6cd1af3866eff28ead4b88f74b7d40cfebdaf59eab374e31a0be617c54801",
       "locations": {
         "canonical": null,
         "mirrors": []
@@ -42,8 +42,8 @@
     {
       "name": "results/artifacts/graph-rejoin-2016-v1.json",
       "role": "result",
-      "bytes": 1831,
-      "sha256": "03a32b75e1575f8b2296469f722712bc2892731b6d281bfc3d32452f15ad8df9",
+      "bytes": 1777,
+      "sha256": "ec27b8a3dc36b06482b86cdcb556038d88b73f3595c1e37d78867c5ce159841c",
       "locations": {
         "canonical": null,
         "mirrors": []
@@ -60,10 +60,20 @@
       }
     },
     {
-      "name": "sources/decluster-3924de0-runtime.tar",
+      "name": "sources/decluster-59195e2-runtime.tar",
       "role": "source",
-      "bytes": 2355200,
-      "sha256": "2f01398ce811c7202da07f90c9817bd74b4c035aa668f4bd23e9ff0d32bfe6f6",
+      "bytes": 2437120,
+      "sha256": "8803bf1fe4950365bd5e07e582b087b2ad6bffef05bc869e294dd7e50fa6fb19",
+      "locations": {
+        "canonical": null,
+        "mirrors": []
+      }
+    },
+    {
+      "name": "dependencies/numpy-2.5.1-cp313-cp313-macosx_14_0_arm64.whl",
+      "role": "dependency",
+      "bytes": 5325143,
+      "sha256": "6165343f81b56ef8f514f396989e529b61d9dc709b99421b07e9f3e698e2287d",
       "locations": {
         "canonical": null,
         "mirrors": []
@@ -72,8 +82,8 @@
     {
       "name": "reproduction/graph-rejoin-2016/requirements.lock",
       "role": "lockfile",
-      "bytes": 30,
-      "sha256": "e0d6a8cada5d383c0aca2bd2a37f28c15721392469c94084128d369c29c5544d",
+      "bytes": 92,
+      "sha256": "efdf4055dba10bfff2541ccaf3668be030c7caed44c61650540cc106393e9636",
       "locations": {
         "canonical": null,
         "mirrors": []
@@ -82,8 +92,8 @@
     {
       "name": "reproduction/graph-rejoin-2016/environment.json",
       "role": "environment",
-      "bytes": 370,
-      "sha256": "09840bec1a88dcfc70afd36ae386292d98598cc237aeb1af06916f3f51c491f9",
+      "bytes": 352,
+      "sha256": "5c5cd35dfaaf8370bb182975a1e2b2a53e3d9ba0b2ab268d3135cde4578d979f",
       "locations": {
         "canonical": null,
         "mirrors": []

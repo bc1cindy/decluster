@@ -13,7 +13,7 @@
       "name": "catalog/runs/ns-bitcoin-v1.json",
       "role": "run_manifest",
       "bytes": 3351,
-      "sha256": "4b47aef60dd4ef320fe9344d788a0464aa245aecf46e02a85b9e40b31ac9fe01",
+      "sha256": "9b374a579ebf1334c33ccd47d23b8412f5b4d4948fd60eb3b9b3dac7737a9711",
       "locations": {
         "canonical": null,
         "mirrors": []
@@ -60,10 +60,10 @@
       }
     },
     {
-      "name": "sources/decluster-3924de0-runtime.tar",
+      "name": "sources/decluster-59195e2-runtime.tar",
       "role": "source",
-      "bytes": 2355200,
-      "sha256": "2f01398ce811c7202da07f90c9817bd74b4c035aa668f4bd23e9ff0d32bfe6f6",
+      "bytes": 2437120,
+      "sha256": "8803bf1fe4950365bd5e07e582b087b2ad6bffef05bc869e294dd7e50fa6fb19",
       "locations": {
         "canonical": null,
         "mirrors": []
@@ -83,7 +83,7 @@
       "name": "reproduction/ns-bitcoin/environment.json",
       "role": "environment",
       "bytes": 356,
-      "sha256": "a94db2cda52cb8ec62da89c7d0e3a3311fafc842e9bb5c95a7799910fb6d5f8d",
+      "sha256": "906f98d90754565f987160eb9fa4f06c8062c422f39cd264df5f12f12f0d4b34",
       "locations": {
         "canonical": null,
         "mirrors": []
