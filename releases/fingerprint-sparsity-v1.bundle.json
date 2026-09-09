@@ -15,7 +15,7 @@
       "bytes": 3180,
       "sha256": "6c76bcb123b4777fc9167629e179b0da32c4f00c83061e839c819c399388dd2a",
       "locations": {
-        "canonical": null,
+        "canonical": "https://github.com/bc1cindy/decluster/raw/b797864acf974e329d27d394ced7bb96cabbbfd7/catalog/runs/fingerprint-sparsity-v1.json",
         "mirrors": []
       }
     },
@@ -35,7 +35,7 @@
       "bytes": 1429,
       "sha256": "923000f70f5eaaf7349a0715d3ed83c382d4b414d28c0e8aa617103871f9ec79",
       "locations": {
-        "canonical": null,
+        "canonical": "https://github.com/bc1cindy/decluster/raw/b797864acf974e329d27d394ced7bb96cabbbfd7/results/artifacts/fingerprint-sparsity-v1.json",
         "mirrors": []
       }
     },
@@ -45,7 +45,7 @@
       "bytes": 694,
       "sha256": "9740d4ad0c64d229df372b81499ae33f1dd54c097a4e26a2fccbee73b80bec6d",
       "locations": {
-        "canonical": null,
+        "canonical": "https://github.com/bc1cindy/decluster/raw/b797864acf974e329d27d394ced7bb96cabbbfd7/results/generated/fingerprint-sparsity-v1.md",
         "mirrors": []
       }
     },
@@ -55,7 +55,7 @@
       "bytes": 2437120,
       "sha256": "8803bf1fe4950365bd5e07e582b087b2ad6bffef05bc869e294dd7e50fa6fb19",
       "locations": {
-        "canonical": null,
+        "canonical": "https://github.com/bc1cindy/decluster/raw/b797864acf974e329d27d394ced7bb96cabbbfd7/sources/decluster-59195e2-runtime.tar",
         "mirrors": []
       }
     },
@@ -65,7 +65,7 @@
       "bytes": 0,
       "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
       "locations": {
-        "canonical": null,
+        "canonical": "https://github.com/bc1cindy/decluster/raw/b797864acf974e329d27d394ced7bb96cabbbfd7/reproduction/fingerprint-sparsity/requirements.lock",
         "mirrors": []
       }
     },
@@ -75,7 +75,7 @@
       "bytes": 376,
       "sha256": "baae6501362c91c4dbf71a8b61820d1729f14208d5d2356999ae135956a1fc24",
       "locations": {
-        "canonical": null,
+        "canonical": "https://github.com/bc1cindy/decluster/raw/b797864acf974e329d27d394ced7bb96cabbbfd7/reproduction/fingerprint-sparsity/environment.json",
         "mirrors": []
       }
     }

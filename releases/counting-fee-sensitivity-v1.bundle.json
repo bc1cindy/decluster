@@ -15,7 +15,7 @@
       "bytes": 2899,
       "sha256": "9526ea3b9d3ea69548c9593c5b435e4979367cfd4890439085db9fa02fd47c7a",
       "locations": {
-        "canonical": null,
+        "canonical": "https://github.com/bc1cindy/decluster/raw/b797864acf974e329d27d394ced7bb96cabbbfd7/catalog/runs/counting-fee-sensitivity-v1.json",
         "mirrors": []
       }
     },
@@ -25,7 +25,7 @@
       "bytes": 1968,
       "sha256": "0fef54735522470634c696ec026c31c86dff4d4dae23da956b49d8f89eb3a508",
       "locations": {
-        "canonical": null,
+        "canonical": "https://github.com/bc1cindy/decluster/raw/b797864acf974e329d27d394ced7bb96cabbbfd7/results/artifacts/counting-fee-sensitivity-v1.json",
         "mirrors": []
       }
     },
@@ -35,7 +35,7 @@
       "bytes": 526,
       "sha256": "df9d25a028a5f5c9f7527923cd354a674865b3012d71b23405c08a6ec643a84b",
       "locations": {
-        "canonical": null,
+        "canonical": "https://github.com/bc1cindy/decluster/raw/b797864acf974e329d27d394ced7bb96cabbbfd7/results/generated/counting-fee-sensitivity-v1.md",
         "mirrors": []
       }
     },
@@ -45,7 +45,7 @@
       "bytes": 2437120,
       "sha256": "8803bf1fe4950365bd5e07e582b087b2ad6bffef05bc869e294dd7e50fa6fb19",
       "locations": {
-        "canonical": null,
+        "canonical": "https://github.com/bc1cindy/decluster/raw/b797864acf974e329d27d394ced7bb96cabbbfd7/sources/decluster-59195e2-runtime.tar",
         "mirrors": []
       }
     },
@@ -65,7 +65,7 @@
       "bytes": 90,
       "sha256": "5ee1d70afd72fdb4ba3f01843e85e7ecd9a6d3e2a52abeb14c346a2143e3c186",
       "locations": {
-        "canonical": null,
+        "canonical": "https://github.com/bc1cindy/decluster/raw/b797864acf974e329d27d394ced7bb96cabbbfd7/reproduction/counting-fee-sensitivity/requirements.lock",
         "mirrors": []
       }
     },
@@ -75,7 +75,7 @@
       "bytes": 359,
       "sha256": "a23ae1b96e4ed9c03e2b65b3c798ab05498e58b2ce54a487136cb25c76cad428",
       "locations": {
-        "canonical": null,
+        "canonical": "https://github.com/bc1cindy/decluster/raw/b797864acf974e329d27d394ced7bb96cabbbfd7/reproduction/counting-fee-sensitivity/environment.json",
         "mirrors": []
       }
     }

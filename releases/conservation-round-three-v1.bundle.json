@@ -15,7 +15,7 @@
       "bytes": 3128,
       "sha256": "2629e0d2174211c7c6227ae3fa73bfd865cc84fb49d19c5e2038ba3f08b39812",
       "locations": {
-        "canonical": null,
+        "canonical": "https://github.com/bc1cindy/decluster/raw/b797864acf974e329d27d394ced7bb96cabbbfd7/catalog/runs/conservation-round-three-v1.json",
         "mirrors": []
       }
     },
@@ -25,7 +25,7 @@
       "bytes": 758,
       "sha256": "e4a9048fa27e28732af5449d9b9a2098f401b203c793d79763d0be685fb86660",
       "locations": {
-        "canonical": null,
+        "canonical": "https://github.com/bc1cindy/decluster/raw/b797864acf974e329d27d394ced7bb96cabbbfd7/tests/fixtures/conservation_round_three.json",
         "mirrors": []
       }
     },
@@ -35,7 +35,7 @@
       "bytes": 9263,
       "sha256": "142f9dc03f39ab280a77e07c6f4e85b04d5e77b411a9c3cdb476d955280d6cfe",
       "locations": {
-        "canonical": null,
+        "canonical": "https://github.com/bc1cindy/decluster/raw/b797864acf974e329d27d394ced7bb96cabbbfd7/results/artifacts/conservation-round-three-v1.json",
         "mirrors": []
       }
     },
@@ -45,7 +45,7 @@
       "bytes": 558,
       "sha256": "8e32849b0f691361403dcbe219f436c2542cb0a2ecab24b98b1ed79b90c2a942",
       "locations": {
-        "canonical": null,
+        "canonical": "https://github.com/bc1cindy/decluster/raw/b797864acf974e329d27d394ced7bb96cabbbfd7/results/generated/conservation-round-three-v1.md",
         "mirrors": []
       }
     },
@@ -55,7 +55,7 @@
       "bytes": 2437120,
       "sha256": "8803bf1fe4950365bd5e07e582b087b2ad6bffef05bc869e294dd7e50fa6fb19",
       "locations": {
-        "canonical": null,
+        "canonical": "https://github.com/bc1cindy/decluster/raw/b797864acf974e329d27d394ced7bb96cabbbfd7/sources/decluster-59195e2-runtime.tar",
         "mirrors": []
       }
     },
@@ -65,7 +65,7 @@
       "bytes": 0,
       "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
       "locations": {
-        "canonical": null,
+        "canonical": "https://github.com/bc1cindy/decluster/raw/b797864acf974e329d27d394ced7bb96cabbbfd7/reproduction/conservation-round-three/requirements.lock",
         "mirrors": []
       }
     },
@@ -75,7 +75,7 @@
       "bytes": 384,
       "sha256": "1f4837ad6db929e5233e046f300ffd7e6676d1002841b6c90bf7fde22e345218",
       "locations": {
-        "canonical": null,
+        "canonical": "https://github.com/bc1cindy/decluster/raw/b797864acf974e329d27d394ced7bb96cabbbfd7/reproduction/conservation-round-three/environment.json",
         "mirrors": []
       }
     }

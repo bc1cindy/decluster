@@ -15,7 +15,7 @@
       "bytes": 2722,
       "sha256": "7fca418963aeec67605713676495143cc5e9731520bb701b844a766c9ee90094",
       "locations": {
-        "canonical": null,
+        "canonical": "https://github.com/bc1cindy/decluster/raw/b797864acf974e329d27d394ced7bb96cabbbfd7/catalog/runs/entropy-insufficiency-v1.json",
         "mirrors": []
       }
     },
@@ -25,7 +25,7 @@
       "bytes": 662,
       "sha256": "a323b5b930835a020812272aa8df80af7c922a116b3def6bca2ca4715e94d466",
       "locations": {
-        "canonical": null,
+        "canonical": "https://github.com/bc1cindy/decluster/raw/b797864acf974e329d27d394ced7bb96cabbbfd7/results/artifacts/entropy-insufficiency-v1.json",
         "mirrors": []
       }
     },
@@ -35,7 +35,7 @@
       "bytes": 580,
       "sha256": "d1ae4828869980634e3739f926f61bb3530a43b31f018f0e8fb6a6ce865eb50a",
       "locations": {
-        "canonical": null,
+        "canonical": "https://github.com/bc1cindy/decluster/raw/b797864acf974e329d27d394ced7bb96cabbbfd7/results/generated/entropy-insufficiency-v1.md",
         "mirrors": []
       }
     },
@@ -45,7 +45,7 @@
       "bytes": 2437120,
       "sha256": "8803bf1fe4950365bd5e07e582b087b2ad6bffef05bc869e294dd7e50fa6fb19",
       "locations": {
-        "canonical": null,
+        "canonical": "https://github.com/bc1cindy/decluster/raw/b797864acf974e329d27d394ced7bb96cabbbfd7/sources/decluster-59195e2-runtime.tar",
         "mirrors": []
       }
     },
@@ -55,7 +55,7 @@
       "bytes": 30,
       "sha256": "e0d6a8cada5d383c0aca2bd2a37f28c15721392469c94084128d369c29c5544d",
       "locations": {
-        "canonical": null,
+        "canonical": "https://github.com/bc1cindy/decluster/raw/b797864acf974e329d27d394ced7bb96cabbbfd7/reproduction/entropy-insufficiency/requirements.lock",
         "mirrors": []
       }
     },
@@ -65,7 +65,7 @@
       "bytes": 378,
       "sha256": "64e8fcb698c9bd4a13e2cc7f40be2f925f73936f23cd304a9a08fb3420898802",
       "locations": {
-        "canonical": null,
+        "canonical": "https://github.com/bc1cindy/decluster/raw/b797864acf974e329d27d394ced7bb96cabbbfd7/reproduction/entropy-insufficiency/environment.json",
         "mirrors": []
       }
     }

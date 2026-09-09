@@ -15,7 +15,7 @@
       "bytes": 3149,
       "sha256": "04e63f142752836d6797c0e9e1731fa92b713b50cee94a9b1bffaeb9acf3d6a5",
       "locations": {
-        "canonical": null,
+        "canonical": "https://github.com/bc1cindy/decluster/raw/b797864acf974e329d27d394ced7bb96cabbbfd7/catalog/runs/amount-channel-survey-v1.json",
         "mirrors": []
       }
     },
@@ -25,7 +25,7 @@
       "bytes": 825,
       "sha256": "210ecb06ecaa32cc4cabe03ced8b85b0882a824dca2c361bd2c5dede7dcccf02",
       "locations": {
-        "canonical": null,
+        "canonical": "https://github.com/bc1cindy/decluster/raw/b797864acf974e329d27d394ced7bb96cabbbfd7/results/artifacts/amount-local-channels-v1.json",
         "mirrors": []
       }
     },
@@ -35,7 +35,7 @@
       "bytes": 666,
       "sha256": "240592b5af814fbcd28b06221805b934424170119da5e62e9da0281944377a9d",
       "locations": {
-        "canonical": null,
+        "canonical": "https://github.com/bc1cindy/decluster/raw/b797864acf974e329d27d394ced7bb96cabbbfd7/results/artifacts/amount-subset-sum-v1.json",
         "mirrors": []
       }
     },
@@ -45,7 +45,7 @@
       "bytes": 1158,
       "sha256": "2e75b1330181e7cbf8539a357e2bd3ad650c4d2d207c7a47ec687e991e24a622",
       "locations": {
-        "canonical": null,
+        "canonical": "https://github.com/bc1cindy/decluster/raw/b797864acf974e329d27d394ced7bb96cabbbfd7/results/artifacts/amount-per-coin-v1.json",
         "mirrors": []
       }
     },
@@ -55,7 +55,7 @@
       "bytes": 942,
       "sha256": "11f0ec645ea1be334dc7d24fbfc31047b234f335f48b5a514960472c7444b7d6",
       "locations": {
-        "canonical": null,
+        "canonical": "https://github.com/bc1cindy/decluster/raw/b797864acf974e329d27d394ced7bb96cabbbfd7/results/artifacts/amount-mapping-family-v1.json",
         "mirrors": []
       }
     },
@@ -65,7 +65,7 @@
       "bytes": 1027,
       "sha256": "83f6a9e8501ee4df45f08b8c8ffc2f7265d40bf9add6d3f5093d712657c9dbf5",
       "locations": {
-        "canonical": null,
+        "canonical": "https://github.com/bc1cindy/decluster/raw/b797864acf974e329d27d394ced7bb96cabbbfd7/results/artifacts/amount-pairwise-family-v1.json",
         "mirrors": []
       }
     },
@@ -75,7 +75,7 @@
       "bytes": 2589,
       "sha256": "fcd4ad596d735b7c5a8dba43bc96481946ce5e78c3806932b60c10c865d1dcf8",
       "locations": {
-        "canonical": null,
+        "canonical": "https://github.com/bc1cindy/decluster/raw/b797864acf974e329d27d394ced7bb96cabbbfd7/results/artifacts/amount-channel-survey-v1.json",
         "mirrors": []
       }
     },
@@ -85,7 +85,7 @@
       "bytes": 1082,
       "sha256": "2f74b40fb24558a23f162d09da46a5f76a4434c170a78e0deb75eabba5d2ca28",
       "locations": {
-        "canonical": null,
+        "canonical": "https://github.com/bc1cindy/decluster/raw/b797864acf974e329d27d394ced7bb96cabbbfd7/results/generated/amount-channel-survey-v1.md",
         "mirrors": []
       }
     },
@@ -95,7 +95,7 @@
       "bytes": 2437120,
       "sha256": "8803bf1fe4950365bd5e07e582b087b2ad6bffef05bc869e294dd7e50fa6fb19",
       "locations": {
-        "canonical": null,
+        "canonical": "https://github.com/bc1cindy/decluster/raw/b797864acf974e329d27d394ced7bb96cabbbfd7/sources/decluster-59195e2-runtime.tar",
         "mirrors": []
       }
     },
@@ -105,7 +105,7 @@
       "bytes": 30,
       "sha256": "e0d6a8cada5d383c0aca2bd2a37f28c15721392469c94084128d369c29c5544d",
       "locations": {
-        "canonical": null,
+        "canonical": "https://github.com/bc1cindy/decluster/raw/b797864acf974e329d27d394ced7bb96cabbbfd7/reproduction/amount-channel-survey/requirements.lock",
         "mirrors": []
       }
     },
@@ -115,7 +115,7 @@
       "bytes": 378,
       "sha256": "24988ff2f9a706cd21c46910ece0461d97e0a35714cc36a6cd7f664e5e750d01",
       "locations": {
-        "canonical": null,
+        "canonical": "https://github.com/bc1cindy/decluster/raw/b797864acf974e329d27d394ced7bb96cabbbfd7/reproduction/amount-channel-survey/environment.json",
         "mirrors": []
       }
     }

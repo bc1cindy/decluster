@@ -15,7 +15,7 @@
       "bytes": 3288,
       "sha256": "38f5a165a1347e8e13bca6a1b5e3e76cb7d8f3ef4befbdb2def08ff8c16d283b",
       "locations": {
-        "canonical": null,
+        "canonical": "https://github.com/bc1cindy/decluster/raw/b797864acf974e329d27d394ced7bb96cabbbfd7/catalog/runs/attribute-drift-v1.json",
         "mirrors": []
       }
     },
@@ -35,7 +35,7 @@
       "bytes": 7210,
       "sha256": "620d6fe56cbfb545dfb2908865f66a18a3fad6a2fa1af96acdda37815ab0f610",
       "locations": {
-        "canonical": null,
+        "canonical": "https://github.com/bc1cindy/decluster/raw/b797864acf974e329d27d394ced7bb96cabbbfd7/results/artifacts/attribute-drift-v1.json",
         "mirrors": []
       }
     },
@@ -45,7 +45,7 @@
       "bytes": 1241,
       "sha256": "9e36c5f5337bfda4db92e2f52d2db42d82ddf368cbb8aa3c8bdf2e18d821de8f",
       "locations": {
-        "canonical": null,
+        "canonical": "https://github.com/bc1cindy/decluster/raw/b797864acf974e329d27d394ced7bb96cabbbfd7/results/generated/attribute-drift-v1.md",
         "mirrors": []
       }
     },
@@ -55,7 +55,7 @@
       "bytes": 2437120,
       "sha256": "8803bf1fe4950365bd5e07e582b087b2ad6bffef05bc869e294dd7e50fa6fb19",
       "locations": {
-        "canonical": null,
+        "canonical": "https://github.com/bc1cindy/decluster/raw/b797864acf974e329d27d394ced7bb96cabbbfd7/sources/decluster-59195e2-runtime.tar",
         "mirrors": []
       }
     },
@@ -65,7 +65,7 @@
       "bytes": 0,
       "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
       "locations": {
-        "canonical": null,
+        "canonical": "https://github.com/bc1cindy/decluster/raw/b797864acf974e329d27d394ced7bb96cabbbfd7/reproduction/attribute-drift/requirements.lock",
         "mirrors": []
       }
     },
@@ -75,7 +75,7 @@
       "bytes": 366,
       "sha256": "65b9d6b99989a7c9f958682616da7cb0fc382f394c35404ad941adb0e460932d",
       "locations": {
-        "canonical": null,
+        "canonical": "https://github.com/bc1cindy/decluster/raw/b797864acf974e329d27d394ced7bb96cabbbfd7/reproduction/attribute-drift/environment.json",
         "mirrors": []
       }
     }

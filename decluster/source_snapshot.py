@@ -3,12 +3,12 @@
 from __future__ import annotations
 
 import argparse
+import copy
 from dataclasses import dataclass
 import hashlib
 import json
 import os
 from pathlib import Path
-import subprocess
 import tempfile
 from urllib.request import urlopen
 
@@ -140,8 +140,22 @@ def verify_source(snapshot, source_path):
     return snapshot
 
 
-def verify_normalized_source(snapshot, source_path, *, jq="jq"):
-    """Verify the recorded jq-normalized notebook identity and structure."""
+def _normalize_notebook(notebook):
+    """Reproduce the pinned jq deletion and compact sorted serialization."""
+    normalized = copy.deepcopy(notebook)
+    for cell in normalized.get("cells", ()):
+        cell.pop("outputs", None)
+        cell.pop("execution_count", None)
+    colab = normalized.get("metadata", {}).get("colab", {})
+    colab.pop("authorship_tag", None)
+    colab.pop("provenance", None)
+    return (json.dumps(
+        normalized, sort_keys=True, separators=(",", ":"), ensure_ascii=False,
+    ) + "\n").encode("utf-8")
+
+
+def verify_normalized_source(snapshot, source_path):
+    """Verify the recorded jq-compatible normalized notebook identity and structure."""
     if snapshot.source_only_sha256 is None:
         return snapshot
     try:
@@ -174,24 +188,7 @@ def verify_normalized_source(snapshot, source_path, *, jq="jq"):
     }
     if snapshot.structure != actual_structure:
         raise SourceSnapshotError(f"{snapshot.id}: notebook structure mismatch")
-    expression = (
-        "del(.cells[].outputs,.cells[].execution_count,"
-        ".metadata.colab.authorship_tag,.metadata.colab.provenance)"
-    )
-    try:
-        version = subprocess.run(
-            [jq, "--version"], check=True, capture_output=True, text=True
-        ).stdout.strip()
-        if version != "jq-1.8.1":
-            raise SourceSnapshotError(f"expected jq-1.8.1, found {version!r}")
-        result = subprocess.run(
-            [jq, "-cS", expression, str(source_path)],
-            check=True,
-            capture_output=True,
-        )
-    except (OSError, subprocess.CalledProcessError) as exc:
-        raise SourceSnapshotError(f"cannot normalize notebook with jq: {exc}") from exc
-    digest = hashlib.sha256(result.stdout).hexdigest()
+    digest = hashlib.sha256(_normalize_notebook(notebook)).hexdigest()
     if digest != snapshot.source_only_sha256:
         raise SourceSnapshotError(f"{snapshot.id}: source-only identity mismatch")
     return snapshot

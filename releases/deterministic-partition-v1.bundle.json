@@ -15,7 +15,7 @@
       "bytes": 2943,
       "sha256": "c3fef8e807dd326a7c8f2295cc53e05c2f21fa71107793b674a227179afac300",
       "locations": {
-        "canonical": null,
+        "canonical": "https://github.com/bc1cindy/decluster/raw/b797864acf974e329d27d394ced7bb96cabbbfd7/catalog/runs/deterministic-partition-v1.json",
         "mirrors": []
       }
     },
@@ -25,7 +25,7 @@
       "bytes": 868,
       "sha256": "9ef88ed2230876552f3f18ebf4e1bf462e7bd401160a5d287de443abc03f7415",
       "locations": {
-        "canonical": null,
+        "canonical": "https://github.com/bc1cindy/decluster/raw/b797864acf974e329d27d394ced7bb96cabbbfd7/results/artifacts/deterministic-partition-v1.json",
         "mirrors": []
       }
     },
@@ -35,7 +35,7 @@
       "bytes": 599,
       "sha256": "bcd7c6a58c1206d78841bceba862f9b9eabd9b978040bcf717a5967f0355df29",
       "locations": {
-        "canonical": null,
+        "canonical": "https://github.com/bc1cindy/decluster/raw/b797864acf974e329d27d394ced7bb96cabbbfd7/results/generated/deterministic-partition-v1.md",
         "mirrors": []
       }
     },
@@ -45,7 +45,7 @@
       "bytes": 2437120,
       "sha256": "8803bf1fe4950365bd5e07e582b087b2ad6bffef05bc869e294dd7e50fa6fb19",
       "locations": {
-        "canonical": null,
+        "canonical": "https://github.com/bc1cindy/decluster/raw/b797864acf974e329d27d394ced7bb96cabbbfd7/sources/decluster-59195e2-runtime.tar",
         "mirrors": []
       }
     },
@@ -55,7 +55,7 @@
       "bytes": 30,
       "sha256": "e0d6a8cada5d383c0aca2bd2a37f28c15721392469c94084128d369c29c5544d",
       "locations": {
-        "canonical": null,
+        "canonical": "https://github.com/bc1cindy/decluster/raw/b797864acf974e329d27d394ced7bb96cabbbfd7/reproduction/deterministic-partition/requirements.lock",
         "mirrors": []
       }
     },
@@ -65,7 +65,7 @@
       "bytes": 382,
       "sha256": "fa296dfd41fc6d7978b16d72294caa4c2434cc59453fb7bf0a36331df668c8d4",
       "locations": {
-        "canonical": null,
+        "canonical": "https://github.com/bc1cindy/decluster/raw/b797864acf974e329d27d394ced7bb96cabbbfd7/reproduction/deterministic-partition/environment.json",
         "mirrors": []
       }
     }

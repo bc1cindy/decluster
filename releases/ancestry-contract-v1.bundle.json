@@ -15,7 +15,7 @@
       "bytes": 2840,
       "sha256": "15bdd22e3612af97e3d7ef2fc2b3767964947360507a3ff47cc181560d3477a6",
       "locations": {
-        "canonical": null,
+        "canonical": "https://github.com/bc1cindy/decluster/raw/b797864acf974e329d27d394ced7bb96cabbbfd7/catalog/runs/ancestry-contract-v1.json",
         "mirrors": []
       }
     },
@@ -25,7 +25,7 @@
       "bytes": 1252,
       "sha256": "5c2be778959f5ab96df33af132a1cebc213375d43725969ba0a6cfec2063d533",
       "locations": {
-        "canonical": null,
+        "canonical": "https://github.com/bc1cindy/decluster/raw/b797864acf974e329d27d394ced7bb96cabbbfd7/results/artifacts/ancestry-contract-v1.json",
         "mirrors": []
       }
     },
@@ -35,7 +35,7 @@
       "bytes": 783,
       "sha256": "f14fa583584595c85f81b7cb4a84072cbbec64150d8eedb38e77b18b015d2ef9",
       "locations": {
-        "canonical": null,
+        "canonical": "https://github.com/bc1cindy/decluster/raw/b797864acf974e329d27d394ced7bb96cabbbfd7/results/generated/ancestry-contract-v1.md",
         "mirrors": []
       }
     },
@@ -45,7 +45,7 @@
       "bytes": 2437120,
       "sha256": "8803bf1fe4950365bd5e07e582b087b2ad6bffef05bc869e294dd7e50fa6fb19",
       "locations": {
-        "canonical": null,
+        "canonical": "https://github.com/bc1cindy/decluster/raw/b797864acf974e329d27d394ced7bb96cabbbfd7/sources/decluster-59195e2-runtime.tar",
         "mirrors": []
       }
     },
@@ -55,7 +55,7 @@
       "bytes": 0,
       "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
       "locations": {
-        "canonical": null,
+        "canonical": "https://github.com/bc1cindy/decluster/raw/b797864acf974e329d27d394ced7bb96cabbbfd7/reproduction/ancestry-contract/requirements.lock",
         "mirrors": []
       }
     },
@@ -65,7 +65,7 @@
       "bytes": 370,
       "sha256": "39de2cc91eb4163a27fd577559a51bca60d48fc80dddc093d45f36082d541a56",
       "locations": {
-        "canonical": null,
+        "canonical": "https://github.com/bc1cindy/decluster/raw/b797864acf974e329d27d394ced7bb96cabbbfd7/reproduction/ancestry-contract/environment.json",
         "mirrors": []
       }
     }

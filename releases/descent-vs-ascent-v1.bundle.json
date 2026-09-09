@@ -15,7 +15,7 @@
       "bytes": 3408,
       "sha256": "cdfd6d45d44c49703c97d2e5e8c7e3e8852fe30b5be94677efe26f08740a4ebb",
       "locations": {
-        "canonical": null,
+        "canonical": "https://github.com/bc1cindy/decluster/raw/b797864acf974e329d27d394ced7bb96cabbbfd7/catalog/runs/descent-vs-ascent-v1.json",
         "mirrors": []
       }
     },
@@ -25,7 +25,7 @@
       "bytes": 1837504,
       "sha256": "66104889f8b79f2938edb6666f16dfa19a74c68cd8016832b4f2a5e03b11865f",
       "locations": {
-        "canonical": null,
+        "canonical": "https://github.com/bc1cindy/decluster/raw/b797864acf974e329d27d394ced7bb96cabbbfd7/tests/fixtures/slice_a_channels_2016.ndjson.gz",
         "mirrors": []
       }
     },
@@ -35,7 +35,7 @@
       "bytes": 2448,
       "sha256": "3542b1199c220f49bd923306dcd1493ed5e7e677ff6fdabd1816256eb7021934",
       "locations": {
-        "canonical": null,
+        "canonical": "https://github.com/bc1cindy/decluster/raw/b797864acf974e329d27d394ced7bb96cabbbfd7/results/artifacts/descent-vs-ascent-v1.json",
         "mirrors": []
       }
     },
@@ -45,7 +45,7 @@
       "bytes": 2504,
       "sha256": "97ecbaa0035044c51f4d5717148ae6f2671d8b1d33ad4c6950801a651bc0db53",
       "locations": {
-        "canonical": null,
+        "canonical": "https://github.com/bc1cindy/decluster/raw/b797864acf974e329d27d394ced7bb96cabbbfd7/results/generated/descent-vs-ascent-v1.md",
         "mirrors": []
       }
     },
@@ -55,7 +55,7 @@
       "bytes": 2437120,
       "sha256": "8803bf1fe4950365bd5e07e582b087b2ad6bffef05bc869e294dd7e50fa6fb19",
       "locations": {
-        "canonical": null,
+        "canonical": "https://github.com/bc1cindy/decluster/raw/b797864acf974e329d27d394ced7bb96cabbbfd7/sources/decluster-59195e2-runtime.tar",
         "mirrors": []
       }
     },
@@ -65,7 +65,7 @@
       "bytes": 30,
       "sha256": "e0d6a8cada5d383c0aca2bd2a37f28c15721392469c94084128d369c29c5544d",
       "locations": {
-        "canonical": null,
+        "canonical": "https://github.com/bc1cindy/decluster/raw/b797864acf974e329d27d394ced7bb96cabbbfd7/reproduction/descent-vs-ascent/requirements.lock",
         "mirrors": []
       }
     },
@@ -75,7 +75,7 @@
       "bytes": 370,
       "sha256": "bcbd7b0f501d5ea968fa2a6a3e57aafea9f2a131e119f4e916bdb950b86a7b25",
       "locations": {
-        "canonical": null,
+        "canonical": "https://github.com/bc1cindy/decluster/raw/b797864acf974e329d27d394ced7bb96cabbbfd7/reproduction/descent-vs-ascent/environment.json",
         "mirrors": []
       }
     }

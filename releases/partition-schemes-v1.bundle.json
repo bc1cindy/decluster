@@ -15,7 +15,7 @@
       "bytes": 3062,
       "sha256": "d945b678e9511a0e5a89f6992311acc9df6eba3b1d08a59297ba2238c6fe2bd5",
       "locations": {
-        "canonical": null,
+        "canonical": "https://github.com/bc1cindy/decluster/raw/b797864acf974e329d27d394ced7bb96cabbbfd7/catalog/runs/partition-schemes-v1.json",
         "mirrors": []
       }
     },
@@ -25,7 +25,7 @@
       "bytes": 52278431,
       "sha256": "44192156107867a305e2f608af9185e4ce22fb88372238c88683f91120b1db16",
       "locations": {
-        "canonical": null,
+        "canonical": "https://github.com/bc1cindy/decluster/raw/b797864acf974e329d27d394ced7bb96cabbbfd7/data/partition-cuts-300k-2016.ndjson.gz",
         "mirrors": []
       }
     },
@@ -35,7 +35,7 @@
       "bytes": 2310,
       "sha256": "a000b89fd2a3def18ab1336179c2f083690289bd90584e4c9d047d3f4c0241ee",
       "locations": {
-        "canonical": null,
+        "canonical": "https://github.com/bc1cindy/decluster/raw/b797864acf974e329d27d394ced7bb96cabbbfd7/results/artifacts/partition-schemes-v1.json",
         "mirrors": []
       }
     },
@@ -45,7 +45,7 @@
       "bytes": 2364,
       "sha256": "57d6d4d6155e20e2ba7537d22e014dc6cd8a78caf82d671fb11fe5318c03cea9",
       "locations": {
-        "canonical": null,
+        "canonical": "https://github.com/bc1cindy/decluster/raw/b797864acf974e329d27d394ced7bb96cabbbfd7/results/generated/partition-schemes-v1.md",
         "mirrors": []
       }
     },
@@ -55,7 +55,7 @@
       "bytes": 2437120,
       "sha256": "8803bf1fe4950365bd5e07e582b087b2ad6bffef05bc869e294dd7e50fa6fb19",
       "locations": {
-        "canonical": null,
+        "canonical": "https://github.com/bc1cindy/decluster/raw/b797864acf974e329d27d394ced7bb96cabbbfd7/sources/decluster-59195e2-runtime.tar",
         "mirrors": []
       }
     },
@@ -65,7 +65,7 @@
       "bytes": 30,
       "sha256": "e0d6a8cada5d383c0aca2bd2a37f28c15721392469c94084128d369c29c5544d",
       "locations": {
-        "canonical": null,
+        "canonical": "https://github.com/bc1cindy/decluster/raw/b797864acf974e329d27d394ced7bb96cabbbfd7/reproduction/partition-schemes/requirements.lock",
         "mirrors": []
       }
     },
@@ -75,7 +75,7 @@
       "bytes": 370,
       "sha256": "4e0056934a2445bf2541c71d80ee464a0cb8dc21c9e360727bcabe10a98ac836",
       "locations": {
-        "canonical": null,
+        "canonical": "https://github.com/bc1cindy/decluster/raw/b797864acf974e329d27d394ced7bb96cabbbfd7/reproduction/partition-schemes/environment.json",
         "mirrors": []
       }
     }

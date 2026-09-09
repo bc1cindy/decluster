@@ -10,6 +10,7 @@ A path the repository deliberately does not ship is declared here with the reaso
 both directions: an entry that starts resolving is removed rather than left to grow stale.
 """
 import re
+import subprocess
 from pathlib import Path
 
 import pytest
@@ -34,6 +35,10 @@ ROOTS = (
     "tests/fixtures/", "examples/",
 )
 
+TRACKED = set(subprocess.check_output(
+    ["git", "ls-files", "-z"], cwd=ROOT,
+).decode().split("\0"))
+
 UNAVAILABLE = {
     "slice_2026.ndjson": "1.1 GB and never committed; the one input this repository cannot restore",
     "catalog/entities.ndjson": "a curated address list the reader supplies; only the example is shipped",
@@ -41,6 +46,10 @@ UNAVAILABLE = {
     "epoch_2016_01_392112-393119.ndjson.gz": "a gitignored epoch export from that collection",
     "fingerprints.md": "a private reference corpus held outside this repository",
     "sasamoto.md": "a private copy of cond-mat/0106125, cited by its arXiv identifier in the same line",
+    "tests/fixtures/slice_gate.json": (
+        "the BigQuery aggregate has not been committed and its verification tests skip"
+    ),
+    "_span6m.ndjson": "the historical six-month graph-scale export was not retained or committed",
     "task-2-report.md": "a private working note that predates this repository",
 }
 
@@ -52,7 +61,7 @@ def cited_paths():
 
 
 def resolves(path):
-    return any((ROOT / prefix / path).exists() for prefix in ROOTS)
+    return any(f"{prefix}{path}" in TRACKED for prefix in ROOTS)
 
 
 def test_documents_are_actually_being_scanned():

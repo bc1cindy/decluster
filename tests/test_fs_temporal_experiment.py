@@ -12,6 +12,7 @@ ROOT = Path(__file__).resolve().parents[1]
 SNAPSHOT = ROOT / "data" / "fs-blkcache-2026-09-04.tar.gz"
 
 
+@pytest.mark.canonical
 def test_snapshot_reproduces_the_historical_report():
     historical = json.loads((ROOT / "results" / "fs-temporal.json").read_text())
     artifact = experiment.build_artifact(SNAPSHOT)

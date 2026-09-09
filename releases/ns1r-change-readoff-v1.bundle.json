@@ -15,7 +15,7 @@
       "bytes": 2627,
       "sha256": "847d95ab4f07540806db47205107de2bfd413edd1c5342984152b4ceda790a32",
       "locations": {
-        "canonical": null,
+        "canonical": "https://github.com/bc1cindy/decluster/raw/b797864acf974e329d27d394ced7bb96cabbbfd7/catalog/runs/ns1r-change-readoff-v1.json",
         "mirrors": []
       }
     },
@@ -25,7 +25,7 @@
       "bytes": 2317,
       "sha256": "d2c40b646533f67e4e256f62260b183e6aa4e2e3e2888d0e8d41da54374ca1f1",
       "locations": {
-        "canonical": null,
+        "canonical": "https://github.com/bc1cindy/decluster/raw/b797864acf974e329d27d394ced7bb96cabbbfd7/results/artifacts/ns1r-change-readoff-v1.json",
         "mirrors": []
       }
     },
@@ -35,7 +35,7 @@
       "bytes": 1321,
       "sha256": "37d0f5348a1fbb852a826d28b09ed7ce09184da149616c9fd5816e127058764e",
       "locations": {
-        "canonical": null,
+        "canonical": "https://github.com/bc1cindy/decluster/raw/b797864acf974e329d27d394ced7bb96cabbbfd7/results/generated/ns1r-change-readoff-v1.md",
         "mirrors": []
       }
     },
@@ -45,7 +45,7 @@
       "bytes": 2437120,
       "sha256": "8803bf1fe4950365bd5e07e582b087b2ad6bffef05bc869e294dd7e50fa6fb19",
       "locations": {
-        "canonical": null,
+        "canonical": "https://github.com/bc1cindy/decluster/raw/b797864acf974e329d27d394ced7bb96cabbbfd7/sources/decluster-59195e2-runtime.tar",
         "mirrors": []
       }
     },
@@ -55,7 +55,7 @@
       "bytes": 30,
       "sha256": "e0d6a8cada5d383c0aca2bd2a37f28c15721392469c94084128d369c29c5544d",
       "locations": {
-        "canonical": null,
+        "canonical": "https://github.com/bc1cindy/decluster/raw/b797864acf974e329d27d394ced7bb96cabbbfd7/reproduction/ns1r-change-readoff/requirements.lock",
         "mirrors": []
       }
     },
@@ -65,7 +65,7 @@
       "bytes": 374,
       "sha256": "51a889478e86c159d09da43e39c88e606a9a81b769a235cb4068525138f20569",
       "locations": {
-        "canonical": null,
+        "canonical": "https://github.com/bc1cindy/decluster/raw/b797864acf974e329d27d394ced7bb96cabbbfd7/reproduction/ns1r-change-readoff/environment.json",
         "mirrors": []
       }
     }

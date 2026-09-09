@@ -23,15 +23,19 @@ jobs:
     steps:
       - name: Check out source
         uses: actions/checkout@08c6903cd8c0fde910a37f88322edcfb5dd907a8 # v5.0.0
+        with:
+          fetch-depth: 0
       - name: Set up Python
         uses: actions/setup-python@a309ff8b426b58ec0e2a45f0f869d46889d02405 # v6.2.0
         with:
           python-version: ${{ matrix.python-version }}
           cache: pip
       - name: Install test dependencies
-        run: python -m pip install --disable-pip-version-check ".[test,data]"
+        run: python -m pip install --disable-pip-version-check ".[test,data,scale]"
       - name: Run offline gate
-        run: python -m pytest -m "not live and not reproduction"
+        run: >-
+          python -m pytest -m
+          "not live and not reproduction${{ matrix.python-version == '3.10' && ' and not canonical' || '' }}"
 
   dss:
     name: Python 3.13 with pinned DSS
@@ -41,6 +45,8 @@ jobs:
     steps:
       - name: Check out source
         uses: actions/checkout@08c6903cd8c0fde910a37f88322edcfb5dd907a8 # v5.0.0
+        with:
+          fetch-depth: 0
       - name: Check out DSS
         uses: actions/checkout@08c6903cd8c0fde910a37f88322edcfb5dd907a8 # v5.0.0
         with:
@@ -58,7 +64,7 @@ jobs:
           rustup default 1.88.0
       - name: Install project and DSS
         run: |
-          python -m pip install --disable-pip-version-check ".[test,data]"
+          python -m pip install --disable-pip-version-check ".[test,data,scale]"
           python -m pip install --disable-pip-version-check .ci/dense-subset-sum
       - name: Verify DSS revision
         run: python -c 'import dss, os; assert dss.__rev__ == os.environ["DSS_GIT_REV"]'

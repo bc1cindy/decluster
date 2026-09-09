@@ -33,6 +33,7 @@ include = ["decluster", "decluster.*"]
 [tool.pytest.ini_options]
 addopts = "-m 'not live'"
 markers = [
+    "canonical: exact artifact comparison in the declared CPython 3.13 environment",
     "live: requires external network services and is excluded from the offline suite",
     "reproduction: materializes and reexecutes evidence bundles in their pinned environment",
 ]

@@ -15,7 +15,7 @@
       "bytes": 2497,
       "sha256": "ad98a73b9b0e2dcf2720acbf3cd7d823bba2b2e5d669f1a377fd23bc309f0cc8",
       "locations": {
-        "canonical": null,
+        "canonical": "https://github.com/bc1cindy/decluster/raw/b797864acf974e329d27d394ced7bb96cabbbfd7/catalog/runs/intersection-cluster-fixture-v1.json",
         "mirrors": []
       }
     },
@@ -25,7 +25,7 @@
       "bytes": 1869,
       "sha256": "2114e568b91808536c94ddb307a4688e3be32720bcb768ef9bb790ef673d0fe5",
       "locations": {
-        "canonical": null,
+        "canonical": "https://github.com/bc1cindy/decluster/raw/b797864acf974e329d27d394ced7bb96cabbbfd7/results/artifacts/intersection-cluster-fixture-v1.json",
         "mirrors": []
       }
     },
@@ -35,7 +35,7 @@
       "bytes": 385,
       "sha256": "3fd9f9bf57e30f4b92851852efa24e4af2201c705c39391d9451b68689005434",
       "locations": {
-        "canonical": null,
+        "canonical": "https://github.com/bc1cindy/decluster/raw/b797864acf974e329d27d394ced7bb96cabbbfd7/results/generated/intersection-cluster-fixture-v1.md",
         "mirrors": []
       }
     },
@@ -45,7 +45,7 @@
       "bytes": 2437120,
       "sha256": "8803bf1fe4950365bd5e07e582b087b2ad6bffef05bc869e294dd7e50fa6fb19",
       "locations": {
-        "canonical": null,
+        "canonical": "https://github.com/bc1cindy/decluster/raw/b797864acf974e329d27d394ced7bb96cabbbfd7/sources/decluster-59195e2-runtime.tar",
         "mirrors": []
       }
     },
@@ -55,7 +55,7 @@
       "bytes": 31,
       "sha256": "c7d402576511073ed4fcf076c77ffa6b3be124e0a2ef996d2da1cd3b02fbe541",
       "locations": {
-        "canonical": null,
+        "canonical": "https://github.com/bc1cindy/decluster/raw/b797864acf974e329d27d394ced7bb96cabbbfd7/reproduction/intersection-cluster-fixture/requirements.lock",
         "mirrors": []
       }
     },
@@ -65,7 +65,7 @@
       "bytes": 392,
       "sha256": "654890b92b3079751d01d5dbe7ccd555ad62c29948be558a43cd2fac4e4dee27",
       "locations": {
-        "canonical": null,
+        "canonical": "https://github.com/bc1cindy/decluster/raw/b797864acf974e329d27d394ced7bb96cabbbfd7/reproduction/intersection-cluster-fixture/environment.json",
         "mirrors": []
       }
     }

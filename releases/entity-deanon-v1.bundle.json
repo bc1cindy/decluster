@@ -15,7 +15,7 @@
       "bytes": 3453,
       "sha256": "c9a185b0e0ca05ebcc237e4712d77a5db7c3b70a92ea199148cf10677d98c402",
       "locations": {
-        "canonical": null,
+        "canonical": "https://github.com/bc1cindy/decluster/raw/b797864acf974e329d27d394ced7bb96cabbbfd7/catalog/runs/entity-deanon-v1.json",
         "mirrors": []
       }
     },
@@ -45,7 +45,7 @@
       "bytes": 1100,
       "sha256": "4825de7e64906f0d708bdcbd3bd23836675ff168166c5ff06fc0ea25d95afb38",
       "locations": {
-        "canonical": null,
+        "canonical": "https://github.com/bc1cindy/decluster/raw/b797864acf974e329d27d394ced7bb96cabbbfd7/results/artifacts/entity-deanon-v1.json",
         "mirrors": []
       }
     },
@@ -55,7 +55,7 @@
       "bytes": 557,
       "sha256": "9a3fdc6c79bc5c94cc687b5a41ebff8c663ecf3358cb080883e93cd30d94d850",
       "locations": {
-        "canonical": null,
+        "canonical": "https://github.com/bc1cindy/decluster/raw/b797864acf974e329d27d394ced7bb96cabbbfd7/results/generated/entity-deanon-v1.md",
         "mirrors": []
       }
     },
@@ -65,7 +65,7 @@
       "bytes": 2437120,
       "sha256": "8803bf1fe4950365bd5e07e582b087b2ad6bffef05bc869e294dd7e50fa6fb19",
       "locations": {
-        "canonical": null,
+        "canonical": "https://github.com/bc1cindy/decluster/raw/b797864acf974e329d27d394ced7bb96cabbbfd7/sources/decluster-59195e2-runtime.tar",
         "mirrors": []
       }
     },
@@ -75,7 +75,7 @@
       "bytes": 0,
       "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
       "locations": {
-        "canonical": null,
+        "canonical": "https://github.com/bc1cindy/decluster/raw/b797864acf974e329d27d394ced7bb96cabbbfd7/reproduction/entity-deanon/requirements.lock",
         "mirrors": []
       }
     },
@@ -85,7 +85,7 @@
       "bytes": 362,
       "sha256": "248f89a7819f877ea6e2dff77def87a393c737737a844e0426ea27f73aeb0590",
       "locations": {
-        "canonical": null,
+        "canonical": "https://github.com/bc1cindy/decluster/raw/b797864acf974e329d27d394ced7bb96cabbbfd7/reproduction/entity-deanon/environment.json",
         "mirrors": []
       }
     }

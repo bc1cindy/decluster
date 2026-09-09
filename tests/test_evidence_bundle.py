@@ -164,7 +164,7 @@ def test_committed_bundle_reports_only_public_distribution_blockers(index):
     readiness = assess_reproduction_readiness(bundle, root / "artifacts", root)
     assert readiness.status is ReproductionStatus.BLOCKED
     kinds = {issue.kind for issue in readiness.issues}
-    assert kinds == {
-        ReadinessIssueKind.CANONICAL_LOCATION_MISSING,
-        ReadinessIssueKind.MIRROR_MISSING,
-    }
+    expected = {ReadinessIssueKind.MIRROR_MISSING}
+    if any(blob.canonical_location is None for blob in bundle.blobs):
+        expected.add(ReadinessIssueKind.CANONICAL_LOCATION_MISSING)
+    assert kinds == expected

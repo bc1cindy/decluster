@@ -1,5 +1,7 @@
 import pytest
 
+pytest.importorskip("dss", reason="DSS restricted-family artifact requires the exact extra")
+
 from decluster.experiments import amount_mapping_family as experiment
 
 

@@ -15,7 +15,7 @@
       "bytes": 3351,
       "sha256": "9b374a579ebf1334c33ccd47d23b8412f5b4d4948fd60eb3b9b3dac7737a9711",
       "locations": {
-        "canonical": null,
+        "canonical": "https://github.com/bc1cindy/decluster/raw/b797864acf974e329d27d394ced7bb96cabbbfd7/catalog/runs/ns-bitcoin-v1.json",
         "mirrors": []
       }
     },
@@ -25,7 +25,7 @@
       "bytes": 23234649,
       "sha256": "069d207b44dcbbeaec0fae98262a3fcb76b3fe834834609e67fe883e229f26d3",
       "locations": {
-        "canonical": null,
+        "canonical": "https://github.com/bc1cindy/decluster/raw/b797864acf974e329d27d394ced7bb96cabbbfd7/data/ns-bitcoin-2016-v1/left-391992-392111.ndjson.gz",
         "mirrors": []
       }
     },
@@ -35,7 +35,7 @@
       "bytes": 26043862,
       "sha256": "1d46dcccb51cd8f1a1d89481db4df45599caaaf8569f9e8e2de37e81e0e5d122",
       "locations": {
-        "canonical": null,
+        "canonical": "https://github.com/bc1cindy/decluster/raw/b797864acf974e329d27d394ced7bb96cabbbfd7/data/ns-bitcoin-2016-v1/right-392112-392231.ndjson.gz",
         "mirrors": []
       }
     },
@@ -45,7 +45,7 @@
       "bytes": 6912,
       "sha256": "39bb12560c4c96749910324b85097938a7efe57e45ce380127bc7783c978f182",
       "locations": {
-        "canonical": null,
+        "canonical": "https://github.com/bc1cindy/decluster/raw/b797864acf974e329d27d394ced7bb96cabbbfd7/results/artifacts/ns-bitcoin-v1.json",
         "mirrors": []
       }
     },
@@ -55,7 +55,7 @@
       "bytes": 416,
       "sha256": "ce6ae206e95d2be86e8ea13a9161a26a0a6566787abf396a5eeffbb23efa3fcb",
       "locations": {
-        "canonical": null,
+        "canonical": "https://github.com/bc1cindy/decluster/raw/b797864acf974e329d27d394ced7bb96cabbbfd7/results/generated/ns-bitcoin-v1.md",
         "mirrors": []
       }
     },
@@ -65,7 +65,7 @@
       "bytes": 2437120,
       "sha256": "8803bf1fe4950365bd5e07e582b087b2ad6bffef05bc869e294dd7e50fa6fb19",
       "locations": {
-        "canonical": null,
+        "canonical": "https://github.com/bc1cindy/decluster/raw/b797864acf974e329d27d394ced7bb96cabbbfd7/sources/decluster-59195e2-runtime.tar",
         "mirrors": []
       }
     },
@@ -75,7 +75,7 @@
       "bytes": 30,
       "sha256": "e0d6a8cada5d383c0aca2bd2a37f28c15721392469c94084128d369c29c5544d",
       "locations": {
-        "canonical": null,
+        "canonical": "https://github.com/bc1cindy/decluster/raw/b797864acf974e329d27d394ced7bb96cabbbfd7/reproduction/ns-bitcoin/requirements.lock",
         "mirrors": []
       }
     },
@@ -85,7 +85,7 @@
       "bytes": 356,
       "sha256": "906f98d90754565f987160eb9fa4f06c8062c422f39cd264df5f12f12f0d4b34",
       "locations": {
-        "canonical": null,
+        "canonical": "https://github.com/bc1cindy/decluster/raw/b797864acf974e329d27d394ced7bb96cabbbfd7/reproduction/ns-bitcoin/environment.json",
         "mirrors": []
       }
     }

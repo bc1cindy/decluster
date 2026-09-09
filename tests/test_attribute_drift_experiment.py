@@ -43,6 +43,7 @@ def test_inconsistent_template_volume_is_refused(tmp_path):
         experiment.build_artifact(path)
 
 
+@pytest.mark.canonical
 def test_the_stored_artifact_still_equals_a_fresh_execution():
     """The named rows above pin what the numbers mean; this pins that nothing else moved.
 

@@ -15,7 +15,7 @@
       "bytes": 2915,
       "sha256": "b21691faac475c6b3c6e319213d7d2443a9fabdf5e54d11469aad09239056f03",
       "locations": {
-        "canonical": null,
+        "canonical": "https://github.com/bc1cindy/decluster/raw/b797864acf974e329d27d394ced7bb96cabbbfd7/catalog/runs/anchor-axis-families-v1.json",
         "mirrors": []
       }
     },
@@ -25,7 +25,7 @@
       "bytes": 5326,
       "sha256": "e0e687d23f9417ace6364372fa8d72ea1bb4f83dabaf08d08d2523423e247911",
       "locations": {
-        "canonical": null,
+        "canonical": "https://github.com/bc1cindy/decluster/raw/b797864acf974e329d27d394ced7bb96cabbbfd7/tests/fixtures/merged_anchor_931d6627.json",
         "mirrors": []
       }
     },
@@ -35,7 +35,7 @@
       "bytes": 3152,
       "sha256": "d465f3640860d0b51f20c6506ca7ae3715c89afb67e4e41b34a5dfc697276505",
       "locations": {
-        "canonical": null,
+        "canonical": "https://github.com/bc1cindy/decluster/raw/b797864acf974e329d27d394ced7bb96cabbbfd7/results/artifacts/anchor-axis-families-v1.json",
         "mirrors": []
       }
     },
@@ -45,7 +45,7 @@
       "bytes": 1451,
       "sha256": "4ce04704b838583333871b5d98883ceac02728ccfcea4c430b3ee7d49f708400",
       "locations": {
-        "canonical": null,
+        "canonical": "https://github.com/bc1cindy/decluster/raw/b797864acf974e329d27d394ced7bb96cabbbfd7/results/generated/anchor-axis-families-v1.md",
         "mirrors": []
       }
     },
@@ -55,7 +55,7 @@
       "bytes": 2437120,
       "sha256": "8803bf1fe4950365bd5e07e582b087b2ad6bffef05bc869e294dd7e50fa6fb19",
       "locations": {
-        "canonical": null,
+        "canonical": "https://github.com/bc1cindy/decluster/raw/b797864acf974e329d27d394ced7bb96cabbbfd7/sources/decluster-59195e2-runtime.tar",
         "mirrors": []
       }
     },
@@ -65,7 +65,7 @@
       "bytes": 30,
       "sha256": "e0d6a8cada5d383c0aca2bd2a37f28c15721392469c94084128d369c29c5544d",
       "locations": {
-        "canonical": null,
+        "canonical": "https://github.com/bc1cindy/decluster/raw/b797864acf974e329d27d394ced7bb96cabbbfd7/reproduction/anchor-axis-families/requirements.lock",
         "mirrors": []
       }
     },
@@ -75,7 +75,7 @@
       "bytes": 376,
       "sha256": "8a4e3e457e7ceb30a56ec41c9d3358fa6e1632405e9e19b8747cbe2e6d576863",
       "locations": {
-        "canonical": null,
+        "canonical": "https://github.com/bc1cindy/decluster/raw/b797864acf974e329d27d394ced7bb96cabbbfd7/reproduction/anchor-axis-families/environment.json",
         "mirrors": []
       }
     }

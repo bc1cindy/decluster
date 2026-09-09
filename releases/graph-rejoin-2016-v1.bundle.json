@@ -15,7 +15,7 @@
       "bytes": 3300,
       "sha256": "98e6cd1af3866eff28ead4b88f74b7d40cfebdaf59eab374e31a0be617c54801",
       "locations": {
-        "canonical": null,
+        "canonical": "https://github.com/bc1cindy/decluster/raw/b797864acf974e329d27d394ced7bb96cabbbfd7/catalog/runs/graph-rejoin-2016-v1.json",
         "mirrors": []
       }
     },
@@ -25,7 +25,7 @@
       "bytes": 10422968,
       "sha256": "cd129cd4bb225ea7a6733dab891b20272d62d1b0f3a6caf07a4209f9f2368015",
       "locations": {
-        "canonical": null,
+        "canonical": "https://github.com/bc1cindy/decluster/raw/b797864acf974e329d27d394ced7bb96cabbbfd7/data/epochs-2016-weekly-v1/391104-392111.epochgraph.xz",
         "mirrors": []
       }
     },
@@ -35,7 +35,7 @@
       "bytes": 12928408,
       "sha256": "0893000345e68249911cb8ee6467a47fa6feecd3022f27e2732bcabfb4725f11",
       "locations": {
-        "canonical": null,
+        "canonical": "https://github.com/bc1cindy/decluster/raw/b797864acf974e329d27d394ced7bb96cabbbfd7/data/epochs-2016-weekly-v1/392112-393119.epochgraph.xz",
         "mirrors": []
       }
     },
@@ -45,7 +45,7 @@
       "bytes": 1777,
       "sha256": "ec27b8a3dc36b06482b86cdcb556038d88b73f3595c1e37d78867c5ce159841c",
       "locations": {
-        "canonical": null,
+        "canonical": "https://github.com/bc1cindy/decluster/raw/b797864acf974e329d27d394ced7bb96cabbbfd7/results/artifacts/graph-rejoin-2016-v1.json",
         "mirrors": []
       }
     },
@@ -55,7 +55,7 @@
       "bytes": 2507,
       "sha256": "1d5afe106a2bb84edd7925ca4ed213d9f5bc3c35349d48dac47c6051492543ed",
       "locations": {
-        "canonical": null,
+        "canonical": "https://github.com/bc1cindy/decluster/raw/b797864acf974e329d27d394ced7bb96cabbbfd7/results/generated/graph-rejoin-2016-v1.md",
         "mirrors": []
       }
     },
@@ -65,7 +65,7 @@
       "bytes": 2437120,
       "sha256": "8803bf1fe4950365bd5e07e582b087b2ad6bffef05bc869e294dd7e50fa6fb19",
       "locations": {
-        "canonical": null,
+        "canonical": "https://github.com/bc1cindy/decluster/raw/b797864acf974e329d27d394ced7bb96cabbbfd7/sources/decluster-59195e2-runtime.tar",
         "mirrors": []
       }
     },
@@ -75,7 +75,7 @@
       "bytes": 5325143,
       "sha256": "6165343f81b56ef8f514f396989e529b61d9dc709b99421b07e9f3e698e2287d",
       "locations": {
-        "canonical": null,
+        "canonical": "https://github.com/bc1cindy/decluster/raw/b797864acf974e329d27d394ced7bb96cabbbfd7/dependencies/numpy-2.5.1-cp313-cp313-macosx_14_0_arm64.whl",
         "mirrors": []
       }
     },
@@ -85,7 +85,7 @@
       "bytes": 92,
       "sha256": "efdf4055dba10bfff2541ccaf3668be030c7caed44c61650540cc106393e9636",
       "locations": {
-        "canonical": null,
+        "canonical": "https://github.com/bc1cindy/decluster/raw/b797864acf974e329d27d394ced7bb96cabbbfd7/reproduction/graph-rejoin-2016/requirements.lock",
         "mirrors": []
       }
     },
@@ -95,7 +95,7 @@
       "bytes": 352,
       "sha256": "5c5cd35dfaaf8370bb182975a1e2b2a53e3d9ba0b2ab268d3135cde4578d979f",
       "locations": {
-        "canonical": null,
+        "canonical": "https://github.com/bc1cindy/decluster/raw/b797864acf974e329d27d394ced7bb96cabbbfd7/reproduction/graph-rejoin-2016/environment.json",
         "mirrors": []
       }
     }

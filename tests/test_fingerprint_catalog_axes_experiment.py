@@ -34,6 +34,7 @@ def test_duplicate_transaction_ids_are_refused(tmp_path):
         experiment.build_artifact(path)
 
 
+@pytest.mark.canonical
 def test_the_stored_artifact_still_equals_a_fresh_execution():
     """The pinned deltas above say what the numbers mean; this says nothing else moved."""
     from pathlib import Path

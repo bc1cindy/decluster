@@ -14,6 +14,7 @@ def artifact():
     return experiment.build_artifact(SNAPSHOT)
 
 
+@pytest.mark.canonical
 def test_snapshot_reproduces_the_canonical_artifact(artifact):
     stored = json.loads((ROOT / "results" / "artifacts" / "em-m-v1.json").read_text())
     assert artifact == stored
