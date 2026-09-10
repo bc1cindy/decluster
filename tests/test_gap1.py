@@ -2,6 +2,30 @@
 import sys, os
 sys.path.insert(0, os.path.dirname(os.path.dirname(__file__)))
 
+import pytest
+
+PAY  = "931d6627f7b63491cbc2e6d860dc630537385fd9ee3171f2013b64e6a143a4e4"
+CAKE = "0a568e3ae6fa6bf34ce8925266ac2cdb1668c723980398d9c613d67d72b39729"
+SEND = "91106666451dc43a0e3f78b325764251e205b39d7e9498948885678616ba719a"
+from decluster import fetch
+
+_ANCHOR_CACHE = os.path.join(os.path.dirname(__file__), "fixtures", "anchor-cache")
+
+
+@pytest.fixture(autouse=True)
+def _anchor_cache(monkeypatch):
+    """Read the anchor transactions from the committed fixture, and refuse the network outright.
+
+    These tests used to decide whether they could run by calling `fetch_tx`. A rate-limited API
+    answers slowly rather than failing, so the probe did not skip, it waited — one CI job spent an
+    hour on this file and its sibling against eighteen minutes for the same suite elsewhere. The
+    seven transactions the anchor demonstration reads are 12 KB, so they are committed instead, and
+    `_request` raises here to keep a cache miss loud rather than silently fetched.
+    """
+    monkeypatch.setattr(fetch, "CACHE", _ANCHOR_CACHE)
+    monkeypatch.setattr(fetch, "_request",
+                        lambda url: (_ for _ in ()).throw(AssertionError(f"offline test fetched {url}")))
+
 def _merge_931d():
     # real 931d6627 values: sender in 2000, Cake in 5750; outs 791, 6750; fee 209
     return {"txid": "931d",
@@ -42,14 +66,6 @@ def test_scope_guard():
 
 def test_amount_refuse_weight_931d():
     from decluster.cluster import amount_refuse_weight
-    PAY  = "931d6627f7b63491cbc2e6d860dc630537385fd9ee3171f2013b64e6a143a4e4"
-    CAKE = "0a568e3ae6fa6bf34ce8925266ac2cdb1668c723980398d9c613d67d72b39729"
-    SEND = "91106666451dc43a0e3f78b325764251e205b39d7e9498948885678616ba719a"
-    import os
-    if not os.path.exists(os.path.join(os.path.dirname(__file__), "..", ".cache", CAKE + ".json")):
-        try:
-            from decluster import fetch_tx; fetch_tx(CAKE)
-        except Exception: print("SKIP: offline"); return
     w = amount_refuse_weight(PAY, SEND, CAKE)
     assert w < 0, f"amount should push toward refusal, got {w}"   # roundness margin 3-1=2 -> -2
 
@@ -57,13 +73,6 @@ def test_engine_refuses_merge():
     from decluster import fetch_tx
     from decluster.combiner import Combiner
     from decluster.cluster import cluster_refined
-    import os
-    PAY  = "931d6627f7b63491cbc2e6d860dc630537385fd9ee3171f2013b64e6a143a4e4"
-    CAKE = "0a568e3ae6fa6bf34ce8925266ac2cdb1668c723980398d9c613d67d72b39729"
-    SEND = "91106666451dc43a0e3f78b325764251e205b39d7e9498948885678616ba719a"
-    if not os.path.exists(os.path.join(os.path.dirname(__file__), "..", ".cache", CAKE + ".json")):
-        try: fetch_tx(CAKE)
-        except Exception: print("SKIP: offline"); return
     nodes = {PAY, CAKE, SEND}
     nodes.add(fetch_tx(CAKE)["vin"][0]["txid"])
     for v in fetch_tx(SEND)["vin"]: nodes.add(v["txid"])

@@ -2,6 +2,23 @@
 import sys, os
 sys.path.insert(0, os.path.dirname(os.path.dirname(__file__)))
 
+import pytest
+
+MERGE  = "931d6627f7b63491cbc2e6d860dc630537385fd9ee3171f2013b64e6a143a4e4"
+CAKE   = "0a568e3ae6fa6bf34ce8925266ac2cdb1668c723980398d9c613d67d72b39729"
+SENDER = "91106666451dc43a0e3f78b325764251e205b39d7e9498948885678616ba719a"
+from decluster import fetch
+
+_ANCHOR_CACHE = os.path.join(os.path.dirname(__file__), "fixtures", "anchor-cache")
+
+
+@pytest.fixture(autouse=True)
+def _anchor_cache(monkeypatch):
+    """Committed anchor transactions, and no network: see `tests/test_gap1.py`."""
+    monkeypatch.setattr(fetch, "CACHE", _ANCHOR_CACHE)
+    monkeypatch.setattr(fetch, "_request",
+                        lambda url: (_ for _ in ()).throw(AssertionError(f"offline test fetched {url}")))
+
 def test_from_library_bits():
     from decluster.combiner import Combiner
     from decluster import library
@@ -24,13 +41,6 @@ def test_merge_money_shot():
     from decluster import fetch_tx
     from decluster.combiner import Combiner
     from decluster.cluster import cluster_refined
-    MERGE = "931d6627f7b63491cbc2e6d860dc630537385fd9ee3171f2013b64e6a143a4e4"
-    CAKE    = "0a568e3ae6fa6bf34ce8925266ac2cdb1668c723980398d9c613d67d72b39729"
-    SENDER  = "91106666451dc43a0e3f78b325764251e205b39d7e9498948885678616ba719a"
-    cache = os.path.join(os.path.dirname(__file__), "..", ".cache", CAKE + ".json")
-    if not os.path.exists(cache):
-        try: fetch_tx(CAKE)
-        except Exception: print("SKIP: offline"); return
     nodes = {MERGE, CAKE, SENDER}
     nodes.add(fetch_tx(CAKE)["vin"][0]["txid"])
     for v in fetch_tx(SENDER)["vin"]: nodes.add(v["txid"])
