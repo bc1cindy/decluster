@@ -16,6 +16,13 @@ def test_demix_real_joinmarket_recovers_eight_makers():
     assert assign[0] == 2089662830                # largest input <-> largest change
 
 
+def test_demix_links_change_never_a_mix_output():
+    assign = coinjoin_demix(JM_IN, JM_OUT)
+    changes = [c for c in JM_OUT if c != 6357366]
+    assert all(c in changes for c in assign.values())
+    assert 6357366 not in assign.values()         # the 11 equal outputs stay indistinguishable
+
+
 def test_demix_three_maker_synthetic():
     # changes spaced far apart (> fee_cap) so each input matches one change; input = mix + change - 1.
     assign = coinjoin_demix([100099, 50099, 10099], [100, 100, 100, 100000, 50000, 10000])

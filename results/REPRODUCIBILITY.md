@@ -25,7 +25,7 @@ survives subsampling** can it be pinned as a **band** on a committed fixture.
 | sparsity → de-anonymization (N-S Thm 2) | `tests/fixtures/reid_sigs.json.gz` | `test_reid.py` |
 | fingerprint clustering separates same-owner (FS + NS AUC) | `tests/fixtures/fingerprint_blkcache_sample.json` | `test_fingerprint_auc.py` |
 | intersection attack narrows candidates | seeds in-test | `test_intersection_real.py` |
-| coinjoin de-mix recovers makers | amounts inlined | `test_coinjoin_demix.py`, `test_amount_refuse_demix.py` |
+| coinjoin de-mix links maker inputs to their change | amounts inlined | `test_coinjoin_demix.py`, `test_amount_refuse_demix.py` |
 | conservation traces output funding | tx inlined | `test_conservation_round_three.py` |
 | §04 anonymity set at scale | `results/scale_output.json` | `test_anonymity_set_scale.py` |
 | amount density gate κ < κ_c orientation | synthetic | `test_cost.py` |

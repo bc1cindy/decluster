@@ -1,5 +1,5 @@
 """De-mix a real JoinMarket coinjoin (0cb4870c...856bbf, 11 participants). Matches each maker's input
-to mix + change - fee and prints the recovered participants and fees. Self-contained (amounts inlined).
+to mix + change - fee and prints each input-to-change link and fee. Self-contained (amounts inlined).
 Run: python3 examples/coinjoin_demix_demo.py"""
 import os
 import sys

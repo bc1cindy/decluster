@@ -99,10 +99,9 @@ forced_prefixes(tx, 4712126860)   # the curve above
 
 ## Relation to the amount channel as measured elsewhere
 
-`RESULTS-subtx-demix.md` reports that the labelled dense coinjoins recover 0
-participants, and PAPER §9 reads that as those rounds being amount-private. Both
-remain true of the de-mix, which looks for `input = mix + change − fee` and finds
-no unique match in dense denomination tiers.
+The de-mix solves `input = mix + change − fee` and abstains in dense
+denomination tiers, where every match is ambiguous, so a dense round is amount-private
+to it.
 
 Conservation is a different argument in the same channel, and it is not silent
 there. A round is amount-private *to the de-mix*; a participant who dominates the

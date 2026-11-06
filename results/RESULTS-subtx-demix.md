@@ -9,8 +9,9 @@ responses.
 
 For JoinMarket transaction `0cb4870c…856bbf`, the amount identity recovers eight
 of twelve inputs, with implied fees of 191, 413, 458, 559, 623, 636, 687 and 973
-satoshis. This reproduces the mechanism, not participant identities: there are
-no independent maker labels.
+satoshis. Each recovered input links to its change output; the eleven equal
+outputs stay indistinguishable. This reproduces the mechanism; verifying the
+maker assignment requires independent labels.
 
 The historical specificity claim is not supported. Of 25 width-eligible
 transactions in this CoinJoin-adjacent cache, 22 trigger the heuristic. The

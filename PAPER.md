@@ -34,11 +34,10 @@ subtracting a contributed input from an output and testing whether the implied p
 (a round number, under the unnecessary-input heuristic), or, for a general coinjoin, by de-mixing
 each participant's input against the mix denomination and their change output
 (`input = mix + change − fee`, `decluster/coinjoin_demix.py`). On a real JoinMarket coinjoin of 11
-participants the de-mix recovers 8 of the makers uniquely, with fees matching the reference tool.
-**Where the amounts are dense** — a well-mixed coinjoin, where many input→output mappings balance —
-the de-mix is silent and the wallet fingerprints and cluster-level graph structure carry the weight:
-the labelled real dense coinjoins recover 0 participants, so they are amount-private *to that
-question* (§2, `results/RESULTS-subtx-demix.md`).
+participants the de-mix links 8 maker inputs to their change outputs, with fees matching the
+reference tool; the 11 equal outputs stay indistinguishable. **Where the amounts are dense** (a
+well-mixed coinjoin, where many input→output mappings balance), the de-mix abstains and the wallet
+fingerprints and cluster-level graph structure carry the weight (§2, `results/RESULTS-subtx-demix.md`).
 
 We present a partition-refinement clustering that fuses signed bits of evidence over the labeled
 transaction multigraph — refusing false merges rather than only growing them, the cluster-collapse

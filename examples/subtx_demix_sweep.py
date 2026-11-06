@@ -1,5 +1,6 @@
 """Sweep the coinjoin de-mix over the labelled fixtures:
-how many participants it recovers per tx. Real Wasabi 2 coinjoins are dense/amount-private (recover 0).
+how many inputs it links to a change output per tx; on dense equal-amount coinjoins (e.g. Wasabi 2)
+it abstains.
 Reads fixture amounts from the sibling dense-subset-sum repo as labelled DATA only (set DSS_REPO)."""
 import os
 import re
